@@ -23,6 +23,7 @@ BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/$BINUTILS"
 GCC_CORE_URL="ftp://ftp.gwdg.de/pub/misc/gcc/releases/gcc-$GCC_VER/$GCC_CORE"
 GCC_GPP_URL="ftp://ftp.gwdg.de/pub/misc/gcc/releases/gcc-$GCC_VER/$GCC_GPP"
 LIBOGC_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBOGC"
+NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/$NEWLIB"
 
 #---------------------------------------------------------------------------------
 # Ask whether to download the source packages or not
