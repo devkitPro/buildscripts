@@ -10,7 +10,7 @@
 
 BINUTILS_VER=2.15
 GCC_VER=3.4.3
-NEWLIB_VER=1.13.0
+NEWLIB_VER=1.12.0
 LIBOGC_VER=20050218
 
 BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
@@ -281,6 +281,7 @@ if [ -f $scriptdir/build-tools.sh ]; then . $scriptdir/build-tools.sh ; cd $BUIL
 
 strip $INSTALLDIR/bin/*
 strip $INSTALLDIR/$target/bin/*
+strip $INSTALLDIR/libexec/gcc/$target/$GCC_VER/*
 rm -fr $INSTALLDIR/include/c++/$GCC_VER/$target/bits/stdc++.h.gch
 
 
