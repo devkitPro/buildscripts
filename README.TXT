@@ -95,10 +95,11 @@ planned for release 12
 	* update to newlib 1.13.0
 
 -------------------------------------------------------------------------------------
-14th February 2005 - release 11 beta 2
+18th February 2005 - release 11 beta 2
 -------------------------------------------------------------------------------------
 	* patch for http://gcc.gnu.org/bugzilla/show_bug.cgi?id=9571
-	* fix iwram overlay section alignment for GBA
+	* updated to latest libogc
+	* added stub library to allow linking without libogc
  
 -------------------------------------------------------------------------------------
 21st January 2005 - release 11 beta 1
@@ -106,6 +107,7 @@ planned for release 12
 
 	* updated to gcc 3.4.3
 	* reverted msvc format errors for compatibility with dev-cpp & vham editors
+	* fix iwram overlay section alignment for GBA
 	* patched for http://gcc.gnu.org/bugzilla/show_bug.cgi?id=16343
 
 -------------------------------------------------------------------------------------
