@@ -95,7 +95,7 @@ planned for release 12
 	* update to newlib 1.13.0
 
 -------------------------------------------------------------------------------------
-planned for release 11 beta 2
+14th February 2005 - release 11 beta 2
 -------------------------------------------------------------------------------------
 	* patch for http://gcc.gnu.org/bugzilla/show_bug.cgi?id=9571
 	* fix iwram overlay section alignment for GBA
