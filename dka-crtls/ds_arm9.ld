@@ -61,7 +61,8 @@ __eheap_end		=	0x02380000;
 __iwram_start		=	0x00800000;
 __iheap_end		=	0x00804000 - 0x400;
 __sp_usr		=	0x00804000 - 0x140;
-__sp_irq		=	0x00804000 - 0x60;
+__sp_irq		=	0x00804000 - 0x80;
+__sp_svc		=	0x00804000 - 0x40;
 __sp_usr_offset		=	__sp_usr - __iwram_start;
 
 SECTIONS

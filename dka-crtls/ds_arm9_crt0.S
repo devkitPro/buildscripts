@@ -24,6 +24,10 @@ _start:
 		msr	cpsr, r0
 		ldr	sp, =__sp_irq			@ Set IRQ stack
 
+		mov	r0, #0x13			@ Switch to SVC Mode
+		msr	cpsr, r0
+		ldr	sp, =__sp_svc			@ Set SVC stack
+
 		mov	r0, #0x1F			@ Switch to System Mode
 		msr	cpsr, r0
 		ldr	sp, =__sp_usr			@ Set user stack
