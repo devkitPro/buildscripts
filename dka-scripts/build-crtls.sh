@@ -12,3 +12,6 @@ $MAKE CRT=gba_crt0
 $MAKE CRT=gp32_crt0
 $MAKE CRT=er_crt0
 $MAKE CRT=gp32_gpsdk_crt0
+$MAKE CRT=ds_arm7_crt0
+$MAKE CRT=ds_arm9_crt0
+$MAKE CRT=ds_cart_crt0
