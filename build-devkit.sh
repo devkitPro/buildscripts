@@ -290,30 +290,10 @@ rm -fr $INSTALLDIR/include/c++/$GCC_VER/$target/bits/stdc++.h.gch
 #---------------------------------------------------------------------------------
 
 echo
-echo "Would you like to delete temporary files? [Y/n]"
-read answer
-
-if [ -z "$answer" -o "$answer" = "y" -o "$answer" = "Y" ]
-then
-    echo "rm -fr "$builddir
-    rm -fr $builddir
-fi
-
-echo
-echo "Would you like to delete the source directories? [Y/n]"
-read answer
-
-if [ -z "$answer" -o "$answer" = "y" -o "$answer" = "Y" ]
-then
-    echo "rm -fr $BINUTILS_SRCDIR $GCC_SRCDIR $NEWLIB_SRCDIR $LIBOGC_SRCDIR"
-    rm -fr $BINUTILS_SRCDIR $GCC_SRCDIR $NEWLIB_SRCDIR $LIBOGC_SRCDIR
-fi
-
-echo
 echo "Would you like to delete the source packages? [y/N]"
 read answer
 
-if [ ! -z "$answer" -o "$answer" = "y" -o "$answer" = "Y" ]
+if [ "$answer" = "y" -o "$answer" = "Y" ]
 then
     echo "rm -f $BINUTILS $GCC_CORE $GCC_GPP $NEWLIB"
     rm -f $SRCDIR/$BINUTILS $SRCDIR/$GCC_CORE $SRCDIR/$GCC_GPP $SRCDIR/$NEWLIB
