@@ -123,7 +123,7 @@ crtsavres.o%s
 --start-group -logcsys -lc --end-group -logc
 
 *lib_gcn:
---start-group -lads -lc --end-group
+--start-group -lads -lc -lstubs --end-group
 
 *lib_yellowknife:
 --start-group -lyk -lc --end-group
