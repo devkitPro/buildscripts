@@ -1,3 +1,5 @@
+#!/bin/sh
+
 prefix=$INSTALLDIR
 
 mkdir -p $target/binutils

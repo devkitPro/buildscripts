@@ -1,3 +1,5 @@
+#!/bin/sh
+
 prefix=$INSTALLDIR
 
 gcc -O2 tools/gba/gbafix.c
@@ -17,10 +19,11 @@ else
 	fi
 fi
 
-g++ tools/bmp2bin.cpp -o $prefix/bin/bmp2bin$exeext -static -O2 -s -D__LITTLE_ENDIAN__
-gcc tools/gbafix.c -o $prefix/bin/gbafix$exeext -static -O2 -s
+g++ tools/general/bmp2bin.cpp -o $prefix/bin/bmp2bin$exeext -static -O2 -s -D__LITTLE_ENDIAN__
+gcc tools/gba/gbafix.c -o $prefix/bin/gbafix$exeext -static -O2 -s
+cp tools/general/alignbin $prefix/bin/alignbin
 
-cd tools/b2fxec
-$MAKE -C tools/gp32/b2fxec
-cp b2fxec$exeext $prefix/bin/b2fxec$exeext
-$MAKE -C tools/gp32/b2fxec clean
+# Awaiting Mr_Spiv's permission to add to project
+#$MAKE -C tools/gp32/b2fxec
+#cp tools/gp32/b2fxec/b2fxec$exeext $prefix/bin/b2fxec$exeext
+#$MAKE -C tools/gp32/b2fxec clean
