@@ -53,28 +53,88 @@ SECTIONS
   .rel.plt        : { *(.rel.plt) }
   .rela.plt       : { *(.rela.plt) }
 
- file_start = 0x80003000;
+  /* DOL header (from TITANIK's GC docs)
+   */
+  file_start = 0x80003000;
   . = file_start;
+
   .header	:
   {
-	/*    0000-001B  Text[0..7] sections File Positions */
-	LONG(text_file_start); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0);
+	/*    0000-001B  Text[0..6] sections File Positions */
+	LONG(text_file_start);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+
 	/*    001C-0047  Data[0..10] sections File Positions */
-	LONG(0/*data_file_start*/); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0);
-	/*    0048-0063  Text[0..7] sections Mem Address */
-	LONG(text_mem_start); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0);
-	/*    0064-008F  Data[0..10] sections Mem Address */
-	LONG(0/*data_mem_start*/); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0);
-	/*    0090-00AB  Text[0..7] sections Sizes */
-	LONG(text_mem_size + data_mem_size); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0);
-	/*    00AC-00D7  Data[0..10] sections Sizes */
-	LONG(0/*data_mem_size*/); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0); LONG(0);
-	/*         00D8  BSS Mem address
-	 *         00DC  BSS Size */
-	LONG(bss_mem_start); LONG(bss_mem_size);
-	/*         00E0  Entry Point */
+	LONG(data_file_start);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+
+	/*    0048-0063  Text[0..6] sections Mem Address */
 	LONG(text_mem_start);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+
+	/*    0064-008F  Data[0..10] sections Mem Address */
+	LONG(data_mem_start);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+
+	/*    0090-00AB  Text[0..6] sections Sizes */
+	LONG(text_mem_size);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+
+	/*    00AC-00D7  Data[0..10] sections Sizes */
+	LONG(data_mem_size);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+	LONG(0);
+
+	/*    00D8  BSS Mem address
+	 *    00DC  BSS Size */
+	LONG(bss_mem_start);
+	LONG(bss_mem_size);
+
+	/*    00E0  Entry Point */
+	LONG(ABSOLUTE(_start));
   }
+
 
 . = 0x80003100;
   text_mem_start = .;
