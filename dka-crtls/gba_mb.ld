@@ -216,9 +216,11 @@ SECTIONS
 
 	.sbss ALIGN(4):
  	{
+    __sbss_start = ABSOLUTE(.);
  		*(.sbss)
  		. = ALIGN(4);
  	}
+  __sbss_end  = .;
 
 	__ewram_end = . ;
 	__ewram_overlay_start = . ;

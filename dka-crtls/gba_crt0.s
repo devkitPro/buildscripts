@@ -108,8 +108,8 @@ SkipEWRAMClear:							@ Clear Internal WRAM to 0x00
 @---------------------------------------------------------------------------------
 @ Clear BSS section to 0x00
 @---------------------------------------------------------------------------------
-	ldr		r0,=__bss_start
-	ldr		r1,=__bss_end
+	ldr		r0,=__sbss_start
+	ldr		r1,=__sbss_end
 	sub		r1,r0
 	bl		ClearMem
 
