@@ -279,6 +279,11 @@ if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh ; cd $BUILDSCR
 if [ -f $scriptdir/build-crtls.sh ]; then . $scriptdir/build-crtls.sh ; cd $BUILDSCRIPTDIR; fi
 if [ -f $scriptdir/build-tools.sh ]; then . $scriptdir/build-tools.sh ; cd $BUILDSCRIPTDIR; fi
 
+strip $INSTALLDIR\bin\*
+strip $INSTALLDIR\$target\bin\*
+rm -fr $INSTALLDIR\include\c++\$GCC_VER\$target\bits\stdc++.h.gch
+
+
 #---------------------------------------------------------------------------------
 # Clean up temporary files and source directories
 #---------------------------------------------------------------------------------
