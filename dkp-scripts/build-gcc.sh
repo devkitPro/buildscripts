@@ -1,7 +1,11 @@
 #!/bin/sh
+#---------------------------------------------------------------------------------
 
 prefix=$INSTALLDIR
 
+#---------------------------------------------------------------------------------
+# build and install binutils
+#---------------------------------------------------------------------------------
 mkdir -p $target/binutils
 cd $target/binutils
 
@@ -14,6 +18,15 @@ cd $target/binutils
 $MAKE | tee binutils_make.log 2>&1
 $MAKE install | tee binutils_install.log 2>&1
 
+#---------------------------------------------------------------------------------
+# remove temp stuff to conserve disc space
+#---------------------------------------------------------------------------------
+rm -fr $target/binutils
+rm -fr $BINUTILS_SRCDIR
+
+#---------------------------------------------------------------------------------
+# build and install just the c compiler
+#---------------------------------------------------------------------------------
 cd $BUILDSCRIPTDIR
 mkdir -p $target/gcc
 cd $target/gcc
@@ -32,6 +45,9 @@ cd $target/gcc
 $MAKE all-gcc | tee gcc_make.log 2>&1
 $MAKE install-gcc | tee gcc_install.log 2>&1
 
+#---------------------------------------------------------------------------------
+# build and install newlib
+#---------------------------------------------------------------------------------
 cd $BUILDSCRIPTDIR
 mkdir -p $target/newlib
 cd $target/newlib
@@ -41,9 +57,23 @@ cd $target/newlib
 $MAKE all | tee newlib_make.log 2>&1
 $MAKE install | tee newlib_install.log 2>&1
 
+#---------------------------------------------------------------------------------
+# remove temp stuff to conserve disc space
+#---------------------------------------------------------------------------------
+rm -fr $target/newlib
+rm -fr $NEWLIB_SRCDIR
 
+#---------------------------------------------------------------------------------
+# build and install the final compiler
+#---------------------------------------------------------------------------------
 cd $BUILDSCRIPTDIR
 cd $target/gcc
 
 $MAKE | tee gcc_final_make.log 2>&1
 $MAKE install | tee gcc_final_install.log 2>&1
+
+#---------------------------------------------------------------------------------
+# remove temp stuff to conserve disc space
+#---------------------------------------------------------------------------------
+rm -fr $target/gcc
+rm -fr $GCC_SRCDIR

@@ -23,6 +23,11 @@ $MAKE install | tee binutils_install.log 2>&1
 
 cd $BUILDSCRIPTDIR
 
+#---------------------------------------------------------------------------------
+# remove temp stuff to conserve disc space
+#---------------------------------------------------------------------------------
+rm -fr $target/binutils
+rm -fr $BINUTILS_SRCDIR
 
 #---------------------------------------------------------------------------------
 # build and install just the c compiler
@@ -58,6 +63,12 @@ $MAKE all | tee newlib_make.log 2>&1
 $MAKE install | tee newlib_install.log 2>&1
 
 #---------------------------------------------------------------------------------
+# remove temp stuff to conserve disc space
+#---------------------------------------------------------------------------------
+rm -fr $target/newlib
+rm -fr $NEWLIB_SRCDIR
+
+#---------------------------------------------------------------------------------
 # build and install the final compiler
 #---------------------------------------------------------------------------------
 
@@ -66,3 +77,9 @@ cd $target/gcc
 
 $MAKE | tee gcc_final_make.log 2>&1
 $MAKE install | tee gcc_final_install.log 2>&1
+
+#---------------------------------------------------------------------------------
+# remove temp stuff to conserve disc space
+#---------------------------------------------------------------------------------
+rm -fr $target/gcc
+rm -fr $GCC_SRCDIR
