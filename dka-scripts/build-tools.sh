@@ -21,7 +21,8 @@ fi
 
 g++ tools/general/bmp2bin.cpp -o $prefix/bin/bmp2bin$exeext -static -O2 -s -D__LITTLE_ENDIAN__
 gcc tools/gba/gbafix.c -o $prefix/bin/gbafix$exeext -static -O2 -s
-g++ tools/nds/ndstool.cpp -o $prefix/bin/ndstool$exeext -static -O2 -s
+g++ -O2 -s -o $prefix/bin/ndstool$exeext tools/nds/ndstool.cpp -lelf -L /usr/local/lib -I /usr/local/include	
+
 cp tools/general/alignbin $prefix/bin/alignbin
 
 # Awaiting Mr_Spiv's permission to add to project
