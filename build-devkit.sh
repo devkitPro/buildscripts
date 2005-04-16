@@ -1,6 +1,6 @@
 #!/bin/sh
 #---------------------------------------------------------------------------------
-# Build scripts for devkitARM/devkitPPC release 11
+# Build scripts for devkitARM/devkitPPC release 12
 #---------------------------------------------------------------------------------
 
 
@@ -10,7 +10,7 @@
 
 BINUTILS_VER=2.15
 GCC_VER=3.4.3
-NEWLIB_VER=1.12.0
+NEWLIB_VER=1.13.0
 LIBOGC_VER=20050306
 
 BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
@@ -36,7 +36,7 @@ do
   echo
   echo "This script will build and install your devkit. Please select the one you require"
   echo
-  echo "1: build devkitARM (gba gp32)"
+  echo "1: build devkitARM (gba gp32 ds)"
   echo "2: build devkitPPC (gamecube)"
   read VERSION
 
@@ -245,7 +245,7 @@ fi
 #---------------------------------------------------------------------------------
 patch -p1 -d $BINUTILS_SRCDIR -i $(pwd)/patches/devkit-binutils-2.15.patch
 patch -p1 -d $GCC_SRCDIR -i $(pwd)/patches/devkit-gcc-3.4.3.patch
-patch -p1 -d $NEWLIB_SRCDIR -i $(pwd)/patches/devkit-newlib-1.12.0.patch
+patch -p1 -d $NEWLIB_SRCDIR -i $(pwd)/patches/devkit-newlib-1.13.0.patch
 
 
 #---------------------------------------------------------------------------------
