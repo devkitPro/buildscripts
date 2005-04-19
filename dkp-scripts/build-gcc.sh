@@ -35,7 +35,8 @@ cd $target/gcc
 	--enable-languages=c,c++ \
 	--with-cpu=750\
 	--with-gcc --with-gnu-ld --with-gnu-as --with-stabs \
-	--disable-nls --disable-shared --disable-threads --disable-multilib\
+	--disable-nls --disable-shared --enable-threads --disable-multilib\
+	--enable-serial-configure \
 	--disable-win32-registry\
 	--target=$target \
 	--with-newlib \
