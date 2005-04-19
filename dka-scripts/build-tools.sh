@@ -23,7 +23,9 @@ g++ tools/general/bmp2bin.cpp -o $prefix/bin/bmp2bin$exeext -static -O2 -s -D__L
 gcc tools/gba/gbafix.c -o $prefix/bin/gbafix$exeext -static -O2 -s
 
 $MAKE -C tools/nds/ndstool
+$MAKE -C tools/nds/dsbuild
 cp tools/nds/ndstool/ndstool$exeext $prefix/bin/ndstool$exeext
+cp tools/nds/dsbuild/dsbuild$exeext $prefix/bin/dsbuild$exeext
 
 cp tools/general/alignbin $prefix/bin/alignbin
 
