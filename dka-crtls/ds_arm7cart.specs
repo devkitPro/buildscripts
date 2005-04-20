@@ -1,8 +1,0 @@
-%rename link                old_link
-
-*link:
-%(old_link) -T ds_arm7cart.ld%s
-
-*startfile:
-dscart_crt0%O%s crti%O%s crtbegin%O%s
-

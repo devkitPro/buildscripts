@@ -24,39 +24,8 @@ _start:
 		sub	r1, r1, r0
 		bl	ClearMem
 
-		ldr	r1, =__data_lma			@ Copy initialized data (data section) from LMA to VMA (ROM to RAM)
-		ldr	r2, =__data_start
-		ldr	r4, =__data_end
-		bl	CopyMemCheck
-
-		ldr	r1, =__iwram_lma		@ Copy internal work ram (iwram section) from LMA to VMA (ROM to RAM)
-		ldr	r2, =__iwram_start
-		ldr	r4, =__iwram_end
-		bl	CopyMemCheck
-
-		ldr	r2, =__load_stop_iwram0		@ Copy internal work ram overlay 0 (iwram0 section) from LMA to VMA (ROM to RAM)
-		ldr	r1, =__load_start_iwram0
-		subs	r3, r2, r1			@ Is there any data to copy?
-		beq	CIW0Skip			@ no
-		ldr	r2, =__iwram_overlay_start
-		bl	CopyMem
 CIW0Skip:
-		ldr	r1, =__ewram_lma		@ Copy external work ram (ewram section) from LMA to VMA (ROM to RAM)
-		ldr	r2, =__ewram_start
-		ldr	r4, =__ewram_end
-		bl	CopyMemCheck
 
-		ldr	r2, =__load_stop_ewram0	@ 	@ Copy external work ram overlay 0 (ewram0 section) from LMA to VMA (ROM to RAM)
-		ldr	r1, =__load_start_ewram0
-		subs	r3, r2, r1			@ Is there any data to copy?
-		beq	CEW0Skip			@ no
-		ldr	r2, =__ewram_overlay_start
-		bl	CopyMem
-CEW0Skip:
-		ldr	r1, =fake_heap_end		@ set heap end
-		ldr	r0, =__eheap_end
-		str	r0, [r1]
-	
 		ldr	r3, =_init			@ global constructors
 		bl	_call_via_r3
 

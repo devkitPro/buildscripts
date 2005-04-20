@@ -5,15 +5,15 @@ ENTRY(_start)
 MEMORY {
 
 	rom		: ORIGIN = 0x08000000, LENGTH = 32M
-	iwram	: ORIGIN = 0x03000000, LENGTH = 32K	
-	ewram	: ORIGIN = 0x02040000, LENGTH = 4M
+	iwram	: ORIGIN = 0x03800000, LENGTH = 64K	
+	ewram	: ORIGIN = 0x02000000, LENGTH = 4M
 }
-__iwram_start = 0x03000000;
+__iwram_start = 0x03800000;
 
-__sp_svc	=	0x3081000 - 0x60;
-__sp_irq	=	__sp_svc - 0x100;
-__sp_usr	=	__sp_irq - 0x100;
-__eheap_end	=	0x02080000;
+__eheap_end			=	0x2040000;
+__sp_irq			=	0x3810000 - 0x60;
+__sp_usr			=	__sp_irq - 0x100;
+
 SECTIONS
 {
 	.init	:
@@ -21,12 +21,13 @@ SECTIONS
 		__text_start = . ;
 		KEEP (*(.init))
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
-		} >ewram = 0xff
-	.plt : { *(.plt) } >ewram = 0xff
+		} >rom = 0xff
+	.plt : { *(.plt) } >rom = 0xff
 
 	.text :   /* ALIGN (4): */
 	{
 
+		*(EXCLUDE_FILE (*text.iwram*) .text)
 		*(.text.*)
 		*(.stub)
 		/* .gnu.warning sections are handled specially by elf32.em.  */
@@ -35,12 +36,12 @@ SECTIONS
 		*(.glue_7)
 		*(.glue_7t)
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
-	} >ewram = 0xff
+	} >rom = 0xff
 
 	.fini           :
 	{
 		KEEP (*(.fini))
-	} >ewram =0xff
+	} >rom =0xff
 
 	__text_end = . ;
 
@@ -53,7 +54,7 @@ SECTIONS
 		*(.gnu.linkonce.r*)
 		SORT(CONSTRUCTORS)
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-	} >ewram = 0xff
+	} >rom = 0xff
 
 	.ctors :
 	{
@@ -68,7 +69,7 @@ SECTIONS
 		KEEP (*(SORT(.ctors.*)))
 		KEEP (*(.ctors))
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-	} >ewram = 0xff
+	} >rom = 0xff
 
 	.dtors :
 	{
@@ -77,27 +78,24 @@ SECTIONS
 		KEEP (*(SORT(.dtors.*)))
 		KEEP (*(.dtors))
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-	} >ewram = 0xff
+	} >rom = 0xff
 
 	.eh_frame :
 	{
 		KEEP (*(.eh_frame))
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-	} >ewram = 0xff
+	} >rom = 0xff
 
 	.gcc_except_table :
 	{
 		*(.gcc_except_table)
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-	} >ewram = 0xff
-	.jcr            : { KEEP (*(.jcr)) } >ewram = 0
-	.got            : { *(.got.plt) *(.got) } >ewram = 0
+	} >rom = 0xff
+	.jcr            : { KEEP (*(.jcr)) } >rom = 0
+	.got            : { *(.got.plt) *(.got) } >rom = 0
 
-	_end = . ;
-	__end__ = . ;
-	PROVIDE (end = _end);
 	__iwram_lma = . ;
-
+	
 	.iwram __iwram_start : AT (__iwram_lma)
 	{
 		__iwram_start = ABSOLUTE(.) ;
@@ -136,6 +134,9 @@ SECTIONS
 	__bss_end = . ;
 	__bss_end__ = . ;
 
+	_end = . ;
+	__end__ = . ;
+	PROVIDE (end = _end);
 
 	/* Stabs debugging sections.  */
 	.stab 0 : { *(.stab) }
