@@ -10,7 +10,7 @@
 
 BINUTILS_VER=2.15
 GCC_VER=3.4.3
-NEWLIB_VER=1.13.0
+NEWLIB_VER=1.12.0
 LIBOGC_VER=20050419
 
 BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
@@ -186,10 +186,10 @@ else
     SRCDIR=`pwd`
 fi
 
-BINUTILS_SRCDIR="binutils-$BINUTILS_VER/"
-GCC_SRCDIR="gcc-$GCC_VER/"
-NEWLIB_SRCDIR="newlib-$NEWLIB_VER/"
-LIBOGC_SRCDIR="libogc-$LIBOGC_VER/"
+BINUTILS_SRCDIR="binutils-$BINUTILS_VER"
+GCC_SRCDIR="gcc-$GCC_VER"
+NEWLIB_SRCDIR="newlib-$NEWLIB_VER"
+LIBOGC_SRCDIR="libogc-$LIBOGC_VER"
 
 echo
 echo 'Ready to install '$package' in '$INSTALLDIR
@@ -288,6 +288,14 @@ rm -fr $INSTALLDIR/include/c++/$GCC_VER/$target/bits/stdc++.h.gch
 #---------------------------------------------------------------------------------
 # Clean up temporary files and source directories
 #---------------------------------------------------------------------------------
+
+echo "Removing patched sources and build directories"
+
+rm -fr $target
+rm -fr $BINUTILS_SRCDIR
+rm -fr $NEWLIB_SRCDIR
+rm -fr $GCC_SRCDIR
+rm -fr $LIBOGC_SRCDIR
 
 echo
 echo "Would you like to delete the source packages? [y/N]"

@@ -57,7 +57,9 @@ cd $BUILDSCRIPTDIR
 mkdir -p $target/newlib
 cd $target/newlib
 
-../../$NEWLIB_SRCDIR/configure --target=$target --prefix=$prefix | tee newlib_configure.log 2>&1
+$BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure	--target=$target \
+											--prefix=$prefix \
+											| tee newlib_configure.log 2>&1
 
 $MAKE all | tee newlib_make.log 2>&1
 $MAKE install | tee newlib_install.log 2>&1

@@ -8,10 +8,10 @@ DEVKITARM=$INSTALLDIR
 
 cp $(pwd)/dka-crtls/* $DEVKITARM/arm-elf/lib/
 cd $DEVKITARM/arm-elf/lib/
-$MAKE CRT=gba_crt0
-$MAKE CRT=gp32_crt0
-$MAKE CRT=er_crt0
-$MAKE CRT=gp32_gpsdk_crt0
-$MAKE CRT=ds_arm7_crt0
-$MAKE CRT=ds_arm9_crt0
-$MAKE CRT=ds_cart_crt0
+$MAKE CRT=gba
+$MAKE CRT=gp32
+$MAKE CRT=er
+$MAKE CRT=gp32_gpsdk
+$MAKE CRT=ds_arm7
+$MAKE CRT=ds_arm9
+$MAKE CRT=ds_cart

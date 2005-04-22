@@ -5,15 +5,21 @@ ENTRY(_start)
 MEMORY {
 
 	rom		: ORIGIN = 0x08000000, LENGTH = 32M
-	iwram	: ORIGIN = 0x03000000, LENGTH = 32K	
-	ewram	: ORIGIN = 0x02040000, LENGTH = 4M
+	iwram	: ORIGIN = 0x037f8000, LENGTH = 32K
+	ewram	: ORIGIN = 0x02004000, LENGTH = (4M - 16K)
+	dtcm	: ORIGIN = 0x00800000, LENGTH = 16K
 }
-__iwram_start = 0x03000000;
 
-__sp_svc	=	0x3081000 - 0x60;
+__iwram_start	=	0x037f8000;
+__iwram_end		=	0x03800000;
+__ewram_end		=	0x02400000;
+__eheap_end		=	0x02400000;
+__dtcm_start	=	0x00800000;
+
+__sp_svc	=	__iwram_end - 0x60;
 __sp_irq	=	__sp_svc - 0x100;
 __sp_usr	=	__sp_irq - 0x100;
-__eheap_end	=	0x02080000;
+
 SECTIONS
 {
 	.init	:
@@ -93,9 +99,18 @@ SECTIONS
 	.jcr            : { KEEP (*(.jcr)) } >ewram = 0
 	.got            : { *(.got.plt) *(.got) } >ewram = 0
 
+	.sbss ALIGN(4):
+ 	{
+		__sbss_start = ABSOLUTE(.);
+ 		*(.sbss)
+ 		. = ALIGN(4);
+ 	}
+	__sbss_end = . ;
+
 	_end = . ;
 	__end__ = . ;
 	PROVIDE (end = _end);
+
 	__iwram_lma = . ;
 
 	.iwram __iwram_start : AT (__iwram_lma)
@@ -120,8 +135,6 @@ SECTIONS
 	} >iwram = 0xff
 
 	__data_end = . ;
-	__appended_data = __data_lma + SIZEOF(.data) ;
-
 
 	.bss ALIGN(4) :
 	{
@@ -135,6 +148,20 @@ SECTIONS
 
 	__bss_end = . ;
 	__bss_end__ = . ;
+
+	__dtcm_lma = __data_lma + SIZEOF(.data);
+
+	.dtcm __dtcm_start : AT (__dtcm_lma)
+	{
+		__dtcm_start = ABSOLUTE(.);
+		*(.dtcm)
+		*(.dtcm.*)
+		. = ALIGN(4);
+	} >dtcm = 0xff
+	__dtcm_end = . ;
+
+	__appended_data = __dtcm_lma + SIZEOF(.dtcm) ;
+
 
 
 	/* Stabs debugging sections.  */
