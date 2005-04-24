@@ -61,8 +61,8 @@ _start:
 	ldr	r0, =__eheap_end
 	str	r0, [r1]
 	
-	@ldr	r3, =_init			@ global constructors
-	@bx	r3
+	ldr	r3, =_init			@ global constructors
+	bl	_call_via_r3
 
 	mov	r0, #0				@ int argc
 	mov	r1, #0				@ char *argv[]
