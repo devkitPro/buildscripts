@@ -50,10 +50,11 @@ cd $target/gcc
 $MAKE all-gcc | tee gcc_make.log 2>&1
 $MAKE install-gcc | tee gcc_install.log 2>&1
 
+cd $BUILDSCRIPTDIR
+
 #---------------------------------------------------------------------------------
 # build and install newlib
 #---------------------------------------------------------------------------------
-cd $BUILDSCRIPTDIR
 mkdir -p $target/newlib
 cd $target/newlib
 
@@ -63,6 +64,8 @@ $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure	--target=$target \
 
 $MAKE all | tee newlib_make.log 2>&1
 $MAKE install | tee newlib_install.log 2>&1
+
+cd $BUILDSCRIPTDIR
 
 #---------------------------------------------------------------------------------
 # remove temp stuff to conserve disc space
@@ -79,6 +82,8 @@ cd $target/gcc
 
 $MAKE | tee gcc_final_make.log 2>&1
 $MAKE install | tee gcc_final_install.log 2>&1
+
+cd $BUILDSCRIPTDIR
 
 #---------------------------------------------------------------------------------
 # remove temp stuff to conserve disc space
