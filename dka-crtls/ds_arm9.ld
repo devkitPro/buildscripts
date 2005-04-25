@@ -8,8 +8,10 @@ MEMORY {
 	iwram	: ORIGIN = 0x037f8000, LENGTH = 32K
 	ewram	: ORIGIN = 0x02004000, LENGTH = (4M - 16K)
 	dtcm	: ORIGIN = 0x00800000, LENGTH = 16K
+	itcm	: ORIGIN = 0x01000000, LENGTH = 32K
 }
 
+__itcm_start	=	0x01000000;
 __iwram_start	=	0x037f8000;
 __iwram_end		=	0x03800000;
 __ewram_end		=	0x02400000;
@@ -160,7 +162,18 @@ SECTIONS
 	} >dtcm = 0xff
 	__dtcm_end = . ;
 
-	__appended_data = __dtcm_lma + SIZEOF(.dtcm) ;
+	__itcm_lma = __dtcm_lma + SIZEOF(.data);
+
+	.itcm __itcm_start : AT (__itcm_lma)
+	{
+		__itcm_start = ABSOLUTE(.);
+		*(.itcm)
+		*(.itcm.*)
+		. = ALIGN(4);
+	} >itcm = 0xff
+	__itcm_end = . ;
+
+	__appended_data = __itcm_lma + SIZEOF(.itcm) ;
 
 
 
