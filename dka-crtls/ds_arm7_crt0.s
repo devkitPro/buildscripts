@@ -7,36 +7,36 @@
 .arm
 
 _start:
-		mov	r0, #0x04000000			@ IME = 0;
-		add	r0, r0, #0x208
-		strh	r0, [r0]
+	mov	r0, #0x04000000			@ IME = 0;
+	add	r0, r0, #0x208
+	strh	r0, [r0]
 
-		mov	r0, #0x12			@ Switch to IRQ Mode
-		msr	cpsr, r0
-		ldr	sp, =__sp_irq			@ Set IRQ stack
+	mov	r0, #0x12			@ Switch to IRQ Mode
+	msr	cpsr, r0
+	ldr	sp, =__sp_irq			@ Set IRQ stack
 
-		mov	r0, #0x1F			@ Switch to System Mode
-		msr	cpsr, r0
-		ldr	sp, =__sp_usr			@ Set user stack
+	mov	r0, #0x1F			@ Switch to System Mode
+	msr	cpsr, r0
+	ldr	sp, =__sp_usr			@ Set user stack
 
-		ldr	r0, =__bss_start		@ Clear BSS section to 0x00
-		ldr	r1, =__bss_end
-		sub	r1, r1, r0
-		bl	ClearMem
+	ldr	r0, =__bss_start		@ Clear BSS section to 0x00
+	ldr	r1, =__bss_end
+	sub	r1, r1, r0
+	bl	ClearMem
 
 CIW0Skip:
 
-		ldr	r3, =_init			@ global constructors
-		bl	_call_via_r3
+	ldr	r3, =_init			@ global constructors
+	bl	_call_via_r3
 
-		mov	r0, #0				@ int argc
-		mov	r1, #0				@ char *argv[]
-		ldr	r3, =main
-		bl	_call_via_r3			@ jump to user code
+	mov	r0, #0				@ int argc
+	mov	r1, #0				@ char *argv[]
+	ldr	r3, =main
+	bl	_call_via_r3			@ jump to user code
 		
-		@ If the user ever returns, return to flash cartridge
-		mov	r0, #0x08000000
-		bx	r0
+	@ If the user ever returns, return to flash cartridge
+	mov	r0, #0x08000000
+	bx	r0
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @
@@ -46,17 +46,19 @@ CIW0Skip:
 @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-ClearMem:	mov	r2, #3			@ Round down to nearest word boundary
-		add	r1, r1, r2		@ Shouldn't be needed
-		bics	r1, r1, r2		@ Clear 2 LSB (and set Z)
-		bxeq	lr			@ Quit if copy size is 0
+ClearMem:
+	mov	r2, #3			@ Round down to nearest word boundary
+	add	r1, r1, r2		@ Shouldn't be needed
+	bics	r1, r1, r2		@ Clear 2 LSB (and set Z)
+	bxeq	lr			@ Quit if copy size is 0
 
-		mov	r2, #0
-ClrLoop:	stmia	r0!, {r2}
-		subs	r1, r1, #4
-		bne	ClrLoop
+	mov	r2, #0
+ClrLoop:
+	stmia	r0!, {r2}
+	subs	r1, r1, #4
+	bne	ClrLoop
 
-		bx	lr
+	bx	lr
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @
@@ -68,7 +70,7 @@ ClrLoop:	stmia	r0!, {r2}
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 CopyMemCheck:
-		sub	r3, r4, r2		@ Is there any data to copy?
+	sub	r3, r4, r2		@ Is there any data to copy?
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @
@@ -79,17 +81,19 @@ CopyMemCheck:
 @
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
-CopyMem:	mov	r0, #3			@ These commands are used in cases where
-		add	r3, r3, r0		@ the length is not a multiple of 4,
-		bics	r3, r3, r0		@ even though it should be.
-		bxeq	lr			@ Length is zero, so exit
+CopyMem:
+	mov	r0, #3			@ These commands are used in cases where
+	add	r3, r3, r0		@ the length is not a multiple of 4,
+	bics	r3, r3, r0		@ even though it should be.
+	bxeq	lr			@ Length is zero, so exit
 
-CIDLoop:	ldmia	r1!, {r0}
-		stmia	r2!, {r0}
-		subs	r3, r3, #4
-		bne	CIDLoop
+CIDLoop:
+	ldmia	r1!, {r0}
+	stmia	r2!, {r0}
+	subs	r3, r3, #4
+	bne	CIDLoop
 
-		bx	lr
+	bx	lr
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

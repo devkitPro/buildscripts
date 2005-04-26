@@ -8,9 +8,10 @@ MEMORY {
 	iwram	: ORIGIN = 0x03800000, LENGTH = 64K	
 	ewram	: ORIGIN = 0x02040000, LENGTH = 4M
 }
-__iwram_start = 0x03800000;
+__iwram_start	= 0x03800000;
+__iwram_end		= 0x03810000;
 
-__sp_irq			=	0x380000 - 0x60;
+__sp_irq			=	__iwram_end - 0x60;
 __sp_usr			=	__sp_irq - 0x100;
 
 SECTIONS
