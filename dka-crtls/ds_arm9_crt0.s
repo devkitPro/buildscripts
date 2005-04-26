@@ -1,12 +1,12 @@
-.section ".init"
-.global _start
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-.align	4
-.arm
-
+@---------------------------------------------------------------------------------
+	.section ".init"
+	.global _start
+@---------------------------------------------------------------------------------
+	.align	4
+	.arm
+@---------------------------------------------------------------------------------
 _start:
+@---------------------------------------------------------------------------------
 	mov	r0, #0x04000000			@ IME = 0;
 	add	r0, r0, #0x208
 	strh	r0, [r0]
@@ -14,23 +14,22 @@ _start:
 	ldr	r1, =0x00002078			@ disable DTCM and protection unit
 	mcr	p15, 0, r1, c1, c0
 
-        @mrc	p15, 0, r0, c1, c0, 0
+	@mrc	p15, 0, r0, c1, c0, 0
 	@ldr	r1, =0xF9005
-        @bic	r0, r0, r1
+	@bic	r0, r0, r1
 	@mcr	p15, 0, r0, c1, c0, 0
 
-	@
-	@ Protection Unit Setup added by Sasq
-	@ With cache and write buffer turned on things goes shitloads faster!
-	@
+@---------------------------------------------------------------------------------
+@ Protection Unit Setup added by Sasq
+@ With cache and write buffer turned on things goes shitloads faster!
+@---------------------------------------------------------------------------------
+	@ Disable cache
+	mov	r0, #0
+	mcr	p15, 0, r0, c7, c5, 0		@ Instruction cache
+	mcr	p15, 0, r0, c7, c6, 0		@ Data cache
 
-        @ Disable cache
-        mov     r0, #0
-        mcr     p15, 0, r0, c7, c5, 0       @ Instruction cache
-        mcr     p15, 0, r0, c7, c6, 0       @ Data cache
-
-        @ Wait for write buffer to empty 
-        mcr     p15, 0, r0, c7, c10, 4
+	@ Wait for write buffer to empty 
+	mcr	p15, 0, r0, c7, c10, 4
 
 	ldr	r0, =0x0080000A
 	mcr	p15, 0, r0, c9, c1		@ TCM base = 0x00800*4096, size = 16 KB
@@ -38,42 +37,42 @@ _start:
 	@ Setup memory regions similar to Release Version
 
 	ldr	r0,=(0b110010 | 0x04000000 | 1)	
-	mcr     p15, 0, r0, c6, c0, 0
+	mcr	p15, 0, r0, c6, c0, 0
 
 	ldr	r0,=(0b101010  | 0x02000000 | 1)	
-	mcr     p15, 0, r0, c6, c1, 0
+	mcr	p15, 0, r0, c6, c1, 0
 
 	ldr	r0,=(0b100010| 0x027C0000 | 1)	
-	mcr     p15, 0, r0, c6, c2, 0
+	mcr	p15, 0, r0, c6, c2, 0
 
 	ldr	r0,=(0b110100| 0x08000000 | 1)	
-	mcr     p15, 0, r0, c6, c3, 0
+	mcr	p15, 0, r0, c6, c3, 0
 
 	@ldr	r0,=(0b011010 | 0x027C0000 | 1)	
 	ldr	r0,=(0b011010 | 0x00800000 | 1)	
-	mcr     p15, 0, r0, c6, c4, 0
+	mcr	p15, 0, r0, c6, c4, 0
 
 	ldr	r0,=(0b011100 | 0x01000000 | 1)	
-	mcr     p15, 0, r0, c6, c5, 0
+	mcr	p15, 0, r0, c6, c5, 0
 
 	ldr	r0,=(0b011100 | 0xFFFF0000 | 1)	
-	mcr     p15, 0, r0, c6, c6, 0
+	mcr	p15, 0, r0, c6, c6, 0
 
 	ldr	r0,=(0b010110  | 0x027FF000 | 1)	
-	mcr     p15, 0, r0, c6, c7, 0
+	mcr	p15, 0, r0, c6, c7, 0
 
 	@ Write buffer enable
 	ldr	r0,=0x2
-	mcr     p15, 0, r0, c3, c0, 0
+	mcr	p15, 0, r0, c3, c0, 0
 
 	@ DCache & ICache enable
-	ldr		r0,=0x42
-	mcr     p15, 0, r0, c2, c0, 0
-	mcr     p15, 0, r0, c2, c0, 1
+	ldr	r0,=0x42
+	mcr	p15, 0, r0, c2, c0, 0
+	mcr	p15, 0, r0, c2, c0, 1
 
 	@ IAccess
 	ldr	r0,=0x05100011
-	mcr     p15, 0, r0, c5, c0, 3
+	mcr	p15, 0, r0, c5, c0, 3
 
 	@ DAccess
 	ldr	r0,=0x15111011
@@ -81,7 +80,8 @@ _start:
 
 	@ Enable Protection Unit, ICache, DCache, ITCM & DTCM
 	mrc p15, 0, r0, c1, c0, 0
-	ldr	r1,=0x35003
+	ldr	r1,=0x15003
+	@ldr	r1,=0x35003
 	@ldr	r1,=0x10000
 	orr	r0,r0,r1
 	mcr p15, 0, r0, c1, c0, 0
@@ -118,11 +118,11 @@ _start:
 	ldr	r4, =__iwram_end
 	bl	CopyMemCheck
 
-	ldr	r1, =__itcm_lma		@ Copy instruction tightly coupled memory (itcm section) from LMA to VMA (ROM to RAM)
+/*	ldr	r1, =__itcm_lma		@ Copy instruction tightly coupled memory (itcm section) from LMA to VMA (ROM to RAM)
 	ldr	r2, =__itcm_start
 	ldr	r4, =__itcm_end
 	bl	CopyMemCheck
-
+*/
 	ldr	r1, =__dtcm_lma		@ Copy data tightly coupled memory (dtcm section) from LMA to VMA (ROM to RAM)
 	ldr	r2, =__dtcm_start
 	ldr	r4, =__dtcm_end
@@ -148,15 +148,13 @@ _start:
 	bx	r1
 ILoop:	b	ILoop
 
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@
+@---------------------------------------------------------------------------------
 @ Clear memory to 0x00 if length != 0
 @  r0 = Start Address
 @  r1 = Length
-@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
+@---------------------------------------------------------------------------------
 ClearMem:
+@---------------------------------------------------------------------------------
 	mov	r2, #3			@ Round down to nearest word boundary
 	add	r1, r1, r2		@ Shouldn't be needed
 	bics	r1, r1, r2		@ Clear 2 LSB (and set Z)
@@ -170,44 +168,36 @@ ClrLoop:
 
 	bx	lr
 
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@
+@---------------------------------------------------------------------------------
 @ Copy memory if length	!= 0
 @  r1 = Source Address
 @  r2 = Dest Address
 @  r4 = Dest Address + Length
-@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
+@---------------------------------------------------------------------------------
 CopyMemCheck:
+@---------------------------------------------------------------------------------
 	sub	r3, r4, r2		@ Is there any data to copy?
-
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@
+@---------------------------------------------------------------------------------
 @ Copy memory
 @  r1 = Source Address
 @  r2 = Dest Address
 @  r3 = Length
-@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
+@---------------------------------------------------------------------------------
 CopyMem:
+@---------------------------------------------------------------------------------
 	mov	r0, #3			@ These commands are used in cases where
 	add	r3, r3, r0		@ the length is not a multiple of 4,
 	bics	r3, r3, r0		@ even though it should be.
 	bxeq	lr			@ Length is zero, so exit
-
 CIDLoop:
 	ldmia	r1!, {r0}
 	stmia	r2!, {r0}
 	subs	r3, r3, #4
 	bne	CIDLoop
-
 	bx	lr
 
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-.align
-.pool
-
-.end
+@---------------------------------------------------------------------------------
+	.align
+	.pool
+	.end
+@---------------------------------------------------------------------------------
