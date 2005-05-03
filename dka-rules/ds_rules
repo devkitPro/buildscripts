@@ -1,0 +1,4 @@
+-include $(DEVKITARM)/base_rules
+
+LIBNDS	:=	$(DEVKITPRO)/libnds
+
