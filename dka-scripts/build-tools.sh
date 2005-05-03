@@ -19,8 +19,9 @@ else
 	fi
 fi
 
-g++ tools/general/bmp2bin.cpp -o $prefix/bin/bmp2bin$exeext -static -O2 -s -D__LITTLE_ENDIAN__
-gcc tools/gba/gbafix.c -o $prefix/bin/gbafix$exeext -static -O2 -s
+$MAKE -C tools/gba
+cp tools/gba/gbafix$exeext $prefix/bin/gbafix$exeext
+cp tools/gba/gbalzss$exeext $prefix/bin/gbalzss$exeext
 
 $MAKE -C tools/nds/ndstool
 $MAKE -C tools/nds/dsbuild
