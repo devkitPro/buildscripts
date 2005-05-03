@@ -1,0 +1,1 @@
+<Project name="template"><Folder name="source"><File path="source\template.c"></File></Folder><Folder name="include"></Folder><File path="Makefile"></File></Project>
