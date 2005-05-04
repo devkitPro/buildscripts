@@ -125,7 +125,19 @@ SECTIONS
 	} >iwram = 0xff
 
 	__iwram_end = . ;
-	__data_lma = __iwram_lma + SIZEOF(.iwram) ;
+
+	__dtcm_lma = __data_lma + SIZEOF(.data);
+
+	.dtcm __dtcm_start : AT (__dtcm_lma)
+	{
+		__dtcm_start = ABSOLUTE(.);
+		*(.dtcm)
+		*(.dtcm.*)
+		. = ALIGN(4);
+	} >dtcm = 0xff
+	__dtcm_end = . ;
+
+	__data_lma = __dtcm_lma + SIZEOF(.dtcm) ;
 
 	.data ALIGN(4) : AT (__data_lma)
 	{
@@ -135,7 +147,7 @@ SECTIONS
 		*(.gnu.linkonce.d*)
 		CONSTRUCTORS
 		. = ALIGN(4);
-	} >iwram = 0xff
+	} >dtcm = 0xff
 
 	__data_end = . ;
 
@@ -152,18 +164,7 @@ SECTIONS
 	__bss_end = . ;
 	__bss_end__ = . ;
 
-	__dtcm_lma = __data_lma + SIZEOF(.data);
-
-	.dtcm __dtcm_start : AT (__dtcm_lma)
-	{
-		__dtcm_start = ABSOLUTE(.);
-		*(.dtcm)
-		*(.dtcm.*)
-		. = ALIGN(4);
-	} >dtcm = 0xff
-	__dtcm_end = . ;
-
-	__itcm_lma = __dtcm_lma + SIZEOF(.data);
+	__itcm_lma = __data_lma + SIZEOF(.data);
 
 	.itcm __itcm_start : AT (__itcm_lma)
 	{
