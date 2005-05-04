@@ -20,13 +20,15 @@ else
 fi
 
 $MAKE -C tools/gba
-cp tools/gba/gbafix$exeext $prefix/bin/gbafix$exeext
-cp tools/gba/gbalzss$exeext $prefix/bin/gbalzss$exeext
+$MAKE -C tools/gba install PREFIX=$prefix/bin
+
+$MAKE -C tools/general
+$MAKE -C tools/general install PREFIX=$prefix/bin
 
 $MAKE -C tools/nds/ndstool
+$MAKE -C tools/nds/ndstool install PREFIX=$prefix/bin
 $MAKE -C tools/nds/dsbuild
-cp tools/nds/ndstool/ndstool$exeext $prefix/bin/ndstool$exeext
-cp tools/nds/dsbuild/dsbuild$exeext $prefix/bin/dsbuild$exeext
+$MAKE -C tools/nds/dsbuild install PREFIX=$prefix/bin
 
 cp tools/general/alignbin $prefix/bin/alignbin
 

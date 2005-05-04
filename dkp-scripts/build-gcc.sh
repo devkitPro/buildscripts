@@ -60,6 +60,8 @@ cd $target/newlib
 
 $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure	--target=$target \
 											--prefix=$prefix \
+											--enable-serial-configure \
+											--enable-newlib-mb \
 											| tee newlib_configure.log 2>&1
 
 $MAKE all | tee newlib_make.log 2>&1
