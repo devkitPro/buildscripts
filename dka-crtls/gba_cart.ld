@@ -40,9 +40,6 @@ OUTPUT_ARCH(arm)
 ENTRY(_start)
 /* SEARCH_DIR(/bin/arm); */
 
-/* By default this linker script will generate code        */
-/* for flash carts located at 0x8000000. 			       */
-
 /* The linker script function "var1 += var2;" sometimes    */
 /* reports incorrect values in the *.map file but the      */
 /* actual value it calculates is usually, if not always,   */
@@ -52,195 +49,201 @@ ENTRY(_start)
 /* not work as well. "var1 += var2" style functions are    */
 /* avoided below as a result.                              */
 
-/* The linker script MEMORY directive is not used here due    */
-/* to the fact that __text_start is not always a fixed value. */
+MEMORY {
+
+	rom		: ORIGIN = 0x08000000, LENGTH = 32M
+	iwram	: ORIGIN = 0x03000000, LENGTH = 32K
+	ewram	: ORIGIN = 0x02000000, LENGTH = 256K
+}
 
 __text_start 		=	0x8000000;
 __eheap_end			=	0x2040000;
 __iwram_start		=	0x3000000;
-__iheap_end			=	0x3008000 - 0x400;
-__sp_usr			=	0x3008000 - 0x100;
-__sp_irq			=	0x3008000 - 0x60;
-__intr_vector_buf	=	0x3008000 - 4;
-__sp_usr_offset		=	__sp_usr - __iwram_start;
-__intr_vect_offset	=	__intr_vector_buf - __sp_usr;
+__iwram_end			=	0x3008000;
+
+__sp_irq			=	__iwram_end - 0x100;
+__sp_usr			=	__sp_irq - 0x100;
+
 SECTIONS
 {
 	. = __text_start;
-  .init :
-  {
-    KEEP (*(.init))
-    . = ALIGN(4);
-  } =0xff
+	.init :
+	{
+		KEEP (*(.init))
+		. = ALIGN(4);
+	} >rom =0xff
 
 	.plt :
- 	{
+	{
 		*(.plt)
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
+	} >rom
+
+	.text  :   /* ALIGN (4): */
+	{
+		*(EXCLUDE_FILE (*.iwram*) .text)
+		*(.text.*)
+		*(.stub)
+		/* .gnu.warning sections are handled specially by elf32.em.  */
+		*(.gnu.warning)
+		*(.gnu.linkonce.t*)
+		*(.glue_7)
+		*(.glue_7t)
+		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
+	} >rom = 0xff
+
+	__text_end = .;
+	.fini           :
+	{
+		KEEP (*(.fini))
+		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
+	} >rom =0
+
+	.rodata :
+	{
+		*(.rodata)
+		*all.rodata*(*)
+		*(.roda)
+		*(.rodata.*)
+		*(.gnu.linkonce.r*)
+		SORT(CONSTRUCTORS)
+		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
+	} >rom = 0xff
+
+	.ctors :
+	{
+		/*	gcc uses crtbegin.o to find the start of the constructors, so
+			we make sure it is first.  Because this is a wildcard, it
+			doesn't matter if the user does not actually link against
+			crtbegin.o; the linker won't look for a file to match a
+			wildcard.  The wildcard also means that it doesn't matter which
+			directory crtbegin.o is in.  */
+		KEEP (*crtbegin.o(.ctors))
+		KEEP (*(EXCLUDE_FILE (*crtend.o) .ctors))
+		KEEP (*(SORT(.ctors.*)))
+		KEEP (*(.ctors))
+		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
+  } >rom = 0
+
+	.dtors :
+	{
+		KEEP (*crtbegin.o(.dtors))
+		KEEP (*(EXCLUDE_FILE (*crtend.o) .dtors))
+		KEEP (*(SORT(.dtors.*)))
+		KEEP (*(.dtors))
+		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
+	} >rom = 0
+
+	.jcr            : { KEEP (*(.jcr)) } >rom 
+
+	.eh_frame :
+	{
+		KEEP (*(.eh_frame))
+		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
+	} >rom = 0
+
+	.gcc_except_table :
+	{
+		*(.gcc_except_table)
+		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
+	} >rom = 0
+
+	__iwram_lma = .;
+
+	.iwram __iwram_start : AT (__iwram_lma)
+	{
+		__iwram_start = ABSOLUTE(.) ;
+		*(.iwram)
+		*iwram.*(.text)
+		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
+	} >iwram = 0xff
+
+	__data_lma = __iwram_lma + SIZEOF(.iwram) ;
+	__iwram_end = . ;
+
+	.bss ALIGN(4) :
+	{
+		__bss_start = ABSOLUTE(.);
+		__bss_start__ = ABSOLUTE(.);
+		*(.dynbss)
+		*(.gnu.linkonce.b*)
+		*(COMMON)
+		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
 	}
 
-  .text  :   /* ALIGN (4): */
-  {
-    *(EXCLUDE_FILE (*.iwram*) .text)
-    *(.text.*)
-    *(.stub)
-    /* .gnu.warning sections are handled specially by elf32.em.  */
-    *(.gnu.warning)
-    *(.gnu.linkonce.t*)
-    *(.glue_7)
-    *(.glue_7t)
-    . = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
-  } = 0xff
-  __text_end = .;
-  .fini           :
-  {
-    KEEP (*(.fini))
-    . = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
-  } =0
+	__bss_end = . ;
+	__bss_end__ = . ;
 
-  .rodata :
-  {
-    *(.rodata)
-    *all.rodata*(*)
-    *(.roda)
-    *(.rodata.*)
-    *(.gnu.linkonce.r*)
-    SORT(CONSTRUCTORS)
-    . = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-  } = 0xff
+	.data ALIGN(4) : AT (__data_lma)
+	{
+		__data_start = ABSOLUTE(.);
+		*(.data)
+		*(.data.*)
+		*(.gnu.linkonce.d*)
+		CONSTRUCTORS
+		. = ALIGN(4);
+	} >iwram = 0xff
 
-  .ctors :
-  {
-    /* gcc uses crtbegin.o to find the start of the constructors, so
-       we make sure it is first.  Because this is a wildcard, it
-       doesn't matter if the user does not actually link against
-       crtbegin.o; the linker won't look for a file to match a
-       wildcard.  The wildcard also means that it doesn't matter which
-       directory crtbegin.o is in.  */
-    KEEP (*crtbegin.o(.ctors))
-    KEEP (*(EXCLUDE_FILE (*crtend.o) .ctors))
-    KEEP (*(SORT(.ctors.*)))
-    KEEP (*(.ctors))
-    . = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-  } = 0
+	__iwram_overlay_lma = __data_lma + SIZEOF(.data);
 
-  .dtors :
-  {
-    KEEP (*crtbegin.o(.dtors))
-    KEEP (*(EXCLUDE_FILE (*crtend.o) .dtors))
-    KEEP (*(SORT(.dtors.*)))
-    KEEP (*(.dtors))
-    . = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-  } = 0
-   .jcr            : { KEEP (*(.jcr)) }
+	__data_end  =  .;
+	__iwram_overlay_start = . ;
 
-/*  laddr = ADDR(.init) + SIZEOF(.init) +  SIZEOF(.text) + SIZEOF(.fini) + SIZEOF(.rodata) + SIZEOF(.ctors) + SIZEOF(.dtors);
-*/
-  .eh_frame :
-  {
-    KEEP (*(.eh_frame))
-    . = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-  } = 0
+	OVERLAY ALIGN(4) : NOCROSSREFS AT (__iwram_overlay_lma)
+	{
+		.iwram0 { *(.iwram0) . = ALIGN(4);}
+		.iwram1 { *(.iwram1) . = ALIGN(4);}
+		.iwram2 { *(.iwram2) . = ALIGN(4);}
+		.iwram3 { *(.iwram3) . = ALIGN(4);}
+		.iwram4 { *(.iwram4) . = ALIGN(4);}
+		.iwram5 { *(.iwram5) . = ALIGN(4);}
+		.iwram6 { *(.iwram6) . = ALIGN(4);}
+		.iwram7 { *(.iwram7) . = ALIGN(4);}
+		.iwram8 { *(.iwram8) . = ALIGN(4);}
+		.iwram9 { *(.iwram9) . = ALIGN(4);}
+	}>iwram = 0xff
 
-  .gcc_except_table :
-  {
-    *(.gcc_except_table)
-    . = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-  } = 0
-  __iwram_lma = .;
+	__ewram_lma = LOADADDR(.iwram0) + SIZEOF(.iwram0)+SIZEOF(.iwram1)+SIZEOF(.iwram2)+SIZEOF(.iwram3)+SIZEOF(.iwram4)+SIZEOF(.iwram5)+SIZEOF(.iwram6)+SIZEOF(.iwram7)+SIZEOF(.iwram8)+SIZEOF(.iwram9);
 
-  .iwram __iwram_start : AT (__iwram_lma)
-  {
-    __iwram_start = ABSOLUTE(.) ;
-    *(.iwram)
-    *iwram.*(.text)
-    . = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-  } = 0xff
-
-  __data_lma = __iwram_lma + SIZEOF(.iwram) ;
-  __iwram_end = . ;
-
-  .bss ALIGN(4) :
-  {
-   __bss_start = ABSOLUTE(.);
-   __bss_start__ = ABSOLUTE(.);
-   *(.dynbss)
-   *(.gnu.linkonce.b*)
-   *(COMMON)
-   . = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
-  }
-
-  __bss_end = . ;
-  __bss_end__ = . ;
-
-  .data ALIGN(4) : AT (__data_lma)
-  {
-    __data_start = ABSOLUTE(.);
-    *(.data)
-    *(.data.*)
-    *(.gnu.linkonce.d*)
-    CONSTRUCTORS
-    . = ALIGN(4);
-  } = 0xff
-
-  __iwram_overlay_lma = __data_lma + SIZEOF(.data);
-
-  __data_end  =  .;
-  PROVIDE (edata = .);
-  __iwram_overlay_start = . ;
-
-  OVERLAY ALIGN(4) : NOCROSSREFS AT (__iwram_overlay_lma)
-  {
-     .iwram0 { *(.iwram0) . = ALIGN(4);}
-     .iwram1 { *(.iwram1) . = ALIGN(4);}
-     .iwram2 { *(.iwram2) . = ALIGN(4);}
-     .iwram3 { *(.iwram3) . = ALIGN(4);}
-     .iwram4 { *(.iwram4) . = ALIGN(4);}
-     .iwram5 { *(.iwram5) . = ALIGN(4);}
-     .iwram6 { *(.iwram6) . = ALIGN(4);}
-     .iwram7 { *(.iwram7) . = ALIGN(4);}
-     .iwram8 { *(.iwram8) . = ALIGN(4);}
-     .iwram9 { *(.iwram9) . = ALIGN(4);}
-  } = 0xff
-  __ewram_lma = LOADADDR(.iwram0) + SIZEOF(.iwram0)+SIZEOF(.iwram1)+SIZEOF(.iwram2)+SIZEOF(.iwram3)+SIZEOF(.iwram4)+SIZEOF(.iwram5)+SIZEOF(.iwram6)+SIZEOF(.iwram7)+SIZEOF(.iwram8)+SIZEOF(.iwram9);
-
-  __iwram_overlay_end = . ;
-  __iheap_start = . ;
+	__iwram_overlay_end = . ;
+	__iheap_start = . ;
 
 	__ewram_start = 0x2000000;
-  .ewram __ewram_start : AT (__ewram_lma)
-  {
-    *(.ewram)
-    . = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
-  } = 0xff
-  __ewram_overlay_lma = __ewram_lma + SIZEOF(.ewram);
+	.ewram __ewram_start : AT (__ewram_lma)
+	{
+		*(.ewram)
+		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
+	}>ewram = 0xff
+
+	__ewram_overlay_lma = __ewram_lma + SIZEOF(.ewram);
 
 	.sbss ALIGN(4):
  	{
-    __sbss_start = ABSOLUTE(.);
+		__sbss_start = ABSOLUTE(.);
  		*(.sbss)
  		. = ALIGN(4);
  	}
-  __sbss_end  = .;
+	
+	__sbss_end  = .;
 
-  __ewram_end = . ;
-  __ewram_overlay_start = . ;
+	__ewram_end = . ;
+	__ewram_overlay_start = . ;
 
-  OVERLAY ALIGN(4): NOCROSSREFS AT (__ewram_overlay_lma)
-  {
-     .ewram0 { *(.ewram0) . = ALIGN(4);}
-     .ewram1 { *(.ewram1) . = ALIGN(4);}
-     .ewram2 { *(.ewram2) . = ALIGN(4);}
-     .ewram3 { *(.ewram3) . = ALIGN(4);}
-     .ewram4 { *(.ewram4) . = ALIGN(4);}
-     .ewram5 { *(.ewram5) . = ALIGN(4);}
-     .ewram6 { *(.ewram6) . = ALIGN(4);}
-     .ewram7 { *(.ewram7) . = ALIGN(4);}
-     .ewram8 { *(.ewram8) . = ALIGN(4);}
-     .ewram9 { *(.ewram9) . = ALIGN(4);}
-  } = 0xff
+	OVERLAY ALIGN(4): NOCROSSREFS AT (__ewram_overlay_lma)
+	{
+		.ewram0 { *(.ewram0) . = ALIGN(4);}
+		.ewram1 { *(.ewram1) . = ALIGN(4);}
+		.ewram2 { *(.ewram2) . = ALIGN(4);}
+		.ewram3 { *(.ewram3) . = ALIGN(4);}
+		.ewram4 { *(.ewram4) . = ALIGN(4);}
+		.ewram5 { *(.ewram5) . = ALIGN(4);}
+		.ewram6 { *(.ewram6) . = ALIGN(4);}
+		.ewram7 { *(.ewram7) . = ALIGN(4);}
+		.ewram8 { *(.ewram8) . = ALIGN(4);}
+		.ewram9 { *(.ewram9) . = ALIGN(4);}
+	}>ewram = 0xff
 
-  __pad_lma = LOADADDR(.ewram0) + SIZEOF(.ewram0)+SIZEOF(.ewram1)+SIZEOF(.ewram2)+SIZEOF(.ewram3)+SIZEOF(.ewram4)+SIZEOF(.ewram5)+SIZEOF(.ewram6)+SIZEOF(.ewram7)+SIZEOF(.ewram8)+SIZEOF(.ewram9);
+	__pad_lma = LOADADDR(.ewram0) + SIZEOF(.ewram0)+SIZEOF(.ewram1)+SIZEOF(.ewram2)+SIZEOF(.ewram3)+SIZEOF(.ewram4)+SIZEOF(.ewram5)+SIZEOF(.ewram6)+SIZEOF(.ewram7)+SIZEOF(.ewram8)+SIZEOF(.ewram9);
 
 	/* EZF Advance strips trailing 0xff bytes, add a pad section so nothing important is removed */
 	.pad ALIGN(4) : AT (__pad_lma)
