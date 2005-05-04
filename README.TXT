@@ -13,15 +13,20 @@ Bison, Flex and Wget from the gnuwin32 project
 
 http://sourceforge.net/projects/gnuwin32/
 
+upx
+
+http://upx.sourceforge.net/
+
+
 Downloading the source packages
 -------------------------------
 
 When you run the build script it will ask you to choose from one of two options, one for if you have already downloaded the source packages and another for if you want it to download them for you (using wget).  If you choose option one and want to get the source packages for yourself then you can find them at the urls listed below;
 
 binutils 2.15  - http://ftp.gnu.org/gnu/binutils/binutils-2.15.tar.bz2
-gcc-core 3.4.2 - ftp://ftp.gwdg.de/pub/misc/gcc/releases/gcc-3.4.3/gcc-core-3.4.2.tar.bz2
-gcc-g++ 3.4.2  - ftp://ftp.gwdg.de/pub/misc/gcc/releases/gcc-3.4.3/gcc-g++-3.4.2.tar.bz2
-newlib 1.12.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.12.0.tar.gz
+gcc-core 3.4.2 - ftp://ftp.gwdg.de/pub/misc/gcc/releases/gcc-3.4.3/gcc-core-3.4.3.tar.bz2
+gcc-g++ 3.4.2  - ftp://ftp.gwdg.de/pub/misc/gcc/releases/gcc-3.4.3/gcc-g++-3.4.3.tar.bz2
+newlib 1.13.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.13.0.tar.gz
 
 The top level shell script has now been unified and offers the option of devkitARM or devkitPPC.
 
@@ -93,6 +98,8 @@ History
 planned for release 12
 -------------------------------------------------------------------------------------
 	* update to newlib 1.13.0
+	* Nintendo DS support
+	* newest libogc
 
 -------------------------------------------------------------------------------------
 18th February 2005 - release 11 beta 2
