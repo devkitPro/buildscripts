@@ -164,7 +164,7 @@ else
 	exit
     fi
 
-    wget -c $NEWLIB_URL
+    wget --passive-ftp -c $NEWLIB_URL
     if [ ! -f $NEWLIB ]
     then
 	echo "Error: Failed to download "$NEWLIB
