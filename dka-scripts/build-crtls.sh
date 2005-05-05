@@ -25,9 +25,9 @@ cp dka-rules/* $DEVKITARM
 
 cd $LIBNDS_SRCDIR
 echo "building libnds ..."
-$MAKE install 
+$MAKE install INSTALLDIR=$TOOLPATH 
 
 echo "building libgba ..."
 cd $BUILDSCRIPTDIR
 cd $LIBGBA_SRCDIR
-$MAKE install
+$MAKE install INSTALLDIR=$TOOLPATH

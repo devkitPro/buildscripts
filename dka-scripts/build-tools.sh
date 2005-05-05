@@ -40,3 +40,5 @@ cp tools/general/alignbin $DEVKITARM/bin/alignbin
 #$MAKE -C tools/gp32/b2fxec
 #cp tools/gp32/b2fxec/b2fxec$exeext $prefix/bin/b2fxec$exeext
 #$MAKE -C tools/gp32/b2fxec clean
+
+$MAKE -C tools clean
