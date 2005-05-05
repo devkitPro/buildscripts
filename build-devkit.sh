@@ -10,17 +10,23 @@ BINUTILS_VER=2.15
 GCC_VER=3.4.3
 NEWLIB_VER=1.13.0
 LIBOGC_VER=20050419
+LIBGBA_VER=20050505
+LIBNDS_VER=20050505
 
 BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
 GCC_CORE="gcc-core-$GCC_VER.tar.bz2"
 GCC_GPP="gcc-g++-$GCC_VER.tar.bz2"
 NEWLIB="newlib-$NEWLIB_VER.tar.gz"
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
+LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
+LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
 
 BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/$BINUTILS"
 GCC_CORE_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_CORE"
 GCC_GPP_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_GPP"
 LIBOGC_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBOGC"
+LIBGBA_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBGBA"
+LIBNDS_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBNDS"
 NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/$NEWLIB"
 
 #---------------------------------------------------------------------------------
@@ -81,6 +87,8 @@ done
 echo
 echo "Please enter the directory where you would like '$package' to be installed:"
 echo "for mingw/msys you must use <drive>:/<install path> or you will have include path problems"
+echo "this is the top level directory for devkitpro"
+
 read INSTALLDIR
 echo
 
@@ -92,7 +100,7 @@ then
     while [ $FOUND -eq 0 ]
     do
       echo
-      echo "Please enter the full path to the directory that contains the source packages:"
+      echo "Please enter the path to the directory that contains the source packages:"
       read SRCDIR
 
       if [ ! -f $SRCDIR/$BINUTILS ]
@@ -169,25 +177,42 @@ else
     then
 	echo "Error: Failed to download "$NEWLIB
 	exit
-    fi
+	fi
 
-    if [ $VERSION -eq 2 ]
-    then
-      wget -c $LIBOGC_URL
-      if [ ! -f $LIBOGC ]
-      then
-	      echo "Error: Failed to download "$LIBOGC
-	      exit
-      fi   
-    fi
+	if [ $VERSION -eq 2 ]
+	then
+		wget -c $LIBOGC_URL
+		if [ ! -f $LIBOGC ]
+		then
+			echo "Error: Failed to download "$LIBOGC
+			exit
+		fi   
+	fi
 
-    SRCDIR=`pwd`
+	if [ $VERSION -eq 1 ]
+	then
+		wget -c $LIBNDS_URL
+		if [ ! -f $LIBNDS ]
+		then
+			echo "Error: Failed to download "$LIBNDS
+			exit
+		fi   
+		wget -c $LIBGBA_URL
+		if [ ! -f $LIBGBA ]
+		then
+			echo "Error: Failed to download "$LIBGBA
+			exit
+		fi   
+	fi
+	SRCDIR=`pwd`
 fi
 
 BINUTILS_SRCDIR="binutils-$BINUTILS_VER"
 GCC_SRCDIR="gcc-$GCC_VER"
 NEWLIB_SRCDIR="newlib-$NEWLIB_VER"
 LIBOGC_SRCDIR="libogc-$LIBOGC_VER"
+LIBGBA_SRCDIR="libgba-$LIBGBA_VER"
+LIBNDS_SRCDIR="libnds-$LIBNDS_VER"
 
 echo
 echo 'Ready to install '$package' in '$INSTALLDIR
@@ -238,6 +263,17 @@ then
   bzip2 -cd $SRCDIR/$LIBOGC | tar -xv -C $LIBOGC_SRCDIR
 fi
 
+if [ $VERSION -eq 1 ]
+then
+  echo "Extracting $LIBNDS"
+  mkdir -p $LIBNDS_SRCDIR
+  bzip2 -cd $SRCDIR/$LIBNDS | tar -xv -C $LIBNDS_SRCDIR
+  echo "Extracting $LIBGBA"
+  mkdir -p $LIBGBA_SRCDIR
+  bzip2 -cd $SRCDIR/$LIBGBA | tar -xv -C $LIBGBA_SRCDIR
+fi
+
+
 #---------------------------------------------------------------------------------
 # apply patches
 #---------------------------------------------------------------------------------
@@ -268,20 +304,19 @@ export DEBUG_FLAGS=''
 # Add installed devkit to the path, adjusting path on minsys
 #---------------------------------------------------------------------------------
 TOOLPATH=$(echo $INSTALLDIR | sed -e 's/^\([a-zA-Z]\):/\/\1/')
-export PATH=$PATH:$TOOLPATH/bin
+export PATH=$PATH:$TOOLPATH/$package/bin
 
 #---------------------------------------------------------------------------------
 # Build and install devkit components
 #---------------------------------------------------------------------------------
-if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh ; cd $BUILDSCRIPTDIR; fi
+#if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh ; cd $BUILDSCRIPTDIR; fi
 if [ -f $scriptdir/build-crtls.sh ]; then . $scriptdir/build-crtls.sh ; cd $BUILDSCRIPTDIR; fi
 if [ -f $scriptdir/build-tools.sh ]; then . $scriptdir/build-tools.sh ; cd $BUILDSCRIPTDIR; fi
 
-strip $INSTALLDIR/bin/*
-strip $INSTALLDIR/$target/bin/*
-strip $INSTALLDIR/libexec/gcc/$target/$GCC_VER/*
-rm -fr $INSTALLDIR/include/c++/$GCC_VER/$target/bits/stdc++.h.gch
-
+strip $INSTALLDIR/$package/bin/*
+strip $INSTALLDIR/$package/$target/bin/*
+strip $INSTALLDIR/$package/libexec/gcc/$target/$GCC_VER/*
+rm -fr $INSTALLDIR/$package/include/c++/$GCC_VER/$target/bits/stdc++.h.gch
 
 #---------------------------------------------------------------------------------
 # Clean up temporary files and source directories
@@ -293,7 +328,7 @@ rm -fr $target
 rm -fr $BINUTILS_SRCDIR
 rm -fr $NEWLIB_SRCDIR
 rm -fr $GCC_SRCDIR
-rm -fr $LIBOGC_SRCDIR
+rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR
 
 echo
 echo "Would you like to delete the source packages? [y/N]"
@@ -306,5 +341,5 @@ then
 fi
 
 echo
-echo "note: Add the following to your PATH variable;  $INSTALLDIR/bin"
+echo "note: Add the following to your PATH variable;  $INSTALLDIR/$package/bin"
 echo

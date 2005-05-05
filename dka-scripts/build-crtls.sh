@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DEVKITARM=$INSTALLDIR
+DEVKITARM=$TOOLPATH/devkitARM
 
 #---------------------------------------------------------------------------------
 # Install and build the gba crt
@@ -16,8 +16,18 @@ $MAKE CRT=ds_arm7
 $MAKE CRT=ds_arm9
 $MAKE CRT=ds_cart
 
+
 #---------------------------------------------------------------------------------
 # copy base rulesets
 #---------------------------------------------------------------------------------
 cd $BUILDSCRIPTDIR
 cp dka-rules/* $DEVKITARM
+
+cd $LIBNDS_SRCDIR
+echo "building libnds ..."
+$MAKE install 
+
+echo "building libgba ..."
+cd $BUILDSCRIPTDIR
+cd $LIBGBA_SRCDIR
+$MAKE install

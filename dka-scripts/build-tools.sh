@@ -1,6 +1,6 @@
 #!/bin/sh
 
-prefix=$INSTALLDIR
+prefix=$INSTALLDIR/devkitARM
 
 gcc -O2 tools/gba/gbafix.c
 
@@ -19,18 +19,22 @@ else
 	fi
 fi
 
+export DEVKITARM=$TOOLPATH/devkitARM
+export DEVKITPRO=$TOOLPATH
+export LIBNDS=$TOOLPATH/libnds
+
 $MAKE -C tools/gba
-$MAKE -C tools/gba install PREFIX=$prefix/bin
+$MAKE -C tools/gba install PREFIX=$DEVKITARM/bin
 
 $MAKE -C tools/general
-$MAKE -C tools/general install PREFIX=$prefix/bin
+$MAKE -C tools/general install PREFIX=$DEVKITARM/bin
 
 $MAKE -C tools/nds/ndstool
-$MAKE -C tools/nds/ndstool install PREFIX=$prefix/bin
+$MAKE -C tools/nds/ndstool install PREFIX=$DEVKITARM/bin
 $MAKE -C tools/nds/dsbuild
-$MAKE -C tools/nds/dsbuild install PREFIX=$prefix/bin
+$MAKE -C tools/nds/dsbuild install PREFIX=$DEVKITARM/bin
 
-cp tools/general/alignbin $prefix/bin/alignbin
+cp tools/general/alignbin $DEVKITARM/bin/alignbin
 
 # Awaiting Mr_Spiv's permission to add to project
 #$MAKE -C tools/gp32/b2fxec

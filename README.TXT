@@ -24,10 +24,11 @@ Downloading the source packages
 When you run the build script it will ask you to choose from one of two options, one for if you have already downloaded the source packages and another for if you want it to download them for you (using wget).  If you choose option one and want to get the source packages for yourself then you can find them at the urls listed below;
 
 binutils 2.15  - http://ftp.gnu.org/gnu/binutils/binutils-2.15.tar.bz2
-gcc-core 3.4.2 - ftp://ftp.gwdg.de/pub/misc/gcc/releases/gcc-3.4.3/gcc-core-3.4.3.tar.bz2
-gcc-g++ 3.4.2  - ftp://ftp.gwdg.de/pub/misc/gcc/releases/gcc-3.4.3/gcc-g++-3.4.3.tar.bz2
+gcc-core 3.4.3 - http://ftp.gnu.org/gnu/gcc/gcc-3.4.3/gcc-core-3.4.3.tar.bz2
+gcc-g++ 3.4.3  - http://ftp.gnu.org/gnu/gcc/gcc-3.4.3/gcc-g++-3.4.3.tar.bz2
 newlib 1.13.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.13.0.tar.gz
 
+libogc, libgba and libnds can be found 
 The top level shell script has now been unified and offers the option of devkitARM or devkitPPC.
 
 Building devkitARM
