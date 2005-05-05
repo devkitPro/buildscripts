@@ -309,7 +309,7 @@ export PATH=$PATH:$TOOLPATH/$package/bin
 #---------------------------------------------------------------------------------
 # Build and install devkit components
 #---------------------------------------------------------------------------------
-#if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh ; cd $BUILDSCRIPTDIR; fi
+if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh ; cd $BUILDSCRIPTDIR; fi
 if [ -f $scriptdir/build-crtls.sh ]; then . $scriptdir/build-crtls.sh ; cd $BUILDSCRIPTDIR; fi
 if [ -f $scriptdir/build-tools.sh ]; then . $scriptdir/build-tools.sh ; cd $BUILDSCRIPTDIR; fi
 
