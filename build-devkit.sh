@@ -53,12 +53,12 @@ done
 if [ $VERSION -eq 1 ]
 then
   scriptdir='./dka-scripts'
-  package='devkitARM'
+  package=devkitARM
   builddir=arm-elf
   target=arm-elf
 else
   scriptdir='./dkp-scripts'
-  package='devkitPPC'
+  package=devkitPPC
   builddir=powerpc-gekko
   target=powerpc-gekko
 fi
@@ -214,6 +214,13 @@ LIBOGC_SRCDIR="libogc-$LIBOGC_VER"
 LIBGBA_SRCDIR="libgba-$LIBGBA_VER"
 LIBNDS_SRCDIR="libnds-$LIBNDS_VER"
 
+#---------------------------------------------------------------------------------
+# Add installed devkit to the path, adjusting path on minsys
+#---------------------------------------------------------------------------------
+TOOLPATH=$(echo $INSTALLDIR | sed -e 's/^\([a-zA-Z]\):/\/\1/')
+export PATH=$PATH:$TOOLPATH/$package/bin
+echo $PATH
+
 echo
 echo 'Ready to install '$package' in '$INSTALLDIR
 echo
@@ -299,12 +306,6 @@ patch -p1 -d $NEWLIB_SRCDIR -i $(pwd)/patches/devkit-newlib-1.13.0.patch
 
 export CXXFLAGS='-O2 -pipe'
 export DEBUG_FLAGS=''
-
-#---------------------------------------------------------------------------------
-# Add installed devkit to the path, adjusting path on minsys
-#---------------------------------------------------------------------------------
-TOOLPATH=$(echo $INSTALLDIR | sed -e 's/^\([a-zA-Z]\):/\/\1/')
-export PATH=$PATH:$TOOLPATH/$package/bin
 
 #---------------------------------------------------------------------------------
 # Build and install devkit components
