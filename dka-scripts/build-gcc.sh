@@ -48,7 +48,7 @@ cd $target/gcc
 	2>&1 | tee $BUILDSCRIPTDIR/gcc_configure.log
 
 $MAKE all-gcc | tee $BUILDSCRIPTDIR/gcc_make.log 2>&1
-$MAKE install-gcc | $BUILDSCRIPTDIR/tee gcc_install.log 2>&1
+$MAKE install-gcc | tee $BUILDSCRIPTDIR/gcc_install.log 2>&1
 
 cd $BUILDSCRIPTDIR
 
