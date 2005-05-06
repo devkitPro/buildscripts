@@ -17,13 +17,14 @@ $MAKE CRT=ds_arm7
 $MAKE CRT=ds_arm9
 $MAKE CRT=ds_cart
 
+cd $BUILDSCRIPTDIR
+
 chmod +x tools/general/alignbin
 cp tools/general/alignbin $DEVKITARM/bin/alignbin
 
 #---------------------------------------------------------------------------------
 # copy base rulesets
 #---------------------------------------------------------------------------------
-cd $BUILDSCRIPTDIR
 cp dka-rules/* $DEVKITARM
 
 cd $LIBNDS_SRCDIR

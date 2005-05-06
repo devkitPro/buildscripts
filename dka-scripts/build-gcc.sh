@@ -62,11 +62,10 @@ $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure	--target=$target \
 											--prefix=$prefix \
 											--enable-serial-configure \
 											--enable-newlib-mb 
+										| tee $BUILDSCRIPTDIR/newlib_configure.log
 
-#											2>&1 | tee $BUILDSCRIPTDIR/newlib_configure.log
-
-$MAKE all | tee $BUILDSCRIPTDIR/newlib_make.log 2>&1
-$MAKE install | tee $BUILDSCRIPTDIR/newlib_install.log 2>&1
+$MAKE all | tee $BUILDSCRIPTDIR/newlib_make.log
+$MAKE install | tee $BUILDSCRIPTDIR/newlib_install.log
 
 cd $BUILDSCRIPTDIR
 
