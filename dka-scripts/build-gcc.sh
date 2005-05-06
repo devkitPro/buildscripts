@@ -18,8 +18,8 @@ cd $target/binutils
 	2>&1 | tee binutils_configure.log
 	
 
-$MAKE | tee binutils_make.log 2>&1
-$MAKE install | tee binutils_install.log 2>&1
+$MAKE 2>&1 | tee binutils_make.log
+$MAKE install 2>&1 | tee binutils_install.log
 
 cd $BUILDSCRIPTDIR
 
@@ -47,8 +47,8 @@ cd $target/gcc
 	--prefix=$prefix -v\
 	2>&1 | tee $BUILDSCRIPTDIR/gcc_configure.log
 
-$MAKE all-gcc | tee $BUILDSCRIPTDIR/gcc_make.log 2>&1
-$MAKE install-gcc | tee $BUILDSCRIPTDIR/gcc_install.log 2>&1
+$MAKE all-gcc 2>&1| tee $BUILDSCRIPTDIR/gcc_make.log
+$MAKE install-gcc 2>&1 | tee $BUILDSCRIPTDIR/gcc_install.log
 
 cd $BUILDSCRIPTDIR
 
@@ -61,7 +61,9 @@ cd $target/newlib
 $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure	--target=$target \
 											--prefix=$prefix \
 											--enable-serial-configure \
-											| tee $BUILDSCRIPTDIR/newlib_configure.log 2>&1
+											--enable-newlib-mb 
+
+#											2>&1 | tee $BUILDSCRIPTDIR/newlib_configure.log
 
 $MAKE all | tee $BUILDSCRIPTDIR/newlib_make.log 2>&1
 $MAKE install | tee $BUILDSCRIPTDIR/newlib_install.log 2>&1
