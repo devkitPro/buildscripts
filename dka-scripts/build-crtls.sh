@@ -17,7 +17,8 @@ $MAKE CRT=ds_arm7
 $MAKE CRT=ds_arm9
 $MAKE CRT=ds_cart
 
-
+chmod +x tools/general/alignbin
+cp tools/general/alignbin $DEVKITARM/bin/alignbin
 
 #---------------------------------------------------------------------------------
 # copy base rulesets

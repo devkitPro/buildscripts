@@ -32,9 +32,6 @@ $MAKE -C tools/nds/ndstool install PREFIX=$DEVKITARM/bin
 $MAKE -C tools/nds/dsbuild
 $MAKE -C tools/nds/dsbuild install PREFIX=$DEVKITARM/bin
 
-chmod +x tools/general/alignbin
-cp tools/general/alignbin $DEVKITARM/bin/alignbin
-
 # Awaiting Mr_Spiv's permission to add to project
 #$MAKE -C tools/gp32/b2fxec
 #cp tools/gp32/b2fxec/b2fxec$exeext $prefix/bin/b2fxec$exeext
