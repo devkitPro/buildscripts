@@ -126,7 +126,7 @@ SECTIONS
 
 	__iwram_end = . ;
 
-	__dtcm_lma = __data_lma + SIZEOF(.data);
+	__dtcm_lma = __iwram_lma + SIZEOF(.iwram);
 
 	.dtcm __dtcm_start : AT (__dtcm_lma)
 	{
