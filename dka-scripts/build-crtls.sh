@@ -1,6 +1,7 @@
 #!/bin/sh
 
-DEVKITARM=$TOOLPATH/devkitARM
+export DEVKITARM=$TOOLPATH/devkitARM
+export DEVKITPRO=$TOOLPATH
 
 #---------------------------------------------------------------------------------
 # Install and build the gba crt
@@ -15,6 +16,7 @@ $MAKE CRT=gp32_gpsdk
 $MAKE CRT=ds_arm7
 $MAKE CRT=ds_arm9
 $MAKE CRT=ds_cart
+
 
 
 #---------------------------------------------------------------------------------

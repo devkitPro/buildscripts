@@ -18,10 +18,8 @@ else
 		exit -1
 	fi
 fi
-
 export DEVKITARM=$TOOLPATH/devkitARM
 export DEVKITPRO=$TOOLPATH
-export LIBNDS=$TOOLPATH/libnds
 
 $MAKE -C tools/gba
 $MAKE -C tools/gba install PREFIX=$DEVKITARM/bin
@@ -34,6 +32,7 @@ $MAKE -C tools/nds/ndstool install PREFIX=$DEVKITARM/bin
 $MAKE -C tools/nds/dsbuild
 $MAKE -C tools/nds/dsbuild install PREFIX=$DEVKITARM/bin
 
+chmod +x tools/general/alignbin
 cp tools/general/alignbin $DEVKITARM/bin/alignbin
 
 # Awaiting Mr_Spiv's permission to add to project

@@ -45,10 +45,10 @@ cd $target/gcc
 	--target=$target \
 	--with-newlib \
 	--prefix=$prefix -v\
-	2>&1 | tee gcc_configure.log
+	2>&1 | tee $BUILDSCRIPTDIR/gcc_configure.log
 
-$MAKE all-gcc | tee gcc_make.log 2>&1
-$MAKE install-gcc | tee gcc_install.log 2>&1
+$MAKE all-gcc | tee $BUILDSCRIPTDIR/gcc_make.log 2>&1
+$MAKE install-gcc | $BUILDSCRIPTDIR/tee gcc_install.log 2>&1
 
 cd $BUILDSCRIPTDIR
 
@@ -61,11 +61,10 @@ cd $target/newlib
 $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure	--target=$target \
 											--prefix=$prefix \
 											--enable-serial-configure \
-											--enable-newlib-mb \
-											| tee newlib_configure.log 2>&1
+											| tee $BUILDSCRIPTDIR/newlib_configure.log 2>&1
 
-$MAKE all | tee newlib_make.log 2>&1
-$MAKE install | tee newlib_install.log 2>&1
+$MAKE all | tee $BUILDSCRIPTDIR/newlib_make.log 2>&1
+$MAKE install | tee $BUILDSCRIPTDIR/newlib_install.log 2>&1
 
 cd $BUILDSCRIPTDIR
 
@@ -82,8 +81,8 @@ rm -fr $NEWLIB_SRCDIR
 cd $BUILDSCRIPTDIR
 cd $target/gcc
 
-$MAKE | tee gcc_final_make.log 2>&1
-$MAKE install | tee gcc_final_install.log 2>&1
+$MAKE | tee $BUILDSCRIPTDIR/gcc_final_make.log 2>&1
+$MAKE install | tee $BUILDSCRIPTDIR/gcc_final_install.log 2>&1
 
 cd $BUILDSCRIPTDIR
 
