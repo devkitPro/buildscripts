@@ -15,11 +15,11 @@ cd $target/binutils
 ../../$BINUTILS_SRCDIR/configure \
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
 	--disable-threads --with-gcc --with-gnu-as --with-gnu-ld --with-stabs \
-	2>&1 | tee binutils_configure.log
+	2>&1 | tee $BUILDSCRIPTDIR/binutils_configure.log
 	
 
 $MAKE 2>&1 | tee binutils_make.log
-$MAKE install 2>&1 | tee binutils_install.log
+$MAKE install 2>&1 | tee $BUILDSCRIPTDIR/binutils_install.log
 
 cd $BUILDSCRIPTDIR
 
@@ -61,7 +61,7 @@ cd $target/newlib
 $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure	--target=$target \
 											--prefix=$prefix \
 											--enable-serial-configure \
-											--enable-newlib-mb 
+											--enable-newlib-mb \
 										| tee $BUILDSCRIPTDIR/newlib_configure.log
 
 $MAKE all | tee $BUILDSCRIPTDIR/newlib_make.log
