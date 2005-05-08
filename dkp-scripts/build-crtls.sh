@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DEVKITPPC=$INSTALLDIR
+DEVKITPPC=$INSTALLDIR/devkitPPC
 
 #---------------------------------------------------------------------------------
 # Install and build the gamecube crt and libogc
