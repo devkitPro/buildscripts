@@ -58,16 +58,17 @@ cd $BUILDSCRIPTDIR
 mkdir -p $target/newlib
 cd $target/newlib
 
-$BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure	--target=$target \
-											--prefix=$prefix \
-											--enable-serial-configure \
-											--enable-newlib-mb \
-										| tee $BUILDSCRIPTDIR/newlib_configure.log
+$BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure \
+	--enable-serial-configure \
+	--target=$target \
+	--prefix=$prefix \
+	--enable-newlib-mb \
+	| tee $BUILDSCRIPTDIR/newlib_configure.log
 
-$MAKE all | tee $BUILDSCRIPTDIR/newlib_make.log
+mkdir -p etc
+
+$MAKE | tee $BUILDSCRIPTDIR/newlib_make.log
 $MAKE install | tee $BUILDSCRIPTDIR/newlib_install.log
-
-cd $BUILDSCRIPTDIR
 
 #---------------------------------------------------------------------------------
 # remove temp stuff to conserve disc space

@@ -57,6 +57,7 @@ $MAKE install-gcc | tee gcc_install.log 2>&1
 cd $BUILDSCRIPTDIR
 mkdir -p $target/newlib
 cd $target/newlib
+mkdir -p etc
 
 $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure	--target=$target \
 											--prefix=$prefix \
