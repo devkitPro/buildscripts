@@ -102,6 +102,14 @@ SECTIONS
 	.jcr            : { KEEP (*(.jcr)) } >ewram = 0
 	.got            : { *(.got.plt) *(.got) } >ewram = 0
 
+	.ewram ALIGN(4) : 
+	{
+		__ewram_start = ABSOLUTE(.) ;
+		*(.ewram)
+		*ewram.*(.text)
+		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
+	} >ewram = 0xff
+
 	.sbss ALIGN(4):
  	{
 		__sbss_start = ABSOLUTE(.);
