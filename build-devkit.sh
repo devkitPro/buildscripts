@@ -7,7 +7,7 @@
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
 BINUTILS_VER=2.15
-GCC_VER=3.4.3
+GCC_VER=3.4.4
 NEWLIB_VER=1.13.0
 LIBOGC_VER=20050511
 LIBGBA_VER=20050511
@@ -284,9 +284,9 @@ fi
 #---------------------------------------------------------------------------------
 # apply patches
 #---------------------------------------------------------------------------------
-patch -p1 -d $BINUTILS_SRCDIR -i $(pwd)/patches/devkit-binutils-2.15.patch
-patch -p1 -d $GCC_SRCDIR -i $(pwd)/patches/devkit-gcc-3.4.3.patch
-patch -p1 -d $NEWLIB_SRCDIR -i $(pwd)/patches/devkit-newlib-1.13.0.patch
+patch -p1 -d $BINUTILS_SRCDIR -i $(pwd)/patches/devkit-binutils-$BINUTILS_VER.patch
+patch -p1 -d $GCC_SRCDIR -i $(pwd)/patches/devkit-gcc-$GCC_VER.patch
+patch -p1 -d $NEWLIB_SRCDIR -i $(pwd)/patches/devkit-newlib-$NEWLIB_VER.patch
 
 
 #---------------------------------------------------------------------------------
