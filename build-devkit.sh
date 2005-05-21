@@ -357,7 +357,7 @@ read answer
 if [ "$answer" = "y" -o "$answer" = "Y" ]
 then
     echo "rm -f $BINUTILS $GCC_CORE $GCC_GPP $NEWLIB"
-    rm -f $SRCDIR/$BINUTILS $SRCDIR/$GCC_CORE $SRCDIR/$GCC_GPP $SRCDIR/$NEWLIB
+    rm -f $SRCDIR/$BINUTILS $SRCDIR/$GCC_CORE $SRCDIR/$GCC_GPP $SRCDIR/$NEWLIB $SRCDIR/$LIBGBA $SRCDIR/$LIBNDS
 fi
 
 echo
