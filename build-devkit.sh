@@ -9,9 +9,9 @@
 BINUTILS_VER=2.15
 GCC_VER=3.4.4
 NEWLIB_VER=1.13.0
-LIBOGC_VER=20050511
+LIBOGC_VER=20050521
 LIBGBA_VER=20050511
-LIBNDS_VER=20050511
+LIBNDS_VER=20050521
 
 BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
 GCC_CORE="gcc-core-$GCC_VER.tar.bz2"
@@ -56,11 +56,13 @@ then
   package=devkitARM
   builddir=arm-elf
   target=arm-elf
+  toolchain=DEVKITARM
 else
   scriptdir='./dkp-scripts'
   package=devkitPPC
   builddir=powerpc-gekko
   target=powerpc-gekko
+  toolchain=DEVKITPPC
 fi
 
 DOWNLOAD=0
@@ -135,6 +137,24 @@ then
 	  FOUND=1
       fi
     
+    if [ $VERSION -eq 1 ]
+    then
+      if [ ! -f $SRCDIR/$LIBGBA ]
+      then
+        echo "Error: $LIBGBA not found in $SRCDIR"
+	      exit
+      else
+	      FOUND=1
+      fi
+      if [ ! -f $SRCDIR/$LIBNDS ]
+      then
+        echo "Error: $LIBNDS not found in $SRCDIR"
+	      exit
+      else
+	      FOUND=1
+      fi
+    fi
+
     if [ $VERSION -eq 2 ]
     then
       if [ ! -f $SRCDIR/$LIBOGC ]
@@ -219,7 +239,6 @@ LIBNDS_SRCDIR="libnds-$LIBNDS_VER"
 #---------------------------------------------------------------------------------
 TOOLPATH=$(echo $INSTALLDIR | sed -e 's/^\([a-zA-Z]\):/\/\1/')
 export PATH=$PATH:$TOOLPATH/$package/bin
-echo $PATH
 
 echo
 echo 'Ready to install '$package' in '$INSTALLDIR
@@ -342,5 +361,5 @@ then
 fi
 
 echo
-echo "note: Add the following to your PATH variable;  $INSTALLDIR/$package/bin"
+echo "note: Add the following to your environment;  DEVKITPRO=$TOOLPATH $TOOLCHAIN=$TOOLPATH/$package"
 echo
