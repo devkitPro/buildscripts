@@ -103,6 +103,7 @@ SkipEWRAMClear:					@ Clear Internal WRAM to 0x00
 	mov	r0, #3
 	lsl	r0, #24				@ r0 = 0x3000000
 	ldr	r1, =__iwram_end
+	sub	r1,r0
 	bl	ClearMem
 
 @---------------------------------------------------------------------------------
@@ -134,8 +135,8 @@ SkipEWRAMClear:					@ Clear Internal WRAM to 0x00
 @---------------------------------------------------------------------------------
 	ldr	r2,= __load_stop_iwram0
 	ldr	r1,= __load_start_iwram0
-	sub	r3, r2, r1				@ Is there any data to copy?
-	beq	CIW0Skip				@ no
+	sub	r3, r2, r1			@ Is there any data to copy?
+	beq	CIW0Skip			@ no
 
 	ldr	r2,= __iwram_overlay_start
 	bl	CopyMem
@@ -154,8 +155,8 @@ CIW0Skip:
 @---------------------------------------------------------------------------------
 	ldr	r2, =__load_stop_ewram0
 	ldr	r1, =__load_start_ewram0
-	sub	r3, r2, r1				@ Is there any data to copy?
-	beq	CEW0Skip				@ no
+	sub	r3, r2, r1			@ Is there any data to copy?
+	beq	CEW0Skip			@ no
 
 	ldr	r2, =__ewram_overlay_start
 	bl	CopyMem
@@ -175,8 +176,8 @@ CEW0Skip:
 @---------------------------------------------------------------------------------
 @ Jump to user code
 @---------------------------------------------------------------------------------
-	mov	r0, #0					@ int argc
-	mov	r1, #0					@ char	*argv[]
+	mov	r0, #0				@ int argc
+	mov	r1, #0				@ char	*argv[]
 	ldr	r3, =main
 	bl	_call_via_r3
 @---------------------------------------------------------------------------------
@@ -187,11 +188,11 @@ CEW0Skip:
 @---------------------------------------------------------------------------------
 ClearMem:
 @---------------------------------------------------------------------------------
-	mov	r2,#3					@ These	commands are used in cases where
-	add	r1,r2					@ the length is	not a multiple of 4,
-	bic	r1,r2					@ even though it should be.
+	mov	r2,#3				@ These	commands are used in cases where
+	add	r1,r2				@ the length is	not a multiple of 4,
+	bic	r1,r2				@ even though it should be.
 
-	beq	ClearMX					@ Length is zero so exit
+	beq	ClearMX				@ Length is zero so exit
 
 	mov	r2,#0
 @---------------------------------------------------------------------------------
