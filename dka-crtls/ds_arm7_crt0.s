@@ -7,30 +7,34 @@
 @---------------------------------------------------------------------------------
 _start:
 @---------------------------------------------------------------------------------
-	mov	r0, #0x04000000			@ IME = 0;
+	mov	r0, #0x04000000		@ IME = 0;
 	add	r0, r0, #0x208
 	strh	r0, [r0]
 
-	mov	r0, #0x12			@ Switch to IRQ Mode
+	mov	r0, #0x12		@ Switch to IRQ Mode
 	msr	cpsr, r0
-	ldr	sp, =__sp_irq			@ Set IRQ stack
+	ldr	sp, =__sp_irq		@ Set IRQ stack
 
-	mov	r0, #0x1F			@ Switch to System Mode
+	mov	r0, #0x13		@ Switch to SVC Mode
 	msr	cpsr, r0
-	ldr	sp, =__sp_usr			@ Set user stack
+	ldr	sp, =__sp_svc		@ Set SVC stack
 
-	ldr	r0, =__bss_start		@ Clear BSS section to 0x00
+	mov	r0, #0x1F		@ Switch to System Mode
+	msr	cpsr, r0
+	ldr	sp, =__sp_usr		@ Set user stack
+
+	ldr	r0, =__bss_start	@ Clear BSS section to 0x00
 	ldr	r1, =__bss_end
 	sub	r1, r1, r0
 	bl	ClearMem
 
-	ldr	r3, =_init			@ global constructors
+	ldr	r3, =_init		@ global constructors
 	bl	_call_via_r3
 
-	mov	r0, #0				@ int argc
-	mov	r1, #0				@ char *argv[]
+	mov	r0, #0			@ int argc
+	mov	r1, #0			@ char *argv[]
 	ldr	r3, =main
-	bl	_call_via_r3			@ jump to user code
+	bl	_call_via_r3		@ jump to user code
 		
 	@ If the user ever returns, return to flash cartridge
 	mov	r0, #0x08000000

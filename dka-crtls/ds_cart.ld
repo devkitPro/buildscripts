@@ -10,9 +10,11 @@ MEMORY {
 }
 __iwram_start = 0x03800000;
 
-__eheap_end			=	0x2040000;
-__sp_irq			=	0x3810000 - 0x60;
-__sp_usr			=	__sp_irq - 0x100;
+__ewram_start	=	0x02000000;
+__eheap_end		=	0x02040000;
+__sp_irq		=	0x03810000 - 0x60;
+__sp_svc		=	__sp_irq - 0x100;
+__sp_usr		=	__sp_svc - 0x100;
 
 SECTIONS
 {
@@ -94,7 +96,29 @@ SECTIONS
 	.jcr            : { KEEP (*(.jcr)) } >rom = 0
 	.got            : { *(.got.plt) *(.got) } >rom = 0
 
-	__iwram_lma = . ;
+	__ewram_lma = . ;
+
+	.ewram __ewram_start : AT (__ewram_lma) 
+	{
+		__ewram_start = ABSOLUTE(.) ;
+		*(.ewram)
+		*ewram.*(.text)
+		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
+	} >ewram = 0xff
+
+	.sbss ALIGN(4):
+ 	{
+		__sbss_start = ABSOLUTE(.);
+ 		*(.sbss)
+ 		. = ALIGN(4);
+ 	}
+	__sbss_end = . ;
+
+	_end = . ;
+	__end__ = . ;
+	PROVIDE (end = _end);
+
+	__iwram_lma = __ewram_lma + SIZEOF(.ewram) + SIZEOF(.sbss);
 	
 	.iwram __iwram_start : AT (__iwram_lma)
 	{
@@ -106,6 +130,7 @@ SECTIONS
 
 	__iwram_end = . ;
 	__data_lma = __iwram_lma + SIZEOF(.iwram) ;
+
 
 	.data ALIGN(4) : AT (__data_lma)
 	{
@@ -133,10 +158,6 @@ SECTIONS
 
 	__bss_end = . ;
 	__bss_end__ = . ;
-
-	_end = . ;
-	__end__ = . ;
-	PROVIDE (end = _end);
 
 	/* Stabs debugging sections.  */
 	.stab 0 : { *(.stab) }
