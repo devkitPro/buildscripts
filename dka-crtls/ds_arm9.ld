@@ -8,10 +8,10 @@ MEMORY {
 	iwram	: ORIGIN = 0x037f8000, LENGTH = 32K
 	ewram	: ORIGIN = 0x02000000, LENGTH = 4M - 4k
 	dtcm	: ORIGIN = 0x00800000, LENGTH = 16K
-	itcm	: ORIGIN = 0x01000000, LENGTH = 32K
+	itcm	: ORIGIN = 0x00000000, LENGTH = 32K
 }
 
-__itcm_start	=	0x01000000;
+__itcm_start	=	0x00000000;
 __iwram_start	=	0x037f8000;
 __iwram_end		=	0x03800000;
 __ewram_end		=	0x02400000;
@@ -110,20 +110,8 @@ SECTIONS
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >ewram = 0xff
 
-	.sbss ALIGN(4):
- 	{
-		__sbss_start = ABSOLUTE(.);
- 		*(.sbss)
- 		. = ALIGN(4);
- 	}
-	__sbss_end = . ;
-
-	_end = . ;
-	__end__ = . ;
-	PROVIDE (end = _end);
-
 	__iwram_lma = . ;
-
+	
 	.iwram __iwram_start : AT (__iwram_lma)
 	{
 		__iwram_start = ABSOLUTE(.) ;
@@ -159,6 +147,7 @@ SECTIONS
 
 	__data_end = . ;
 
+
 	.bss ALIGN(4) :
 	{
 		__bss_start = ABSOLUTE(.);
@@ -183,7 +172,21 @@ SECTIONS
 	} >itcm = 0xff
 	__itcm_end = . ;
 
+	
+	__sbss_lma = __itcm_lma + SIZEOF(.itcm) ;
 	__appended_data = __itcm_lma + SIZEOF(.itcm) ;
+
+	.sbss __sbss_lma : AT (__sbss_lma)
+ 	{
+		__sbss_start = ABSOLUTE(.);
+ 		*(.sbss)
+ 		. = ALIGN(4);
+ 	}
+	__sbss_end = . ;
+
+	_end = . ;
+	__end__ = . ;
+	PROVIDE (end = _end);
 
 
 
