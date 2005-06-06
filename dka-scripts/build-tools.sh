@@ -30,9 +30,7 @@ $MAKE -C tools/gp32 install PREFIX=$DEVKITARM/bin
 $MAKE -C tools/general
 $MAKE -C tools/general install PREFIX=$DEVKITARM/bin
 
-$MAKE -C tools/nds/ndstool
-$MAKE -C tools/nds/ndstool install PREFIX=$DEVKITARM/bin
-$MAKE -C tools/nds/dsbuild
-$MAKE -C tools/nds/dsbuild install PREFIX=$DEVKITARM/bin
+$MAKE -C tools/nds/
+$MAKE -C tools/nds/ install PREFIX=$DEVKITARM/bin
 
 $MAKE -C tools clean
