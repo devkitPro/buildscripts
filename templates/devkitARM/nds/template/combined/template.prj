@@ -1,0 +1,48 @@
+[Project ID]
+Signature=UE Proj: v.1
+[Group]
+0=arm7
+1=arm7 - include
+2=arm7 - source
+3=arm9
+4=arm9 - include
+5=arm9 - source
+6=
+[Project Information]
+Filter=*.*
+Project Directory=C:\projects\devkitPro\buildscripts\templates\devkitARM\nds\template\combined\
+Use Relative Directory=1
+Relative to Project File=1
+Project Wordfile=
+Project Tagfile=
+Create Tagfile=0
+Include Sub Directories=0
+[Files - arm7 - source]
+0=arm7\source\template.c
+[Files - arm7]
+0=arm7\Makefile
+[Files - arm9 - source]
+0=arm9\source\template.c
+[Files - arm9]
+0=arm9\Makefile
+[Files]
+0=Makefile
+[Open Files]
+Open File0=C:\projects\devkitPro\buildscripts\templates\devkitARM\nds\template\combined\Makefile
+Active File Display Mode=3
+Open File Pos0=0
+Open File Line0=0
+Open File Window Pos0=0,1,-1,-1,-4,-23,22,22,896,462
+Open File1=C:\projects\devkitPro\buildscripts\templates\devkitARM\nds\template\combined\arm7\Makefile
+Open File Pos1=0
+Open File Line1=0
+Open File Window Pos1=0,1,-1,-1,-4,-23,44,44,922,488
+Open File2=C:\projects\USB\neowriter\source\neousb.cpp
+Open File Pos2=0
+Open File Line2=13296
+Active File Index=2
+Open File Window Pos2=2,3,-1,-1,-4,-23,88,88,966,532
+Open File3=
+[File View]
+Current Select=Project Files\
+Scroll Position=0
