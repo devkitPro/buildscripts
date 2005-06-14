@@ -361,5 +361,5 @@ then
 fi
 
 echo
-echo "note: Add the following to your environment;  DEVKITPRO=$TOOLPATH $TOOLCHAIN=$TOOLPATH/$package"
+echo "note: Add the following to your environment;  DEVKITPRO=$TOOLPATH $toolchain=$TOOLPATH/$package"
 echo
