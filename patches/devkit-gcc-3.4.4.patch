@@ -2170,7 +2170,7 @@ diff -NBaur gcc-3.4.4/gcc/version.c gcc-3.4.4-new/gcc/version.c
     organization's name in parentheses at the end of the string.  */
  
 -const char version_string[] = "3.4.4";
-+const char version_string[] = "3.4.4 ("TOOLCHAIN" release "RELEASE")";
++const char version_string[] = "3.4.4";
  
  /* This is the location of the online document giving instructions for
     reporting bugs.  If you distribute a modified version of GCC,

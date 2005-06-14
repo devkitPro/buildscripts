@@ -29,8 +29,6 @@ LIBGBA_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBGBA"
 LIBNDS_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBNDS"
 NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/$NEWLIB"
 
-release="13"
-
 #---------------------------------------------------------------------------------
 # Ask whether to download the source packages or not
 #---------------------------------------------------------------------------------
@@ -320,7 +318,7 @@ patch -p1 -d $NEWLIB_SRCDIR -i $(pwd)/patches/devkit-newlib-$NEWLIB_VER.patch
 #
 #else
 
-  export CFLAGS='-O2 -pipe -DTOOLCHAIN="$package" -DRELEASE=$release
+  export CFLAGS='-O2 -pipe' 
   export LDFLAGS='-s'
 
 #fi
