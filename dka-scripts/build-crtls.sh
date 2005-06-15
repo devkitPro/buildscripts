@@ -19,8 +19,8 @@ $MAKE CRT=ds_cart
 
 cd $BUILDSCRIPTDIR
 
-chmod +x tools/general/alignbin
-cp tools/general/alignbin $DEVKITARM/bin/alignbin
+$MAKE -C tools/general
+$MAKE -C tools/general install PREFIX=$DEVKITARM/bin
 
 #---------------------------------------------------------------------------------
 # copy base rulesets
