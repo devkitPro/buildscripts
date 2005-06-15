@@ -44,7 +44,7 @@ export OBJCOPY	:=	$(PREFIX)objcopy
 # canned command sequence for binary data
 #---------------------------------------------------------------------------------
 define bin2o
-	cp $(<) $(<F)
+	[ -s $(<F) ] || cp $(<) $(<F)
 	padbin 4 $(<F)
 	$(OBJCOPY) -I binary -O elf32-littlearm -B arm \
 	--rename-section .data=.rodata,readonly,data,contents,alloc \
@@ -55,6 +55,5 @@ define bin2o
 	echo "extern const u32" `(echo $(<F) | tr . _)`"_end[];" > `(echo $(<F) | tr . _)`.h
 	echo "extern const u8" `(echo $(<F) | tr . _)`"[];" >> `(echo $(<F) | tr . _)`.h
 	echo "extern const u32" `(echo $(<F) | tr . _)`_size[]";" >> `(echo $(<F) | tr . _)`.h
-	rm $(<F)
 endef
 
