@@ -1,4 +1,4 @@
-Devkit r11 build scripts
+Devkit r13 build scripts
 --------------------------
 
 This readme will guide you through building devkitARM or devkitPPC from source using a set of scripts.
@@ -13,10 +13,15 @@ Bison, Flex and Wget from the gnuwin32 project
 
 http://sourceforge.net/projects/gnuwin32/
 
+
+Two other packages are required on all platforms, these should be built and installed before building the 
 upx
 
 http://upx.sourceforge.net/
 
+libelf
+
+http://www.mr511.de/software/
 
 Downloading the source packages
 -------------------------------
@@ -24,11 +29,14 @@ Downloading the source packages
 When you run the build script it will ask you to choose from one of two options, one for if you have already downloaded the source packages and another for if you want it to download them for you (using wget).  If you choose option one and want to get the source packages for yourself then you can find them at the urls listed below;
 
 binutils 2.15  - http://ftp.gnu.org/gnu/binutils/binutils-2.15.tar.bz2
-gcc-core 3.4.3 - http://ftp.gnu.org/gnu/gcc/gcc-3.4.3/gcc-core-3.4.3.tar.bz2
-gcc-g++ 3.4.3  - http://ftp.gnu.org/gnu/gcc/gcc-3.4.3/gcc-g++-3.4.3.tar.bz2
+gcc-core 3.4.4 - http://ftp.gnu.org/gnu/gcc/gcc-3.4.4/gcc-core-3.4.4.tar.bz2
+gcc-g++ 3.4.4 - http://ftp.gnu.org/gnu/gcc/gcc-3.4.4/gcc-g++-3.4.4.tar.bz2
 newlib 1.13.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.13.0.tar.gz
 
-libogc, libgba and libnds can be found 
+libogc, libgba and libnds can be found in the sourceforge project.
+
+http://sourceforge.net/projects/devkitpro
+
 The top level shell script has now been unified and offers the option of devkitARM or devkitPPC.
 
 Building devkitARM
@@ -50,8 +58,19 @@ export PATH=$PATH:<path to devkitARM>/bin
 
 (Obviously replace <path to devkitARM> with the full path to the devkitARM installation directory)
 
-to use the built in crt0 and linkscript use arm-elf-gcc to link your project - use the command -specs=gba.specs for a normal cart image & -specs=gba_mb.specs for a multiboot image.
+to use the built in crt0 and linkscript use arm-elf-gcc to link your project
 
+Several specs files are built in for the various platforms
+
+	-specs=gba.specs for a normal GBA cart image.
+	-specs=gba_mb.specs for a GBA multiboot image.
+	-specs=gba_er for an eReader GBA binary.
+	-specs=ds_arm9 for a DS arm9 binary.
+	-specs=ds_arm7 for a DS arm7 binary.
+	-specs=ds_cart for a DS arm7 binary which runs from GBA cart.
+	-specs=gp32.specs for standard GP32 app.
+	-specs=gp32_gpsdk.specs for official gamepark SDK GP32 app.
+	
 Getting started
 ---------------
 
@@ -91,12 +110,23 @@ Credits
 * libgba by WinterMute
 * b2fxec by Mr Spiv
 * scripts made BSD compatible by o2addict
+* Dovoto and Joat for DS libraries
 
   - efnet #gbadev forever!
 
 History
 -------------------------------------------------------------------------------------
-planned for release 12
+planned for release 13
+-------------------------------------------------------------------------------------
+	* fixed errors in gba crtls
+	* updated nds crtls
+	* addition of pineight tools
+	* added Mr Spiv's gpd & dsd
+	* ndstool updated
+	* bin2o rule updated to include extension in name
+
+-------------------------------------------------------------------------------------
+21st May 2005 - release 12
 -------------------------------------------------------------------------------------
 	* update to newlib 1.13.0
 	* Nintendo DS support
