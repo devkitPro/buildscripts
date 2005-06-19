@@ -44,14 +44,13 @@ export OBJCOPY	:=	$(PREFIX)objcopy
 # canned command sequence for binary data
 #---------------------------------------------------------------------------------
 define bin2o
-	[ -s $(<F) ] || cp $(<) $(<F)
-	padbin 4 $(<F)
+	padbin 4 $(<)
 	$(OBJCOPY) -I binary -O elf32-littlearm -B arm \
 	--rename-section .data=.rodata,readonly,data,contents,alloc \
-	--redefine-sym _binary_`(echo $(<F) | tr . _)`_start=`(echo $(<F) | tr . _)`\
-	--redefine-sym _binary_`(echo $(<F) | tr . _)`_end=`(echo $(<F) | tr . _)`_end\
-	--redefine-sym _binary_`(echo $(<F) | tr . _)`_size=`(echo $(<F) | tr . _)`_size\
-	$(<F) $(@)
+	--redefine-sym _binary_`(echo $(<) | sed -e 's/^\(\/[a-zA-Z]\/\)/\1_/' | tr . _)`_start=`(echo $(<F) | tr . _)`\
+	--redefine-sym _binary_`(echo $(<) | sed -e 's/^\(\/[a-zA-Z]\/\)/\1_/' | tr . _)`_end=`(echo $(<F) | tr . _)`_end\
+	--redefine-sym _binary_`(echo $(<) | sed -e 's/^\(\/[a-zA-Z]\/\)/\1_/' | tr . _)`_size=`(echo $(<F) | tr . _)`_size\
+	$(<) $(@)
 	echo "extern const u32" `(echo $(<F) | tr . _)`"_end[];" > `(echo $(<F) | tr . _)`.h
 	echo "extern const u8" `(echo $(<F) | tr . _)`"[];" >> `(echo $(<F) | tr . _)`.h
 	echo "extern const u32" `(echo $(<F) | tr . _)`_size[]";" >> `(echo $(<F) | tr . _)`.h
