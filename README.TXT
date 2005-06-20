@@ -14,7 +14,8 @@ Bison, Flex and Wget from the gnuwin32 project
 http://sourceforge.net/projects/gnuwin32/
 
 
-Two other packages are required on all platforms, these should be built and installed before building the 
+Two other packages are required on all platforms, these should be built and installed before building the toolchain(s).
+
 upx
 
 http://upx.sourceforge.net/
@@ -28,7 +29,7 @@ Downloading the source packages
 
 When you run the build script it will ask you to choose from one of two options, one for if you have already downloaded the source packages and another for if you want it to download them for you (using wget).  If you choose option one and want to get the source packages for yourself then you can find them at the urls listed below;
 
-binutils 2.15  - http://ftp.gnu.org/gnu/binutils/binutils-2.15.tar.bz2
+binutils 2.16.1  - http://ftp.gnu.org/gnu/binutils/binutils-2.16.1.tar.bz2
 gcc-core 3.4.4 - http://ftp.gnu.org/gnu/gcc/gcc-3.4.4/gcc-core-3.4.4.tar.bz2
 gcc-g++ 3.4.4 - http://ftp.gnu.org/gnu/gcc/gcc-3.4.4/gcc-g++-3.4.4.tar.bz2
 newlib 1.13.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.13.0.tar.gz
@@ -108,6 +109,7 @@ Credits
 * Thanks to Mr Spiv, Honkey Kong and JoostP for OS X testing
 * libogc written and supplied by Shagkur. Additional code by WinterMute
 * libgba by WinterMute
+* libmirko by Mr Mirko
 * b2fxec by Mr Spiv
 * scripts made BSD compatible by o2addict
 * Dovoto and Joat for DS libraries
@@ -118,8 +120,10 @@ History
 -------------------------------------------------------------------------------------
 planned for release 13
 -------------------------------------------------------------------------------------
+	* updated to binutils 2.16.1
 	* fixed errors in gba crtls
 	* updated nds crtls
+	* allow arm9 to write SRAM
 	* addition of pineight tools
 	* added Mr Spiv's gpd & dsd
 	* ndstool updated
@@ -142,7 +146,6 @@ planned for release 13
 -------------------------------------------------------------------------------------
 21st January 2005 - release 11 beta 1
 -------------------------------------------------------------------------------------
-
 	* updated to gcc 3.4.3
 	* reverted msvc format errors for compatibility with dev-cpp & vham editors
 	* fix iwram overlay section alignment for GBA
@@ -151,21 +154,18 @@ planned for release 13
 -------------------------------------------------------------------------------------
 28th July 2004 - release 8
 -------------------------------------------------------------------------------------
-
 	* updated to gcc 3.4.1
 	* win32 native b2fxec added & cygwin1.dll removed
 
 -------------------------------------------------------------------------------------
 26th June 2004 - devkitPPC release 7
 -------------------------------------------------------------------------------------
-
 	* libogc added to devkitPPC
 	* updated specs file with -mogc switch for linking
 
 -------------------------------------------------------------------------------------
 12th June 2004 - release 6a
 -------------------------------------------------------------------------------------
-
 	* long calls patch added
 	* -save-temps fixed (again)
 	* binutils 2.15.0
@@ -175,14 +175,12 @@ planned for release 13
 -------------------------------------------------------------------------------------
 8th May 2004 - release 6
 -------------------------------------------------------------------------------------
-
 	* updated to gcc 3.4.0
 	* reverted to binutils 2.14.0
 
 -------------------------------------------------------------------------------------
 12th April 2004 - release 5.
 -------------------------------------------------------------------------------------
-
     * built in crt0 and linkscript for gp32 added. Use -specs=gp32.specs when linking
     * Mr Spiv's b2fxec included
     * DarkFader's gbafix included
@@ -191,7 +189,6 @@ planned for release 13
 -------------------------------------------------------------------------------------
 15th March 2004 - Release 4
 -------------------------------------------------------------------------------------
-
     * updated to binutils 2.15.90
     * more msdev error output conversion
     * -save-temps fixed
@@ -199,22 +196,17 @@ planned for release 13
 -------------------------------------------------------------------------------------
 26th February 2004 - Release 3a
 -------------------------------------------------------------------------------------
-
     * updated to newlib 1.12.0
     * crt0, linkscript and runtime library support added to DevkitARM
 
 -------------------------------------------------------------------------------------
 20th February 2004
 -------------------------------------------------------------------------------------
-
-DevkitARM and DevkitPPC updated - Release 3
-
     * updated to gcc 3.3.3
 
 -------------------------------------------------------------------------------------
 14th February 2004 - Release 2
 -------------------------------------------------------------------------------------
-
     * crt0, linkscript and runtime library support added to DevkitPPC
     * adjusted error output for msdev
     * Fixed minor problem with include paths
@@ -222,7 +214,6 @@ DevkitARM and DevkitPPC updated - Release 3
 -------------------------------------------------------------------------------------
 16th January 2004 - release 1
 -------------------------------------------------------------------------------------
-
     * Initial build supporting arm target
     * Required link script and crt0
     * no built in support for runtime libraries
