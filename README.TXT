@@ -14,7 +14,7 @@ Bison, Flex and Wget from the gnuwin32 project
 http://sourceforge.net/projects/gnuwin32/
 
 
-Two other packages are required on all platforms, these should be built and installed before building the toolchain(s).
+Two other packages are required on all platforms, these should be built and installed before building the toolchain(s). It appears there is no UPX version for OS X, the scripts will report an error but this is non fatal.
 
 upx
 
@@ -118,7 +118,14 @@ Credits
 
 History
 -------------------------------------------------------------------------------------
-planned for release 13
+planned for release 14
+-------------------------------------------------------------------------------------
+	* rework libraries to allow armv5 arch
+	* BFLT support 
+	* system libraries for ARM stdio
+
+-------------------------------------------------------------------------------------
+20th June 2005 release 13
 -------------------------------------------------------------------------------------
 	* updated to binutils 2.16.1
 	* fixed errors in gba crtls
