@@ -47,9 +47,9 @@ define bin2o
 	padbin 4 $(<)
 	$(OBJCOPY) -I binary -O elf32-littlearm -B arm \
 	--rename-section .data=.rodata,readonly,data,contents,alloc \
-	--redefine-sym _binary`(echo $(<) | sed -e 's/^\(\/[a-zA-Z]\/\)/\1_/' | tr . _ | tr / _)`_start=`(echo $(<F) | tr . _)`\
-	--redefine-sym _binary`(echo $(<) | sed -e 's/^\(\/[a-zA-Z]\/\)/\1_/' | tr . _ | tr / _)`_end=`(echo $(<F) | tr . _)`_end\
-	--redefine-sym _binary`(echo $(<) | sed -e 's/^\(\/[a-zA-Z]\/\)/\1_/' | tr . _ | tr / _)`_size=`(echo $(<F) | tr . _)`_size\
+	--redefine-sym _binary_`(echo $(<) | sed -e 's/^\///' | sed -e 's/^\([a-zA-Z]\/\)/\1_/' | tr . _ | tr / _)`_start=`(echo $(<F) | tr . _)`\
+	--redefine-sym _binary_`(echo $(<) | sed -e 's/^\///' | sed -e 's/^\([a-zA-Z]\/\)/\1_/' | tr . _ | tr / _)`_end=`(echo $(<F) | tr . _)`_end\
+	--redefine-sym _binary_`(echo $(<) | sed -e 's/^\///' | sed -e 's/^\([a-zA-Z]\/\)/\1_/' | tr . _ | tr / _)`_size=`(echo $(<F) | tr . _)`_size\
 	$(<) $(@)
 	echo "extern const u32" `(echo $(<F) | tr . _)`"_end[];" > `(echo $(<F) | tr . _)`.h
 	echo "extern const u8" `(echo $(<F) | tr . _)`"[];" >> `(echo $(<F) | tr . _)`.h
