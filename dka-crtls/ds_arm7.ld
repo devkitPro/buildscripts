@@ -125,7 +125,7 @@ SECTIONS
 		*(.gnu.linkonce.b*)
 		*(COMMON)
 		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
-	}
+	} >iwram
 
 	__bss_end = . ;
 	__bss_end__ = . ;

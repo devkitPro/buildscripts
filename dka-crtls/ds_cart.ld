@@ -111,7 +111,7 @@ SECTIONS
 		__sbss_start = ABSOLUTE(.);
  		*(.sbss)
  		. = ALIGN(4);
- 	}
+ 	} >ewram
 	__sbss_end = . ;
 
 	_end = . ;
@@ -154,7 +154,7 @@ SECTIONS
 		*(.gnu.linkonce.b*)
 		*(COMMON)
 		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
-	}
+	} >iwram
 
 	__bss_end = . ;
 	__bss_end__ = . ;
