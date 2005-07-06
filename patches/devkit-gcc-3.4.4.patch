@@ -1,6 +1,6 @@
-diff -NBaur gcc-3.4.4/config.sub gcc-3.4.4-new/config.sub
+diff -Nbaur gcc-3.4.4/config.sub gcc-3.4.4-new/config.sub
 --- gcc-3.4.4/config.sub	Sun Feb 22 14:44:23 2004
-+++ gcc-3.4.4-new/config.sub	Tue Jun 14 03:43:49 2005
++++ gcc-3.4.4-new/config.sub	Wed Jul  6 01:52:28 2005
 @@ -219,6 +219,10 @@
  		basic_machine=m68k-atari
  		os=-mint
@@ -12,9 +12,36 @@ diff -NBaur gcc-3.4.4/config.sub gcc-3.4.4-new/config.sub
  esac
  
  # Decode aliases for certain CPU-COMPANY combinations.
-diff -NBaur gcc-3.4.4/gcc/Makefile.in gcc-3.4.4-new/gcc/Makefile.in
+@@ -253,6 +257,7 @@
+ 	| mipsisa64sb1 | mipsisa64sb1el \
+ 	| mipsisa64sr71k | mipsisa64sr71kel \
+ 	| mipstx39 | mipstx39el \
++	| mipsallegrex | mipsallegrexel \
+ 	| mn10200 | mn10300 \
+ 	| msp430 \
+ 	| ns16k | ns32k \
+@@ -326,6 +331,7 @@
+ 	| mipsisa64sb1-* | mipsisa64sb1el-* \
+ 	| mipsisa64sr71k-* | mipsisa64sr71kel-* \
+ 	| mipstx39-* | mipstx39el-* \
++ 	| mipsallegrex-* | mipsallegrexel-* \
+ 	| msp430-* \
+ 	| none-* | np1-* | nv1-* | ns16k-* | ns32k-* \
+ 	| orion-* \
+@@ -648,6 +654,10 @@
+ 	*mint | -mint[0-9]* | *MiNT | *MiNT[0-9]*)
+ 		basic_machine=m68k-atari
+ 		os=-mint
++		;;
++	psp)
++		basic_machine=mipsallegrexel-psp
++		os=-elf
+ 		;;
+ 	mips3*-*)
+ 		basic_machine=`echo $basic_machine | sed -e 's/mips3/mips64/'`
+diff -Nbaur gcc-3.4.4/gcc/Makefile.in gcc-3.4.4-new/gcc/Makefile.in
 --- gcc-3.4.4/gcc/Makefile.in	Thu Feb 24 09:26:57 2005
-+++ gcc-3.4.4-new/gcc/Makefile.in	Tue Jun 14 03:43:49 2005
++++ gcc-3.4.4-new/gcc/Makefile.in	Wed Jul  6 01:50:35 2005
 @@ -138,7 +138,7 @@
  # TCFLAGS is used for compilations with the GCC just built.
  XCFLAGS =
@@ -32,9 +59,9 @@ diff -NBaur gcc-3.4.4/gcc/Makefile.in gcc-3.4.4-new/gcc/Makefile.in
  includedir = $(prefix)/include
  # where the info files go
  infodir = @infodir@
-diff -NBaur gcc-3.4.4/gcc/c-format.c gcc-3.4.4-new/gcc/c-format.c
+diff -Nbaur gcc-3.4.4/gcc/c-format.c gcc-3.4.4-new/gcc/c-format.c
 --- gcc-3.4.4/gcc/c-format.c	Sun May  1 11:38:56 2005
-+++ gcc-3.4.4-new/gcc/c-format.c	Tue Jun 14 03:43:49 2005
++++ gcc-3.4.4-new/gcc/c-format.c	Wed Jul  6 01:50:35 2005
 @@ -31,6 +31,7 @@
  #include "diagnostic.h"
  #include "langhooks.h"
@@ -138,9 +165,9 @@ diff -NBaur gcc-3.4.4/gcc/c-format.c gcc-3.4.4-new/gcc/c-format.c
  		  length_chars = fli->name;
  		  length_chars_val = fli->index;
  		  length_chars_std = fli->std;
-diff -NBaur gcc-3.4.4/gcc/collect2.c gcc-3.4.4-new/gcc/collect2.c
+diff -Nbaur gcc-3.4.4/gcc/collect2.c gcc-3.4.4-new/gcc/collect2.c
 --- gcc-3.4.4/gcc/collect2.c	Mon Jan 10 15:25:23 2005
-+++ gcc-3.4.4-new/gcc/collect2.c	Tue Jun 14 03:43:49 2005
++++ gcc-3.4.4-new/gcc/collect2.c	Wed Jul  6 01:50:36 2005
 @@ -30,24 +30,13 @@
  #include "system.h"
  #include "coretypes.h"
@@ -694,9 +721,9 @@ diff -NBaur gcc-3.4.4/gcc/collect2.c gcc-3.4.4-new/gcc/collect2.c
  
  #endif /* OBJECT_FORMAT_NONE */
  
-diff -NBaur gcc-3.4.4/gcc/config/arm/arm.md gcc-3.4.4-new/gcc/config/arm/arm.md
+diff -Nbaur gcc-3.4.4/gcc/config/arm/arm.md gcc-3.4.4-new/gcc/config/arm/arm.md
 --- gcc-3.4.4/gcc/config/arm/arm.md	Tue Jan 25 12:50:34 2005
-+++ gcc-3.4.4-new/gcc/config/arm/arm.md	Tue Jun 14 03:43:49 2005
++++ gcc-3.4.4-new/gcc/config/arm/arm.md	Wed Jul  6 01:50:36 2005
 @@ -7205,6 +7205,12 @@
    {
      if (TARGET_CALLER_INTERWORKING)
@@ -723,9 +750,9 @@ diff -NBaur gcc-3.4.4/gcc/config/arm/arm.md gcc-3.4.4-new/gcc/config/arm/arm.md
      else
        return \"bl\\t%__call_via_%1\";
    }"
-diff -NBaur gcc-3.4.4/gcc/config/arm/t-arm-elf gcc-3.4.4-new/gcc/config/arm/t-arm-elf
+diff -Nbaur gcc-3.4.4/gcc/config/arm/t-arm-elf gcc-3.4.4-new/gcc/config/arm/t-arm-elf
 --- gcc-3.4.4/gcc/config/arm/t-arm-elf	Tue Sep 30 11:21:41 2003
-+++ gcc-3.4.4-new/gcc/config/arm/t-arm-elf	Tue Jun 14 03:44:21 2005
++++ gcc-3.4.4-new/gcc/config/arm/t-arm-elf	Wed Jul  6 02:17:23 2005
 @@ -26,16 +26,16 @@
  # MULTILIB_DIRNAMES   += 32bit 26bit
  # MULTILIB_EXCEPTIONS += *mthumb/*mapcs-26*
@@ -743,9 +770,9 @@ diff -NBaur gcc-3.4.4/gcc/config/arm/t-arm-elf gcc-3.4.4-new/gcc/config/arm/t-ar
 -# MULTILIB_OPTIONS    += mcpu=arm7
 -# MULTILIB_DIRNAMES   += nofmult
 -# MULTILIB_EXCEPTIONS += *mthumb*/*mcpu=arm7*
-+MULTILIB_OPTIONS    += mcpu=arm7
-+MULTILIB_DIRNAMES   += nofmult
-+MULTILIB_EXCEPTIONS += *mthumb*/*mcpu=arm7*
++#MULTILIB_OPTIONS    += mcpu=arm7
++#MULTILIB_DIRNAMES   += nofmult
++#MULTILIB_EXCEPTIONS += *mthumb*/*mcpu=arm7*
  # # Note: the multilib_exceptions matches both -mthumb and
  # # -mthumb-interwork
  # #
@@ -786,9 +813,9 @@ diff -NBaur gcc-3.4.4/gcc/config/arm/t-arm-elf gcc-3.4.4-new/gcc/config/arm/t-ar
  
  EXTRA_MULTILIB_PARTS = crtbegin.o crtend.o crti.o crtn.o
  
-diff -NBaur gcc-3.4.4/gcc/config/i386/cygming.h gcc-3.4.4-new/gcc/config/i386/cygming.h
+diff -Nbaur gcc-3.4.4/gcc/config/i386/cygming.h gcc-3.4.4-new/gcc/config/i386/cygming.h
 --- gcc-3.4.4/gcc/config/i386/cygming.h	Tue Jun  8 07:30:13 2004
-+++ gcc-3.4.4-new/gcc/config/i386/cygming.h	Tue Jun 14 03:43:49 2005
++++ gcc-3.4.4-new/gcc/config/i386/cygming.h	Wed Jul  6 01:50:36 2005
 @@ -251,7 +251,7 @@
     unit may not be bound to undefined symbols in another translation unit
     without user intervention.  For instance, under Microsoft Windows
@@ -807,9 +834,9 @@ diff -NBaur gcc-3.4.4/gcc/config/i386/cygming.h gcc-3.4.4-new/gcc/config/i386/cy
  
  /* Don't assume anything about the header files.  */
  #define NO_IMPLICIT_EXTERN_C
-diff -NBaur gcc-3.4.4/gcc/config/i386/i386.c gcc-3.4.4-new/gcc/config/i386/i386.c
+diff -Nbaur gcc-3.4.4/gcc/config/i386/i386.c gcc-3.4.4-new/gcc/config/i386/i386.c
 --- gcc-3.4.4/gcc/config/i386/i386.c	Wed Mar 16 15:23:40 2005
-+++ gcc-3.4.4-new/gcc/config/i386/i386.c	Tue Jun 14 03:43:49 2005
++++ gcc-3.4.4-new/gcc/config/i386/i386.c	Wed Jul  6 01:50:36 2005
 @@ -5284,7 +5284,7 @@
  			       GEN_INT (-allocate), -1);
    else
@@ -819,9 +846,9 @@ diff -NBaur gcc-3.4.4/gcc/config/i386/i386.c gcc-3.4.4-new/gcc/config/i386/i386.
        rtx eax = gen_rtx_REG (SImode, 0);
        bool eax_live = ix86_eax_live_at_start_p ();
  
-diff -NBaur gcc-3.4.4/gcc/config/i386/mingw32-1.c gcc-3.4.4-new/gcc/config/i386/mingw32-1.c
+diff -Nbaur gcc-3.4.4/gcc/config/i386/mingw32-1.c gcc-3.4.4-new/gcc/config/i386/mingw32-1.c
 --- gcc-3.4.4/gcc/config/i386/mingw32-1.c	Thu Jan  1 00:00:00 1970
-+++ gcc-3.4.4-new/gcc/config/i386/mingw32-1.c	Tue Jun 14 03:43:50 2005
++++ gcc-3.4.4-new/gcc/config/i386/mingw32-1.c	Wed Jul  6 01:50:36 2005
 @@ -0,0 +1,41 @@
 +/* This replaces the use of stat and struct stat.st_ino to determine if
 +   files are different in gcc.c (do_spec_1) handling of --save-temps
@@ -864,9 +891,9 @@ diff -NBaur gcc-3.4.4/gcc/config/i386/mingw32-1.c gcc-3.4.4-new/gcc/config/i386/
 +  GetFullPathName (dst, MAX_PATH, fullpath_dst, &pfilename);
 +  return  (lstrcmpi (fullpath_src, fullpath_dst));
 +}
-diff -NBaur gcc-3.4.4/gcc/config/i386/mingw32.h gcc-3.4.4-new/gcc/config/i386/mingw32.h
+diff -Nbaur gcc-3.4.4/gcc/config/i386/mingw32.h gcc-3.4.4-new/gcc/config/i386/mingw32.h
 --- gcc-3.4.4/gcc/config/i386/mingw32.h	Fri Sep 26 04:46:06 2003
-+++ gcc-3.4.4-new/gcc/config/i386/mingw32.h	Tue Jun 14 03:43:50 2005
++++ gcc-3.4.4-new/gcc/config/i386/mingw32.h	Wed Jul  6 01:50:36 2005
 @@ -67,7 +67,11 @@
  
  #undef STARTFILE_SPEC
@@ -880,9 +907,9 @@ diff -NBaur gcc-3.4.4/gcc/config/i386/mingw32.h gcc-3.4.4-new/gcc/config/i386/mi
  
  /* An additional prefix to try after the standard prefixes.  */
  #undef MD_STARTFILE_PREFIX
-diff -NBaur gcc-3.4.4/gcc/config/i386/t-cygming gcc-3.4.4-new/gcc/config/i386/t-cygming
+diff -Nbaur gcc-3.4.4/gcc/config/i386/t-cygming gcc-3.4.4-new/gcc/config/i386/t-cygming
 --- gcc-3.4.4/gcc/config/i386/t-cygming	Tue Sep 23 19:55:59 2003
-+++ gcc-3.4.4-new/gcc/config/i386/t-cygming	Tue Jun 14 03:43:50 2005
++++ gcc-3.4.4-new/gcc/config/i386/t-cygming	Wed Jul  6 01:50:36 2005
 @@ -10,6 +10,8 @@
  # first.
  LIBGCC2_INCLUDES = -I$(srcdir)/../winsup/w32api/include
@@ -892,9 +919,9 @@ diff -NBaur gcc-3.4.4/gcc/config/i386/t-cygming gcc-3.4.4-new/gcc/config/i386/t-
  winnt.o: $(srcdir)/config/i386/winnt.c $(CONFIG_H) $(SYSTEM_H) coretypes.h \
    $(TM_H) $(RTL_H) $(REGS_H) hard-reg-set.h output.h $(TREE_H) flags.h \
    $(TM_P_H) toplev.h $(HASHTAB_H) $(GGC_H)
-diff -NBaur gcc-3.4.4/gcc/config/i386/t-mingw32 gcc-3.4.4-new/gcc/config/i386/t-mingw32
+diff -Nbaur gcc-3.4.4/gcc/config/i386/t-mingw32 gcc-3.4.4-new/gcc/config/i386/t-mingw32
 --- gcc-3.4.4/gcc/config/i386/t-mingw32	Tue Jun 11 06:25:44 2002
-+++ gcc-3.4.4-new/gcc/config/i386/t-mingw32	Tue Jun 14 03:43:50 2005
++++ gcc-3.4.4-new/gcc/config/i386/t-mingw32	Wed Jul  6 01:50:36 2005
 @@ -1,7 +1,8 @@
  #
  # collect2 doesn't work for i386-mingw32* yet.
@@ -906,9 +933,9 @@ diff -NBaur gcc-3.4.4/gcc/config/i386/t-mingw32 gcc-3.4.4-new/gcc/config/i386/t-
 -LIB2FUNCS_EXTRA = $(srcdir)/config/i386/gthr-win32.c
 +LIB2FUNCS_EXTRA += $(srcdir)/config/i386/gthr-win32.c
 +
-diff -NBaur gcc-3.4.4/gcc/config/i386/w32-shared-ptr.c gcc-3.4.4-new/gcc/config/i386/w32-shared-ptr.c
+diff -Nbaur gcc-3.4.4/gcc/config/i386/w32-shared-ptr.c gcc-3.4.4-new/gcc/config/i386/w32-shared-ptr.c
 --- gcc-3.4.4/gcc/config/i386/w32-shared-ptr.c	Thu Jan  1 00:00:00 1970
-+++ gcc-3.4.4-new/gcc/config/i386/w32-shared-ptr.c	Tue Jun 14 03:43:50 2005
++++ gcc-3.4.4-new/gcc/config/i386/w32-shared-ptr.c	Wed Jul  6 01:50:36 2005
 @@ -0,0 +1,244 @@
 +/*
 + * w32-shared-ptr.c
@@ -1154,9 +1181,9 @@ diff -NBaur gcc-3.4.4/gcc/config/i386/w32-shared-ptr.c gcc-3.4.4-new/gcc/config/
 +    abort ();
 +}
 +#endif
-diff -NBaur gcc-3.4.4/gcc/config/i386/w32-shared-ptr.h gcc-3.4.4-new/gcc/config/i386/w32-shared-ptr.h
+diff -Nbaur gcc-3.4.4/gcc/config/i386/w32-shared-ptr.h gcc-3.4.4-new/gcc/config/i386/w32-shared-ptr.h
 --- gcc-3.4.4/gcc/config/i386/w32-shared-ptr.h	Thu Jan  1 00:00:00 1970
-+++ gcc-3.4.4-new/gcc/config/i386/w32-shared-ptr.h	Tue Jun 14 03:43:50 2005
++++ gcc-3.4.4-new/gcc/config/i386/w32-shared-ptr.h	Wed Jul  6 01:50:36 2005
 @@ -0,0 +1,65 @@
 +/*
 + * w32-shared-ptr.h
@@ -1223,9 +1250,9 @@ diff -NBaur gcc-3.4.4/gcc/config/i386/w32-shared-ptr.h gcc-3.4.4-new/gcc/config/
 +#endif
 +
 +#endif
-diff -NBaur gcc-3.4.4/gcc/config/i386/winnt.c gcc-3.4.4-new/gcc/config/i386/winnt.c
+diff -Nbaur gcc-3.4.4/gcc/config/i386/winnt.c gcc-3.4.4-new/gcc/config/i386/winnt.c
 --- gcc-3.4.4/gcc/config/i386/winnt.c	Tue Mar 23 23:18:31 2004
-+++ gcc-3.4.4-new/gcc/config/i386/winnt.c	Tue Jun 14 03:43:50 2005
++++ gcc-3.4.4-new/gcc/config/i386/winnt.c	Wed Jul  6 01:50:37 2005
 @@ -262,7 +262,8 @@
  	}
  
@@ -1292,9 +1319,9 @@ diff -NBaur gcc-3.4.4/gcc/config/i386/winnt.c gcc-3.4.4-new/gcc/config/i386/winn
    for (p = extern_head; p != NULL; p = p->next)
      {
        tree decl;
-diff -NBaur gcc-3.4.4/gcc/config/i386/x-mingw32 gcc-3.4.4-new/gcc/config/i386/x-mingw32
+diff -Nbaur gcc-3.4.4/gcc/config/i386/x-mingw32 gcc-3.4.4-new/gcc/config/i386/x-mingw32
 --- gcc-3.4.4/gcc/config/i386/x-mingw32	Wed May 28 22:06:23 2003
-+++ gcc-3.4.4-new/gcc/config/i386/x-mingw32	Tue Jun 14 03:43:50 2005
++++ gcc-3.4.4-new/gcc/config/i386/x-mingw32	Wed Jul  6 01:50:37 2005
 @@ -2,3 +2,26 @@
  # Make local_includedir relative to EXEC_PREFIX 
  #
@@ -1322,9 +1349,9 @@ diff -NBaur gcc-3.4.4/gcc/config/i386/x-mingw32 gcc-3.4.4-new/gcc/config/i386/x-
 +  $(srcdir)/config/i386/xm-mingw32.h
 +	$(CC) -c $(ALL_CFLAGS) $(ALL_CPPFLAGS) $(INCLUDES) \
 +	$(srcdir)/config/i386/mingw32-1.c
-diff -NBaur gcc-3.4.4/gcc/config/i386/xm-mingw32.h gcc-3.4.4-new/gcc/config/i386/xm-mingw32.h
+diff -Nbaur gcc-3.4.4/gcc/config/i386/xm-mingw32.h gcc-3.4.4-new/gcc/config/i386/xm-mingw32.h
 --- gcc-3.4.4/gcc/config/i386/xm-mingw32.h	Sat Jan 31 06:18:23 2004
-+++ gcc-3.4.4-new/gcc/config/i386/xm-mingw32.h	Tue Jun 14 03:43:50 2005
++++ gcc-3.4.4-new/gcc/config/i386/xm-mingw32.h	Wed Jul  6 01:50:37 2005
 @@ -27,3 +27,18 @@
  
  /* This is the name of the null device on windows.  */
@@ -1344,9 +1371,144 @@ diff -NBaur gcc-3.4.4/gcc/config/i386/xm-mingw32.h gcc-3.4.4-new/gcc/config/i386
 +extern int
 +w32_file_id_cmp (const char *, const char *);
 +#define HOST_FILE_ID_CMP(SRC,DST) w32_file_id_cmp (SRC, DST)
-diff -NBaur gcc-3.4.4/gcc/config/rs6000/sysv4.h gcc-3.4.4-new/gcc/config/rs6000/sysv4.h
+diff -Nbaur gcc-3.4.4/gcc/config/mips/mips.c gcc-3.4.4-new/gcc/config/mips/mips.c
+--- gcc-3.4.4/gcc/config/mips/mips.c	Sun May  8 13:06:23 2005
++++ gcc-3.4.4-new/gcc/config/mips/mips.c	Wed Jul  6 01:50:54 2005
+@@ -693,6 +693,7 @@
+ 
+   /* MIPS II */
+   { "r6000", PROCESSOR_R6000, 2 },
++  { "allegrex", PROCESSOR_ALLEGREX, 2 },
+ 
+   /* MIPS III */
+   { "r4000", PROCESSOR_R4000, 3 },
+diff -Nbaur gcc-3.4.4/gcc/config/mips/mips.h gcc-3.4.4-new/gcc/config/mips/mips.h
+--- gcc-3.4.4/gcc/config/mips/mips.h	Thu Jul 15 01:42:47 2004
++++ gcc-3.4.4-new/gcc/config/mips/mips.h	Wed Jul  6 01:53:59 2005
+@@ -67,7 +67,8 @@
+   PROCESSOR_R8000,
+   PROCESSOR_R9000,
+   PROCESSOR_SB1,
+-  PROCESSOR_SR71000
++  PROCESSOR_SR71000,
++  PROCESSOR_ALLEGREX
+ };
+ 
+ /* Which ABI to use.  ABI_32 (original 32, or o32), ABI_N32 (n32),
+@@ -333,6 +334,7 @@
+ #define TARGET_MIPS9000             (mips_arch == PROCESSOR_R9000)
+ #define TARGET_SB1                  (mips_arch == PROCESSOR_SB1)
+ #define TARGET_SR71K                (mips_arch == PROCESSOR_SR71000)
++#define TARGET_ALLEGREX             (mips_arch == PROCESSOR_ALLEGREX)
+ 
+ /* Scheduling target defines.  */
+ #define TUNE_MIPS3000               (mips_tune == PROCESSOR_R3000)
+@@ -345,6 +347,7 @@
+ #define TUNE_MIPS7000               (mips_tune == PROCESSOR_R7000)
+ #define TUNE_MIPS9000               (mips_tune == PROCESSOR_R9000)
+ #define TUNE_SB1                    (mips_tune == PROCESSOR_SB1)
++#define TUNE_ALLEGREX               (mips_tune == PROCESSOR_ALLEGREX)
+ #define TUNE_SR71K                  (mips_tune == PROCESSOR_SR71000)
+ 
+ #define TARGET_NEWABI		    (mips_abi == ABI_N32 || mips_abi == ABI_64)
+@@ -847,7 +850,8 @@
+ 
+ /* ISA has conditional trap instructions.  */
+ #define ISA_HAS_COND_TRAP	(!ISA_MIPS1				\
+-				 && !TARGET_MIPS16)
++				 && !TARGET_MIPS16			\
++				 && !TARGET_ALLEGREX) 
+ 
+ /* ISA has integer multiply-accumulate instructions, madd and msub.  */
+ #define ISA_HAS_MADD_MSUB       ((ISA_MIPS32				\
+@@ -865,6 +869,7 @@
+ #define ISA_HAS_CLZ_CLO         ((ISA_MIPS32				\
+                                   || ISA_MIPS32R2			\
+                                   || ISA_MIPS64				\
++                                  || TARGET_ALLEGREX			\
+                                  ) && !TARGET_MIPS16)
+ 
+ /* ISA has double-word count leading zeroes/ones instruction (not
+@@ -906,6 +911,7 @@
+                                      || TARGET_MIPS5400                 \
+                                      || TARGET_MIPS5500                 \
+                                      || TARGET_SR71K                    \
++                                     || TARGET_ALLEGREX                 \
+                                      ))
+ 
+ /* ISA has 64-bit rotate right instruction.  */
+@@ -939,6 +945,7 @@
+ /* ISA includes the MIPS32r2 seb and seh instructions.  */
+ #define ISA_HAS_SEB_SEH         (!TARGET_MIPS16                        \
+                                  && (ISA_MIPS32R2                      \
++                                     || TARGET_ALLEGREX                \
+                                      ))
+ 
+ /* True if the result of a load is not available to the next instruction.
+diff -Nbaur gcc-3.4.4/gcc/config/mips/psp.h gcc-3.4.4-new/gcc/config/mips/psp.h
+--- gcc-3.4.4/gcc/config/mips/psp.h	Thu Jan  1 00:00:00 1970
++++ gcc-3.4.4-new/gcc/config/mips/psp.h	Wed Jul  6 01:50:54 2005
+@@ -0,0 +1,24 @@
++/* Support for Sony's Playstation Portable (PSP).
++   Copyright (C) 2005 Free Software Foundation, Inc.
++   Contributed by Marcus R. Brown <mrbrown@ocgnet.org>
++
++This file is part of GCC.
++
++GCC is free software; you can redistribute it and/or modify
++it under the terms of the GNU General Public License as published by
++the Free Software Foundation; either version 2, or (at your option)
++any later version.
++
++GCC is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++GNU General Public License for more details.
++
++You should have received a copy of the GNU General Public License
++along with GCC; see the file COPYING.  If not, write to
++the Free Software Foundation, 59 Temple Place - Suite 330,
++Boston, MA 02111-1307, USA.  */
++
++/* Override the startfile spec to include crt0.o. */
++#undef STARTFILE_SPEC
++#define STARTFILE_SPEC "crt0%O%s crti%O%s crtbegin%O%s"
+diff -Nbaur gcc-3.4.4/gcc/config/mips/t-allegrex gcc-3.4.4-new/gcc/config/mips/t-allegrex
+--- gcc-3.4.4/gcc/config/mips/t-allegrex	Thu Jan  1 00:00:00 1970
++++ gcc-3.4.4-new/gcc/config/mips/t-allegrex	Wed Jul  6 01:50:54 2005
+@@ -0,0 +1,29 @@
++# Suppress building libgcc1.a, since the MIPS compiler port is complete
++# and does not need anything from libgcc1.a.
++LIBGCC1 =
++CROSS_LIBGCC1 =
++
++EXTRA_MULTILIB_PARTS = crtbegin.o crtend.o crti.o crtn.o
++# Don't let CTOR_LIST end up in sdata section.
++CRTSTUFF_T_CFLAGS = -G 0
++
++# Assemble startup files.
++$(T)crti.o: $(srcdir)/config/mips/crti.asm $(GCC_PASSES)
++	$(GCC_FOR_TARGET) $(GCC_CFLAGS) $(MULTILIB_CFLAGS) $(INCLUDES) \
++	-c -o $(T)crti.o -x assembler-with-cpp $(srcdir)/config/mips/crti.asm
++
++$(T)crtn.o: $(srcdir)/config/mips/crtn.asm $(GCC_PASSES)
++	$(GCC_FOR_TARGET) $(GCC_CFLAGS) $(MULTILIB_CFLAGS) $(INCLUDES) \
++	-c -o $(T)crtn.o -x assembler-with-cpp $(srcdir)/config/mips/crtn.asm
++
++# We must build libgcc2.a with -G 0, in case the user wants to link
++# without the $gp register.
++TARGET_LIBGCC2_CFLAGS = -G 0
++
++# Build the libraries for both hard and soft floating point
++
++MULTILIB_OPTIONS = 
++MULTILIB_DIRNAMES = 
++
++LIBGCC = stmp-multilib
++INSTALL_LIBGCC = install-multilib
+diff -Nbaur gcc-3.4.4/gcc/config/rs6000/sysv4.h gcc-3.4.4-new/gcc/config/rs6000/sysv4.h
 --- gcc-3.4.4/gcc/config/rs6000/sysv4.h	Fri Feb 11 21:06:45 2005
-+++ gcc-3.4.4-new/gcc/config/rs6000/sysv4.h	Tue Jun 14 03:43:50 2005
++++ gcc-3.4.4-new/gcc/config/rs6000/sysv4.h	Wed Jul  6 01:50:37 2005
 @@ -444,7 +444,7 @@
    (TARGET_RELOCATABLE || (flag_pic && DEFAULT_ABI != ABI_AIX)		\
     ? "\t.section\t\".got2\",\"aw\"" : "\t.section\t\".got1\",\"aw\"")
@@ -1356,9 +1518,9 @@ diff -NBaur gcc-3.4.4/gcc/config/rs6000/sysv4.h gcc-3.4.4-new/gcc/config/rs6000/
  #define	SDATA2_SECTION_ASM_OP "\t.section\t\".sdata2\",\"a\""
  #define	SBSS_SECTION_ASM_OP "\t.section\t\".sbss\",\"aw\",@nobits"
  
-diff -NBaur gcc-3.4.4/gcc/config.gcc gcc-3.4.4-new/gcc/config.gcc
+diff -Nbaur gcc-3.4.4/gcc/config.gcc gcc-3.4.4-new/gcc/config.gcc
 --- gcc-3.4.4/gcc/config.gcc	Mon Apr 25 05:47:59 2005
-+++ gcc-3.4.4-new/gcc/config.gcc	Tue Jun 14 03:43:50 2005
++++ gcc-3.4.4-new/gcc/config.gcc	Wed Jul  6 01:55:49 2005
 @@ -1173,6 +1173,8 @@
  	xm_file=i386/xm-mingw32.h
  	tmake_file="i386/t-cygming i386/t-mingw32"
@@ -1368,8 +1530,22 @@ diff -NBaur gcc-3.4.4/gcc/config.gcc gcc-3.4.4-new/gcc/config.gcc
  	if test x$enable_threads = xyes; then
  		thread_file='win32'
  	fi
-@@ -1661,6 +1663,15 @@
+@@ -1659,8 +1661,29 @@
+ 	tmake_file=mips/t-r3900
+ 	use_fixproto=yes
  	;;
++mipsallegrex-*-elf* | mipsallegrexel-*-elf*)
++	tm_file="elfos.h ${tm_file} mips/elf.h"
++	tmake_file=mips/t-allegrex
++	target_cpu_default="MASK_SINGLE_FLOAT"
++	tm_defines="MIPS_ISA_DEFAULT=2 MIPS_CPU_STRING_DEFAULT=\\\"allegrex\\\" MIPS_ABI_DEFAULT=ABI_EABI"
++	case ${target} in
++	mipsallegrex*-psp-elf*)	
++		tm_file="${tm_file} mips/psp.h"
++		;;
++	esac
++	use_fixproto=yes
++	;;
  mmix-knuth-mmixware)
  	need_64bit_hwint=yes
 +	;;
@@ -1384,9 +1560,9 @@ diff -NBaur gcc-3.4.4/gcc/config.gcc gcc-3.4.4-new/gcc/config.gcc
  	;;
  mn10300-*-*)
  	tm_file="dbxelf.h elfos.h svr4.h ${tm_file}"
-diff -NBaur gcc-3.4.4/gcc/config.host gcc-3.4.4-new/gcc/config.host
+diff -Nbaur gcc-3.4.4/gcc/config.host gcc-3.4.4-new/gcc/config.host
 --- gcc-3.4.4/gcc/config.host	Tue Oct 14 04:41:41 2003
-+++ gcc-3.4.4-new/gcc/config.host	Tue Jun 14 03:43:50 2005
++++ gcc-3.4.4-new/gcc/config.host	Wed Jul  6 01:50:37 2005
 @@ -135,6 +135,8 @@
      host_xm_file=i386/xm-mingw32.h
      host_xmake_file=i386/x-mingw32
@@ -1396,9 +1572,9 @@ diff -NBaur gcc-3.4.4/gcc/config.host gcc-3.4.4-new/gcc/config.host
      ;;
    i[34567]86-*-uwin*)
      echo "*** UWIN may not be used as a host platform because"
-diff -NBaur gcc-3.4.4/gcc/cp/decl2.c gcc-3.4.4-new/gcc/cp/decl2.c
+diff -Nbaur gcc-3.4.4/gcc/cp/decl2.c gcc-3.4.4-new/gcc/cp/decl2.c
 --- gcc-3.4.4/gcc/cp/decl2.c	Mon Oct 11 15:42:36 2004
-+++ gcc-3.4.4-new/gcc/cp/decl2.c	Tue Jun 14 03:43:50 2005
++++ gcc-3.4.4-new/gcc/cp/decl2.c	Wed Jul  6 01:50:37 2005
 @@ -1476,6 +1476,11 @@
  	{
  	  TREE_PUBLIC (decl) = 1;
@@ -1411,9 +1587,9 @@ diff -NBaur gcc-3.4.4/gcc/cp/decl2.c gcc-3.4.4-new/gcc/cp/decl2.c
  	}
      }
  }
-diff -NBaur gcc-3.4.4/gcc/cp/parser.c gcc-3.4.4-new/gcc/cp/parser.c
+diff -Nbaur gcc-3.4.4/gcc/cp/parser.c gcc-3.4.4-new/gcc/cp/parser.c
 --- gcc-3.4.4/gcc/cp/parser.c	Tue Apr  5 00:43:47 2005
-+++ gcc-3.4.4-new/gcc/cp/parser.c	Tue Jun 14 03:43:50 2005
++++ gcc-3.4.4-new/gcc/cp/parser.c	Wed Jul  6 01:50:37 2005
 @@ -9320,7 +9320,7 @@
  	     declaration context.  */
  
@@ -1423,9 +1599,9 @@ diff -NBaur gcc-3.4.4/gcc/cp/parser.c gcc-3.4.4-new/gcc/cp/parser.c
  	    warning ("type attributes are honored only at type definition");
  
  	  type = xref_tag (tag_type, identifier, 
-diff -NBaur gcc-3.4.4/gcc/cp/repo.c gcc-3.4.4-new/gcc/cp/repo.c
+diff -Nbaur gcc-3.4.4/gcc/cp/repo.c gcc-3.4.4-new/gcc/cp/repo.c
 --- gcc-3.4.4/gcc/cp/repo.c	Fri Dec 19 23:28:09 2003
-+++ gcc-3.4.4-new/gcc/cp/repo.c	Tue Jun 14 03:43:50 2005
++++ gcc-3.4.4-new/gcc/cp/repo.c	Wed Jul  6 01:50:37 2005
 @@ -1,5 +1,5 @@
  /* Code to maintain a C++ template repository.
 -   Copyright (C) 1995, 1996, 1997, 1998, 2000, 2001, 2002, 2003
@@ -1453,9 +1629,9 @@ diff -NBaur gcc-3.4.4/gcc/cp/repo.c gcc-3.4.4-new/gcc/cp/repo.c
  	inside = !inside;
        else
  	obstack_1grow (&temporary_obstack, c);
-diff -NBaur gcc-3.4.4/gcc/crtstuff.c gcc-3.4.4-new/gcc/crtstuff.c
+diff -Nbaur gcc-3.4.4/gcc/crtstuff.c gcc-3.4.4-new/gcc/crtstuff.c
 --- gcc-3.4.4/gcc/crtstuff.c	Thu Oct 14 00:29:04 2004
-+++ gcc-3.4.4-new/gcc/crtstuff.c	Tue Jun 14 03:43:50 2005
++++ gcc-3.4.4-new/gcc/crtstuff.c	Wed Jul  6 01:50:37 2005
 @@ -134,6 +134,8 @@
  /* Likewise for _Jv_RegisterClasses.  */
  extern void _Jv_RegisterClasses (void *) TARGET_ATTRIBUTE_WEAK;
@@ -1574,9 +1750,9 @@ diff -NBaur gcc-3.4.4/gcc/crtstuff.c gcc-3.4.4-new/gcc/crtstuff.c
 +#endif
 +
 +#endif /* __MINGW32__ || __CYGWIN__ */
-diff -NBaur gcc-3.4.4/gcc/doc/extend.texi gcc-3.4.4-new/gcc/doc/extend.texi
+diff -Nbaur gcc-3.4.4/gcc/doc/extend.texi gcc-3.4.4-new/gcc/doc/extend.texi
 --- gcc-3.4.4/gcc/doc/extend.texi	Sat Feb 26 22:17:26 2005
-+++ gcc-3.4.4-new/gcc/doc/extend.texi	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/gcc/doc/extend.texi	Wed Jul  6 01:50:37 2005
 @@ -3385,7 +3385,7 @@
  @item dllimport
  The @code{dllimport} attribute is described in @xref{Function Attributes}.
@@ -1586,9 +1762,9 @@ diff -NBaur gcc-3.4.4/gcc/doc/extend.texi gcc-3.4.4-new/gcc/doc/extend.texi
  The @code{dllexport} attribute is described in @xref{Function Attributes}.
  
  @end table
-diff -NBaur gcc-3.4.4/gcc/doc/hostconfig.texi gcc-3.4.4-new/gcc/doc/hostconfig.texi
+diff -Nbaur gcc-3.4.4/gcc/doc/hostconfig.texi gcc-3.4.4-new/gcc/doc/hostconfig.texi
 --- gcc-3.4.4/gcc/doc/hostconfig.texi	Wed Jul 30 00:36:47 2003
-+++ gcc-3.4.4-new/gcc/doc/hostconfig.texi	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/gcc/doc/hostconfig.texi	Wed Jul  6 01:50:37 2005
 @@ -196,7 +196,15 @@
  Define this macro if the host system has a small limit on the total
  size of an argument vector.  This causes the driver to take more care
@@ -1605,9 +1781,9 @@ diff -NBaur gcc-3.4.4/gcc/doc/hostconfig.texi gcc-3.4.4-new/gcc/doc/hostconfig.t
  
  In addition, if @command{configure} generates an incorrect definition of
  any of the macros in @file{auto-host.h}, you can override that
-diff -NBaur gcc-3.4.4/gcc/doc/invoke.texi gcc-3.4.4-new/gcc/doc/invoke.texi
+diff -Nbaur gcc-3.4.4/gcc/doc/invoke.texi gcc-3.4.4-new/gcc/doc/invoke.texi
 --- gcc-3.4.4/gcc/doc/invoke.texi	Fri Apr 22 07:49:59 2005
-+++ gcc-3.4.4-new/gcc/doc/invoke.texi	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/gcc/doc/invoke.texi	Wed Jul  6 01:50:37 2005
 @@ -497,7 +497,7 @@
  -m96bit-long-double  -mregparm=@var{num}  -momit-leaf-frame-pointer @gol
  -mno-red-zone -mno-tls-direct-seg-refs @gol
@@ -1648,9 +1824,9 @@ diff -NBaur gcc-3.4.4/gcc/doc/invoke.texi gcc-3.4.4-new/gcc/doc/invoke.texi
  @end table
  
  @node HPPA Options
-diff -NBaur gcc-3.4.4/gcc/gcc.c gcc-3.4.4-new/gcc/gcc.c
+diff -Nbaur gcc-3.4.4/gcc/gcc.c gcc-3.4.4-new/gcc/gcc.c
 --- gcc-3.4.4/gcc/gcc.c	Sun May  1 11:33:14 2005
-+++ gcc-3.4.4-new/gcc/gcc.c	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/gcc/gcc.c	Wed Jul  6 01:50:37 2005
 @@ -88,7 +88,7 @@
  #ifdef HAVE_SYS_RESOURCE_H
  #include <sys/resource.h>
@@ -1737,9 +1913,9 @@ diff -NBaur gcc-3.4.4/gcc/gcc.c gcc-3.4.4-new/gcc/gcc.c
  			  {
  			    temp_filename = save_string (temp_filename,
  							 temp_filename_length + 1);
-diff -NBaur gcc-3.4.4/gcc/ggc.h gcc-3.4.4-new/gcc/ggc.h
+diff -Nbaur gcc-3.4.4/gcc/ggc.h gcc-3.4.4-new/gcc/ggc.h
 --- gcc-3.4.4/gcc/ggc.h	Sun Dec 21 14:08:33 2003
-+++ gcc-3.4.4-new/gcc/ggc.h	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/gcc/ggc.h	Wed Jul  6 01:50:37 2005
 @@ -287,4 +287,8 @@
  extern int ggc_min_heapsize_heuristic (void);
  extern void init_ggc_heuristics (void);
@@ -1749,9 +1925,9 @@ diff -NBaur gcc-3.4.4/gcc/ggc.h gcc-3.4.4-new/gcc/ggc.h
 +#endif
 +
  #endif
-diff -NBaur gcc-3.4.4/gcc/ginclude/stdarg.h gcc-3.4.4-new/gcc/ginclude/stdarg.h
+diff -Nbaur gcc-3.4.4/gcc/ginclude/stdarg.h gcc-3.4.4-new/gcc/ginclude/stdarg.h
 --- gcc-3.4.4/gcc/ginclude/stdarg.h	Thu Mar 13 02:58:40 2003
-+++ gcc-3.4.4-new/gcc/ginclude/stdarg.h	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/gcc/ginclude/stdarg.h	Wed Jul  6 01:50:37 2005
 @@ -30,6 +30,7 @@
  
  #ifndef _STDARG_H
@@ -1767,9 +1943,9 @@ diff -NBaur gcc-3.4.4/gcc/ginclude/stdarg.h gcc-3.4.4-new/gcc/ginclude/stdarg.h
 +#endif /* not RC_INVOKED */
  #endif /* not _ANSI_STDARG_H_ */
  #endif /* not _STDARG_H */
-diff -NBaur gcc-3.4.4/gcc/hwint.h gcc-3.4.4-new/gcc/hwint.h
+diff -Nbaur gcc-3.4.4/gcc/hwint.h gcc-3.4.4-new/gcc/hwint.h
 --- gcc-3.4.4/gcc/hwint.h	Wed Jun 25 20:33:08 2003
-+++ gcc-3.4.4-new/gcc/hwint.h	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/gcc/hwint.h	Wed Jul  6 01:50:38 2005
 @@ -15,6 +15,12 @@
  #define HOST_BITS_PER_INT   (CHAR_BIT * SIZEOF_INT)
  #define HOST_BITS_PER_LONG  (CHAR_BIT * SIZEOF_LONG)
@@ -1813,9 +1989,9 @@ diff -NBaur gcc-3.4.4/gcc/hwint.h gcc-3.4.4-new/gcc/hwint.h
  #endif
  
  #endif /* ! GCC_HWINT_H */
-diff -NBaur gcc-3.4.4/gcc/libgcc2.c gcc-3.4.4-new/gcc/libgcc2.c
+diff -Nbaur gcc-3.4.4/gcc/libgcc2.c gcc-3.4.4-new/gcc/libgcc2.c
 --- gcc-3.4.4/gcc/libgcc2.c	Wed Dec 15 12:34:24 2004
-+++ gcc-3.4.4-new/gcc/libgcc2.c	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/gcc/libgcc2.c	Wed Jul  6 01:50:38 2005
 @@ -1573,7 +1573,7 @@
  
  /* Jump to a trampoline, loading the static chain address.  */
@@ -1825,9 +2001,9 @@ diff -NBaur gcc-3.4.4/gcc/libgcc2.c gcc-3.4.4-new/gcc/libgcc2.c
  
  long
  getpagesize (void)
-diff -NBaur gcc-3.4.4/gcc/mklibgcc.in gcc-3.4.4-new/gcc/mklibgcc.in
+diff -Nbaur gcc-3.4.4/gcc/mklibgcc.in gcc-3.4.4-new/gcc/mklibgcc.in
 --- gcc-3.4.4/gcc/mklibgcc.in	Thu Feb 24 09:26:57 2005
-+++ gcc-3.4.4-new/gcc/mklibgcc.in	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/gcc/mklibgcc.in	Wed Jul  6 01:50:38 2005
 @@ -46,6 +46,7 @@
  echo 'srcdir = @srcdir@'
  echo 'VPATH = @srcdir@'
@@ -1836,9 +2012,9 @@ diff -NBaur gcc-3.4.4/gcc/mklibgcc.in gcc-3.4.4-new/gcc/mklibgcc.in
  echo
  echo 'force:'
  echo
-diff -NBaur gcc-3.4.4/gcc/mklibgcc.in.patch gcc-3.4.4-new/gcc/mklibgcc.in.patch
+diff -Nbaur gcc-3.4.4/gcc/mklibgcc.in.patch gcc-3.4.4-new/gcc/mklibgcc.in.patch
 --- gcc-3.4.4/gcc/mklibgcc.in.patch	Thu Jan  1 00:00:00 1970
-+++ gcc-3.4.4-new/gcc/mklibgcc.in.patch	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/gcc/mklibgcc.in.patch	Wed Jul  6 01:50:38 2005
 @@ -0,0 +1,10 @@
 +--- mklibgcc.in.orig	Sat May 15 18:33:35 2004
 ++++ mklibgcc.in	Tue May 11 12:54:15 2004
@@ -1850,9 +2026,9 @@ diff -NBaur gcc-3.4.4/gcc/mklibgcc.in.patch gcc-3.4.4-new/gcc/mklibgcc.in.patch
 + echo
 + echo 'force:'
 + echo
-diff -NBaur gcc-3.4.4/gcc/stor-layout.c gcc-3.4.4-new/gcc/stor-layout.c
+diff -Nbaur gcc-3.4.4/gcc/stor-layout.c gcc-3.4.4-new/gcc/stor-layout.c
 --- gcc-3.4.4/gcc/stor-layout.c	Sat May 29 00:16:00 2004
-+++ gcc-3.4.4-new/gcc/stor-layout.c	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/gcc/stor-layout.c	Wed Jul  6 01:50:38 2005
 @@ -1,6 +1,6 @@
  /* C-compiler utilities for types and variables storage layout
     Copyright (C) 1987, 1988, 1992, 1993, 1994, 1995, 1996, 1996, 1998,
@@ -1861,9 +2037,9 @@ diff -NBaur gcc-3.4.4/gcc/stor-layout.c gcc-3.4.4-new/gcc/stor-layout.c
  
  This file is part of GCC.
  
-diff -NBaur gcc-3.4.4/gcc/system.h gcc-3.4.4-new/gcc/system.h
+diff -Nbaur gcc-3.4.4/gcc/system.h gcc-3.4.4-new/gcc/system.h
 --- gcc-3.4.4/gcc/system.h	Mon Mar 15 23:22:47 2004
-+++ gcc-3.4.4-new/gcc/system.h	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/gcc/system.h	Wed Jul  6 01:50:38 2005
 @@ -486,6 +486,19 @@
  #define HOST_BIT_BUCKET "/dev/null"
  #endif
@@ -1884,9 +2060,9 @@ diff -NBaur gcc-3.4.4/gcc/system.h gcc-3.4.4-new/gcc/system.h
  /* Be conservative and only use enum bitfields with GCC.
     FIXME: provide a complete autoconf test for buggy enum bitfields.  */
  
-diff -NBaur gcc-3.4.4/gcc/tlink.c gcc-3.4.4-new/gcc/tlink.c
+diff -Nbaur gcc-3.4.4/gcc/tlink.c gcc-3.4.4-new/gcc/tlink.c
 --- gcc-3.4.4/gcc/tlink.c	Sat Jul 19 15:47:14 2003
-+++ gcc-3.4.4-new/gcc/tlink.c	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/gcc/tlink.c	Wed Jul  6 01:50:38 2005
 @@ -463,11 +463,20 @@
  	}
        fclose (stream);
@@ -1910,9 +2086,9 @@ diff -NBaur gcc-3.4.4/gcc/tlink.c gcc-3.4.4-new/gcc/tlink.c
        obstack_grow (&temporary_obstack, c_file_name, strlen (c_file_name));
        obstack_1grow (&temporary_obstack, ' ');
        obstack_grow (&temporary_obstack, f->args, strlen (f->args));
-diff -NBaur gcc-3.4.4/gcc/unwind-dw2-fde.c gcc-3.4.4-new/gcc/unwind-dw2-fde.c
+diff -Nbaur gcc-3.4.4/gcc/unwind-dw2-fde.c gcc-3.4.4-new/gcc/unwind-dw2-fde.c
 --- gcc-3.4.4/gcc/unwind-dw2-fde.c	Fri Oct 31 20:46:26 2003
-+++ gcc-3.4.4-new/gcc/unwind-dw2-fde.c	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/gcc/unwind-dw2-fde.c	Wed Jul  6 01:50:38 2005
 @@ -41,18 +41,32 @@
  #include "gthr.h"
  #endif
@@ -1988,9 +2164,9 @@ diff -NBaur gcc-3.4.4/gcc/unwind-dw2-fde.c gcc-3.4.4-new/gcc/unwind-dw2-fde.c
  }
  
  #define SWAP(x,y) do { const fde * tmp = x; x = y; y = tmp; } while (0)
-diff -NBaur gcc-3.4.4/gcc/unwind-sjlj.c gcc-3.4.4-new/gcc/unwind-sjlj.c
+diff -Nbaur gcc-3.4.4/gcc/unwind-sjlj.c gcc-3.4.4-new/gcc/unwind-sjlj.c
 --- gcc-3.4.4/gcc/unwind-sjlj.c	Sun Nov  2 00:00:08 2003
-+++ gcc-3.4.4-new/gcc/unwind-sjlj.c	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/gcc/unwind-sjlj.c	Wed Jul  6 01:50:38 2005
 @@ -35,6 +35,10 @@
  #include "unwind.h"
  #include "gthr.h"
@@ -2073,9 +2249,9 @@ diff -NBaur gcc-3.4.4/gcc/unwind-sjlj.c gcc-3.4.4-new/gcc/unwind-sjlj.c
  #if __GTHREADS
    if (use_fc_key < 0)
      fc_key_init_once ();
-diff -NBaur gcc-3.4.4/gcc/varasm.c gcc-3.4.4-new/gcc/varasm.c
+diff -Nbaur gcc-3.4.4/gcc/varasm.c gcc-3.4.4-new/gcc/varasm.c
 --- gcc-3.4.4/gcc/varasm.c	Wed Mar  2 20:57:48 2005
-+++ gcc-3.4.4-new/gcc/varasm.c	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/gcc/varasm.c	Wed Jul  6 01:50:38 2005
 @@ -4975,6 +4975,7 @@
  default_elf_select_section_1 (tree decl, int reloc,
  			      unsigned HOST_WIDE_INT align, int shlib)
@@ -2162,27 +2338,18 @@ diff -NBaur gcc-3.4.4/gcc/varasm.c gcc-3.4.4-new/gcc/varasm.c
  }
  
  /* Construct a unique section name based on the decl name and the
-diff -NBaur gcc-3.4.4/gcc/version.c gcc-3.4.4-new/gcc/version.c
+diff -Nbaur gcc-3.4.4/gcc/version.c gcc-3.4.4-new/gcc/version.c
 --- gcc-3.4.4/gcc/version.c	Thu May 19 08:51:53 2005
-+++ gcc-3.4.4-new/gcc/version.c	Tue Jun 14 03:43:51 2005
-@@ -5,7 +5,7 @@
-    please modify this string to indicate that, e.g. by putting your
-    organization's name in parentheses at the end of the string.  */
- 
--const char version_string[] = "3.4.4";
-+const char version_string[] = "3.4.4";
- 
- /* This is the location of the online document giving instructions for
-    reporting bugs.  If you distribute a modified version of GCC,
++++ gcc-3.4.4-new/gcc/version.c	Wed Jul  6 01:50:38 2005
 @@ -14,4 +14,4 @@
     forward us bugs reported to you, if you determine that they are
     not bugs in your modifications.)  */
  
 -const char bug_report_url[] = "<URL:http://gcc.gnu.org/bugs.html>";
 +const char bug_report_url[] = "<URL:http://devkitpro.sourceforge.net/bugs.shtml>";
-diff -NBaur gcc-3.4.4/include/libiberty.h gcc-3.4.4-new/include/libiberty.h
+diff -Nbaur gcc-3.4.4/include/libiberty.h gcc-3.4.4-new/include/libiberty.h
 --- gcc-3.4.4/include/libiberty.h	Thu May 15 20:02:12 2003
-+++ gcc-3.4.4-new/include/libiberty.h	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/include/libiberty.h	Wed Jul  6 01:50:38 2005
 @@ -1,6 +1,6 @@
  /* Function declarations for libiberty.
  
@@ -2218,9 +2385,9 @@ diff -NBaur gcc-3.4.4/include/libiberty.h gcc-3.4.4-new/include/libiberty.h
  
  extern int pwait PARAMS ((int, int *, int));
  
-diff -NBaur gcc-3.4.4/include/pex-read.h gcc-3.4.4-new/include/pex-read.h
+diff -Nbaur gcc-3.4.4/include/pex-read.h gcc-3.4.4-new/include/pex-read.h
 --- gcc-3.4.4/include/pex-read.h	Thu Jan  1 00:00:00 1970
-+++ gcc-3.4.4-new/include/pex-read.h	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/include/pex-read.h	Wed Jul  6 01:50:38 2005
 @@ -0,0 +1,41 @@
 +/* Declarations of the pex-read functions for libiberty.
 +   Copyright 2004 Free Software Foundation, Inc.
@@ -2263,9 +2430,9 @@ diff -NBaur gcc-3.4.4/include/pex-read.h gcc-3.4.4-new/include/pex-read.h
 +#endif
 +
 +#endif /* PEX_READ_H */
-diff -NBaur gcc-3.4.4/libiberty/ChangeLog gcc-3.4.4-new/libiberty/ChangeLog
+diff -Nbaur gcc-3.4.4/libiberty/ChangeLog gcc-3.4.4-new/libiberty/ChangeLog
 --- gcc-3.4.4/libiberty/ChangeLog	Thu May 19 08:50:22 2005
-+++ gcc-3.4.4-new/libiberty/ChangeLog	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/libiberty/ChangeLog	Wed Jul  6 01:50:38 2005
 @@ -23,11 +23,33 @@
  
  	* GCC 3.4.0 released.
@@ -2342,9 +2509,9 @@ diff -NBaur gcc-3.4.4/libiberty/ChangeLog gcc-3.4.4-new/libiberty/ChangeLog
  
  2004-01-15  Kazu Hirata  <kazu@cs.umass.edu>
  
-diff -NBaur gcc-3.4.4/libiberty/Makefile.in gcc-3.4.4-new/libiberty/Makefile.in
+diff -Nbaur gcc-3.4.4/libiberty/Makefile.in gcc-3.4.4-new/libiberty/Makefile.in
 --- gcc-3.4.4/libiberty/Makefile.in	Wed Jan 14 21:27:28 2004
-+++ gcc-3.4.4-new/libiberty/Makefile.in	Tue Jun 14 03:43:51 2005
++++ gcc-3.4.4-new/libiberty/Makefile.in	Wed Jul  6 01:50:38 2005
 @@ -28,7 +28,6 @@
  
  libiberty_topdir = @libiberty_topdir@
@@ -3248,9 +3415,9 @@ diff -NBaur gcc-3.4.4/libiberty/Makefile.in gcc-3.4.4-new/libiberty/Makefile.in
 +	else true; fi
 +	$(COMPILE.c) $(srcdir)/xstrerror.c $(OUTPUT_OPTION)
 +
-diff -NBaur gcc-3.4.4/libiberty/config.in gcc-3.4.4-new/libiberty/config.in
+diff -Nbaur gcc-3.4.4/libiberty/config.in gcc-3.4.4-new/libiberty/config.in
 --- gcc-3.4.4/libiberty/config.in	Sat Jan 10 02:17:41 2004
-+++ gcc-3.4.4-new/libiberty/config.in	Tue Jun 14 03:43:52 2005
++++ gcc-3.4.4-new/libiberty/config.in	Wed Jul  6 01:50:38 2005
 @@ -1,7 +1,4 @@
  /* config.in.  Generated from configure.ac by autoheader.  */
 -/* Define to `unsigned long' if <sys/types.h> doesn't define.  */
@@ -3273,9 +3440,9 @@ diff -NBaur gcc-3.4.4/libiberty/config.in gcc-3.4.4-new/libiberty/config.in
  
  /* Define to `int' if <sys/types.h> does not define. */
  #undef pid_t
-diff -NBaur gcc-3.4.4/libiberty/configure gcc-3.4.4-new/libiberty/configure
+diff -Nbaur gcc-3.4.4/libiberty/configure gcc-3.4.4-new/libiberty/configure
 --- gcc-3.4.4/libiberty/configure	Wed Oct  1 18:11:29 2003
-+++ gcc-3.4.4-new/libiberty/configure	Tue Jun 14 03:43:52 2005
++++ gcc-3.4.4-new/libiberty/configure	Wed Jul  6 01:50:39 2005
 @@ -1,9 +1,8 @@
  #! /bin/sh
  # Guess values for system-dependent variables and create Makefiles.
@@ -3840,7 +4007,7 @@ diff -NBaur gcc-3.4.4/libiberty/configure gcc-3.4.4-new/libiberty/configure
           { ac_try='test -s conftest.$ac_objext'
    { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
    (eval $ac_try) 2>&5
-@@ -3077,7 +3188,7 @@
+@@ -3077,21 +3188,25 @@
  sed 's/^/| /' conftest.$ac_ext >&5
  
  fi
@@ -3848,8 +4015,6 @@ diff -NBaur gcc-3.4.4/libiberty/configure gcc-3.4.4-new/libiberty/configure
 +rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
  done
  
- fi
-@@ -3083,15 +3194,19 @@
  fi
  echo "$as_me:$LINENO: result: $ac_cv_c_inline" >&5
  echo "${ECHO_T}$ac_cv_c_inline" >&6
@@ -5462,9 +5627,9 @@ diff -NBaur gcc-3.4.4/libiberty/configure gcc-3.4.4-new/libiberty/configure
  
  
    { echo "$as_me:$LINENO: executing $ac_dest commands" >&5
-diff -NBaur gcc-3.4.4/libiberty/configure.ac gcc-3.4.4-new/libiberty/configure.ac
+diff -Nbaur gcc-3.4.4/libiberty/configure.ac gcc-3.4.4-new/libiberty/configure.ac
 --- gcc-3.4.4/libiberty/configure.ac	Sat Jan 10 02:17:41 2004
-+++ gcc-3.4.4-new/libiberty/configure.ac	Tue Jun 14 03:43:52 2005
++++ gcc-3.4.4-new/libiberty/configure.ac	Wed Jul  6 01:50:39 2005
 @@ -1,7 +1,8 @@
  dnl Process this file with autoconf to produce a configure script
  
@@ -5563,9 +5728,9 @@ diff -NBaur gcc-3.4.4/libiberty/configure.ac gcc-3.4.4-new/libiberty/configure.a
 -)
 +]])
 +AC_OUTPUT
-diff -NBaur gcc-3.4.4/libiberty/dyn-string.c gcc-3.4.4-new/libiberty/dyn-string.c
+diff -Nbaur gcc-3.4.4/libiberty/dyn-string.c gcc-3.4.4-new/libiberty/dyn-string.c
 --- gcc-3.4.4/libiberty/dyn-string.c	Mon Apr  1 22:55:12 2002
-+++ gcc-3.4.4-new/libiberty/dyn-string.c	Tue Jun 14 03:43:52 2005
++++ gcc-3.4.4-new/libiberty/dyn-string.c	Wed Jul  6 01:50:39 2005
 @@ -1,5 +1,5 @@
  /* An abstract string datatype.
 -   Copyright (C) 1998, 1999, 2000, 2002 Free Software Foundation, Inc.
@@ -5589,9 +5754,9 @@ diff -NBaur gcc-3.4.4/libiberty/dyn-string.c gcc-3.4.4-new/libiberty/dyn-string.
  
  /* Performs in-place initialization of a dyn_string struct.  This
     function can be used with a dyn_string struct on the stack or
-diff -NBaur gcc-3.4.4/libiberty/getpwd.c gcc-3.4.4-new/libiberty/getpwd.c
+diff -Nbaur gcc-3.4.4/libiberty/getpwd.c gcc-3.4.4-new/libiberty/getpwd.c
 --- gcc-3.4.4/libiberty/getpwd.c	Sun Oct  7 22:53:31 2001
-+++ gcc-3.4.4-new/libiberty/getpwd.c	Tue Jun 14 03:43:52 2005
++++ gcc-3.4.4-new/libiberty/getpwd.c	Wed Jul  6 01:50:39 2005
 @@ -35,6 +35,9 @@
  #if HAVE_SYS_STAT_H
  #include <sys/stat.h>
@@ -5602,9 +5767,9 @@ diff -NBaur gcc-3.4.4/libiberty/getpwd.c gcc-3.4.4-new/libiberty/getpwd.c
  
  /* Prototype these in case the system headers don't provide them. */
  extern char *getpwd ();
-diff -NBaur gcc-3.4.4/libiberty/maint-tool gcc-3.4.4-new/libiberty/maint-tool
+diff -Nbaur gcc-3.4.4/libiberty/maint-tool gcc-3.4.4-new/libiberty/maint-tool
 --- gcc-3.4.4/libiberty/maint-tool	Tue Apr 15 20:21:38 2003
-+++ gcc-3.4.4-new/libiberty/maint-tool	Tue Jun 14 03:43:52 2005
++++ gcc-3.4.4-new/libiberty/maint-tool	Wed Jul  6 01:50:39 2005
 @@ -213,6 +213,12 @@
  
  sub deps {
@@ -5645,9 +5810,9 @@ diff -NBaur gcc-3.4.4/libiberty/maint-tool gcc-3.4.4-new/libiberty/maint-tool
  	}
      }
      closedir(S);
-diff -NBaur gcc-3.4.4/libiberty/pex-common.h gcc-3.4.4-new/libiberty/pex-common.h
+diff -Nbaur gcc-3.4.4/libiberty/pex-common.h gcc-3.4.4-new/libiberty/pex-common.h
 --- gcc-3.4.4/libiberty/pex-common.h	Fri Jan 24 20:02:11 2003
-+++ gcc-3.4.4-new/libiberty/pex-common.h	Tue Jun 14 03:43:52 2005
++++ gcc-3.4.4-new/libiberty/pex-common.h	Wed Jul  6 01:50:39 2005
 @@ -1,6 +1,6 @@
  /* Utilities to execute a program in a subprocess (possibly linked by pipes
     with other subprocesses), and wait for it.  Shared logic.
@@ -5666,9 +5831,9 @@ diff -NBaur gcc-3.4.4/libiberty/pex-common.h gcc-3.4.4-new/libiberty/pex-common.
  
  /* value of `pipe': port index for reading.  */
  #define READ_PORT 0
-diff -NBaur gcc-3.4.4/libiberty/pex-unix.c gcc-3.4.4-new/libiberty/pex-unix.c
+diff -Nbaur gcc-3.4.4/libiberty/pex-unix.c gcc-3.4.4-new/libiberty/pex-unix.c
 --- gcc-3.4.4/libiberty/pex-unix.c	Fri Jan 24 20:02:11 2003
-+++ gcc-3.4.4-new/libiberty/pex-unix.c	Tue Jun 14 03:43:52 2005
++++ gcc-3.4.4-new/libiberty/pex-unix.c	Wed Jul  6 01:50:39 2005
 @@ -1,7 +1,7 @@
  /* Utilities to execute a program in a subprocess (possibly linked by pipes
     with other subprocesses), and wait for it.  Generic Unix version
@@ -5784,16 +5949,15 @@ diff -NBaur gcc-3.4.4/libiberty/pex-unix.c gcc-3.4.4-new/libiberty/pex-unix.c
  
        /* Exec the program.  */
 -      (*func) (program, argv);
--
--      fprintf (stderr, "%s: ", this_pname);
--      fprintf (stderr, install_error_msg, program);
--      fprintf (stderr, ": %s\n", xstrerror (errno));
--      exit (-1);
 +      if (flags & PEXECUTE_SEARCH)
 +	execvp (program, argv);
 +      else
 +	execv (program, argv);
-+
+ 
+-      fprintf (stderr, "%s: ", this_pname);
+-      fprintf (stderr, install_error_msg, program);
+-      fprintf (stderr, ": %s\n", xstrerror (errno));
+-      exit (-1);
 +      /* We don't want to call fprintf after vfork.  */
 +#define writeerr(s) write (STDERR_FILE_NO, s, strlen (s))
 +      writeerr (this_pname);
@@ -5807,9 +5971,9 @@ diff -NBaur gcc-3.4.4/libiberty/pex-unix.c gcc-3.4.4-new/libiberty/pex-unix.c
        /* NOTREACHED */
        return 0;
  
-diff -NBaur gcc-3.4.4/libiberty/pexecute.txh gcc-3.4.4-new/libiberty/pexecute.txh
+diff -Nbaur gcc-3.4.4/libiberty/pexecute.txh gcc-3.4.4-new/libiberty/pexecute.txh
 --- gcc-3.4.4/libiberty/pexecute.txh	Fri Jan 24 20:02:11 2003
-+++ gcc-3.4.4-new/libiberty/pexecute.txh	Tue Jun 14 03:43:52 2005
++++ gcc-3.4.4-new/libiberty/pexecute.txh	Wed Jul  6 01:50:39 2005
 @@ -1,4 +1,4 @@
 -@deftypefn Extension int pexecute (const char *@var{program}, char * const *@var{argv}, const char *@var{this_pname}, const char *@var{temp_base}, char **@var{errmsg_fmt}, char **@var{errmsg_arg}, int flags)
 +@deftypefn Extension int pexecute (const char *@var{program}, char * const *@var{argv}, const char *@var{this_pname}, const char *@var{temp_base}, char **@var{errmsg_fmt}, char **@var{errmsg_arg}, int @var{flags})
@@ -5856,9 +6020,9 @@ diff -NBaur gcc-3.4.4/libiberty/pexecute.txh gcc-3.4.4-new/libiberty/pexecute.tx
 +subprocess.
 +
 +@end deftypefn
-diff -NBaur gcc-3.4.4/libiberty/pexrd-generic.c gcc-3.4.4-new/libiberty/pexrd-generic.c
+diff -Nbaur gcc-3.4.4/libiberty/pexrd-generic.c gcc-3.4.4-new/libiberty/pexrd-generic.c
 --- gcc-3.4.4/libiberty/pexrd-generic.c	Thu Jan  1 00:00:00 1970
-+++ gcc-3.4.4-new/libiberty/pexrd-generic.c	Tue Jun 14 03:43:52 2005
++++ gcc-3.4.4-new/libiberty/pexrd-generic.c	Wed Jul  6 01:50:39 2005
 @@ -0,0 +1,72 @@
 +/* Execute a program and read stdout.  Generic version.
 +   Copyright (C) 2004 Free Software Foundation, Inc.
@@ -5932,9 +6096,9 @@ diff -NBaur gcc-3.4.4/libiberty/pexrd-generic.c gcc-3.4.4-new/libiberty/pexrd-ge
 +  *status = pclose (file);
 +  return 0;
 +}
-diff -NBaur gcc-3.4.4/libiberty/pexrd-unix.c gcc-3.4.4-new/libiberty/pexrd-unix.c
+diff -Nbaur gcc-3.4.4/libiberty/pexrd-unix.c gcc-3.4.4-new/libiberty/pexrd-unix.c
 --- gcc-3.4.4/libiberty/pexrd-unix.c	Thu Jan  1 00:00:00 1970
-+++ gcc-3.4.4-new/libiberty/pexrd-unix.c	Tue Jun 14 03:43:52 2005
++++ gcc-3.4.4-new/libiberty/pexrd-unix.c	Wed Jul  6 01:50:39 2005
 @@ -0,0 +1,164 @@
 +/* Execute a program and read stdout.  Generic Unix version.
 +   Copyright (C) 2004 Free Software Foundation, Inc.
@@ -6100,9 +6264,9 @@ diff -NBaur gcc-3.4.4/libiberty/pexrd-unix.c gcc-3.4.4-new/libiberty/pexrd-unix.
 +  fclose (file);
 +  return waitpid (pid, status, 0);
 +}
-diff -NBaur gcc-3.4.4/libiberty/regex.c gcc-3.4.4-new/libiberty/regex.c
+diff -Nbaur gcc-3.4.4/libiberty/regex.c gcc-3.4.4-new/libiberty/regex.c
 --- gcc-3.4.4/libiberty/regex.c	Tue Apr 15 15:24:26 2003
-+++ gcc-3.4.4-new/libiberty/regex.c	Tue Jun 14 03:43:52 2005
++++ gcc-3.4.4-new/libiberty/regex.c	Wed Jul  6 01:50:39 2005
 @@ -36,6 +36,8 @@
  # include <config.h>
  #endif
@@ -6130,9 +6294,9 @@ diff -NBaur gcc-3.4.4/libiberty/regex.c gcc-3.4.4-new/libiberty/regex.c
      char *errbuf;
      size_t errbuf_size;
  {
-diff -NBaur gcc-3.4.4/libiberty/strerror.c gcc-3.4.4-new/libiberty/strerror.c
+diff -Nbaur gcc-3.4.4/libiberty/strerror.c gcc-3.4.4-new/libiberty/strerror.c
 --- gcc-3.4.4/libiberty/strerror.c	Thu Oct  2 20:06:29 2003
-+++ gcc-3.4.4-new/libiberty/strerror.c	Tue Jun 14 03:43:52 2005
++++ gcc-3.4.4-new/libiberty/strerror.c	Wed Jul  6 01:50:39 2005
 @@ -2,9 +2,6 @@
     Written by Fred Fish.  fnf@cygnus.com
     This file is in the public domain.  --Per Bothner.  */
@@ -6164,9 +6328,9 @@ diff -NBaur gcc-3.4.4/libiberty/strerror.c gcc-3.4.4-new/libiberty/strerror.c
  
  #endif
  
-diff -NBaur gcc-3.4.4/libiberty/testsuite/test-demangle.c gcc-3.4.4-new/libiberty/testsuite/test-demangle.c
+diff -Nbaur gcc-3.4.4/libiberty/testsuite/test-demangle.c gcc-3.4.4-new/libiberty/testsuite/test-demangle.c
 --- gcc-3.4.4/libiberty/testsuite/test-demangle.c	Fri Jan  2 20:33:55 2004
-+++ gcc-3.4.4-new/libiberty/testsuite/test-demangle.c	Tue Jun 14 03:43:53 2005
++++ gcc-3.4.4-new/libiberty/testsuite/test-demangle.c	Wed Jul  6 01:50:39 2005
 @@ -26,6 +26,12 @@
  #include <stdio.h>
  #include "libiberty.h"
@@ -6189,9 +6353,9 @@ diff -NBaur gcc-3.4.4/libiberty/testsuite/test-demangle.c gcc-3.4.4-new/libibert
    int no_params;
    int is_v3_ctor;
    int is_v3_dtor;
-diff -NBaur gcc-3.4.4/libstdc++-v3/config/os/mingw32/os_defines.h gcc-3.4.4-new/libstdc++-v3/config/os/mingw32/os_defines.h
+diff -Nbaur gcc-3.4.4/libstdc++-v3/config/os/mingw32/os_defines.h gcc-3.4.4-new/libstdc++-v3/config/os/mingw32/os_defines.h
 --- gcc-3.4.4/libstdc++-v3/config/os/mingw32/os_defines.h	Sat Jul  5 05:05:32 2003
-+++ gcc-3.4.4-new/libstdc++-v3/config/os/mingw32/os_defines.h	Tue Jun 14 03:43:53 2005
++++ gcc-3.4.4-new/libstdc++-v3/config/os/mingw32/os_defines.h	Wed Jul  6 01:50:39 2005
 @@ -45,4 +45,11 @@
  #undef NOMINMAX
  #define NOMINMAX 1
@@ -6204,9 +6368,9 @@ diff -NBaur gcc-3.4.4/libstdc++-v3/config/os/mingw32/os_defines.h gcc-3.4.4-new/
 +#define _GLIBCXX_NO_LONG_DOUBLE_IO 1
 +
  #endif
-diff -NBaur gcc-3.4.4/libstdc++-v3/configure.host gcc-3.4.4-new/libstdc++-v3/configure.host
+diff -Nbaur gcc-3.4.4/libstdc++-v3/configure.host gcc-3.4.4-new/libstdc++-v3/configure.host
 --- gcc-3.4.4/libstdc++-v3/configure.host	Tue Oct  5 17:32:49 2004
-+++ gcc-3.4.4-new/libstdc++-v3/configure.host	Tue Jun 14 03:43:53 2005
++++ gcc-3.4.4-new/libstdc++-v3/configure.host	Wed Jul  6 01:50:39 2005
 @@ -180,6 +180,7 @@
      ;;
    mingw32*)
@@ -6215,9 +6379,9 @@ diff -NBaur gcc-3.4.4/libstdc++-v3/configure.host gcc-3.4.4-new/libstdc++-v3/con
      ;;
    netbsd*)
      os_include_dir="os/bsd/netbsd"
-diff -NBaur gcc-3.4.4/libstdc++-v3/include/bits/char_traits.h gcc-3.4.4-new/libstdc++-v3/include/bits/char_traits.h
+diff -Nbaur gcc-3.4.4/libstdc++-v3/include/bits/char_traits.h gcc-3.4.4-new/libstdc++-v3/include/bits/char_traits.h
 --- gcc-3.4.4/libstdc++-v3/include/bits/char_traits.h	Thu Mar 18 17:36:47 2004
-+++ gcc-3.4.4-new/libstdc++-v3/include/bits/char_traits.h	Tue Jun 14 03:43:53 2005
++++ gcc-3.4.4-new/libstdc++-v3/include/bits/char_traits.h	Wed Jul  6 01:50:39 2005
 @@ -296,7 +296,7 @@
    };
  
@@ -6238,9 +6402,9 @@ diff -NBaur gcc-3.4.4/libstdc++-v3/include/bits/char_traits.h gcc-3.4.4-new/libs
  
        static void
        assign(char_type& __c1, const char_type& __c2)
-diff -NBaur gcc-3.4.4/libstdc++-v3/include/bits/locale_facets.tcc gcc-3.4.4-new/libstdc++-v3/include/bits/locale_facets.tcc
+diff -Nbaur gcc-3.4.4/libstdc++-v3/include/bits/locale_facets.tcc gcc-3.4.4-new/libstdc++-v3/include/bits/locale_facets.tcc
 --- gcc-3.4.4/libstdc++-v3/include/bits/locale_facets.tcc	Thu Nov 18 10:50:19 2004
-+++ gcc-3.4.4-new/libstdc++-v3/include/bits/locale_facets.tcc	Tue Jun 14 03:43:53 2005
++++ gcc-3.4.4-new/libstdc++-v3/include/bits/locale_facets.tcc	Wed Jul  6 01:50:39 2005
 @@ -765,7 +765,13 @@
        string __xtrc;
        __xtrc.reserve(32);
@@ -6326,9 +6490,9 @@ diff -NBaur gcc-3.4.4/libstdc++-v3/include/bits/locale_facets.tcc gcc-3.4.4-new/
        _CharT* __ws = static_cast<_CharT*>(__builtin_alloca(sizeof(_CharT)
  							   * __cs_size));
        __ctype.widen(__cs, __cs + __len, __ws);
-diff -NBaur gcc-3.4.4/libstdc++-v3/include/bits/stringfwd.h gcc-3.4.4-new/libstdc++-v3/include/bits/stringfwd.h
+diff -Nbaur gcc-3.4.4/libstdc++-v3/include/bits/stringfwd.h gcc-3.4.4-new/libstdc++-v3/include/bits/stringfwd.h
 --- gcc-3.4.4/libstdc++-v3/include/bits/stringfwd.h	Thu Mar 18 17:37:03 2004
-+++ gcc-3.4.4-new/libstdc++-v3/include/bits/stringfwd.h	Tue Jun 14 03:43:53 2005
++++ gcc-3.4.4-new/libstdc++-v3/include/bits/stringfwd.h	Wed Jul  6 01:50:39 2005
 @@ -59,7 +59,7 @@
  
    typedef basic_string<char>    string;
@@ -6338,9 +6502,9 @@ diff -NBaur gcc-3.4.4/libstdc++-v3/include/bits/stringfwd.h gcc-3.4.4-new/libstd
    template<> struct char_traits<wchar_t>;
  
    typedef basic_string<wchar_t> wstring;
-diff -NBaur gcc-3.4.4/libstdc++-v3/libsupc++/Makefile.in gcc-3.4.4-new/libstdc++-v3/libsupc++/Makefile.in
+diff -Nbaur gcc-3.4.4/libstdc++-v3/libsupc++/Makefile.in gcc-3.4.4-new/libstdc++-v3/libsupc++/Makefile.in
 --- gcc-3.4.4/libstdc++-v3/libsupc++/Makefile.in	Thu Mar 18 17:37:08 2004
-+++ gcc-3.4.4-new/libstdc++-v3/libsupc++/Makefile.in	Tue Jun 14 03:43:53 2005
++++ gcc-3.4.4-new/libstdc++-v3/libsupc++/Makefile.in	Wed Jul  6 01:50:39 2005
 @@ -210,7 +210,7 @@
  # These bits are all figured out from configure.  Look in acinclude.m4
  # or configure.ac to see how they are set.  See GLIBCXX_EXPORT_FLAGS.
@@ -6350,9 +6514,9 @@ diff -NBaur gcc-3.4.4/libstdc++-v3/libsupc++/Makefile.in gcc-3.4.4-new/libstdc++
  
  WARN_CXXFLAGS = \
  	$(WARN_FLAGS) $(WERROR) -fdiagnostics-show-location=once
-diff -NBaur gcc-3.4.4/libstdc++-v3/libsupc++/eh_globals.cc gcc-3.4.4-new/libstdc++-v3/libsupc++/eh_globals.cc
+diff -Nbaur gcc-3.4.4/libstdc++-v3/libsupc++/eh_globals.cc gcc-3.4.4-new/libstdc++-v3/libsupc++/eh_globals.cc
 --- gcc-3.4.4/libstdc++-v3/libsupc++/eh_globals.cc	Mon Nov  8 17:41:19 2004
-+++ gcc-3.4.4-new/libstdc++-v3/libsupc++/eh_globals.cc	Tue Jun 14 03:43:53 2005
++++ gcc-3.4.4-new/libstdc++-v3/libsupc++/eh_globals.cc	Wed Jul  6 01:50:40 2005
 @@ -32,6 +32,9 @@
  #include <cstdlib>
  #include "unwind-cxx.h"
@@ -6363,9 +6527,9 @@ diff -NBaur gcc-3.4.4/libstdc++-v3/libsupc++/eh_globals.cc gcc-3.4.4-new/libstdc
  #include "bits/gthr.h"
  
  using namespace __cxxabiv1;
-diff -NBaur gcc-3.4.4/libstdc++-v3/libsupc++/eh_term_handler.cc gcc-3.4.4-new/libstdc++-v3/libsupc++/eh_term_handler.cc
+diff -Nbaur gcc-3.4.4/libstdc++-v3/libsupc++/eh_term_handler.cc gcc-3.4.4-new/libstdc++-v3/libsupc++/eh_term_handler.cc
 --- gcc-3.4.4/libstdc++-v3/libsupc++/eh_term_handler.cc	Tue Sep  2 19:46:54 2003
-+++ gcc-3.4.4-new/libstdc++-v3/libsupc++/eh_term_handler.cc	Tue Jun 14 03:43:53 2005
++++ gcc-3.4.4-new/libstdc++-v3/libsupc++/eh_term_handler.cc	Wed Jul  6 01:50:40 2005
 @@ -41,6 +41,7 @@
  # include <cstdlib>
  #endif
@@ -6379,9 +6543,9 @@ diff -NBaur gcc-3.4.4/libstdc++-v3/libsupc++/eh_term_handler.cc gcc-3.4.4-new/li
  #endif
  
 +#endif
-diff -NBaur gcc-3.4.4/libstdc++-v3/libsupc++/eh_terminate.cc gcc-3.4.4-new/libstdc++-v3/libsupc++/eh_terminate.cc
+diff -Nbaur gcc-3.4.4/libstdc++-v3/libsupc++/eh_terminate.cc gcc-3.4.4-new/libstdc++-v3/libsupc++/eh_terminate.cc
 --- gcc-3.4.4/libstdc++-v3/libsupc++/eh_terminate.cc	Sat May 24 17:22:03 2003
-+++ gcc-3.4.4-new/libstdc++-v3/libsupc++/eh_terminate.cc	Tue Jun 14 03:43:54 2005
++++ gcc-3.4.4-new/libstdc++-v3/libsupc++/eh_terminate.cc	Wed Jul  6 01:50:40 2005
 @@ -50,6 +50,11 @@
  void
  std::terminate ()
@@ -6406,9 +6570,9 @@ diff -NBaur gcc-3.4.4/libstdc++-v3/libsupc++/eh_terminate.cc gcc-3.4.4-new/libst
    __unexpected (__unexpected_handler);
  }
  
-diff -NBaur gcc-3.4.4/libstdc++-v3/libsupc++/eh_unex_handler.cc gcc-3.4.4-new/libstdc++-v3/libsupc++/eh_unex_handler.cc
+diff -Nbaur gcc-3.4.4/libstdc++-v3/libsupc++/eh_unex_handler.cc gcc-3.4.4-new/libstdc++-v3/libsupc++/eh_unex_handler.cc
 --- gcc-3.4.4/libstdc++-v3/libsupc++/eh_unex_handler.cc	Sat May 24 17:22:03 2003
-+++ gcc-3.4.4-new/libstdc++-v3/libsupc++/eh_unex_handler.cc	Tue Jun 14 03:43:54 2005
++++ gcc-3.4.4-new/libstdc++-v3/libsupc++/eh_unex_handler.cc	Wed Jul  6 01:50:40 2005
 @@ -29,6 +29,7 @@
  
  #include "unwind-cxx.h"
@@ -6418,9 +6582,9 @@ diff -NBaur gcc-3.4.4/libstdc++-v3/libsupc++/eh_unex_handler.cc gcc-3.4.4-new/li
  std::unexpected_handler __cxxabiv1::__unexpected_handler = std::terminate;
 -
 +#endif
-diff -NBaur gcc-3.4.4/libstdc++-v3/libsupc++/typeinfo gcc-3.4.4-new/libstdc++-v3/libsupc++/typeinfo
+diff -Nbaur gcc-3.4.4/libstdc++-v3/libsupc++/typeinfo gcc-3.4.4-new/libstdc++-v3/libsupc++/typeinfo
 --- gcc-3.4.4/libstdc++-v3/libsupc++/typeinfo	Sat Jul  5 05:05:40 2003
-+++ gcc-3.4.4-new/libstdc++-v3/libsupc++/typeinfo	Tue Jun 14 03:43:54 2005
++++ gcc-3.4.4-new/libstdc++-v3/libsupc++/typeinfo	Wed Jul  6 01:50:40 2005
 @@ -44,7 +44,7 @@
    class __class_type_info;
  } // namespace __cxxabiv1
@@ -6430,9 +6594,9 @@ diff -NBaur gcc-3.4.4/libstdc++-v3/libsupc++/typeinfo gcc-3.4.4-new/libstdc++-v3
    // If weak symbols are not supported, typeinfo names are not merged.
    #define __GXX_MERGED_TYPEINFO_NAMES 0
  #else
-diff -NBaur gcc-3.4.4/libstdc++-v3/libsupc++/unwind-cxx.h gcc-3.4.4-new/libstdc++-v3/libsupc++/unwind-cxx.h
+diff -Nbaur gcc-3.4.4/libstdc++-v3/libsupc++/unwind-cxx.h gcc-3.4.4-new/libstdc++-v3/libsupc++/unwind-cxx.h
 --- gcc-3.4.4/libstdc++-v3/libsupc++/unwind-cxx.h	Sat Jul  5 05:05:41 2003
-+++ gcc-3.4.4-new/libstdc++-v3/libsupc++/unwind-cxx.h	Tue Jun 14 03:43:54 2005
++++ gcc-3.4.4-new/libstdc++-v3/libsupc++/unwind-cxx.h	Wed Jul  6 01:50:40 2005
 @@ -125,9 +125,16 @@
  extern void __terminate(std::terminate_handler) __attribute__((noreturn));
  extern void __unexpected(std::unexpected_handler) __attribute__((noreturn));
@@ -6451,9 +6615,9 @@ diff -NBaur gcc-3.4.4/libstdc++-v3/libsupc++/unwind-cxx.h gcc-3.4.4-new/libstdc+
  
  // These are explicitly GNU C++ specific.
  
-diff -NBaur gcc-3.4.4/libstdc++-v3/src/Makefile.in gcc-3.4.4-new/libstdc++-v3/src/Makefile.in
+diff -Nbaur gcc-3.4.4/libstdc++-v3/src/Makefile.in gcc-3.4.4-new/libstdc++-v3/src/Makefile.in
 --- gcc-3.4.4/libstdc++-v3/src/Makefile.in	Fri Apr 16 20:08:35 2004
-+++ gcc-3.4.4-new/libstdc++-v3/src/Makefile.in	Tue Jun 14 03:43:54 2005
++++ gcc-3.4.4-new/libstdc++-v3/src/Makefile.in	Wed Jul  6 01:50:40 2005
 @@ -211,7 +211,7 @@
  # These bits are all figured out from configure.  Look in acinclude.m4
  # or configure.ac to see how they are set.  See GLIBCXX_EXPORT_FLAGS.
@@ -6463,9 +6627,9 @@ diff -NBaur gcc-3.4.4/libstdc++-v3/src/Makefile.in gcc-3.4.4-new/libstdc++-v3/sr
  
  WARN_CXXFLAGS = \
  	$(WARN_FLAGS) $(WERROR) -fdiagnostics-show-location=once
-diff -NBaur gcc-3.4.4/libstdc++-v3/src/globals_io.cc gcc-3.4.4-new/libstdc++-v3/src/globals_io.cc
+diff -Nbaur gcc-3.4.4/libstdc++-v3/src/globals_io.cc gcc-3.4.4-new/libstdc++-v3/src/globals_io.cc
 --- gcc-3.4.4/libstdc++-v3/src/globals_io.cc	Thu Mar 18 17:37:13 2004
-+++ gcc-3.4.4-new/libstdc++-v3/src/globals_io.cc	Tue Jun 14 03:43:54 2005
++++ gcc-3.4.4-new/libstdc++-v3/src/globals_io.cc	Wed Jul  6 01:50:40 2005
 @@ -26,6 +26,9 @@
  // the GNU General Public License.
  
@@ -6476,9 +6640,9 @@ diff -NBaur gcc-3.4.4/libstdc++-v3/src/globals_io.cc gcc-3.4.4-new/libstdc++-v3/
  #include "bits/gthr.h"
  #include <fstream>
  #include <istream>
-diff -NBaur gcc-3.4.4/ltcf-c.sh gcc-3.4.4-new/ltcf-c.sh
+diff -Nbaur gcc-3.4.4/ltcf-c.sh gcc-3.4.4-new/ltcf-c.sh
 --- gcc-3.4.4/ltcf-c.sh	Wed Nov 19 05:29:32 2003
-+++ gcc-3.4.4-new/ltcf-c.sh	Tue Jun 14 03:43:54 2005
++++ gcc-3.4.4-new/ltcf-c.sh	Wed Jul  6 01:50:40 2005
 @@ -38,17 +38,17 @@
  lt_simple_link_test_code='main(){return(0);}'
  

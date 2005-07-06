@@ -1,6 +1,6 @@
 #!/bin/sh
 #---------------------------------------------------------------------------------
-# Build scripts for devkitARM/devkitPPC release 12
+# Build scripts for devkitARM/devkitPPC/devkitPSP
 #---------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------
@@ -12,6 +12,7 @@ NEWLIB_VER=1.13.0
 LIBOGC_VER=20050521
 LIBGBA_VER=20050615
 LIBNDS_VER=20050615
+PSPSDK_VER=1.0+beta
 
 BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
 GCC_CORE="gcc-core-$GCC_VER.tar.bz2"
@@ -20,6 +21,7 @@ NEWLIB="newlib-$NEWLIB_VER.tar.gz"
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
 LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
+PSPSDK="pspsdk-$PSPSDK_VER.tar.gz"
 
 BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/$BINUTILS"
 GCC_CORE_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_CORE"
@@ -28,7 +30,7 @@ LIBOGC_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBOGC"
 LIBGBA_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBGBA"
 LIBNDS_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBNDS"
 NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/$NEWLIB"
-
+PSPSDK_URL="http://ps2dev.org/files/$PSPSDK"
 #---------------------------------------------------------------------------------
 # Ask whether to download the source packages or not
 #---------------------------------------------------------------------------------
@@ -42,9 +44,10 @@ do
   echo
   echo "1: build devkitARM (gba gp32 ds)"
   echo "2: build devkitPPC (gamecube)"
+  echo "3: build devkitPSP (PSP)"
   read VERSION
 
-  if [ "$VERSION" -ne 1 -a "$VERSION" -ne 2 ]
+  if [ "$VERSION" -ne 1 -a "$VERSION" -ne 2 -a "$VERSION" -ne 3 ]
   then
       VERSION=0
   fi
@@ -52,18 +55,31 @@ done
 
 if [ $VERSION -eq 1 ]
 then
-  scriptdir='./dka-scripts'
+  scriptdir='./dkarm/scripts'
   package=devkitARM
   builddir=arm-elf
   target=arm-elf
   toolchain=DEVKITARM
-else
-  scriptdir='./dkp-scripts'
+fi
+
+if [ $VERSION -eq 2 ]
+then
+  scriptdir='./dkppc/scripts'
   package=devkitPPC
   builddir=powerpc-gekko
   target=powerpc-gekko
   toolchain=DEVKITPPC
 fi
+
+if [ $VERSION -eq 3 ]
+then
+  scriptdir='./dkpsp/scripts'
+  package=devkitPSP
+  builddir=psp
+  target=psp
+  toolchain=DEVKITPSP
+fi
+
 
 DOWNLOAD=0
 
@@ -167,6 +183,17 @@ then
 
     fi
 
+    if [ $VERSION -eq 3 ]
+    then
+      if [ ! -f $SRCDIR/$PSPSDK ]
+      then
+        echo "Error: $PSPSDK not found in $SRCDIR"
+	      exit
+      else
+	      FOUND=1
+      fi
+
+    fi
     done
 
 else
@@ -209,6 +236,16 @@ else
 		fi   
 	fi
 
+	if [ $VERSION -eq 3 ]
+	then
+		wget -c $PSPSDK_URL
+		if [ ! -f $PSPSDK ]
+		then
+			echo "Error: Failed to download "$PSPSDK
+			exit
+		fi   
+	fi
+
 	if [ $VERSION -eq 1 ]
 	then
 		wget -c $LIBNDS_URL
@@ -233,6 +270,7 @@ NEWLIB_SRCDIR="newlib-$NEWLIB_VER"
 LIBOGC_SRCDIR="libogc-$LIBOGC_VER"
 LIBGBA_SRCDIR="libgba-$LIBGBA_VER"
 LIBNDS_SRCDIR="libnds-$LIBNDS_VER"
+PSPSDK_SRCDIR="pspsdk-$PSPSDK_VER"
 
 #---------------------------------------------------------------------------------
 # Add installed devkit to the path, adjusting path on minsys
@@ -289,6 +327,12 @@ then
   bzip2 -cd $SRCDIR/$LIBOGC | tar -xv -C $LIBOGC_SRCDIR
 fi
 
+if [ $VERSION -eq 3 ]
+then
+  echo "Extracting $PSPSDK"
+  tar -xzvf $SRCDIR/$PSPSDK
+fi
+
 if [ $VERSION -eq 1 ]
 then
   echo "Extracting $LIBNDS"
@@ -306,6 +350,12 @@ fi
 patch -p1 -d $BINUTILS_SRCDIR -i $(pwd)/patches/devkit-binutils-$BINUTILS_VER.patch
 patch -p1 -d $GCC_SRCDIR -i $(pwd)/patches/devkit-gcc-$GCC_VER.patch
 patch -p1 -d $NEWLIB_SRCDIR -i $(pwd)/patches/devkit-newlib-$NEWLIB_VER.patch
+
+if [ $VERSION -eq 3 ]
+then
+  echo
+  patch -p1 -d $PSPSDK_SRCDIR -i $(pwd)/patches/pspsdk-$PSPSDK_VER.patch
+fi
 
 
 #---------------------------------------------------------------------------------
@@ -348,7 +398,7 @@ rm -fr $target
 rm -fr $BINUTILS_SRCDIR
 rm -fr $NEWLIB_SRCDIR
 rm -fr $GCC_SRCDIR
-rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR
+rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR PSPSDK_SRCDIR
 
 echo
 echo "Would you like to delete the source packages? [y/N]"

@@ -1,13 +1,13 @@
-Devkit r13 build scripts
+DevkitPro build scripts
 --------------------------
 
-This readme will guide you through building devkitARM or devkitPPC from source using a set of scripts.
+This readme will guide you through building devkitARM, devkitPPC or devkitPSP from source using a set of scripts.
 
 To use these scripts under minsys and MinGW you will need some additional packages over and above the base install.
 
 The minsys developer toolkit
 
-http://prdownloads.sf.net/mingw/msysDTK-1.0.1.exe?download
+http://prdownloads.sourceforge.net/mingw/msysDTK-1.0.1.exe?download
 
 Bison, Flex and Wget from the gnuwin32 project
 
@@ -38,10 +38,14 @@ libogc, libgba and libnds can be found in the sourceforge project.
 
 http://sourceforge.net/projects/devkitpro
 
-The top level shell script has now been unified and offers the option of devkitARM or devkitPPC.
+the pspsdk can be found at
 
-Building devkitARM
-------------------
+http://ps2dev.org/files/pspsdk-1.0+beta.tar.gz
+
+The top level shell script has now been unified and offers the option of devkitARM, devkitPPC or devkitPSP.
+
+Building the devkits
+--------------------
 
 Simply run the "build-devkit.sh" script in the same directory as this text file as shown below, then follow the prompts;
 
@@ -77,15 +81,6 @@ Getting started
 
 The best thing to do next is test the compiler, so go to http://www.devkit.tk and download "libgba" from the downloads section and also "PCXview" from the sample code section.
 
-
-Building devkitPPC
-------------------
-
-Simply run the "build-devkit.sh" script in the same directory as this text file as shown below, then follow the prompts;
-
-./build-devkit.sh
-
-Once the script finds the source packages they will be decompressed and the build process will begin.  When its finished you have the option to delete all temporary files, sources and their source packages.
 
 
 Using devkitPPC
@@ -144,7 +139,7 @@ planned for release 14
 	* newest libogc
 
 -------------------------------------------------------------------------------------
-18th February 2005 - release 11 beta 2
+18th February 2005 - devkitPPC release 11 beta 2
 -------------------------------------------------------------------------------------
 	* patch for http://gcc.gnu.org/bugzilla/show_bug.cgi?id=9571
 	* updated to latest libogc
@@ -171,7 +166,7 @@ planned for release 14
 	* updated specs file with -mogc switch for linking
 
 -------------------------------------------------------------------------------------
-12th June 2004 - release 6a
+12th June 2004 - devkitARM release 6a
 -------------------------------------------------------------------------------------
 	* long calls patch added
 	* -save-temps fixed (again)
@@ -180,13 +175,13 @@ planned for release 14
 	* specs file and crt0 for gamepark gp32 libraries
 
 -------------------------------------------------------------------------------------
-8th May 2004 - release 6
+8th May 2004 - devkitARM release 6
 -------------------------------------------------------------------------------------
 	* updated to gcc 3.4.0
 	* reverted to binutils 2.14.0
 
 -------------------------------------------------------------------------------------
-12th April 2004 - release 5.
+12th April 2004 - devkitARM release 5.
 -------------------------------------------------------------------------------------
     * built in crt0 and linkscript for gp32 added. Use -specs=gp32.specs when linking
     * Mr Spiv's b2fxec included
@@ -194,14 +189,14 @@ planned for release 14
     * linux build available for download
 
 -------------------------------------------------------------------------------------
-15th March 2004 - Release 4
+15th March 2004 - devkitARM Release 4
 -------------------------------------------------------------------------------------
     * updated to binutils 2.15.90
     * more msdev error output conversion
     * -save-temps fixed
 
 -------------------------------------------------------------------------------------
-26th February 2004 - Release 3a
+26th February 2004 - devkitARM Release 3a
 -------------------------------------------------------------------------------------
     * updated to newlib 1.12.0
     * crt0, linkscript and runtime library support added to DevkitARM
@@ -212,14 +207,14 @@ planned for release 14
     * updated to gcc 3.3.3
 
 -------------------------------------------------------------------------------------
-14th February 2004 - Release 2
+14th February 2004 - devkitARM Release 2
 -------------------------------------------------------------------------------------
     * crt0, linkscript and runtime library support added to DevkitPPC
     * adjusted error output for msdev
     * Fixed minor problem with include paths
 
 -------------------------------------------------------------------------------------
-16th January 2004 - release 1
+16th January 2004 - devkitARM release 1
 -------------------------------------------------------------------------------------
     * Initial build supporting arm target
     * Required link script and crt0

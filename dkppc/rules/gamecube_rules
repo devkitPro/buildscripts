@@ -1,0 +1,10 @@
+-include $(DEVKITPPC)/base_rules
+
+%.dol: %.elf
+	@echo output ... $(notdir $@)
+	@$(OBJCOPY)  -O binary $< $@
+
+#---------------------------------------------------------------------------------
+%.elf:
+	@echo linking ... $(notdir $@)
+	@$(LD)  $^ $(LDFLAGS) $(LIBPATHS) $(LIBS) -o $@
