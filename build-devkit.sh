@@ -398,7 +398,7 @@ rm -fr $target
 rm -fr $BINUTILS_SRCDIR
 rm -fr $NEWLIB_SRCDIR
 rm -fr $GCC_SRCDIR
-rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR PSPSDK_SRCDIR
+rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $PSPSDK_SRCDIR
 
 echo
 echo "Would you like to delete the source packages? [y/N]"
@@ -407,7 +407,7 @@ read answer
 if [ "$answer" = "y" -o "$answer" = "Y" ]
 then
     echo "removing archives"
-    rm -f $SRCDIR/$BINUTILS $SRCDIR/$GCC_CORE $SRCDIR/$GCC_GPP $SRCDIR/$NEWLIB $SRCDIR/$LIBGBA $SRCDIR/$LIBNDS $SRCDIR/$LIBOGC
+    rm -f $SRCDIR/$BINUTILS $SRCDIR/$GCC_CORE $SRCDIR/$GCC_GPP $SRCDIR/$NEWLIB $SRCDIR/$LIBGBA $SRCDIR/$LIBNDS $SRCDIR/$LIBOGC $SRCDIR/$PSPSDK
 fi
 
 echo
