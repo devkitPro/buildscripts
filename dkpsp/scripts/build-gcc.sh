@@ -23,11 +23,6 @@ $MAKE install 2>&1 | tee $BUILDSCRIPTDIR/binutils_install.log
 
 cd $BUILDSCRIPTDIR
 
-#---------------------------------------------------------------------------------
-# remove temp stuff to conserve disc space
-#---------------------------------------------------------------------------------
-rm -fr $target/binutils
-rm -fr $BINUTILS_SRCDIR
 
 #---------------------------------------------------------------------------------
 # build and install just the c compiler
@@ -38,9 +33,9 @@ cd $target/gcc
 
 ../../$GCC_SRCDIR/configure \
 	--enable-languages=c,c++ \
-	--disable-multilib\
+	--enable-interwork --disable-multilib\
 	--with-gcc --with-gnu-ld --with-gnu-as --with-stabs \
-	--disable-shared --disable-threads --disable-win32-registry --disable-nls\
+	--disable-shared --disable-win32-registry --disable-nls\
 	--enable-cxx-flags="-G0" \
 	--target=$target \
 	--with-newlib \
@@ -57,23 +52,15 @@ cd $BUILDSCRIPTDIR
 #---------------------------------------------------------------------------------
 mkdir -p $target/newlib
 cd $target/newlib
+mkdir etc
 
 $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure \
-	--enable-serial-configure \
 	--target=$target \
 	--prefix=$prefix \
 	| tee $BUILDSCRIPTDIR/newlib_configure.log
 
-mkdir -p etc
-
-$MAKE
-$MAKE install
-
-#---------------------------------------------------------------------------------
-# remove temp stuff to conserve disc space
-#---------------------------------------------------------------------------------
-rm -fr $target/newlib
-rm -fr $NEWLIB_SRCDIR
+$MAKE | tee $BUILDSCRIPTDIR/newlib_make.log
+$MAKE install | tee $BUILDSCRIPTDIR/newlib_install.log
 
 #---------------------------------------------------------------------------------
 # build and install the final compiler
