@@ -9,8 +9,8 @@ prefix=$INSTALLDIR/devkitPSP
 # build and install binutils
 #---------------------------------------------------------------------------------
 
-#mkdir -p $target/binutils
-#cd $target/binutils
+mkdir -p $target/binutils
+cd $target/binutils
 
 ../../$BINUTILS_SRCDIR/configure \
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \

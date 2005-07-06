@@ -6,6 +6,7 @@
 
 echo "building pspsdk ..."
 cd $PSPSDK_SRCDIR
+./configure
 $MAKE
 echo "installing pspsdk ..."
 $MAKE install
