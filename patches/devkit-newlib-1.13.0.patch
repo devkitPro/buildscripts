@@ -64,9 +64,8 @@ diff -NBaur newlib-1.13.0/configure.in newlib-1.13.0-new/configure.in
    mips*-*-*)
      noconfigdirs="$noconfigdirs gprof ${libgcj}"
      ;;
-diff -NBaur newlib-1.13.0/newlib/configure.host newlib-1.13.0-new/newlib/configure.host
 --- newlib-1.13.0/newlib/configure.host	Tue Oct  5 20:44:24 2004
-+++ newlib-1.13.0-new/newlib/configure.host	Wed Jul  6 18:25:48 2005
++++ newlib-1.13.0-new/newlib/configure.host	Fri Jul  8 05:45:18 2005
 @@ -389,6 +389,9 @@
    powerpcle-*-pe)
  	posix_dir=posix
@@ -77,16 +76,17 @@ diff -NBaur newlib-1.13.0/newlib/configure.host newlib-1.13.0-new/newlib/configu
    sh*-*)
  	sys_dir=sh
  	;;
-@@ -569,8 +572,13 @@
+@@ -569,8 +572,14 @@
  	newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES"
  	;;
    mips*-*-elf*)
-+    case "${host}" in
-+      mipsallegrex*)
-+	    newlib_cflags="${newlib_cflags} -G0 -DPREFER_SIZE_OVER_SPEED -DCOMPACT_CTYPE -DCLOCK_PROVIDED" ;;
-+      * )
-+  	    newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES" ;;
-+    esac
++	case "${host}" in
++	  mipsallegrex*-psp-*)
++		syscall_dir=syscalls
++		newlib_cflags="${newlib_cflags} -G0 -DPREFER_SIZE_OVER_SPEED -DCOMPACT_CTYPE -DCLOCK_PROVIDED" ;;
++	  * )
++	    newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES" ;;
++	esac
  	default_newlib_io_long_long="yes"
 -	newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES"
  	;;

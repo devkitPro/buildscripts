@@ -6,10 +6,10 @@
 
 echo "building pspsdk ..."
 cd $PSPSDK_SRCDIR
-./configure
-$MAKE
+./configure || { echo "Error configuring pspsdk"; exit 1; }
+$MAKE || { echo "Error building pspsdk"; exit 1; } 
 echo "installing pspsdk ..."
-$MAKE install
+$MAKE install || { echo "Error installing pspsdk"; exit 1; }
 
 cd $BUILDSCRIPTDIR
 

@@ -110,7 +110,7 @@ echo "this is the top level directory for devkitpro"
 read INSTALLDIR
 echo
 
-[ ! -z "$INSTALLDIR" ] && mkdir -p $INSTALLDIR && touch $INSTALLDIR/nonexistantfile && rm $INSTALLDIR/nonexistantfile || exit 1
+[ ! -z "$INSTALLDIR" ] && mkdir -p $INSTALLDIR && touch $INSTALLDIR/nonexistantfile && rm $INSTALLDIR/nonexistantfile || exit 1;
 
 if [ $DOWNLOAD -eq 1 ]
 then
@@ -198,68 +198,28 @@ then
 
 else
 
-    wget -c $BINUTILS_URL
-    if [ ! -f $BINUTILS ]
-    then
-	echo "Error: Failed to download "$BINUTILS
-	exit
-    fi
+    wget -c $BINUTILS_URL || { echo "Error: Failed to download "$BINUTILS; exit; }
 
-    wget -c $GCC_CORE_URL
-    if [ ! -f $GCC_CORE ]
-    then
-	echo "Error: Failed to download "$GCC_CORE
-	exit
-    fi
+    wget -c $GCC_CORE_URL || { echo "Error: Failed to download "$GCC_CORE; exit; }
 
-    wget -c $GCC_GPP_URL
-    if [ ! -f $GCC_GPP ]
-    then
-	echo "Error: Failed to download "$GCC_GPP
-	exit
-    fi
+    wget -c $GCC_GPP_URL || { echo "Error: Failed to download "$GCC_GPP; exit; }
 
-    wget --passive-ftp -c $NEWLIB_URL
-    if [ ! -f $NEWLIB ]
-    then
-	echo "Error: Failed to download "$NEWLIB
-	exit
-	fi
+    wget --passive-ftp -c $NEWLIB_URL || { echo "Error: Failed to download "$NEWLIB; exit; }
 
 	if [ $VERSION -eq 2 ]
 	then
-		wget -c $LIBOGC_URL
-		if [ ! -f $LIBOGC ]
-		then
-			echo "Error: Failed to download "$LIBOGC
-			exit
-		fi   
+		wget -c $LIBOGC_URL || { echo "Error: Failed to download "$LIBOGC; exit; }
 	fi
 
 	if [ $VERSION -eq 3 ]
 	then
-		wget -c $PSPSDK_URL
-		if [ ! -f $PSPSDK ]
-		then
-			echo "Error: Failed to download "$PSPSDK
-			exit
-		fi   
+		wget -c $PSPSDK_URL || { echo "Error: Failed to download "$PSPSDK; exit; }
 	fi
 
 	if [ $VERSION -eq 1 ]
 	then
-		wget -c $LIBNDS_URL
-		if [ ! -f $LIBNDS ]
-		then
-			echo "Error: Failed to download "$LIBNDS
-			exit
-		fi   
-		wget -c $LIBGBA_URL
-		if [ ! -f $LIBGBA ]
-		then
-			echo "Error: Failed to download "$LIBGBA
-			exit
-		fi   
+		wget -c $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit; }
+		wget -c $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit; }
 	fi
 	SRCDIR=`pwd`
 fi
@@ -301,7 +261,6 @@ fi
 echo use $MAKE as make
 export MAKE
 
-
 #---------------------------------------------------------------------------------
 # Extract source packages
 #---------------------------------------------------------------------------------
@@ -309,47 +268,47 @@ export MAKE
 BUILDSCRIPTDIR=$(pwd)
 
 echo "Extracting $BINUTILS"
-tar -xjvf $SRCDIR/$BINUTILS
+tar -xjvf $SRCDIR/$BINUTILS || { echo "Error extracting "$BINUTILS; exit; }
 
 echo "Extracting $GCC_CORE"
-tar -xjvf $SRCDIR/$GCC_CORE
+tar -xjvf $SRCDIR/$GCC_CORE || { echo "Error extracting "$GCC_CORE; exit; }
 
 echo "Extracting $GCC_GPP"
-tar -xjvf $SRCDIR/$GCC_GPP
+tar -xjvf $SRCDIR/$GCC_GPP || { echo "Error extracting "$GCC_GPP; exit; }
 
 echo "Extracting $NEWLIB"
-tar -xzvf $SRCDIR/$NEWLIB
+tar -xzvf $SRCDIR/$NEWLIB || { echo "Error extracting "$NEWLIB; exit; }
 
 if [ $VERSION -eq 2 ]
 then
   echo "Extracting $LIBOGC"
   mkdir -p $LIBOGC_SRCDIR
-  bzip2 -cd $SRCDIR/$LIBOGC | tar -xv -C $LIBOGC_SRCDIR
+  bzip2 -cd $SRCDIR/$LIBOGC | tar -xv -C $LIBOGC_SRCDIR  || { echo "Error extracting "$LIBOGC; exit; }
 fi
 
 if [ $VERSION -eq 3 ]
 then
   echo "Extracting $PSPSDK"
-  tar -xzvf $SRCDIR/$PSPSDK
+  tar -xzvf $SRCDIR/$PSPSDK  || { echo "Error extracting "$PSPSDK; exit; }
 fi
 
 if [ $VERSION -eq 1 ]
 then
   echo "Extracting $LIBNDS"
   mkdir -p $LIBNDS_SRCDIR
-  bzip2 -cd $SRCDIR/$LIBNDS | tar -xv -C $LIBNDS_SRCDIR
+  bzip2 -cd $SRCDIR/$LIBNDS | tar -xv -C $LIBNDS_SRCDIR  || { echo "Error extracting "$LIBNDS; exit; }
   echo "Extracting $LIBGBA"
   mkdir -p $LIBGBA_SRCDIR
-  bzip2 -cd $SRCDIR/$LIBGBA | tar -xv -C $LIBGBA_SRCDIR
+  bzip2 -cd $SRCDIR/$LIBGBA | tar -xv -C $LIBGBA_SRCDIR || { echo "Error extracting "$LIBGBA; exit; }
 fi
 
 
 #---------------------------------------------------------------------------------
 # apply patches
 #---------------------------------------------------------------------------------
-patch -p1 -d $BINUTILS_SRCDIR -i $(pwd)/patches/devkit-binutils-$BINUTILS_VER.patch
-patch -p1 -d $GCC_SRCDIR -i $(pwd)/patches/devkit-gcc-$GCC_VER.patch
-patch -p1 -d $NEWLIB_SRCDIR -i $(pwd)/patches/devkit-newlib-$NEWLIB_VER.patch
+patch -p1 -d $BINUTILS_SRCDIR -i $(pwd)/patches/devkit-binutils-$BINUTILS_VER.patch || { echo "Error patching binutils"; exit; }
+patch -p1 -d $GCC_SRCDIR -i $(pwd)/patches/devkit-gcc-$GCC_VER.patch || { echo "Error patching gcc"; exit; }
+patch -p1 -d $NEWLIB_SRCDIR -i $(pwd)/patches/devkit-newlib-$NEWLIB_VER.patch || { echo "Error patching newlib"; exit; }
 
 if [ $VERSION -eq 3 ]
 then
@@ -379,9 +338,9 @@ export DEBUG_FLAGS=''
 #---------------------------------------------------------------------------------
 # Build and install devkit components
 #---------------------------------------------------------------------------------
-if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh ; cd $BUILDSCRIPTDIR; fi
-if [ -f $scriptdir/build-crtls.sh ]; then . $scriptdir/build-crtls.sh ; cd $BUILDSCRIPTDIR; fi
-if [ -f $scriptdir/build-tools.sh ]; then . $scriptdir/build-tools.sh ; cd $BUILDSCRIPTDIR; fi
+if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh || { echo "Error building toolchain"; exit; }; cd $BUILDSCRIPTDIR; fi
+if [ -f $scriptdir/build-crtls.sh ]; then . $scriptdir/build-crtls.sh || { echo "Error building crtls"; exit; }; cd $BUILDSCRIPTDIR; fi
+if [ -f $scriptdir/build-tools.sh ]; then . $scriptdir/build-tools.sh || { echo "Error building tools"; exit; }; cd $BUILDSCRIPTDIR; fi
 
 strip $INSTALLDIR/$package/bin/*
 strip $INSTALLDIR/$package/$target/bin/*
@@ -401,7 +360,7 @@ rm -fr $GCC_SRCDIR
 rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $PSPSDK_SRCDIR
 
 echo
-echo "Would you like to delete the source packages? [y/N]"
+echo "Would you like to delete the downloaded source packages? [y/N]"
 read answer
 
 if [ "$answer" = "y" -o "$answer" = "Y" ]
