@@ -15,11 +15,10 @@ cd $target/binutils
 ../../$BINUTILS_SRCDIR/configure \
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
 	--disable-threads --with-gcc --with-gnu-as --with-gnu-ld --with-stabs \
-	2>&1 | tee $BUILDSCRIPTDIR/binutils_configure.log
-	
+	|| { echo "Error configuring binutils"; exit 1; }	
 
-$MAKE 2>&1 | tee binutils_make.log
-$MAKE install 2>&1 | tee $BUILDSCRIPTDIR/binutils_install.log
+$MAKE || { echo "Error building binutils"; exit 1; }
+$MAKE install || { echo "Error installing binutils"; exit 1; }
 
 cd $BUILDSCRIPTDIR
 
@@ -45,10 +44,10 @@ cd $target/gcc
 	--target=$target \
 	--with-newlib \
 	--prefix=$prefix -v\
-	2>&1 | tee $BUILDSCRIPTDIR/gcc_configure.log
+	|| { echo "Error configuring gcc"; exit 1; }
 
-$MAKE all-gcc 2>&1| tee $BUILDSCRIPTDIR/gcc_make.log
-$MAKE install-gcc 2>&1 | tee $BUILDSCRIPTDIR/gcc_install.log
+$MAKE all-gcc || { echo "Error building gcc"; exit 1; }
+$MAKE install-gcc || { echo "Error installing gcc"; exit 1; }
 
 cd $BUILDSCRIPTDIR
 
@@ -63,12 +62,10 @@ $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure \
 	--target=$target \
 	--prefix=$prefix \
 	--enable-newlib-mb \
-	| tee $BUILDSCRIPTDIR/newlib_configure.log
+	|| { echo "Error configuring newlib"; exit 1; }
 
-mkdir -p etc
-
-$MAKE | tee $BUILDSCRIPTDIR/newlib_make.log
-$MAKE install | tee $BUILDSCRIPTDIR/newlib_install.log
+$MAKE || { echo "Error building newlib"; exit 1; }
+$MAKE install || { echo "Error installing newlib"; exit 1; }
 
 #---------------------------------------------------------------------------------
 # remove temp stuff to conserve disc space
@@ -83,8 +80,8 @@ rm -fr $NEWLIB_SRCDIR
 cd $BUILDSCRIPTDIR
 cd $target/gcc
 
-$MAKE | tee $BUILDSCRIPTDIR/gcc_final_make.log 2>&1
-$MAKE install | tee $BUILDSCRIPTDIR/gcc_final_install.log 2>&1
+$MAKE || { echo "Error building g++"; exit 1; }
+$MAKE install || { echo "Error installing g++"; exit 1; }
 
 cd $BUILDSCRIPTDIR
 
