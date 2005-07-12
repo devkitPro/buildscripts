@@ -41,6 +41,7 @@ cd $target/gcc
 	--enable-cxx-flags="-G0" \
 	--target=$target \
 	--with-newlib \
+	--without-headers \
 	--prefix=$prefix \
 	|| { echo "Error configuring gcc"; exit 1; }
 
