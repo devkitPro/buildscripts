@@ -33,9 +33,6 @@ _start:
 	add	r0, r0, #0x208
 	strh	r0, [r0]
 
-	mov	r1,#0				@ enable arm9 iwram
-	strb	r1,[r0, #(0x247 - 0x208)]
-
 	ldr	r1, =0x00002078			@ disable DTCM and protection unit
 	mcr	p15, 0, r1, c1, c0
 
