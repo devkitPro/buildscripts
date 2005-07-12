@@ -5,15 +5,12 @@ ENTRY(_start)
 MEMORY {
 
 	rom		: ORIGIN = 0x08000000, LENGTH = 32M
-	iwram	: ORIGIN = 0x037f8000, LENGTH = 32K
 	ewram	: ORIGIN = 0x02000000, LENGTH = 4M - 4k
 	dtcm	: ORIGIN = 0x00800000, LENGTH = 16K
 	itcm	: ORIGIN = 0x00000000, LENGTH = 32K
 }
 
 __itcm_start	=	0x00000000;
-__iwram_start	=	0x037f8000;
-__iwram_end		=	0x03800000;
 __ewram_end		=	0x02400000;
 __eheap_end		=	0x023ff000;
 __dtcm_start	=	0x00800000;
@@ -110,19 +107,20 @@ SECTIONS
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >ewram = 0xff
 
-	__iwram_lma = . ;
-	
-	.iwram __iwram_start : AT (__iwram_lma)
+
+	.data ALIGN(4) :
 	{
-		__iwram_start = ABSOLUTE(.) ;
-		*(.iwram)
-		*iwram.*(.text)
-		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-	} >iwram = 0xff
+		__data_start = ABSOLUTE(.);
+		*(.data)
+		*(.data.*)
+		*(.gnu.linkonce.d*)
+		CONSTRUCTORS
+		. = ALIGN(4);
+	} >ewram = 0xff
 
-	__iwram_end = . ;
+	__data_end = . ;
 
-	__dtcm_lma = __iwram_lma + SIZEOF(.iwram);
+	__dtcm_lma = . ;
 
 	.dtcm __dtcm_start : AT (__dtcm_lma)
 	{
@@ -133,35 +131,8 @@ SECTIONS
 	} >dtcm = 0xff
 	__dtcm_end = . ;
 
-	__data_lma = __dtcm_lma + SIZEOF(.dtcm) ;
 
-	.data ALIGN(4) : AT (__data_lma)
-	{
-		__data_start = ABSOLUTE(.);
-		*(.data)
-		*(.data.*)
-		*(.gnu.linkonce.d*)
-		CONSTRUCTORS
-		. = ALIGN(4);
-	} >dtcm = 0xff
-
-	__data_end = . ;
-
-
-	.bss ALIGN(4) :
-	{
-		__bss_start = ABSOLUTE(.);
-		__bss_start__ = ABSOLUTE(.);
-		*(.dynbss)
-		*(.gnu.linkonce.b*)
-		*(COMMON)
-		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
-	} >dtcm
-
-	__bss_end = . ;
-	__bss_end__ = . ;
-
-	__itcm_lma = __data_lma + SIZEOF(.data);
+	__itcm_lma = __dtcm_lma + SIZEOF(.dtcm);
 
 	.itcm __itcm_start : AT (__itcm_lma)
 	{
@@ -171,18 +142,33 @@ SECTIONS
 		. = ALIGN(4);
 	} >itcm = 0xff
 	__itcm_end = . ;
+	
+	.sbss __dtcm_end : 
+	{
+		__sbss_start = ABSOLUTE(.);
+		__sbss_start__ = ABSOLUTE(.);
+		*(.sbss)
+		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
+		__sbss_end = ABSOLUTE(.);
+	} >dtcm
+	
 
 	
-	__sbss_lma = __itcm_lma + SIZEOF(.itcm) ;
+	__bss_lma = __itcm_lma + SIZEOF(.itcm) ;
 	__appended_data = __itcm_lma + SIZEOF(.itcm) ;
+	.bss __bss_lma : AT (__bss_lma)
+	{
+		__bss_start = ABSOLUTE(.);
+		__bss_start__ = ABSOLUTE(.);
+		*(.dynbss)
+		*(.gnu.linkonce.b*)
+		*(COMMON)
+		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
+	__bss_end = ABSOLUTE(.) ;
+	__bss_end__ = ABSOLUTE(.) ;
+	} >ewram
 
-	.sbss __sbss_lma : AT (__sbss_lma)
- 	{
-		__sbss_start = ABSOLUTE(.);
- 		*(.sbss)
- 		. = ALIGN(4);
- 	} >ewram
-	__sbss_end = . ;
+
 
 	_end = . ;
 	__end__ = . ;

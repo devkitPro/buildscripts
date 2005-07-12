@@ -152,16 +152,6 @@ _start:
 	msr	cpsr, r0
 	ldr	sp, =__sp_usr		@ Set user stack
 
-	ldr	r1, =__data_lma		@ Copy initialized data (data section) from LMA to VMA (ROM to RAM)
-	ldr	r2, =__data_start
-	ldr	r4, =__data_end
-	bl	CopyMemCheck
-
-	ldr	r1, =__iwram_lma	@ Copy internal work ram (iwram section) from LMA to VMA (ROM to RAM)
-	ldr	r2, =__iwram_start
-	ldr	r4, =__iwram_end
-	bl	CopyMemCheck
-
 	ldr	r1, =__itcm_lma		@ Copy instruction tightly coupled memory (itcm section) from LMA to VMA (ROM to RAM)
 	ldr	r2, =__itcm_start
 	ldr	r4, =__itcm_end
