@@ -20,6 +20,18 @@
 #define PAGE_2G		(0b11110 << 1)
 #define PAGE_4G		(0b11111 << 1)
 
+#define ITCM_LOAD	(1<<19)
+#define ITCM_ENABLE	(1<<18)
+#define DTCM_LOAD	(1<<17)
+#define DTCM_ENABLE	(1<<16)
+#define DISABLE_TBIT	(1<<15)
+#define ROUND_ROBIN	(1<<14)
+#define ALT_VECTORS	(1<<13)
+#define ICACHE_ENABLE	(1<<12)
+#define BIG_ENDIAN	(1<<7)
+#define DCACHE_ENABLE	(1<<2)
+#define PROTECT_ENABLE	(1<<0)
+
 @---------------------------------------------------------------------------------
 	.section ".init"
 	.global _start
@@ -133,7 +145,7 @@ _start:
 	@ Enable ICache, DCache, ITCM & DTCM
 	@-------------------------------------------------------------------------
 	mrc	p15, 0, r0, c1, c0, 0
-	ldr	r1,=0x55005
+	ldr	r1,= ITCM_ENABLE | DTCM_ENABLE | ICACHE_ENABLE | DCACHE_ENABLE | PROTECT_ENABLE
 	orr	r0,r0,r1
 	mcr	p15, 0, r0, c1, c0, 0
 
