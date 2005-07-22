@@ -1,0 +1,253 @@
+diff -Naurb gcc-4.0.1/config.sub gcc-4.0.1-new/config.sub
+--- gcc-4.0.1/config.sub	Mon Apr 25 11:36:56 2005
++++ gcc-4.0.1-new/config.sub	Thu Jul 21 17:11:26 2005
+@@ -219,6 +219,10 @@
+ 		basic_machine=m68k-atari
+ 		os=-mint
+ 		;;
++	-gekko)
++		basic_machine=powerpc-eabi
++		os=-elf
++		;;
+ esac
+ 
+ # Decode aliases for certain CPU-COMPANY combinations.
+@@ -254,6 +258,7 @@
+ 	| mipsisa64sb1 | mipsisa64sb1el \
+ 	| mipsisa64sr71k | mipsisa64sr71kel \
+ 	| mipstx39 | mipstx39el \
++	| mipsallegrex | mipsallegrexel \
+ 	| mn10200 | mn10300 \
+ 	| msp430 \
+ 	| ns16k | ns32k \
+@@ -328,6 +333,7 @@
+ 	| mipsisa64sb1-* | mipsisa64sb1el-* \
+ 	| mipsisa64sr71k-* | mipsisa64sr71kel-* \
+ 	| mipstx39-* | mipstx39el-* \
++	| mipsallegrex-* | mipsallegrexel-* \
+ 	| mmix-* \
+ 	| msp430-* \
+ 	| none-* | np1-* | ns16k-* | ns32k-* \
+@@ -667,6 +673,10 @@
+ 	*mint | -mint[0-9]* | *MiNT | *MiNT[0-9]*)
+ 		basic_machine=m68k-atari
+ 		os=-mint
++		;;
++	psp)
++		basic_machine=mipsallegrexel-psp
++		os=-elf
+ 		;;
+ 	mips3*-*)
+ 		basic_machine=`echo $basic_machine | sed -e 's/mips3/mips64/'`
+diff -Naurb gcc-4.0.1/gcc/c-incpath.c gcc-4.0.1-new/gcc/c-incpath.c
+--- gcc-4.0.1/gcc/c-incpath.c	Sun Jan 23 15:05:27 2005
++++ gcc-4.0.1-new/gcc/c-incpath.c	Fri Jul  8 11:32:20 2005
+@@ -331,13 +331,18 @@
+   cpp_dir *p;
+ 
+ #if defined (HAVE_DOS_BASED_FILE_SYSTEM)
+-  /* Convert all backslashes to slashes.  The native CRT stat()
+-     function does not recognize a directory that ends in a backslash
+-     (unless it is a drive root dir, such "c:\").  Forward slashes,
+-     trailing or otherwise, cause no problems for stat().  */
+-  char* c;
+-  for (c = path; *c; c++)
+-    if (*c == '\\') *c = '/';
++  /* Remove unnecessary trailing slashes.  On some versions of MS
++     Windows, trailing  _forward_ slashes cause no problems for stat().
++     On newer versions, stat() does not recognise a directory that ends
++     in a '\\' or '/', unless it is a drive root dir, such as "c:/",
++     where it is obligatory.  */
++  int pathlen = strlen (path);
++  char* end = path + pathlen - 1;
++  /* Preserve the lead '/' or lead "c:/".  */
++  char* start = path + (pathlen > 2 && path[1] == ':' ? 3 : 1);
++  
++  for (; end > start && IS_DIR_SEPARATOR (*end); end--)
++    *end = 0;
+ #endif
+ 
+   p = xmalloc (sizeof (cpp_dir));
+diff -Naurb gcc-4.0.1/gcc/config/arm/t-arm-elf gcc-4.0.1-new/gcc/config/arm/t-arm-elf
+--- gcc-4.0.1/gcc/config/arm/t-arm-elf	Wed Sep  1 12:14:21 2004
++++ gcc-4.0.1-new/gcc/config/arm/t-arm-elf	Wed Jul 20 23:25:14 2005
+@@ -23,8 +23,8 @@
+ # MULTILIB_DIRNAMES   += fpu soft
+ # MULTILIB_EXCEPTIONS += *mthumb/*mhard-float*
+ # 
+-# MULTILIB_OPTIONS    += mno-thumb-interwork/mthumb-interwork
+-# MULTILIB_DIRNAMES   += normal interwork
++MULTILIB_OPTIONS    += mno-thumb-interwork/mthumb-interwork
++MULTILIB_DIRNAMES   += normal interwork
+ # 
+ # MULTILIB_OPTIONS    += fno-leading-underscore/fleading-underscore
+ # MULTILIB_DIRNAMES   += elf under
+diff -Naurb gcc-4.0.1/gcc/config/mips/mips.c gcc-4.0.1-new/gcc/config/mips/mips.c
+--- gcc-4.0.1/gcc/config/mips/mips.c	Sun May  8 12:56:53 2005
++++ gcc-4.0.1-new/gcc/config/mips/mips.c	Fri Jul  8 10:05:36 2005
+@@ -673,6 +673,7 @@
+ 
+   /* MIPS II */
+   { "r6000", PROCESSOR_R6000, 2 },
++  { "allegrex", PROCESSOR_ALLEGREX, 2 },
+ 
+   /* MIPS III */
+   { "r4000", PROCESSOR_R4000, 3 },
+diff -Naurb gcc-4.0.1/gcc/config/mips/mips.h gcc-4.0.1-new/gcc/config/mips/mips.h
+--- gcc-4.0.1/gcc/config/mips/mips.h	Fri Apr 15 08:00:18 2005
++++ gcc-4.0.1-new/gcc/config/mips/mips.h	Fri Jul  8 10:05:36 2005
+@@ -59,7 +59,8 @@
+   PROCESSOR_R8000,
+   PROCESSOR_R9000,
+   PROCESSOR_SB1,
+-  PROCESSOR_SR71000
++  PROCESSOR_SR71000,
++  PROCESSOR_ALLEGREX
+ };
+ 
+ /* Which ABI to use.  ABI_32 (original 32, or o32), ABI_N32 (n32),
+@@ -308,6 +309,7 @@
+ #define TARGET_MIPS9000             (mips_arch == PROCESSOR_R9000)
+ #define TARGET_SB1                  (mips_arch == PROCESSOR_SB1)
+ #define TARGET_SR71K                (mips_arch == PROCESSOR_SR71000)
++#define TARGET_ALLEGREX             (mips_arch == PROCESSOR_ALLEGREX)
+ 
+ /* Scheduling target defines.  */
+ #define TUNE_MIPS3000               (mips_tune == PROCESSOR_R3000)
+@@ -322,6 +324,7 @@
+ #define TUNE_MIPS7000               (mips_tune == PROCESSOR_R7000)
+ #define TUNE_MIPS9000               (mips_tune == PROCESSOR_R9000)
+ #define TUNE_SB1                    (mips_tune == PROCESSOR_SB1)
++#define TUNE_ALLEGREX               (mips_tune == PROCESSOR_ALLEGREX)
+ 
+ /* True if the pre-reload scheduler should try to create chains of
+    multiply-add or multiply-subtract instructions.  For example,
+@@ -889,7 +892,8 @@
+ 
+ /* ISA has conditional trap instructions.  */
+ #define ISA_HAS_COND_TRAP	(!ISA_MIPS1				\
+-				 && !TARGET_MIPS16)
++				 && !TARGET_MIPS16			\
++				 && !TARGET_ALLEGREX) 
+ 
+ /* ISA has integer multiply-accumulate instructions, madd and msub.  */
+ #define ISA_HAS_MADD_MSUB       ((ISA_MIPS32				\
+@@ -907,6 +911,7 @@
+ #define ISA_HAS_CLZ_CLO         ((ISA_MIPS32				\
+                                   || ISA_MIPS32R2			\
+                                   || ISA_MIPS64				\
++                                  || TARGET_ALLEGREX			\
+                                  ) && !TARGET_MIPS16)
+ 
+ /* ISA has double-word count leading zeroes/ones instruction (not
+@@ -954,6 +959,7 @@
+                                      || TARGET_MIPS5400                 \
+                                      || TARGET_MIPS5500                 \
+                                      || TARGET_SR71K                    \
++                                     || TARGET_ALLEGREX                 \
+                                      ))
+ 
+ /* ISA has 64-bit rotate right instruction.  */
+@@ -987,6 +993,7 @@
+ /* ISA includes the MIPS32r2 seb and seh instructions.  */
+ #define ISA_HAS_SEB_SEH         (!TARGET_MIPS16                        \
+                                  && (ISA_MIPS32R2                      \
++                                     || TARGET_ALLEGREX                \
+                                      ))
+ 
+ /* True if the result of a load is not available to the next instruction.
+diff -Naurb gcc-4.0.1/gcc/config/mips/psp.h gcc-4.0.1-new/gcc/config/mips/psp.h
+--- gcc-4.0.1/gcc/config/mips/psp.h	Thu Jan  1 00:00:00 1970
++++ gcc-4.0.1-new/gcc/config/mips/psp.h	Fri Jul  8 10:05:36 2005
+@@ -0,0 +1,24 @@
++/* Support for Sony's Playstation Portable (PSP).
++   Copyright (C) 2005 Free Software Foundation, Inc.
++   Contributed by Marcus R. Brown <mrbrown@ocgnet.org>
++
++This file is part of GCC.
++
++GCC is free software; you can redistribute it and/or modify
++it under the terms of the GNU General Public License as published by
++the Free Software Foundation; either version 2, or (at your option)
++any later version.
++
++GCC is distributed in the hope that it will be useful,
++but WITHOUT ANY WARRANTY; without even the implied warranty of
++MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++GNU General Public License for more details.
++
++You should have received a copy of the GNU General Public License
++along with GCC; see the file COPYING.  If not, write to
++the Free Software Foundation, 59 Temple Place - Suite 330,
++Boston, MA 02111-1307, USA.  */
++
++/* Override the startfile spec to include crt0.o. */
++#undef STARTFILE_SPEC
++#define STARTFILE_SPEC "crt0%O%s crti%O%s crtbegin%O%s"
+diff -Naurb gcc-4.0.1/gcc/config/mips/t-allegrex gcc-4.0.1-new/gcc/config/mips/t-allegrex
+--- gcc-4.0.1/gcc/config/mips/t-allegrex	Thu Jan  1 00:00:00 1970
++++ gcc-4.0.1-new/gcc/config/mips/t-allegrex	Fri Jul  8 10:05:36 2005
+@@ -0,0 +1,29 @@
++# Suppress building libgcc1.a, since the MIPS compiler port is complete
++# and does not need anything from libgcc1.a.
++LIBGCC1 =
++CROSS_LIBGCC1 =
++
++EXTRA_MULTILIB_PARTS = crtbegin.o crtend.o crti.o crtn.o
++# Don't let CTOR_LIST end up in sdata section.
++CRTSTUFF_T_CFLAGS = -G 0
++
++# Assemble startup files.
++$(T)crti.o: $(srcdir)/config/mips/crti.asm $(GCC_PASSES)
++	$(GCC_FOR_TARGET) $(GCC_CFLAGS) $(MULTILIB_CFLAGS) $(INCLUDES) \
++	-c -o $(T)crti.o -x assembler-with-cpp $(srcdir)/config/mips/crti.asm
++
++$(T)crtn.o: $(srcdir)/config/mips/crtn.asm $(GCC_PASSES)
++	$(GCC_FOR_TARGET) $(GCC_CFLAGS) $(MULTILIB_CFLAGS) $(INCLUDES) \
++	-c -o $(T)crtn.o -x assembler-with-cpp $(srcdir)/config/mips/crtn.asm
++
++# We must build libgcc2.a with -G 0, in case the user wants to link
++# without the $gp register.
++TARGET_LIBGCC2_CFLAGS = -G 0
++
++# Build the libraries for both hard and soft floating point
++
++MULTILIB_OPTIONS = 
++MULTILIB_DIRNAMES = 
++
++LIBGCC = stmp-multilib
++INSTALL_LIBGCC = install-multilib
+diff -Naurb gcc-4.0.1/gcc/config.gcc gcc-4.0.1-new/gcc/config.gcc
+--- gcc-4.0.1/gcc/config.gcc	Thu May  5 21:11:50 2005
++++ gcc-4.0.1-new/gcc/config.gcc	Fri Jul  8 10:05:36 2005
+@@ -1520,6 +1520,18 @@
+ 	tmake_file=mips/t-r3900
+ 	use_fixproto=yes
+ 	;;
++mipsallegrex-*-elf* | mipsallegrexel-*-elf*)
++	tm_file="elfos.h ${tm_file} mips/elf.h"
++	tmake_file=mips/t-allegrex
++	target_cpu_default="MASK_SINGLE_FLOAT|MASK_DIVIDE_BREAKS"
++	tm_defines="MIPS_ISA_DEFAULT=2 MIPS_CPU_STRING_DEFAULT=\\\"allegrex\\\" MIPS_ABI_DEFAULT=ABI_EABI"
++	case ${target} in
++	mipsallegrex*-psp-elf*)	
++		tm_file="${tm_file} mips/psp.h"
++		;;
++	esac
++	use_fixproto=yes
++	;;
+ mmix-knuth-mmixware)
+ 	need_64bit_hwint=yes
+ 	;;
+diff -Naurb gcc-4.0.1/gcc/hwint.h gcc-4.0.1-new/gcc/hwint.h
+--- gcc-4.0.1/gcc/hwint.h	Wed Nov 24 04:31:57 2004
++++ gcc-4.0.1-new/gcc/hwint.h	Thu Jul 21 14:37:06 2005
+@@ -80,7 +80,7 @@
+ #  define HOST_WIDE_INT_PRINT_DOUBLE_HEX "0x%lx%08lx"
+ # endif
+ #else
+-# define HOST_WIDE_INT_PRINT "ll"
++# define HOST_WIDE_INT_PRINT HOST_LONG_LONG_FORMAT
+ # define HOST_WIDE_INT_PRINT_C "LL"
+   /* We can assume that 'long long' is at least 64 bits.  */
+ # define HOST_WIDE_INT_PRINT_DOUBLE_HEX \
