@@ -1,20 +1,6 @@
-diff -Nbaur binutils-2.15/config.sub binutils-2.15-gekko/config.sub
---- binutils-2.15/config.sub	Mon Jun  2 21:35:44 2003
-+++ binutils-2.15-gekko/config.sub	Thu Jan 20 09:03:26 2005
-@@ -218,6 +218,10 @@
- 		basic_machine=m68k-atari
- 		os=-mint
- 		;;
-+	-gekko)
-+		basic_machine=powerpc-eabi
-+		os=-elf
-+		;;
- esac
- 
- # Decode aliases for certain CPU-COMPANY combinations.
-diff -Nbaur binutils-2.15/bfd/doc/chew.c binutils-2.15-new/bfd/doc/chew.c
---- binutils-2.15/bfd/doc/chew.c	Sun Jun 29 11:06:40 2003
-+++ binutils-2.15-new/bfd/doc/chew.c	Thu Jan 20 20:16:18 2005
+diff -Nbaur --exclude=*.info* binutils-2.16.1/bfd/doc/chew.c binutils-2.16.1-new/bfd/doc/chew.c
+--- binutils-2.16.1/bfd/doc/chew.c	Thu Mar  3 11:41:02 2005
++++ binutils-2.16.1-new/bfd/doc/chew.c	Mon Jun 20 00:14:07 2005
 @@ -91,6 +91,12 @@
  #define DEF_SIZE 5000
  #define STACK 50
@@ -28,9 +14,35 @@ diff -Nbaur binutils-2.15/bfd/doc/chew.c binutils-2.15-new/bfd/doc/chew.c
  int internal_wanted;
  int internal_mode;
  
-diff -Nbaur binutils-2.15/gas/config/tc-ppc.c binutils-2.15-new/gas/config/tc-ppc.c
---- binutils-2.15/gas/config/tc-ppc.c	Mon May 17 20:36:12 2004
-+++ binutils-2.15-new/gas/config/tc-ppc.c	Fri Jan 21 00:28:36 2005
+diff -Nbaur --exclude=*.info* binutils-2.16.1/config.sub binutils-2.16.1-new/config.sub
+--- binutils-2.16.1/config.sub	Wed Jan 19 00:34:56 2005
++++ binutils-2.16.1-new/config.sub	Mon Jun 20 00:14:07 2005
+@@ -219,6 +219,10 @@
+ 		basic_machine=m68k-atari
+ 		os=-mint
+ 		;;
++	-gekko)
++		basic_machine=powerpc-eabi
++		os=-elf
++		;;
+ esac
+ 
+ # Decode aliases for certain CPU-COMPANY combinations.
+diff -Nbaur --exclude=*.info* binutils-2.16.1/configure.in binutils-2.16.1-new/configure.in
+--- binutils-2.16.1/configure.in	Sun Jun 12 20:33:06 2005
++++ binutils-2.16.1-new/configure.in	Mon Jun 20 00:53:42 2005
+@@ -242,7 +242,7 @@
+ 
+ # Some tools are only suitable for building in a "native" situation.
+ # Remove these if host!=target.  
+-native_only="autoconf automake libtool fileutils find gawk gettext gzip hello indent m4 rcs recode sed shellutils tar textutils uudecode wdiff gprof target-groff guile perl time ash bash bzip2 prms gnuserv target-gperf"
++native_only="autoconf automake libtool fileutils find gawk gettext gzip hello indent m4 rcs recode sed shellutils tar textutils uudecode wdiff target-groff guile perl time ash bash bzip2 prms gnuserv target-gperf"
+ 
+ # Similarly, some are only suitable for cross toolchains.
+ # Remove these if host=target.
+diff -Nbaur --exclude=*.info* binutils-2.16.1/gas/config/tc-ppc.c binutils-2.16.1-new/gas/config/tc-ppc.c
+--- binutils-2.16.1/gas/config/tc-ppc.c	Wed Mar  2 13:24:01 2005
++++ binutils-2.16.1-new/gas/config/tc-ppc.c	Mon Jun 20 00:14:07 2005
 @@ -310,6 +310,7 @@
     sdr1           has the value 25
     srr0           has the value 26
@@ -121,9 +133,9 @@ diff -Nbaur binutils-2.15/gas/config/tc-ppc.c binutils-2.15-new/gas/config/tc-pp
        if (*str != '\0')
  	++str;
      }
-diff -Nbaur binutils-2.15/include/opcode/ppc.h binutils-2.15-new/include/opcode/ppc.h
---- binutils-2.15/include/opcode/ppc.h	Mon May 17 20:36:06 2004
-+++ binutils-2.15-new/include/opcode/ppc.h	Thu Jan 20 19:54:34 2005
+diff -Nbaur --exclude=*.info* binutils-2.16.1/include/opcode/ppc.h binutils-2.16.1-new/include/opcode/ppc.h
+--- binutils-2.16.1/include/opcode/ppc.h	Thu Sep  9 13:42:37 2004
++++ binutils-2.16.1-new/include/opcode/ppc.h	Mon Jun 20 00:14:07 2005
 @@ -134,6 +134,9 @@
  /* Opcode is supported by machine check APU.  */
  #define PPC_OPCODE_RFMCI	  0x800000
@@ -145,12 +157,12 @@ diff -Nbaur binutils-2.15/include/opcode/ppc.h binutils-2.15-new/include/opcode/
  /* The POWER and PowerPC assemblers use a few macros.  We keep them
     with the operands table for simplicity.  The macro table is an
     array of struct powerpc_macro.  */
-diff -Nbaur binutils-2.15/opcodes/ppc-dis.c binutils-2.15-new/opcodes/ppc-dis.c
---- binutils-2.15/opcodes/ppc-dis.c	Mon May 17 20:35:56 2004
-+++ binutils-2.15-new/opcodes/ppc-dis.c	Thu Jan 20 19:54:34 2005
-@@ -72,6 +72,13 @@
-       dialect &= ~PPC_OPCODE_ALTIVEC;
-     }
+diff -Nbaur --exclude=*.info* binutils-2.16.1/opcodes/ppc-dis.c binutils-2.16.1-new/opcodes/ppc-dis.c
+--- binutils-2.16.1/opcodes/ppc-dis.c	Tue Mar 22 15:31:19 2005
++++ binutils-2.16.1-new/opcodes/ppc-dis.c	Mon Jun 20 00:14:07 2005
+@@ -64,6 +64,13 @@
+ 	   && strstr (info->disassembler_options, "efs") != NULL)
+     dialect |= PPC_OPCODE_EFS;
    else
 +	if (info->disassembler_options
 +	&& (strstr (info->disassembler_options, "gekko") == 0))
@@ -160,9 +172,9 @@ diff -Nbaur binutils-2.15/opcodes/ppc-dis.c binutils-2.15-new/opcodes/ppc-dis.c
 +	  }
 +  else
      dialect |= (PPC_OPCODE_403 | PPC_OPCODE_601 | PPC_OPCODE_CLASSIC
- 		| PPC_OPCODE_COMMON);
+ 		| PPC_OPCODE_COMMON | PPC_OPCODE_ALTIVEC);
  
-@@ -247,6 +254,8 @@
+@@ -239,6 +246,8 @@
  	    (*info->print_address_func) (memaddr + value, info);
  	  else if ((operand->flags & PPC_OPERAND_ABSOLUTE) != 0)
  	    (*info->print_address_func) ((bfd_vma) value & 0xffffffff, info);
@@ -171,15 +183,15 @@ diff -Nbaur binutils-2.15/opcodes/ppc-dis.c binutils-2.15-new/opcodes/ppc-dis.c
  	  else if ((operand->flags & PPC_OPERAND_CR) == 0
  		   || (dialect & PPC_OPCODE_PPC) == 0)
  	    (*info->fprintf_func) (info->stream, "%ld", value);
-@@ -312,4 +321,5 @@
+@@ -304,4 +313,5 @@
    fprintf (stream, "  power4                   Disassemble the Power4 instructions\n");
    fprintf (stream, "  32                       Do not disassemble 64-bit instructions\n");
    fprintf (stream, "  64                       Allow disassembly of 64-bit instructions\n");
 +  fprintf (stream, "  gekko                    Disassemble the Gamecube Gekko instructions\n");
  }
-diff -Nbaur binutils-2.15/opcodes/ppc-opc.c binutils-2.15-new/opcodes/ppc-opc.c
---- binutils-2.15/opcodes/ppc-opc.c	Mon May 17 20:35:56 2004
-+++ binutils-2.15-new/opcodes/ppc-opc.c	Fri Jan 21 00:29:46 2005
+diff -Nbaur --exclude=*.info* binutils-2.16.1/opcodes/ppc-opc.c binutils-2.16.1-new/opcodes/ppc-opc.c
+--- binutils-2.16.1/opcodes/ppc-opc.c	Tue Apr 19 18:09:56 2005
++++ binutils-2.16.1-new/opcodes/ppc-opc.c	Mon Jun 20 00:14:07 2005
 @@ -93,6 +93,13 @@
  static unsigned long insert_ev8 (unsigned long, long, int, const char **);
  static long extract_ev8 (unsigned long, int, int *);
@@ -194,9 +206,9 @@ diff -Nbaur binutils-2.15/opcodes/ppc-opc.c binutils-2.15-new/opcodes/ppc-opc.c
  /* The operands table.
  
     The fields are bits, shift, insert, extract, flags.
-@@ -554,6 +561,25 @@
+@@ -558,6 +565,25 @@
  #define MTMSRD_L WS + 1
-   { 1, 16, 0, 0, PPC_OPERAND_OPTIONAL },
+   { 1, 16, NULL, NULL, PPC_OPERAND_OPTIONAL },
  
 +  /* I Field in psq_ instructions */
 +#define PSQ_DD MTMSRD_L + 1
@@ -220,7 +232,7 @@ diff -Nbaur binutils-2.15/opcodes/ppc-opc.c binutils-2.15-new/opcodes/ppc-opc.c
  };
  
  /* The functions used to insert and extract complicated operands.  */
-@@ -1417,6 +1443,48 @@
+@@ -1432,6 +1458,48 @@
    return ret;
  }
  
@@ -269,7 +281,7 @@ diff -Nbaur binutils-2.15/opcodes/ppc-opc.c binutils-2.15-new/opcodes/ppc-opc.c
  /* Macros used to form opcodes.  */
  
  /* The main opcode.  */
-@@ -1696,6 +1764,10 @@
+@@ -1715,6 +1783,10 @@
  #define XUC(op, xop)  (OP (op) | (((unsigned long)(xop)) & 0x1f))
  #define XUC_MASK      XUC(0x3f, 0x1f)
  
@@ -280,7 +292,7 @@ diff -Nbaur binutils-2.15/opcodes/ppc-opc.c binutils-2.15-new/opcodes/ppc-opc.c
  /* The BO encodings used in extended conditional branch mnemonics.  */
  #define BODNZF	(0x0)
  #define BODNZFP	(0x1)
-@@ -1786,6 +1858,7 @@
+@@ -1805,6 +1877,7 @@
  #define PPCCHLK	PPC_OPCODE_CACHELCK
  #define PPCCHLK64	PPC_OPCODE_CACHELCK | PPC_OPCODE_BOOKE64
  #define PPCRFMCI	PPC_OPCODE_RFMCI
@@ -288,7 +300,7 @@ diff -Nbaur binutils-2.15/opcodes/ppc-opc.c binutils-2.15-new/opcodes/ppc-opc.c
  
  /* The opcode table.
  
-@@ -4558,6 +4631,99 @@
+@@ -4612,6 +4685,99 @@
  
  { "fcfid",   XRC(63,846,0), XRA_MASK,	PPC64,		{ FRT, FRB } },
  { "fcfid.",  XRC(63,846,1), XRA_MASK,	PPC64,		{ FRT, FRB } },

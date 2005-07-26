@@ -1,18 +1,7 @@
-diff -Naurb gcc-4.0.1/config.sub gcc-4.0.1-new/config.sub
+diff -NBaur gcc-4.0.1/config.sub gcc-4.0.1-psp/config.sub
 --- gcc-4.0.1/config.sub	Mon Apr 25 11:36:56 2005
-+++ gcc-4.0.1-new/config.sub	Thu Jul 21 17:11:26 2005
-@@ -219,6 +219,10 @@
- 		basic_machine=m68k-atari
- 		os=-mint
- 		;;
-+	-gekko)
-+		basic_machine=powerpc-eabi
-+		os=-elf
-+		;;
- esac
- 
- # Decode aliases for certain CPU-COMPANY combinations.
-@@ -254,6 +258,7 @@
++++ gcc-4.0.1-psp/config.sub	Mon Jul 25 23:52:30 2005
+@@ -254,6 +254,7 @@
  	| mipsisa64sb1 | mipsisa64sb1el \
  	| mipsisa64sr71k | mipsisa64sr71kel \
  	| mipstx39 | mipstx39el \
@@ -20,7 +9,7 @@ diff -Naurb gcc-4.0.1/config.sub gcc-4.0.1-new/config.sub
  	| mn10200 | mn10300 \
  	| msp430 \
  	| ns16k | ns32k \
-@@ -328,6 +333,7 @@
+@@ -328,6 +329,7 @@
  	| mipsisa64sb1-* | mipsisa64sb1el-* \
  	| mipsisa64sr71k-* | mipsisa64sr71kel-* \
  	| mipstx39-* | mipstx39el-* \
@@ -28,7 +17,7 @@ diff -Naurb gcc-4.0.1/config.sub gcc-4.0.1-new/config.sub
  	| mmix-* \
  	| msp430-* \
  	| none-* | np1-* | ns16k-* | ns32k-* \
-@@ -667,6 +673,10 @@
+@@ -667,6 +669,10 @@
  	*mint | -mint[0-9]* | *MiNT | *MiNT[0-9]*)
  		basic_machine=m68k-atari
  		os=-mint
@@ -39,9 +28,9 @@ diff -Naurb gcc-4.0.1/config.sub gcc-4.0.1-new/config.sub
  		;;
  	mips3*-*)
  		basic_machine=`echo $basic_machine | sed -e 's/mips3/mips64/'`
-diff -Naurb gcc-4.0.1/gcc/c-incpath.c gcc-4.0.1-new/gcc/c-incpath.c
+diff -NBaur gcc-4.0.1/gcc/c-incpath.c gcc-4.0.1-psp/gcc/c-incpath.c
 --- gcc-4.0.1/gcc/c-incpath.c	Sun Jan 23 15:05:27 2005
-+++ gcc-4.0.1-new/gcc/c-incpath.c	Fri Jul  8 11:32:20 2005
++++ gcc-4.0.1-psp/gcc/c-incpath.c	Mon Jul 25 23:52:30 2005
 @@ -331,13 +331,18 @@
    cpp_dir *p;
  
@@ -62,29 +51,15 @@ diff -Naurb gcc-4.0.1/gcc/c-incpath.c gcc-4.0.1-new/gcc/c-incpath.c
 +  char* end = path + pathlen - 1;
 +  /* Preserve the lead '/' or lead "c:/".  */
 +  char* start = path + (pathlen > 2 && path[1] == ':' ? 3 : 1);
-+  
++   
 +  for (; end > start && IS_DIR_SEPARATOR (*end); end--)
 +    *end = 0;
  #endif
  
    p = xmalloc (sizeof (cpp_dir));
-diff -Naurb gcc-4.0.1/gcc/config/arm/t-arm-elf gcc-4.0.1-new/gcc/config/arm/t-arm-elf
---- gcc-4.0.1/gcc/config/arm/t-arm-elf	Wed Sep  1 12:14:21 2004
-+++ gcc-4.0.1-new/gcc/config/arm/t-arm-elf	Wed Jul 20 23:25:14 2005
-@@ -23,8 +23,8 @@
- # MULTILIB_DIRNAMES   += fpu soft
- # MULTILIB_EXCEPTIONS += *mthumb/*mhard-float*
- # 
--# MULTILIB_OPTIONS    += mno-thumb-interwork/mthumb-interwork
--# MULTILIB_DIRNAMES   += normal interwork
-+MULTILIB_OPTIONS    += mno-thumb-interwork/mthumb-interwork
-+MULTILIB_DIRNAMES   += normal interwork
- # 
- # MULTILIB_OPTIONS    += fno-leading-underscore/fleading-underscore
- # MULTILIB_DIRNAMES   += elf under
-diff -Naurb gcc-4.0.1/gcc/config/mips/mips.c gcc-4.0.1-new/gcc/config/mips/mips.c
+diff -NBaur gcc-4.0.1/gcc/config/mips/mips.c gcc-4.0.1-psp/gcc/config/mips/mips.c
 --- gcc-4.0.1/gcc/config/mips/mips.c	Sun May  8 12:56:53 2005
-+++ gcc-4.0.1-new/gcc/config/mips/mips.c	Fri Jul  8 10:05:36 2005
++++ gcc-4.0.1-psp/gcc/config/mips/mips.c	Mon Jul 25 23:52:30 2005
 @@ -673,6 +673,7 @@
  
    /* MIPS II */
@@ -93,9 +68,9 @@ diff -Naurb gcc-4.0.1/gcc/config/mips/mips.c gcc-4.0.1-new/gcc/config/mips/mips.
  
    /* MIPS III */
    { "r4000", PROCESSOR_R4000, 3 },
-diff -Naurb gcc-4.0.1/gcc/config/mips/mips.h gcc-4.0.1-new/gcc/config/mips/mips.h
+diff -NBaur gcc-4.0.1/gcc/config/mips/mips.h gcc-4.0.1-psp/gcc/config/mips/mips.h
 --- gcc-4.0.1/gcc/config/mips/mips.h	Fri Apr 15 08:00:18 2005
-+++ gcc-4.0.1-new/gcc/config/mips/mips.h	Fri Jul  8 10:05:36 2005
++++ gcc-4.0.1-psp/gcc/config/mips/mips.h	Mon Jul 25 23:52:30 2005
 @@ -59,7 +59,8 @@
    PROCESSOR_R8000,
    PROCESSOR_R9000,
@@ -156,10 +131,10 @@ diff -Naurb gcc-4.0.1/gcc/config/mips/mips.h gcc-4.0.1-new/gcc/config/mips/mips.
                                       ))
  
  /* True if the result of a load is not available to the next instruction.
-diff -Naurb gcc-4.0.1/gcc/config/mips/psp.h gcc-4.0.1-new/gcc/config/mips/psp.h
+diff -NBaur gcc-4.0.1/gcc/config/mips/psp.h gcc-4.0.1-psp/gcc/config/mips/psp.h
 --- gcc-4.0.1/gcc/config/mips/psp.h	Thu Jan  1 00:00:00 1970
-+++ gcc-4.0.1-new/gcc/config/mips/psp.h	Fri Jul  8 10:05:36 2005
-@@ -0,0 +1,24 @@
++++ gcc-4.0.1-psp/gcc/config/mips/psp.h	Mon Jul 25 23:52:30 2005
+@@ -0,0 +1,31 @@
 +/* Support for Sony's Playstation Portable (PSP).
 +   Copyright (C) 2005 Free Software Foundation, Inc.
 +   Contributed by Marcus R. Brown <mrbrown@ocgnet.org>
@@ -184,9 +159,16 @@ diff -Naurb gcc-4.0.1/gcc/config/mips/psp.h gcc-4.0.1-new/gcc/config/mips/psp.h
 +/* Override the startfile spec to include crt0.o. */
 +#undef STARTFILE_SPEC
 +#define STARTFILE_SPEC "crt0%O%s crti%O%s crtbegin%O%s"
-diff -Naurb gcc-4.0.1/gcc/config/mips/t-allegrex gcc-4.0.1-new/gcc/config/mips/t-allegrex
++
++#undef SUBTARGET_CPP_SPEC
++#define SUBTARGET_CPP_SPEC "-DPSP=1 -D__psp__=1 -D_PSP=1"
++
++/* Get rid of the .pdr section. */
++#undef SUBTARGET_ASM_SPEC
++#define SUBTARGET_ASM_SPEC "-mno-pdr"
+diff -NBaur gcc-4.0.1/gcc/config/mips/t-allegrex gcc-4.0.1-psp/gcc/config/mips/t-allegrex
 --- gcc-4.0.1/gcc/config/mips/t-allegrex	Thu Jan  1 00:00:00 1970
-+++ gcc-4.0.1-new/gcc/config/mips/t-allegrex	Fri Jul  8 10:05:36 2005
++++ gcc-4.0.1-psp/gcc/config/mips/t-allegrex	Mon Jul 25 23:52:30 2005
 @@ -0,0 +1,29 @@
 +# Suppress building libgcc1.a, since the MIPS compiler port is complete
 +# and does not need anything from libgcc1.a.
@@ -217,9 +199,9 @@ diff -Naurb gcc-4.0.1/gcc/config/mips/t-allegrex gcc-4.0.1-new/gcc/config/mips/t
 +
 +LIBGCC = stmp-multilib
 +INSTALL_LIBGCC = install-multilib
-diff -Naurb gcc-4.0.1/gcc/config.gcc gcc-4.0.1-new/gcc/config.gcc
+diff -NBaur gcc-4.0.1/gcc/config.gcc gcc-4.0.1-psp/gcc/config.gcc
 --- gcc-4.0.1/gcc/config.gcc	Thu May  5 21:11:50 2005
-+++ gcc-4.0.1-new/gcc/config.gcc	Fri Jul  8 10:05:36 2005
++++ gcc-4.0.1-psp/gcc/config.gcc	Mon Jul 25 23:52:30 2005
 @@ -1520,6 +1520,18 @@
  	tmake_file=mips/t-r3900
  	use_fixproto=yes
@@ -239,9 +221,9 @@ diff -Naurb gcc-4.0.1/gcc/config.gcc gcc-4.0.1-new/gcc/config.gcc
  mmix-knuth-mmixware)
  	need_64bit_hwint=yes
  	;;
-diff -Naurb gcc-4.0.1/gcc/hwint.h gcc-4.0.1-new/gcc/hwint.h
+diff -NBaur gcc-4.0.1/gcc/hwint.h gcc-4.0.1-psp/gcc/hwint.h
 --- gcc-4.0.1/gcc/hwint.h	Wed Nov 24 04:31:57 2004
-+++ gcc-4.0.1-new/gcc/hwint.h	Thu Jul 21 14:37:06 2005
++++ gcc-4.0.1-psp/gcc/hwint.h	Mon Jul 25 23:52:30 2005
 @@ -80,7 +80,7 @@
  #  define HOST_WIDE_INT_PRINT_DOUBLE_HEX "0x%lx%08lx"
  # endif
@@ -251,3 +233,21 @@ diff -Naurb gcc-4.0.1/gcc/hwint.h gcc-4.0.1-new/gcc/hwint.h
  # define HOST_WIDE_INT_PRINT_C "LL"
    /* We can assume that 'long long' is at least 64 bits.  */
  # define HOST_WIDE_INT_PRINT_DOUBLE_HEX \
+diff -NBaur gcc-4.0.1/gcc/version.c gcc-4.0.1-psp/gcc/version.c
+--- gcc-4.0.1/gcc/version.c	Thu Jul  7 19:41:54 2005
++++ gcc-4.0.1-psp/gcc/version.c	Mon Jul 25 23:52:30 2005
+@@ -5,7 +5,7 @@
+    please modify this string to indicate that, e.g. by putting your
+    organization's name in parentheses at the end of the string.  */
+ 
+-const char version_string[] = "4.0.1";
++const char version_string[] = "4.0.1 (PSPDEV 20050722)";
+ 
+ /* This is the location of the online document giving instructions for
+    reporting bugs.  If you distribute a modified version of GCC,
+@@ -14,4 +14,4 @@
+    forward us bugs reported to you, if you determine that they are
+    not bugs in your modifications.)  */
+ 
+-const char bug_report_url[] = "<URL:http://gcc.gnu.org/bugs.html>";
++const char bug_report_url[] = "<URL:http://wiki.pspdev.org/psp:toolchain#bugs>";

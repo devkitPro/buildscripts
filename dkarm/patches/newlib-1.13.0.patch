@@ -1,0 +1,64 @@
+diff -NBaur newlib-1.13.0/newlib/libc/sys/arm/Makefile.in newlib-1.13.0-new/newlib/libc/sys/arm/Makefile.in
+--- newlib-1.13.0/newlib/libc/sys/arm/Makefile.in	Wed Jun  9 20:05:09 2004
++++ newlib-1.13.0-new/newlib/libc/sys/arm/Makefile.in	Wed Jul  6 09:09:25 2005
+@@ -88,7 +88,7 @@
+ INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
+ 
+ noinst_LIBRARIES = lib.a
+-@MAY_SUPPLY_SYSCALLS_TRUE@extra_objs = syscalls.o
++@MAY_SUPPLY_SYSCALLS_TRUE@extra_objs = syscalls.o malloc_vars.o
+ @MAY_SUPPLY_SYSCALLS_FALSE@extra_objs = 
+ 
+ lib_a_SOURCES = libcfunc.c trap.S
+diff -NBaur newlib-1.13.0/newlib/libc/sys/arm/malloc_vars.c newlib-1.13.0-new/newlib/libc/sys/arm/malloc_vars.c
+--- newlib-1.13.0/newlib/libc/sys/arm/malloc_vars.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.13.0-new/newlib/libc/sys/arm/malloc_vars.c	Wed Jul  6 09:09:25 2005
+@@ -0,0 +1,2 @@
++char *fake_heap_end = (char*)0;
++char *fake_heap_start = (char*)0;
+diff -NBaur newlib-1.13.0/newlib/libc/sys/arm/syscalls.c newlib-1.13.0-new/newlib/libc/sys/arm/syscalls.c
+--- newlib-1.13.0/newlib/libc/sys/arm/syscalls.c	Tue Jan  6 19:27:21 2004
++++ newlib-1.13.0-new/newlib/libc/sys/arm/syscalls.c	Wed Jul  6 09:09:25 2005
+@@ -474,19 +474,41 @@
+   n = n;
+ }
+ 
++extern char *fake_heap_end;
++extern char *fake_heap_start;
++
+ caddr_t
+ _sbrk (int incr)
+ {
+   extern char   end asm ("end");	/* Defined by the linker.  */
+   static char * heap_end;
+   char *        prev_heap_end;
++  char *		our_heap_end;
+ 
+   if (heap_end == NULL)
++  {
++  	if (fake_heap_start == NULL)
++  	{
+     heap_end = & end;
++    }
++    else
++    {
++    	heap_end = fake_heap_start;
++    }
++  }
+   
+   prev_heap_end = heap_end;
+   
+-  if (heap_end + incr > stack_ptr)
++	if (fake_heap_end == NULL)
++	{
++		our_heap_end = stack_ptr;
++	}
++	else
++	{
++		our_heap_end = fake_heap_end;
++	}
++
++	if (heap_end + incr > our_heap_end)
+     {
+       /* Some of the libstdc++-v3 tests rely upon detecting
+ 	 out of memory errors, so do not abort here.  */

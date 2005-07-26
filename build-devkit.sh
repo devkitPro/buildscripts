@@ -7,11 +7,11 @@
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
 BINUTILS_VER=2.16.1
-GCC_VER=3.4.4
+GCC_VER=4.0.1
 NEWLIB_VER=1.13.0
 LIBOGC_VER=20050521
 LIBGBA_VER=20050615
-LIBNDS_VER=20050615
+LIBNDS_VER=20050714
 PSPSDK_VER=1.0+beta
 
 BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
@@ -55,7 +55,7 @@ done
 
 if [ $VERSION -eq 1 ]
 then
-  scriptdir='./dkarm/scripts'
+  basedir='dkarm'
   package=devkitARM
   builddir=arm-elf
   target=arm-elf
@@ -64,7 +64,7 @@ fi
 
 if [ $VERSION -eq 2 ]
 then
-  scriptdir='./dkppc/scripts'
+  basedir='dkppc'
   package=devkitPPC
   builddir=powerpc-gekko
   target=powerpc-gekko
@@ -73,7 +73,7 @@ fi
 
 if [ $VERSION -eq 3 ]
 then
-  scriptdir='./dkpsp/scripts'
+  basedir='dkpsp'
   package=devkitPSP
   builddir=psp
   target=psp
@@ -261,6 +261,9 @@ fi
 echo use $MAKE as make
 export MAKE
 
+if [ 0 ]
+then
+
 #---------------------------------------------------------------------------------
 # Extract source packages
 #---------------------------------------------------------------------------------
@@ -302,13 +305,17 @@ then
   bzip2 -cd $SRCDIR/$LIBGBA | tar -xv -C $LIBGBA_SRCDIR || { echo "Error extracting "$LIBGBA; exit; }
 fi
 
+fi
+
+patchdir=$(pwd)/$basedir/patches
+scriptdir=$(pwd)/$basedir/scripts
 
 #---------------------------------------------------------------------------------
 # apply patches
 #---------------------------------------------------------------------------------
-patch -p1 -d $BINUTILS_SRCDIR -i $(pwd)/patches/devkit-binutils-$BINUTILS_VER.patch || { echo "Error patching binutils"; exit; }
-patch -p1 -d $GCC_SRCDIR -i $(pwd)/patches/devkit-gcc-$GCC_VER.patch || { echo "Error patching gcc"; exit; }
-patch -p1 -d $NEWLIB_SRCDIR -i $(pwd)/patches/devkit-newlib-$NEWLIB_VER.patch || { echo "Error patching newlib"; exit; }
+patch -p1 -d $BINUTILS_SRCDIR -i $patchdir/binutils-$BINUTILS_VER.patch || { echo "Error patching binutils"; exit; }
+patch -p1 -d $GCC_SRCDIR -i $patchdir/gcc-$GCC_VER.patch || { echo "Error patching gcc"; exit; }
+patch -p1 -d $NEWLIB_SRCDIR -i $patchdir/newlib-$NEWLIB_VER.patch || { echo "Error patching newlib"; exit; }
 
 if [ $VERSION -eq 3 ]
 then
