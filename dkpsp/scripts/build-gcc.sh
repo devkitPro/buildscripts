@@ -45,6 +45,8 @@ cd $target/gcc
 	--prefix=$prefix \
 	|| { echo "Error configuring gcc"; exit 1; }
 
+mkdir -p libiberty libcpp fixincludes
+
 $MAKE all-gcc || { echo "Error building gcc"; exit 1; }
 $MAKE install-gcc || { echo "Error installing gcc"; exit 1; }
 

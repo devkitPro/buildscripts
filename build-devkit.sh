@@ -261,8 +261,8 @@ fi
 echo use $MAKE as make
 export MAKE
 
-if [ 0 ]
-then
+patchdir=$(pwd)/$basedir/patches
+scriptdir=$(pwd)/$basedir/scripts
 
 #---------------------------------------------------------------------------------
 # Extract source packages
@@ -305,10 +305,6 @@ then
   bzip2 -cd $SRCDIR/$LIBGBA | tar -xv -C $LIBGBA_SRCDIR || { echo "Error extracting "$LIBGBA; exit; }
 fi
 
-fi
-
-patchdir=$(pwd)/$basedir/patches
-scriptdir=$(pwd)/$basedir/scripts
 
 #---------------------------------------------------------------------------------
 # apply patches

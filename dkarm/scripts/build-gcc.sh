@@ -46,6 +46,8 @@ cd $target/gcc
 	--prefix=$prefix -v\
 	|| { echo "Error configuring gcc"; exit 1; }
 
+mkdir -p libiberty libcpp fixincludes
+
 $MAKE all-gcc || { echo "Error building gcc"; exit 1; }
 $MAKE install-gcc || { echo "Error installing gcc"; exit 1; }
 
@@ -56,6 +58,7 @@ cd $BUILDSCRIPTDIR
 #---------------------------------------------------------------------------------
 mkdir -p $target/newlib
 cd $target/newlib
+mkdir -p etc
 
 $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure \
 	--enable-serial-configure \

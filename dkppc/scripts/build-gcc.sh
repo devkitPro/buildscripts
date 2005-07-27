@@ -48,6 +48,8 @@ cd $target/gcc
 	--prefix=$prefix -v\
 	2>&1 | tee gcc_configure.log
 
+mkdir -p libiberty libcpp fixincludes
+
 $MAKE all-gcc | tee gcc_make.log 2>&1
 $MAKE install-gcc | tee gcc_install.log 2>&1
 
