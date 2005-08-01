@@ -1,4 +1,8 @@
--include $(DEVKITARM)/base_rules
+ifeq ($(strip $(DEVKITPRO)),)
+$(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>devkitPro)
+endif
+
+include $(DEVKITARM)/base_rules
 
 LIBNDS	:=	$(DEVKITPRO)/libnds
 
@@ -8,16 +12,21 @@ LIBNDS	:=	$(DEVKITPRO)/libnds
 	@echo built ... $(notdir $@)
 
 #---------------------------------------------------------------------------------
-%.nds: %.bin
+%.nds: %.arm9
 	@ndstool -c $@ -9 $<
 	@echo built ... $(notdir $@)
 
 #---------------------------------------------------------------------------------
-%.bin: %.elf
+%.arm9: %.elf
 	@$(OBJCOPY) -O binary $< $@
 	@echo built ... $(notdir $@)
  
 #---------------------------------------------------------------------------------
+%.arm7: %.elf
+	@$(OBJCOPY) -O binary $< $@
+	@echo built ... $(notdir $@)
+
+#---------------------------------------------------------------------------------
 %.elf:
-	@echo linking binary
+	@echo linking $(notdir $@)
 	@$(LD)  $(LDFLAGS) $(OFILES) $(LIBPATHS) $(LIBS) -o $@
