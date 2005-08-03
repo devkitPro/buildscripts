@@ -14,6 +14,11 @@ export AS		:=	$(PREFIX)as
 export AR		:=	$(PREFIX)ar
 export OBJCOPY	:=	$(PREFIX)objcopy
 
+define adjustdepends
+cp $(DEPSDIR)/$*.d $(DEPSDIR)/$*.P;
+sed -e 's/#.*//' -e 's/^[^:]*: \+//' -e 's/^ *//' -e 's/ *\\$$//' -e '/^$$/ d' -e 's/$$/ :/' < $(DEPSDIR)/$*.P >> $(DEPSDIR)/$*.d;
+rm $(DEPSDIR)/$*.P
+endef
 
 #---------------------------------------------------------------------------------
 %.a:
@@ -25,21 +30,25 @@ export OBJCOPY	:=	$(PREFIX)objcopy
 %.o: %.cpp
 	@echo $(notdir $<)
 	@$(CXX) -MMD -MF $(DEPSDIR)/$*.d $(CXXFLAGS) -c $< -o $@
-
+	@$(adjustdepends)
+	
 #---------------------------------------------------------------------------------
 %.o: %.c
 	@echo $(notdir $<)
 	@$(CC) -MMD -MF $(DEPSDIR)/$*.d $(CFLAGS) -c $< -o $@
+	@$(adjustdepends)
 
 #---------------------------------------------------------------------------------
 %.o: %.s
 	@echo $(notdir $<)
 	@$(CC) -MMD -MF $(DEPSDIR)/$*.d -x assembler-with-cpp $(ASFLAGS) -c $< -o $@
+	@$(adjustdepends)
 
 #---------------------------------------------------------------------------------
 %.o: %.S
 	@echo $(notdir $<)
 	@$(CC) -MMD -MF $(DEPSDIR)/$*.d -x assembler-with-cpp $(ASFLAGS) -c $< -o $@
+	@$(adjustdepends)
 
 #---------------------------------------------------------------------------------
 # canned command sequence for binary data
