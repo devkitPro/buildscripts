@@ -46,10 +46,8 @@ export OBJCOPY	:=	$(PREFIX)objcopy
 #---------------------------------------------------------------------------------
 define bin2o
 	bin2s $< | $(AS) $(ARCH) -o $(@)
-	echo "extern const u32" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"_end[];" > `(echo $(<F) | tr . _)`.h
+	echo "extern const u8" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"_end[];" > `(echo $(<F) | tr . _)`.h
 	echo "extern const u8" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"[];" >> `(echo $(<F) | tr . _)`.h
-	echo "extern const u32" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`_len[]";" >> `(echo $(<F) | tr . _)`.h
-	echo "#define" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"_size (u32)"`(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`_len >> `(echo $(<F) | tr . _)`.h
-
+	echo "extern const u32" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`_size";" >> `(echo $(<F) | tr . _)`.h
 endef
 
