@@ -9,47 +9,51 @@ export AR		:=	$(PREFIX)ar
 export OBJCOPY	:=	$(PREFIX)objcopy
 
 
+define adjustdepends
+cp $(DEPSDIR)/$*.d $(DEPSDIR)/$*.P;
+sed -e 's/#.*//' -e 's/^[^:]*: \+//' -e 's/^ *//' -e 's/ *\\$$//' -e '/^$$/ d' -e 's/$$/ :/' < $(DEPSDIR)/$*.P >> $(DEPSDIR)/$*.d;
+rm $(DEPSDIR)/$*.P
+endef
+
 #---------------------------------------------------------------------------------
 %.a:
 #---------------------------------------------------------------------------------
 	@echo $(notdir $@)
+	@rm -f $@
 	@$(AR) -rc $@ $^
 
 #---------------------------------------------------------------------------------
 %.o: %.cpp
 	@echo $(notdir $<)
 	@$(CXX) -MMD -MF $(DEPSDIR)/$*.d $(CXXFLAGS) -c $< -o $@
-
+	@$(adjustdepends)
+	
 #---------------------------------------------------------------------------------
 %.o: %.c
 	@echo $(notdir $<)
 	@$(CC) -MMD -MF $(DEPSDIR)/$*.d $(CFLAGS) -c $< -o $@
+	@$(adjustdepends)
 
 #---------------------------------------------------------------------------------
 %.o: %.s
 	@echo $(notdir $<)
 	@$(CC) -MMD -MF $(DEPSDIR)/$*.d -x assembler-with-cpp $(ASFLAGS) -c $< -o $@
+	@$(adjustdepends)
 
 #---------------------------------------------------------------------------------
 %.o: %.S
 	@echo $(notdir $<)
 	@$(CC) -MMD -MF $(DEPSDIR)/$*.d -x assembler-with-cpp $(ASFLAGS) -c $< -o $@
+	@$(adjustdepends)
 
 #---------------------------------------------------------------------------------
 # canned command sequence for binary data
 #---------------------------------------------------------------------------------
 define bin2o
-	cp $(<) $(*).tmp
-	alignbin $(*).tmp
-	$(OBJCOPY) -I binary -O elf32-powerpc -B powerpc \
-	--rename-section .data=.rodata,readonly,data,contents,alloc \
-	--redefine-sym _binary_`(echo $(*) | tr . _)`_tmp_start=`(echo $(*) | tr . _)`\
-	--redefine-sym _binary_`(echo $(*) | tr . _)`_tmp_end=`(echo $(*) | tr . _)`_end\
-	--redefine-sym _binary_`(echo $(*) | tr . _)`_tmp_size=`(echo $(*) | tr . _)`_size\
-	$(*).tmp $(@)
-	echo "extern const u32" `(echo $(*) | tr . _)`"_end[];" >> $(*).h
-	echo "extern const u8" `(echo $(*) | tr . _)`"[];" >> $(*).h
-	echo "extern const u32" `(echo $(*) | tr . _)`_size[]";" >> $(*).h
-	rm $(*).tmp
+	bin2s -a 32 $< | $(AS) -o $(@)
+	echo "extern const u8" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"_end[];" > `(echo $(<F) | tr . _)`.h
+	echo "extern const u8" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"[];" >> `(echo $(<F) | tr . _)`.h
+	echo "extern const u32" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`_size";" >> `(echo $(<F) | tr . _)`.h
 endef
+
 
