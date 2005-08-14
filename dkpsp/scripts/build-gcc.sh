@@ -52,6 +52,13 @@ $MAKE install-gcc || { echo "Error installing gcc"; exit 1; }
 
 cd $BUILDSCRIPTDIR
 
+svn checkout svn://svn.pspdev.org/psp/trunk/pspsdk || { echo "ERROR GETTING PSPSDK"; exit 1; }
+cd pspsdk
+./bootstrap || { echo "ERROR RUNNING PSPSDK BOOSTRAP"; exit 1; }
+./configure || { echo "ERROR RUNNING PSPSDK CONFIGURE"; exit 1; }
+$MAKE install-data || { echo "ERROR INSTALLING PSPSDK HEADERS"; exit 1; }
+
+
 #---------------------------------------------------------------------------------
 # build and install newlib
 #---------------------------------------------------------------------------------
@@ -86,6 +93,7 @@ $MAKE install || { echo "Error installing g++"; exit 1; }
 
 
 cd $BUILDSCRIPTDIR
+
 
 #---------------------------------------------------------------------------------
 # remove temp stuff to conserve disc space

@@ -11,8 +11,7 @@ GCC_VER=4.0.1
 NEWLIB_VER=1.13.0
 LIBOGC_VER=20050521
 LIBGBA_VER=20050615
-LIBNDS_VER=20050714
-PSPSDK_VER=1.0+beta
+LIBNDS_VER=20050804
 
 BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
 GCC_CORE="gcc-core-$GCC_VER.tar.bz2"
@@ -21,7 +20,6 @@ NEWLIB="newlib-$NEWLIB_VER.tar.gz"
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
 LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
-PSPSDK="pspsdk-$PSPSDK_VER.tar.gz"
 
 BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/$BINUTILS"
 GCC_CORE_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_CORE"
@@ -30,7 +28,10 @@ LIBOGC_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBOGC"
 LIBGBA_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBGBA"
 LIBNDS_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBNDS"
 NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/$NEWLIB"
-PSPSDK_URL="http://ps2dev.org/files/$PSPSDK"
+
+
+
+
 #---------------------------------------------------------------------------------
 # Ask whether to download the source packages or not
 #---------------------------------------------------------------------------------
@@ -78,6 +79,13 @@ then
   builddir=psp
   target=psp
   toolchain=DEVKITPSP
+
+  if test "`svn help`" ; then
+    SVN="svn"
+  else
+     echo "ERROR: Please make sure you have 'subversion (svn)' installed."
+     exit
+  fi
 fi
 
 
@@ -95,6 +103,13 @@ do
   if [ "$DOWNLOAD" -ne 1 -a "$DOWNLOAD" -ne 2 ]
   then
       DOWNLOAD=0
+  else
+    if test "`wget -V`" ; then
+      WGET="wget"
+    else
+      echo "ERROR: Please make sure you have 'wget' installed."
+      exit
+    fi
   fi
 done
 
@@ -183,38 +198,23 @@ then
 
     fi
 
-    if [ $VERSION -eq 3 ]
-    then
-      if [ ! -f $SRCDIR/$PSPSDK ]
-      then
-        echo "Error: $PSPSDK not found in $SRCDIR"
-	      exit
-      else
-	      FOUND=1
-      fi
-
-    fi
     done
 
 else
 
-    wget -c $BINUTILS_URL || { echo "Error: Failed to download "$BINUTILS; exit; }
+    $WGET -c $BINUTILS_URL || { echo "Error: Failed to download "$BINUTILS; exit; }
 
-    wget -c $GCC_CORE_URL || { echo "Error: Failed to download "$GCC_CORE; exit; }
+    $WGET -c $GCC_CORE_URL || { echo "Error: Failed to download "$GCC_CORE; exit; }
 
-    wget -c $GCC_GPP_URL || { echo "Error: Failed to download "$GCC_GPP; exit; }
+    $WGET -c $GCC_GPP_URL || { echo "Error: Failed to download "$GCC_GPP; exit; }
 
-    wget --passive-ftp -c $NEWLIB_URL || { echo "Error: Failed to download "$NEWLIB; exit; }
+    $WGET --passive-ftp -c $NEWLIB_URL || { echo "Error: Failed to download "$NEWLIB; exit; }
 
 	if [ $VERSION -eq 2 ]
 	then
 		wget -c $LIBOGC_URL || { echo "Error: Failed to download "$LIBOGC; exit; }
 	fi
 
-	if [ $VERSION -eq 3 ]
-	then
-		wget -c $PSPSDK_URL || { echo "Error: Failed to download "$PSPSDK; exit; }
-	fi
 
 	if [ $VERSION -eq 1 ]
 	then
@@ -230,7 +230,6 @@ NEWLIB_SRCDIR="newlib-$NEWLIB_VER"
 LIBOGC_SRCDIR="libogc-$LIBOGC_VER"
 LIBGBA_SRCDIR="libgba-$LIBGBA_VER"
 LIBNDS_SRCDIR="libnds-$LIBNDS_VER"
-PSPSDK_SRCDIR="pspsdk-$PSPSDK_VER"
 
 #---------------------------------------------------------------------------------
 # Add installed devkit to the path, adjusting path on minsys
@@ -264,6 +263,8 @@ export MAKE
 patchdir=$(pwd)/$basedir/patches
 scriptdir=$(pwd)/$basedir/scripts
 
+echo $patchdir
+
 #---------------------------------------------------------------------------------
 # Extract source packages
 #---------------------------------------------------------------------------------
@@ -289,11 +290,6 @@ then
   bzip2 -cd $SRCDIR/$LIBOGC | tar -xv -C $LIBOGC_SRCDIR  || { echo "Error extracting "$LIBOGC; exit; }
 fi
 
-if [ $VERSION -eq 3 ]
-then
-  echo "Extracting $PSPSDK"
-  tar -xzvf $SRCDIR/$PSPSDK  || { echo "Error extracting "$PSPSDK; exit; }
-fi
 
 if [ $VERSION -eq 1 ]
 then
@@ -312,12 +308,6 @@ fi
 patch -p1 -d $BINUTILS_SRCDIR -i $patchdir/binutils-$BINUTILS_VER.patch || { echo "Error patching binutils"; exit; }
 patch -p1 -d $GCC_SRCDIR -i $patchdir/gcc-$GCC_VER.patch || { echo "Error patching gcc"; exit; }
 patch -p1 -d $NEWLIB_SRCDIR -i $patchdir/newlib-$NEWLIB_VER.patch || { echo "Error patching newlib"; exit; }
-
-if [ $VERSION -eq 3 ]
-then
-  echo
-  patch -p1 -d $PSPSDK_SRCDIR -i $(pwd)/patches/pspsdk-$PSPSDK_VER.patch
-fi
 
 
 #---------------------------------------------------------------------------------
@@ -360,7 +350,7 @@ rm -fr $target
 rm -fr $BINUTILS_SRCDIR
 rm -fr $NEWLIB_SRCDIR
 rm -fr $GCC_SRCDIR
-rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $PSPSDK_SRCDIR
+rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR
 
 echo
 echo "Would you like to delete the downloaded source packages? [y/N]"

@@ -5,11 +5,16 @@
 #---------------------------------------------------------------------------------
 
 echo "building pspsdk ..."
-cd $PSPSDK_SRCDIR
-./configure || { echo "Error configuring pspsdk"; exit 1; }
-$MAKE || { echo "Error building pspsdk"; exit 1; } 
-echo "installing pspsdk ..."
-$MAKE install || { echo "Error installing pspsdk"; exit 1; }
+cd pspsdk
+
+./configure || { echo "ERROR RUNNING PSPSDK CONFIGURE"; exit 1; }
+
+$MAKE || { echo "ERROR BUILDING PSPSDK"; exit 1; }
+
+$MAKE install || { echo "ERROR INSTALLING PSPSDK"; exit 1; }
+
+cd $BUILDSCRIPTDIR
+rm -fr pspsdk
 
 cd $BUILDSCRIPTDIR
 
