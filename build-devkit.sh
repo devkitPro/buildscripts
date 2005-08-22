@@ -9,7 +9,7 @@
 BINUTILS_VER=2.16.1
 GCC_VER=4.0.1
 NEWLIB_VER=1.13.0
-LIBOGC_VER=20050521
+LIBOGC_VER=20050812
 LIBGBA_VER=20050615
 LIBNDS_VER=20050804
 
@@ -28,9 +28,6 @@ LIBOGC_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBOGC"
 LIBGBA_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBGBA"
 LIBNDS_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBNDS"
 NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/$NEWLIB"
-
-
-
 
 #---------------------------------------------------------------------------------
 # Ask whether to download the source packages or not
