@@ -1,6 +1,5 @@
-diff -NBaur newlib-1.13.0/config.sub newlib-1.13.0-psp/config.sub
---- newlib-1.13.0/config.sub	Tue Nov 16 01:18:39 2004
-+++ newlib-1.13.0-psp/config.sub	Mon Jul 25 23:53:48 2005
+--- newlib-1.13.0.orig/config.sub	2004-11-15 17:18:39.000000000 -0800
++++ newlib-psp/config.sub	2005-06-24 17:04:02.000000000 -0700
 @@ -253,6 +253,7 @@
  	| mipsisa64sb1 | mipsisa64sb1el \
  	| mipsisa64sr71k | mipsisa64sr71kel \
@@ -17,20 +16,19 @@ diff -NBaur newlib-1.13.0/config.sub newlib-1.13.0-psp/config.sub
  	| mmix-* \
  	| msp430-* \
  	| none-* | np1-* | ns16k-* | ns32k-* \
-@@ -664,6 +666,10 @@
- 	*mint | -mint[0-9]* | *MiNT | *MiNT[0-9]*)
+@@ -665,6 +667,10 @@
  		basic_machine=m68k-atari
  		os=-mint
-+		;;
+ 		;;
 +	psp)
 +		basic_machine=mipsallegrexel-psp
 +		os=-elf
- 		;;
++		;;
  	mips3*-*)
  		basic_machine=`echo $basic_machine | sed -e 's/mips3/mips64/'`
-diff -NBaur newlib-1.13.0/configure newlib-1.13.0-psp/configure
---- newlib-1.13.0/configure	Thu Dec 16 19:51:28 2004
-+++ newlib-1.13.0-psp/configure	Mon Jul 25 23:53:48 2005
+ 		;;
+--- newlib-1.13.0.orig/configure	2004-12-16 11:51:28.000000000 -0800
++++ newlib-psp/configure	2005-06-19 18:09:12.000000000 -0700
 @@ -1507,6 +1507,9 @@
    mips*-*-linux*)
      noconfigdirs="$noconfigdirs target-newlib target-libgloss"
@@ -41,9 +39,8 @@ diff -NBaur newlib-1.13.0/configure newlib-1.13.0-psp/configure
    mips*-*-*)
      noconfigdirs="$noconfigdirs gprof ${libgcj}"
      ;;
-diff -NBaur newlib-1.13.0/configure.in newlib-1.13.0-psp/configure.in
---- newlib-1.13.0/configure.in	Thu Dec 16 19:51:28 2004
-+++ newlib-1.13.0-psp/configure.in	Mon Jul 25 23:53:48 2005
+--- newlib-1.13.0.orig/configure.in	2004-12-16 11:51:28.000000000 -0800
++++ newlib-psp/configure.in	2005-06-19 18:09:12.000000000 -0700
 @@ -716,6 +716,9 @@
    mips*-*-linux*)
      noconfigdirs="$noconfigdirs target-newlib target-libgloss"
@@ -54,28 +51,8 @@ diff -NBaur newlib-1.13.0/configure.in newlib-1.13.0-psp/configure.in
    mips*-*-*)
      noconfigdirs="$noconfigdirs gprof ${libgcj}"
      ;;
-diff -NBaur newlib-1.13.0/newlib/configure.host newlib-1.13.0-psp/newlib/configure.host
---- newlib-1.13.0/newlib/configure.host	Tue Oct  5 20:44:24 2004
-+++ newlib-1.13.0-psp/newlib/configure.host	Mon Jul 25 23:53:49 2005
-@@ -570,7 +570,14 @@
- 	;;
-   mips*-*-elf*)
- 	default_newlib_io_long_long="yes"
--	newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES"
-+	case "${host}" in
-+	  mipsallegrex*-psp-*)
-+		sys_dir=psp
-+		syscall_dir=syscalls
-+		newlib_cflags="${newlib_cflags} -G0 -DPREFER_SIZE_OVER_SPEED -DCOMPACT_CTYPE -DCLOCK_PROVIDED -I${prefix}/psp/sdk/include" ;;
-+	  *)
-+		newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES" ;;
-+	esac
- 	;;
-   mmix-*)
- 	syscall_dir=syscalls
-diff -NBaur newlib-1.13.0/newlib/libc/sys/psp/Makefile.am newlib-1.13.0-psp/newlib/libc/sys/psp/Makefile.am
---- newlib-1.13.0/newlib/libc/sys/psp/Makefile.am	Thu Jan  1 00:00:00 1970
-+++ newlib-1.13.0-psp/newlib/libc/sys/psp/Makefile.am	Mon Jul 25 23:53:48 2005
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/Makefile.am	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/Makefile.am	2005-07-23 23:17:04.000000000 -0700
 @@ -0,0 +1,22 @@
 +## Process this file with automake to generate Makefile.in
 +
@@ -99,9 +76,23 @@ diff -NBaur newlib-1.13.0/newlib/libc/sys/psp/Makefile.am newlib-1.13.0-psp/newl
 +
 +ACLOCAL_AMFLAGS = -I ../../..
 +CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host
-diff -NBaur newlib-1.13.0/newlib/libc/sys/psp/Makefile.in newlib-1.13.0-psp/newlib/libc/sys/psp/Makefile.in
---- newlib-1.13.0/newlib/libc/sys/psp/Makefile.in	Thu Jan  1 00:00:00 1970
-+++ newlib-1.13.0-psp/newlib/libc/sys/psp/Makefile.in	Mon Jul 25 23:53:48 2005
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/configure.in	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/configure.in	2005-07-23 22:43:33.000000000 -0700
+@@ -0,0 +1,12 @@
++dnl This is the newlib/libc/sys/psp configure.in file.
++dnl Process this file with autoconf to produce a configure script.
++
++AC_PREREQ(2.5)
++AC_INIT(libcglue.c)
++
++dnl Can't be done in NEWLIB_CONFIGURE because that confuses automake. 
++AC_CONFIG_AUX_DIR(../../../..)
++
++NEWLIB_CONFIGURE(../../..)
++
++AC_OUTPUT(Makefile)
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/Makefile.in	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/Makefile.in	2005-07-23 23:18:52.000000000 -0700
 @@ -0,0 +1,343 @@
 +# Makefile.in generated automatically by automake 1.4-p6 from Makefile.am
 +
@@ -446,9 +437,678 @@ diff -NBaur newlib-1.13.0/newlib/libc/sys/psp/Makefile.in newlib-1.13.0-psp/newl
 +# Tell versions [3.59,3.63) of GNU make to not export all variables.
 +# Otherwise a system limit (for SysV at least) may be exceeded.
 +.NOEXPORT:
-diff -NBaur newlib-1.13.0/newlib/libc/sys/psp/README newlib-1.13.0-psp/newlib/libc/sys/psp/README
---- newlib-1.13.0/newlib/libc/sys/psp/README	Thu Jan  1 00:00:00 1970
-+++ newlib-1.13.0-psp/newlib/libc/sys/psp/README	Mon Jul 25 23:53:49 2005
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/libcglue.c	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/libcglue.c	2005-07-23 21:49:02.000000000 -0700
+@@ -0,0 +1,494 @@
++/*
++ * PSP Software Development Kit - http://www.pspdev.org
++ * -----------------------------------------------------------------------
++ * Licensed under the BSD license, see LICENSE in PSPSDK root for details.
++ *
++ * libcglue.c - Newlib-compatible system calls.
++ *
++ * Copyright (c) 2005 Marcus R. Brown <mrbrown@ocgnet.org>
++ * Copyright (c) 2005 James Forshaw <tyranid@gmail.com>
++ * Copyright (c) 2005 John Kelley <ps2dev@kelley.ca>
++ * Copyright (c) 2005 Jim Paris <jim@jtan.com>
++ * 
++ */
++#include <errno.h>
++#include <malloc.h>
++#include <stdarg.h>
++#include <string.h>
++#include <time.h>
++#include <sys/fcntl.h>
++#include <sys/stat.h>
++#include <sys/time.h>
++#include <sys/types.h>
++#include <sys/unistd.h>
++
++#include <psptypes.h>
++#include <pspiofilemgr.h>
++#include <pspmodulemgr.h>
++#include <pspsysmem.h>
++#include <pspthreadman.h>
++#include <psputils.h>
++
++/* These functions aren't exposed in any public headers, and they probably don't need to be. */
++int sceKernelStdin(void);
++int sceKernelStdout(void);
++int sceKernelStderr(void);
++
++extern char * __psp_argv_0;
++extern int __psp_cwd_initialized;
++extern char __psp_cwd[MAXPATHLEN + 1];
++extern void __psp_init_cwd(void);
++extern int __psp_path_absolute(const char *in, char *out, int len);
++
++#ifdef F_getcwd
++char *getcwd(char *buf, size_t size)
++{
++	if(!__psp_cwd_initialized)
++		__psp_init_cwd();
++
++	if(!buf) {
++		errno = EINVAL;
++		return NULL;
++	}		
++
++	if(strlen(__psp_cwd) >= size) {
++		errno = ERANGE;
++		return NULL;
++	}
++
++	strcpy(buf, __psp_cwd);
++	return buf;
++}
++#endif
++
++#ifdef F_chdir
++int chdir(const char *path)
++{
++	char dest[MAXPATHLEN + 1];
++	SceUID uid;
++
++	if(!__psp_cwd_initialized)
++		__psp_init_cwd();
++
++	if(__psp_path_absolute(path, dest, MAXPATHLEN) < 0) {
++		errno = ENAMETOOLONG;
++		return -1;
++	}
++
++	/* sceIoChdir doesn't give an indication of whether it worked,
++	   so test for existance by attempting to open the dir */
++	uid = sceIoDopen(dest);
++	if(uid < 0) {
++		errno = ENOTDIR;
++		return -1;
++	}
++	sceIoDclose(uid);
++
++	sceIoChdir(dest);
++	strcpy(__psp_cwd, dest);
++	return 0;
++}
++#endif
++
++#ifdef F_realpath
++char *realpath(const char *path, char *resolved_path)
++{
++	if(!path || !resolved_path) {
++		errno = EINVAL;
++		return NULL;
++	}		
++	if(__psp_path_absolute(path, resolved_path, MAXPATHLEN) < 0) {
++		errno = ENAMETOOLONG;
++		return NULL;
++	}
++	return resolved_path;
++}
++#endif
++
++/* Wrappers of the standard open(), close(), read(), write(), unlink() and lseek() routines. */
++#ifdef F__open
++int _open(const char *name, int flags, int mode)
++{
++	int sce_flags;
++
++	/* Make sure the CWD has been set. */
++	if (!__psp_cwd_initialized) {
++		__psp_init_cwd();
++	}
++
++	/* O_RDONLY starts at 0, where PSP_O_RDONLY starts at 1, so remap the read/write
++	   flags by adding 1. */
++	sce_flags = (flags & O_ACCMODE) + 1;
++
++	/* Translate standard open flags into the flags understood by the PSP kernel. */
++	if (flags & O_APPEND) {
++		sce_flags |= PSP_O_APPEND;
++	}
++	if (flags & O_CREAT) {
++		sce_flags |= PSP_O_CREAT;
++	}
++	if (flags & O_TRUNC) {
++		sce_flags |= PSP_O_TRUNC;
++	}
++	if (flags & O_EXCL) {
++		sce_flags |= PSP_O_EXCL;
++	}
++	if (flags & O_NONBLOCK) {
++		sce_flags |= PSP_O_NBLOCK;
++	}
++
++	return sceIoOpen(name, sce_flags, mode);
++}
++#endif
++
++#ifdef F__close
++int _close(int fd)
++{
++	int sce_fd = fd;
++
++	if (fd == STDIN_FILENO) {
++		sce_fd = sceKernelStdin();
++	} else if (fd == STDOUT_FILENO) {
++		sce_fd = sceKernelStdout();
++	} else if (fd == STDERR_FILENO) {
++		sce_fd == sceKernelStderr();
++	}
++
++	if (sce_fd < 0) {
++		return -EBADF;
++	}
++
++	return sceIoClose(sce_fd);
++}
++#endif
++
++#ifdef F__read
++int _read(int fd, void *buf, size_t size)
++{
++	int sce_fd = fd;
++
++	if (fd == STDIN_FILENO) {
++		sce_fd = sceKernelStdin();
++	} else if (fd == STDOUT_FILENO) {
++		sce_fd = sceKernelStdout();
++	} else if (fd == STDERR_FILENO) {
++		sce_fd = sceKernelStderr();
++	}
++
++	if (sce_fd < 0) {
++		return -EBADF;
++	}
++
++	return sceIoRead(sce_fd, buf, size);
++}
++#endif
++
++#ifdef F__write
++int _write(int fd, const void *buf, size_t size)
++{
++	int sce_fd = fd;
++
++	if (fd == STDIN_FILENO) {
++		sce_fd = sceKernelStdin();
++	} else if (fd == STDOUT_FILENO) {
++		sce_fd = sceKernelStdout();
++	} else if (fd == STDERR_FILENO) {
++		sce_fd = sceKernelStderr();
++	}
++
++	if (sce_fd < 0) {
++		return -EBADF;
++	}
++
++	return sceIoWrite(sce_fd, buf, size);
++}
++#endif
++
++#ifdef F__lseek
++off_t _lseek(int fd, off_t offset, int whence)
++{
++	int sce_fd = fd;
++
++	if (fd == STDIN_FILENO) {
++		sce_fd = sceKernelStdin();
++	} else if (fd == STDOUT_FILENO) {
++		sce_fd = sceKernelStdout();
++	} else if (fd == STDERR_FILENO) {
++		sce_fd = sceKernelStderr();
++	}
++
++	if (sce_fd < 0) {
++		return -EBADF;
++	}
++
++	/* We don't have to do anything with the whence argument because SEEK_* == PSP_SEEK_*. */
++	return (off_t) sceIoLseek(sce_fd, offset, whence);
++}
++#endif
++
++#ifdef F__unlink
++int _unlink(const char *path)
++{
++	/* Make sure the CWD has been set. */
++	if (!__psp_cwd_initialized) {
++		__psp_init_cwd();
++	}
++	return sceIoRemove(path);
++}
++#endif
++
++#ifdef F__link
++int _link(const char *name1, const char *name2)
++{
++	return -1;
++}
++#endif
++
++#ifdef F__opendir
++DIR *_opendir(const char *filename)
++{
++	DIR *dirp;
++	SceUID uid;
++
++	/* Make sure the CWD has been set. */
++	if (!__psp_cwd_initialized) {
++		__psp_init_cwd();
++	}
++
++	dirp = (DIR *)malloc(sizeof(DIR));
++
++	uid = sceIoDopen(filename);
++
++	if (uid < 0)
++	{
++		free(dirp);
++		return NULL;
++	}
++
++	dirp->uid = uid;
++
++	return dirp;
++}
++#endif
++
++#ifdef F__readdir
++struct SceIoDirent *_readdir(DIR *dirp)
++{
++	SceIoDirent *de;
++
++	de = (SceIoDirent *)malloc(sizeof(SceIoDirent));
++
++	if (sceIoDread(dirp->uid, de) <= 0)
++	{
++		free(de);
++		return NULL;
++	}
++
++	return de;
++}
++#endif
++
++#ifdef F__closedir
++int _closedir(DIR *dirp)
++{
++	if (dirp != NULL)
++	{
++		int uid;
++		uid = dirp->uid;
++		free (dirp);
++		return sceIoDclose(uid); 
++	}
++	return -1; 
++}
++#endif
++
++/* Time routines.  These wrap around the routines provided by the kernel. */
++#ifdef F__gettimeofday
++int _gettimeofday(struct timeval *tp, struct timezone *tzp)
++{
++	return sceKernelLibcGettimeofday(tp, tzp);
++}
++
++#endif
++
++/* If we're being built for PSPSDK's libc this function isn't defined. */
++#ifdef F_glue_gettimeofday
++int gettimeofday(struct timeval *tp, struct timezone *tzp)
++{
++	return sceKernelLibcGettimeofday(tp, tzp);
++}
++#endif
++
++#if defined(F_clock) || defined(F_glue_clock)
++clock_t clock(void)
++{
++	return sceKernelLibcClock();
++}
++#endif
++
++#if defined(F_time) || defined(F_glue_time)
++time_t time(time_t *t)
++{
++	return sceKernelLibcTime(t);
++}
++#endif
++
++/* PSP-compatible sbrk(). */
++#if defined(F__sbrk) || defined(F_glue__sbrk)
++/* TODO: Currently our default heap is set to the maximum available block size
++   when sbrk() is first called.  Sony seems to always use a default of 64KB,
++   with the expectation that user programs will override the default size with
++   their own desired size.  The only reason I can think of them doing this is
++   to allow each PRX to have their own seperate heap.  I think that their
++   method is overkill for most user programs.
++
++   What I'd like to do instead is to use the default of 64KB for PRXes as Sony
++   does, but use the maximum available block size for executables.  This avoids
++   the requirement of specifying the heap size manually in user programs.
++   However, we currently don't have a clean way to distinguish PRXes and normal
++   executables, so this code needs to be revisited once we do come up with a
++   way. */
++#define DEFAULT_PRX_HEAP_SIZE_KB 64
++
++/* If defined it specifies the desired size of the heap, in KB. */
++extern unsigned int sce_newlib_heap_kb_size __attribute__((weak));
++
++/* UID of the memory block that represents the heap. */
++static SceUID __psp_heap_blockid;
++
++void * _sbrk(ptrdiff_t incr)
++{
++	static void * heap_bottom = NULL;
++	static void * heap_top = NULL;
++	static void * heap_ptr = NULL;
++
++	/* Has our heap been initialized? */
++	if (heap_bottom == NULL) {
++		/* No, initialize the heap. */
++		SceSize heap_size;
++
++		if (&sce_newlib_heap_kb_size != NULL) {
++			heap_size = sce_newlib_heap_kb_size * 1024;
++		} else {
++			/* TODO: Here we should distinguish between a PRX and a normal
++			   executable.  Right now we assume it's an executable. */
++			if (0 /* is a prx */) {
++				heap_size = DEFAULT_PRX_HEAP_SIZE_KB * 1024;
++			} else {
++				heap_size = sceKernelMaxFreeMemSize();
++			}
++		}
++
++		__psp_heap_blockid = sceKernelAllocPartitionMemory(2, "block", PSP_SMEM_Low, heap_size, NULL);
++		if (__psp_heap_blockid > 0) {
++			heap_bottom = sceKernelGetBlockHeadAddr(__psp_heap_blockid);
++			heap_ptr = heap_bottom;
++			heap_top = (unsigned char *) heap_bottom + heap_size;
++		}
++	}
++
++	void * heap_addr = (void *) -1;
++	void * next_heap_ptr = (void *) ((ptrdiff_t) heap_ptr + incr);
++	if ((heap_bottom != NULL) && (next_heap_ptr >= heap_bottom) && (next_heap_ptr < heap_top)) {
++		heap_addr = heap_ptr;
++		heap_ptr = next_heap_ptr;
++	}
++
++	return heap_addr;
++}
++
++/* Free the heap. */
++int __psp_free_heap(void)
++{
++	if (__psp_heap_blockid > 0) {
++		return sceKernelFreePartitionMemory(__psp_heap_blockid);
++	}
++
++	return __psp_heap_blockid;
++}
++#endif
++
++/* Other POSIX routines that must be defined. */
++#ifdef F__fstat
++int _fstat(int fd, struct stat *sbuf)
++{
++	sbuf->st_mode = S_IFCHR;
++	return 0;
++}
++#endif
++
++#ifdef F_isatty
++int isatty(int fd)
++{
++	return 1;
++}
++#endif
++
++/* Unsupported newlib system calls. */
++#ifdef F__fork
++pid_t fork(void)
++{
++	return (pid_t) -1;
++}
++#endif
++
++#ifdef F__getpid
++pid_t _getpid(void)
++{
++	return (pid_t) -1;
++}
++#endif
++
++#ifdef F__kill
++int _kill(int unused, int unused2)
++{
++	return -1;
++}
++#endif
++
++#ifdef F__wait
++pid_t _wait(int *unused)
++{
++	return (pid_t) -1;
++}
++#endif
++
++/* Exit. */
++#if defined(F__exit) || defined(F_glue__exit)
++extern int sce_newlib_nocreate_thread_in_start __attribute__((weak));
++
++extern int __psp_free_heap(void);
++
++void _exit(int status)
++{
++	if (&sce_newlib_nocreate_thread_in_start != NULL) {
++		/* Free the heap created by _sbrk(). */
++		__psp_free_heap();
++
++		sceKernelSelfStopUnloadModule(1, 0, NULL);
++	} else {
++		if (status == 0) {
++			/* Free the heap created by _sbrk(). */
++			__psp_free_heap();
++		}
++
++		sceKernelExitThread(status);
++	}
++
++	while (1) ;
++}
++#endif
++
++/* newlib's errno.h wants a function that returns a pointer to errno. */
++#ifdef F_glue___errno
++#undef errno
++
++int errno;
++
++/* TODO: Should this be made reentrant (wrapping interrupt disable/enable
++   around it should do it)? */
++int * __errno(void)
++{
++	return &errno;
++}
++#endif
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/pspcwd.c	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/pspcwd.c	2005-07-23 21:49:44.000000000 -0700
+@@ -0,0 +1,170 @@
++/*
++ * PSP Software Development Kit - http://www.pspdev.org
++ * -----------------------------------------------------------------------
++ * Licensed under the BSD license, see LICENSE in PSPSDK root for details.
++ *
++ * pspcwd.c - Current working directory emulation helper functions
++ *
++ * Copyright (c) 2005 Marcus R. Brown <mrbrown@ocgnet.org>
++ * Copyright (c) 2005 James Forshaw <tyranid@gmail.com>
++ * Copyright (c) 2005 John Kelley <ps2dev@kelley.ca>
++ * Copyright (c) 2005 Jim Paris <jim@jtan.com>
++ *
++ */
++#include <string.h>
++#include <sys/types.h>
++#include <sys/unistd.h>
++
++#include <psptypes.h>
++#include <pspiofilemgr.h>
++
++extern char * __psp_argv_0;
++int __psp_cwd_initialized = 0;
++char __psp_cwd[MAXPATHLEN + 1] = { 0 };
++
++/* Set the current working directory (CWD) to the path where the module was launched. */
++void __psp_init_cwd(void)
++{
++	if (!__psp_cwd_initialized && (__psp_argv_0 != NULL)) {
++		char base_path[MAXPATHLEN + 1];
++		char *end;
++
++		__psp_cwd_initialized = 1;
++
++		strncpy(base_path, __psp_argv_0, sizeof(base_path) - 1);
++		base_path[sizeof(base_path) - 1] = '\0';
++		end = strrchr(base_path, '/');
++		if (end != NULL) {
++			*(end + 1) = '\0';
++			chdir(base_path);
++		}
++	}
++}
++
++/* Return the number of bytes taken up by the "drive:" prefix,
++   or -1 if it's not found */
++int __psp_get_drive(const char *d)
++{
++	int i;
++	for(i=0; d[i]; i++) {
++		if(! ((d[i] >= 'a' && d[i] <= 'z') ||
++		      (d[i] >= '0' && d[i] <= '9') ))
++			break;
++	}
++	if(d[i] == ':') return i+1;
++	return -1;
++}
++
++/* Like strcpy, but returns 0 if the string doesn't fit */
++int __psp_safe_strcpy(char *out, const char *in, int maxlen)
++{
++	for( ; maxlen > 0 && *in ; maxlen-- )
++		*(out++) = *(in++);
++	if(maxlen < 1) return 0;
++	*out = 0;
++	return 1;
++}
++
++/* Like strcat, but returns 0 if the string doesn't fit */
++int __psp_safe_strcat(char *out, const char *in, int maxlen)
++{
++	for( ; *out ; out++,maxlen-- )
++		continue;
++	return __psp_safe_strcpy(out, in, maxlen);
++}
++
++/* Normalize a pathname (without leading "drive:") by removing
++   . and .. components, duplicated /, etc. */
++int __psp_path_normalize(char *out, int len)
++{
++	int i, j;
++	int first, next;
++
++	/* First append "/" to make the rest easier */
++	if(!__psp_safe_strcat(out,"/",len)) return -10;
++
++	/* Convert "//" to "/" */
++	for(i=0; out[i+1]; i++) {
++		if(out[i]=='/' && out[i+1]=='/') {
++			for(j=i+1; out[j]; j++)
++				out[j] = out[j+1];
++			i--;
++		}
++	}
++
++	/* Convert "/./" to "/" */
++	for(i=0; out[i] && out[i+1] && out[i+2]; i++) {
++		if(out[i]=='/' && out[i+1]=='.' && out[i+2]=='/') {
++			for(j=i+1; out[j]; j++)
++				out[j] = out[j+2];
++			i--;
++		}
++	}
++
++	/* Convert "/asdf/../" to "/" until we can't anymore.  Also
++	 * convert leading "/../" to "/" */
++	first = next = 0;
++	while(1) {
++		/* If a "../" follows, remove it and the parent */
++		if(out[next+1] && out[next+1]=='.' && 
++		   out[next+2] && out[next+2]=='.' &&
++		   out[next+3] && out[next+3]=='/') {
++			for(j=0; out[first+j+1]; j++)
++				out[first+j+1] = out[next+j+4];
++			first = next = 0;
++			continue;
++		}
++
++		/* Find next slash */
++		first = next;
++		for(next=first+1; out[next] && out[next] != '/'; next++)
++			continue;
++		if(!out[next]) break;
++	}
++
++	/* Remove trailing "/" */
++	for(i=1; out[i]; i++)
++		continue;
++	if(i > 1 && out[i-1] == '/') 
++		out[i-1] = 0;
++
++	return 0;
++}
++
++/* Convert relative path to absolute path. */
++int __psp_path_absolute(const char *in, char *out, int len)
++{
++	int dr;
++
++	/* See what the relative URL starts with */
++	dr = __psp_get_drive(in);
++	if(dr > 0 && in[dr] == '/') {
++		/* It starts with "drive:/", so it's already absolute */
++		if(!__psp_safe_strcpy(out, in, len))
++			return -1;
++	} else if(in[0] == '/') {
++		/* It's absolute, but missing the drive, so use cwd's drive */
++		if(strlen(__psp_cwd) >= len)
++			return -2;
++		strcpy(out, __psp_cwd);
++		dr = __psp_get_drive(out);
++		out[dr] = 0;
++		if(!__psp_safe_strcat(out, in, len))
++			return -3;
++	} else {
++		/* It's not absolute, so append it to the current cwd */
++		if(strlen(__psp_cwd) >= len)
++			return -4;
++		strcpy(out, __psp_cwd);
++		if(!__psp_safe_strcat(out, "/", len)) 
++			return -6;
++		if(!__psp_safe_strcat(out, in, len)) 
++			return -7;
++	}
++
++	/* Now normalize the pathname portion */
++	dr = __psp_get_drive(out);
++	if(dr < 0) dr = 0;
++	return __psp_path_normalize(out + dr, len - dr);
++}
++
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/README	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/README	2005-07-23 23:25:55.000000000 -0700
 @@ -0,0 +1,16 @@
 +Newlib for PSP
 +--
@@ -466,9 +1126,8 @@ diff -NBaur newlib-1.13.0/newlib/libc/sys/psp/README newlib-1.13.0-psp/newlib/li
 +
 +--
 +Marcus R. Brown <mrbrown@ocgnet.org>
-diff -NBaur newlib-1.13.0/newlib/libc/sys/psp/aclocal.m4 newlib-1.13.0-psp/newlib/libc/sys/psp/aclocal.m4
---- newlib-1.13.0/newlib/libc/sys/psp/aclocal.m4	Thu Jan  1 00:00:00 1970
-+++ newlib-1.13.0-psp/newlib/libc/sys/psp/aclocal.m4	Mon Jul 25 23:53:49 2005
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/aclocal.m4	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/aclocal.m4	2005-07-23 23:18:42.000000000 -0700
 @@ -0,0 +1,1185 @@
 +dnl aclocal.m4 generated automatically by aclocal 1.4-p6
 +
@@ -1655,9 +2314,8 @@ diff -NBaur newlib-1.13.0/newlib/libc/sys/psp/aclocal.m4 newlib-1.13.0-psp/newli
 +]
 +)
 +
-diff -NBaur newlib-1.13.0/newlib/libc/sys/psp/configure newlib-1.13.0-psp/newlib/libc/sys/psp/configure
---- newlib-1.13.0/newlib/libc/sys/psp/configure	Thu Jan  1 00:00:00 1970
-+++ newlib-1.13.0-psp/newlib/libc/sys/psp/configure	Mon Jul 25 23:53:49 2005
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/configure	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/configure	2005-07-23 22:50:02.000000000 -0700
 @@ -0,0 +1,1880 @@
 +#! /bin/sh
 +
@@ -3539,698 +4197,42 @@ diff -NBaur newlib-1.13.0/newlib/libc/sys/psp/configure newlib-1.13.0-psp/newlib
 +rm -fr confdefs* $ac_clean_files
 +test "$no_create" = yes || ${CONFIG_SHELL-/bin/sh} $CONFIG_STATUS || exit 1
 +
-diff -NBaur newlib-1.13.0/newlib/libc/sys/psp/configure.in newlib-1.13.0-psp/newlib/libc/sys/psp/configure.in
---- newlib-1.13.0/newlib/libc/sys/psp/configure.in	Thu Jan  1 00:00:00 1970
-+++ newlib-1.13.0-psp/newlib/libc/sys/psp/configure.in	Mon Jul 25 23:53:48 2005
-@@ -0,0 +1,12 @@
-+dnl This is the newlib/libc/sys/psp configure.in file.
-+dnl Process this file with autoconf to produce a configure script.
-+
-+AC_PREREQ(2.5)
-+AC_INIT(libcglue.c)
-+
-+dnl Can't be done in NEWLIB_CONFIGURE because that confuses automake. 
-+AC_CONFIG_AUX_DIR(../../../..)
-+
-+NEWLIB_CONFIGURE(../../..)
-+
-+AC_OUTPUT(Makefile)
-diff -NBaur newlib-1.13.0/newlib/libc/sys/psp/crt0.c newlib-1.13.0-psp/newlib/libc/sys/psp/crt0.c
---- newlib-1.13.0/newlib/libc/sys/psp/crt0.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.13.0-psp/newlib/libc/sys/psp/crt0.c	Mon Jul 25 23:53:49 2005
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/crt0.c	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/crt0.c	2005-07-23 23:27:06.000000000 -0700
 @@ -0,0 +1,3 @@
 +/* The real crt0.c lives in PSPSDK. */
 +
 +void _start() { }
-diff -NBaur newlib-1.13.0/newlib/libc/sys/psp/libcglue.c newlib-1.13.0-psp/newlib/libc/sys/psp/libcglue.c
---- newlib-1.13.0/newlib/libc/sys/psp/libcglue.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.13.0-psp/newlib/libc/sys/psp/libcglue.c	Mon Jul 25 23:53:49 2005
-@@ -0,0 +1,494 @@
-+/*
-+ * PSP Software Development Kit - http://www.pspdev.org
-+ * -----------------------------------------------------------------------
-+ * Licensed under the BSD license, see LICENSE in PSPSDK root for details.
-+ *
-+ * libcglue.c - Newlib-compatible system calls.
-+ *
-+ * Copyright (c) 2005 Marcus R. Brown <mrbrown@ocgnet.org>
-+ * Copyright (c) 2005 James Forshaw <tyranid@gmail.com>
-+ * Copyright (c) 2005 John Kelley <ps2dev@kelley.ca>
-+ * Copyright (c) 2005 Jim Paris <jim@jtan.com>
-+ * 
-+ */
-+#include <errno.h>
-+#include <malloc.h>
-+#include <stdarg.h>
-+#include <string.h>
-+#include <time.h>
-+#include <sys/fcntl.h>
-+#include <sys/stat.h>
-+#include <sys/time.h>
-+#include <sys/types.h>
-+#include <sys/unistd.h>
-+
-+#include <psptypes.h>
-+#include <pspiofilemgr.h>
-+#include <pspmodulemgr.h>
-+#include <pspsysmem.h>
-+#include <pspthreadman.h>
-+#include <psputils.h>
-+
-+/* These functions aren't exposed in any public headers, and they probably don't need to be. */
-+int sceKernelStdin(void);
-+int sceKernelStdout(void);
-+int sceKernelStderr(void);
-+
-+extern char * __psp_argv_0;
-+extern int __psp_cwd_initialized;
-+extern char __psp_cwd[MAXPATHLEN + 1];
-+extern void __psp_init_cwd(void);
-+extern int __psp_path_absolute(const char *in, char *out, int len);
-+
-+#ifdef F_getcwd
-+char *getcwd(char *buf, size_t size)
-+{
-+	if(!__psp_cwd_initialized)
-+		__psp_init_cwd();
-+
-+	if(!buf) {
-+		errno = EINVAL;
-+		return NULL;
-+	}		
-+
-+	if(strlen(__psp_cwd) >= size) {
-+		errno = ERANGE;
-+		return NULL;
-+	}
-+
-+	strcpy(buf, __psp_cwd);
-+	return buf;
-+}
+--- newlib-1.13.0.orig/newlib/libc/include/sys/config.h	2004-06-22 14:54:51.000000000 -0700
++++ newlib-psp/newlib/libc/include/sys/config.h	2005-08-15 14:11:50.806728088 -0700
+@@ -94,6 +94,12 @@
+ #endif
+ #endif
+ 
++/* We compile newlib with -G0 for PSP, but if we're compiling an app with $gp enabled,
++   then _impure_ptr is expected to live in .sdata. */
++#if defined(__psp__)
++#define __ATTRIBUTE_IMPURE_PTR__ __attribute__((__section__(".sdata")))
 +#endif
 +
-+#ifdef F_chdir
-+int chdir(const char *path)
-+{
-+	char dest[MAXPATHLEN + 1];
-+	SceUID uid;
-+
-+	if(!__psp_cwd_initialized)
-+		__psp_init_cwd();
-+
-+	if(__psp_path_absolute(path, dest, MAXPATHLEN) < 0) {
-+		errno = ENAMETOOLONG;
-+		return -1;
-+	}
-+
-+	/* sceIoChdir doesn't give an indication of whether it worked,
-+	   so test for existance by attempting to open the dir */
-+	uid = sceIoDopen(dest);
-+	if(uid < 0) {
-+		errno = ENOTDIR;
-+		return -1;
-+	}
-+	sceIoDclose(uid);
-+
-+	sceIoChdir(dest);
-+	strcpy(__psp_cwd, dest);
-+	return 0;
-+}
-+#endif
-+
-+#ifdef F_realpath
-+char *realpath(const char *path, char *resolved_path)
-+{
-+	if(!path || !resolved_path) {
-+		errno = EINVAL;
-+		return NULL;
-+	}		
-+	if(__psp_path_absolute(path, resolved_path, MAXPATHLEN) < 0) {
-+		errno = ENAMETOOLONG;
-+		return NULL;
-+	}
-+	return resolved_path;
-+}
-+#endif
-+
-+/* Wrappers of the standard open(), close(), read(), write(), unlink() and lseek() routines. */
-+#ifdef F__open
-+int _open(const char *name, int flags, int mode)
-+{
-+	int sce_flags;
-+
-+	/* Make sure the CWD has been set. */
-+	if (!__psp_cwd_initialized) {
-+		__psp_init_cwd();
-+	}
-+
-+	/* O_RDONLY starts at 0, where PSP_O_RDONLY starts at 1, so remap the read/write
-+	   flags by adding 1. */
-+	sce_flags = (flags & O_ACCMODE) + 1;
-+
-+	/* Translate standard open flags into the flags understood by the PSP kernel. */
-+	if (flags & O_APPEND) {
-+		sce_flags |= PSP_O_APPEND;
-+	}
-+	if (flags & O_CREAT) {
-+		sce_flags |= PSP_O_CREAT;
-+	}
-+	if (flags & O_TRUNC) {
-+		sce_flags |= PSP_O_TRUNC;
-+	}
-+	if (flags & O_EXCL) {
-+		sce_flags |= PSP_O_EXCL;
-+	}
-+	if (flags & O_NONBLOCK) {
-+		sce_flags |= PSP_O_NBLOCK;
-+	}
-+
-+	return sceIoOpen(name, sce_flags, mode);
-+}
-+#endif
-+
-+#ifdef F__close
-+int _close(int fd)
-+{
-+	int sce_fd = fd;
-+
-+	if (fd == STDIN_FILENO) {
-+		sce_fd = sceKernelStdin();
-+	} else if (fd == STDOUT_FILENO) {
-+		sce_fd = sceKernelStdout();
-+	} else if (fd == STDERR_FILENO) {
-+		sce_fd == sceKernelStderr();
-+	}
-+
-+	if (sce_fd < 0) {
-+		return -EBADF;
-+	}
-+
-+	return sceIoClose(sce_fd);
-+}
-+#endif
-+
-+#ifdef F__read
-+int _read(int fd, void *buf, size_t size)
-+{
-+	int sce_fd = fd;
-+
-+	if (fd == STDIN_FILENO) {
-+		sce_fd = sceKernelStdin();
-+	} else if (fd == STDOUT_FILENO) {
-+		sce_fd = sceKernelStdout();
-+	} else if (fd == STDERR_FILENO) {
-+		sce_fd = sceKernelStderr();
-+	}
-+
-+	if (sce_fd < 0) {
-+		return -EBADF;
-+	}
-+
-+	return sceIoRead(sce_fd, buf, size);
-+}
-+#endif
-+
-+#ifdef F__write
-+int _write(int fd, const void *buf, size_t size)
-+{
-+	int sce_fd = fd;
-+
-+	if (fd == STDIN_FILENO) {
-+		sce_fd = sceKernelStdin();
-+	} else if (fd == STDOUT_FILENO) {
-+		sce_fd = sceKernelStdout();
-+	} else if (fd == STDERR_FILENO) {
-+		sce_fd = sceKernelStderr();
-+	}
-+
-+	if (sce_fd < 0) {
-+		return -EBADF;
-+	}
-+
-+	return sceIoWrite(sce_fd, buf, size);
-+}
-+#endif
-+
-+#ifdef F__lseek
-+off_t _lseek(int fd, off_t offset, int whence)
-+{
-+	int sce_fd = fd;
-+
-+	if (fd == STDIN_FILENO) {
-+		sce_fd = sceKernelStdin();
-+	} else if (fd == STDOUT_FILENO) {
-+		sce_fd = sceKernelStdout();
-+	} else if (fd == STDERR_FILENO) {
-+		sce_fd = sceKernelStderr();
-+	}
-+
-+	if (sce_fd < 0) {
-+		return -EBADF;
-+	}
-+
-+	/* We don't have to do anything with the whence argument because SEEK_* == PSP_SEEK_*. */
-+	return (off_t) sceIoLseek(sce_fd, offset, whence);
-+}
-+#endif
-+
-+#ifdef F__unlink
-+int _unlink(const char *path)
-+{
-+	/* Make sure the CWD has been set. */
-+	if (!__psp_cwd_initialized) {
-+		__psp_init_cwd();
-+	}
-+	return sceIoRemove(path);
-+}
-+#endif
-+
-+#ifdef F__link
-+int _link(const char *name1, const char *name2)
-+{
-+	return -1;
-+}
-+#endif
-+
-+#ifdef F__opendir
-+DIR *_opendir(const char *filename)
-+{
-+	DIR *dirp;
-+	SceUID uid;
-+
-+	/* Make sure the CWD has been set. */
-+	if (!__psp_cwd_initialized) {
-+		__psp_init_cwd();
-+	}
-+
-+	dirp = (DIR *)malloc(sizeof(DIR));
-+
-+	uid = sceIoDopen(filename);
-+
-+	if (uid < 0)
-+	{
-+		free(dirp);
-+		return NULL;
-+	}
-+
-+	dirp->uid = uid;
-+
-+	return dirp;
-+}
-+#endif
-+
-+#ifdef F__readdir
-+struct SceIoDirent *_readdir(DIR *dirp)
-+{
-+	SceIoDirent *de;
-+
-+	de = (SceIoDirent *)malloc(sizeof(SceIoDirent));
-+
-+	if (sceIoDread(dirp->uid, de) <= 0)
-+	{
-+		free(de);
-+		return NULL;
-+	}
-+
-+	return de;
-+}
-+#endif
-+
-+#ifdef F__closedir
-+int _closedir(DIR *dirp)
-+{
-+	if (dirp != NULL)
-+	{
-+		int uid;
-+		uid = dirp->uid;
-+		free (dirp);
-+		return sceIoDclose(uid); 
-+	}
-+	return -1; 
-+}
-+#endif
-+
-+/* Time routines.  These wrap around the routines provided by the kernel. */
-+#ifdef F__gettimeofday
-+int _gettimeofday(struct timeval *tp, struct timezone *tzp)
-+{
-+	return sceKernelLibcGettimeofday(tp, tzp);
-+}
-+
-+#endif
-+
-+/* If we're being built for PSPSDK's libc this function isn't defined. */
-+#ifdef F_glue_gettimeofday
-+int gettimeofday(struct timeval *tp, struct timezone *tzp)
-+{
-+	return sceKernelLibcGettimeofday(tp, tzp);
-+}
-+#endif
-+
-+#if defined(F_clock) || defined(F_glue_clock)
-+clock_t clock(void)
-+{
-+	return sceKernelLibcClock();
-+}
-+#endif
-+
-+#if defined(F_time) || defined(F_glue_time)
-+time_t time(time_t *t)
-+{
-+	return sceKernelLibcTime(t);
-+}
-+#endif
-+
-+/* PSP-compatible sbrk(). */
-+#if defined(F__sbrk) || defined(F_glue__sbrk)
-+/* TODO: Currently our default heap is set to the maximum available block size
-+   when sbrk() is first called.  Sony seems to always use a default of 64KB,
-+   with the expectation that user programs will override the default size with
-+   their own desired size.  The only reason I can think of them doing this is
-+   to allow each PRX to have their own seperate heap.  I think that their
-+   method is overkill for most user programs.
-+
-+   What I'd like to do instead is to use the default of 64KB for PRXes as Sony
-+   does, but use the maximum available block size for executables.  This avoids
-+   the requirement of specifying the heap size manually in user programs.
-+   However, we currently don't have a clean way to distinguish PRXes and normal
-+   executables, so this code needs to be revisited once we do come up with a
-+   way. */
-+#define DEFAULT_PRX_HEAP_SIZE_KB 64
-+
-+/* If defined it specifies the desired size of the heap, in KB. */
-+extern unsigned int sce_newlib_heap_kb_size __attribute__((weak));
-+
-+/* UID of the memory block that represents the heap. */
-+static SceUID __psp_heap_blockid;
-+
-+void * _sbrk(ptrdiff_t incr)
-+{
-+	static void * heap_bottom = NULL;
-+	static void * heap_top = NULL;
-+	static void * heap_ptr = NULL;
-+
-+	/* Has our heap been initialized? */
-+	if (heap_bottom == NULL) {
-+		/* No, initialize the heap. */
-+		SceSize heap_size;
-+
-+		if (&sce_newlib_heap_kb_size != NULL) {
-+			heap_size = sce_newlib_heap_kb_size * 1024;
-+		} else {
-+			/* TODO: Here we should distinguish between a PRX and a normal
-+			   executable.  Right now we assume it's an executable. */
-+			if (0 /* is a prx */) {
-+				heap_size = DEFAULT_PRX_HEAP_SIZE_KB * 1024;
-+			} else {
-+				heap_size = sceKernelMaxFreeMemSize();
-+			}
-+		}
-+
-+		__psp_heap_blockid = sceKernelAllocPartitionMemory(2, "block", PSP_SMEM_Low, heap_size, NULL);
-+		if (__psp_heap_blockid > 0) {
-+			heap_bottom = sceKernelGetBlockHeadAddr(__psp_heap_blockid);
-+			heap_ptr = heap_bottom;
-+			heap_top = (unsigned char *) heap_bottom + heap_size;
-+		}
-+	}
-+
-+	void * heap_addr = (void *) -1;
-+	void * next_heap_ptr = (void *) ((ptrdiff_t) heap_ptr + incr);
-+	if ((heap_bottom != NULL) && (next_heap_ptr >= heap_bottom) && (next_heap_ptr < heap_top)) {
-+		heap_addr = heap_ptr;
-+		heap_ptr = next_heap_ptr;
-+	}
-+
-+	return heap_addr;
-+}
-+
-+/* Free the heap. */
-+int __psp_free_heap(void)
-+{
-+	if (__psp_heap_blockid > 0) {
-+		return sceKernelFreePartitionMemory(__psp_heap_blockid);
-+	}
-+
-+	return __psp_heap_blockid;
-+}
-+#endif
-+
-+/* Other POSIX routines that must be defined. */
-+#ifdef F__fstat
-+int _fstat(int fd, struct stat *sbuf)
-+{
-+	sbuf->st_mode = S_IFCHR;
-+	return 0;
-+}
-+#endif
-+
-+#ifdef F_isatty
-+int isatty(int fd)
-+{
-+	return 1;
-+}
-+#endif
-+
-+/* Unsupported newlib system calls. */
-+#ifdef F__fork
-+pid_t fork(void)
-+{
-+	return (pid_t) -1;
-+}
-+#endif
-+
-+#ifdef F__getpid
-+pid_t _getpid(void)
-+{
-+	return (pid_t) -1;
-+}
-+#endif
-+
-+#ifdef F__kill
-+int _kill(int unused, int unused2)
-+{
-+	return -1;
-+}
-+#endif
-+
-+#ifdef F__wait
-+pid_t _wait(int *unused)
-+{
-+	return (pid_t) -1;
-+}
-+#endif
-+
-+/* Exit. */
-+#if defined(F__exit) || defined(F_glue__exit)
-+extern int sce_newlib_nocreate_thread_in_start __attribute__((weak));
-+
-+extern int __psp_free_heap(void);
-+
-+void _exit(int status)
-+{
-+	if (&sce_newlib_nocreate_thread_in_start != NULL) {
-+		/* Free the heap created by _sbrk(). */
-+		__psp_free_heap();
-+
-+		sceKernelSelfStopUnloadModule(1, 0, NULL);
-+	} else {
-+		if (status == 0) {
-+			/* Free the heap created by _sbrk(). */
-+			__psp_free_heap();
-+		}
-+
-+		sceKernelExitThread(status);
-+	}
-+
-+	while (1) ;
-+}
-+#endif
-+
-+/* newlib's errno.h wants a function that returns a pointer to errno. */
-+#ifdef F_glue___errno
-+#undef errno
-+
-+int errno;
-+
-+/* TODO: Should this be made reentrant (wrapping interrupt disable/enable
-+   around it should do it)? */
-+int * __errno(void)
-+{
-+	return &errno;
-+}
-+#endif
-diff -NBaur newlib-1.13.0/newlib/libc/sys/psp/pspcwd.c newlib-1.13.0-psp/newlib/libc/sys/psp/pspcwd.c
---- newlib-1.13.0/newlib/libc/sys/psp/pspcwd.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.13.0-psp/newlib/libc/sys/psp/pspcwd.c	Mon Jul 25 23:53:49 2005
-@@ -0,0 +1,170 @@
-+/*
-+ * PSP Software Development Kit - http://www.pspdev.org
-+ * -----------------------------------------------------------------------
-+ * Licensed under the BSD license, see LICENSE in PSPSDK root for details.
-+ *
-+ * pspcwd.c - Current working directory emulation helper functions
-+ *
-+ * Copyright (c) 2005 Marcus R. Brown <mrbrown@ocgnet.org>
-+ * Copyright (c) 2005 James Forshaw <tyranid@gmail.com>
-+ * Copyright (c) 2005 John Kelley <ps2dev@kelley.ca>
-+ * Copyright (c) 2005 Jim Paris <jim@jtan.com>
-+ *
-+ */
-+#include <string.h>
-+#include <sys/types.h>
-+#include <sys/unistd.h>
-+
-+#include <psptypes.h>
-+#include <pspiofilemgr.h>
-+
-+extern char * __psp_argv_0;
-+int __psp_cwd_initialized = 0;
-+char __psp_cwd[MAXPATHLEN + 1] = { 0 };
-+
-+/* Set the current working directory (CWD) to the path where the module was launched. */
-+void __psp_init_cwd(void)
-+{
-+	if (!__psp_cwd_initialized && (__psp_argv_0 != NULL)) {
-+		char base_path[MAXPATHLEN + 1];
-+		char *end;
-+
-+		__psp_cwd_initialized = 1;
-+
-+		strncpy(base_path, __psp_argv_0, sizeof(base_path) - 1);
-+		base_path[sizeof(base_path) - 1] = '\0';
-+		end = strrchr(base_path, '/');
-+		if (end != NULL) {
-+			*(end + 1) = '\0';
-+			chdir(base_path);
-+		}
-+	}
-+}
-+
-+/* Return the number of bytes taken up by the "drive:" prefix,
-+   or -1 if it's not found */
-+int __psp_get_drive(const char *d)
-+{
-+	int i;
-+	for(i=0; d[i]; i++) {
-+		if(! ((d[i] >= 'a' && d[i] <= 'z') ||
-+		      (d[i] >= '0' && d[i] <= '9') ))
-+			break;
-+	}
-+	if(d[i] == ':') return i+1;
-+	return -1;
-+}
-+
-+/* Like strcpy, but returns 0 if the string doesn't fit */
-+int __psp_safe_strcpy(char *out, const char *in, int maxlen)
-+{
-+	for( ; maxlen > 0 && *in ; maxlen-- )
-+		*(out++) = *(in++);
-+	if(maxlen < 1) return 0;
-+	*out = 0;
-+	return 1;
-+}
-+
-+/* Like strcat, but returns 0 if the string doesn't fit */
-+int __psp_safe_strcat(char *out, const char *in, int maxlen)
-+{
-+	for( ; *out ; out++,maxlen-- )
-+		continue;
-+	return __psp_safe_strcpy(out, in, maxlen);
-+}
-+
-+/* Normalize a pathname (without leading "drive:") by removing
-+   . and .. components, duplicated /, etc. */
-+int __psp_path_normalize(char *out, int len)
-+{
-+	int i, j;
-+	int first, next;
-+
-+	/* First append "/" to make the rest easier */
-+	if(!__psp_safe_strcat(out,"/",len)) return -10;
-+
-+	/* Convert "//" to "/" */
-+	for(i=0; out[i+1]; i++) {
-+		if(out[i]=='/' && out[i+1]=='/') {
-+			for(j=i+1; out[j]; j++)
-+				out[j] = out[j+1];
-+			i--;
-+		}
-+	}
-+
-+	/* Convert "/./" to "/" */
-+	for(i=0; out[i] && out[i+1] && out[i+2]; i++) {
-+		if(out[i]=='/' && out[i+1]=='.' && out[i+2]=='/') {
-+			for(j=i+1; out[j]; j++)
-+				out[j] = out[j+2];
-+			i--;
-+		}
-+	}
-+
-+	/* Convert "/asdf/../" to "/" until we can't anymore.  Also
-+	 * convert leading "/../" to "/" */
-+	first = next = 0;
-+	while(1) {
-+		/* If a "../" follows, remove it and the parent */
-+		if(out[next+1] && out[next+1]=='.' && 
-+		   out[next+2] && out[next+2]=='.' &&
-+		   out[next+3] && out[next+3]=='/') {
-+			for(j=0; out[first+j+1]; j++)
-+				out[first+j+1] = out[next+j+4];
-+			first = next = 0;
-+			continue;
-+		}
-+
-+		/* Find next slash */
-+		first = next;
-+		for(next=first+1; out[next] && out[next] != '/'; next++)
-+			continue;
-+		if(!out[next]) break;
-+	}
-+
-+	/* Remove trailing "/" */
-+	for(i=1; out[i]; i++)
-+		continue;
-+	if(i > 1 && out[i-1] == '/') 
-+		out[i-1] = 0;
-+
-+	return 0;
-+}
-+
-+/* Convert relative path to absolute path. */
-+int __psp_path_absolute(const char *in, char *out, int len)
-+{
-+	int dr;
-+
-+	/* See what the relative URL starts with */
-+	dr = __psp_get_drive(in);
-+	if(dr > 0 && in[dr] == '/') {
-+		/* It starts with "drive:/", so it's already absolute */
-+		if(!__psp_safe_strcpy(out, in, len))
-+			return -1;
-+	} else if(in[0] == '/') {
-+		/* It's absolute, but missing the drive, so use cwd's drive */
-+		if(strlen(__psp_cwd) >= len)
-+			return -2;
-+		strcpy(out, __psp_cwd);
-+		dr = __psp_get_drive(out);
-+		out[dr] = 0;
-+		if(!__psp_safe_strcat(out, in, len))
-+			return -3;
-+	} else {
-+		/* It's not absolute, so append it to the current cwd */
-+		if(strlen(__psp_cwd) >= len)
-+			return -4;
-+		strcpy(out, __psp_cwd);
-+		if(!__psp_safe_strcat(out, "/", len)) 
-+			return -6;
-+		if(!__psp_safe_strcat(out, in, len)) 
-+			return -7;
-+	}
-+
-+	/* Now normalize the pathname portion */
-+	dr = __psp_get_drive(out);
-+	if(dr < 0) dr = 0;
-+	return __psp_path_normalize(out + dr, len - dr);
-+}
-+
+ #ifdef __xstormy16__
+ #define __SMALL_BITFIELDS
+ #undef INT_MAX
+--- newlib-1.13.0.orig/newlib/configure.host	2004-10-05 12:44:24.000000000 -0700
++++ newlib-psp/newlib/configure.host	2005-07-23 23:02:26.000000000 -0700
+@@ -570,7 +570,14 @@
+ 	;;
+   mips*-*-elf*)
+ 	default_newlib_io_long_long="yes"
+-	newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES"
++	case "${host}" in
++	  mipsallegrex*-psp-*)
++		sys_dir=psp
++		syscall_dir=syscalls
++		newlib_cflags="${newlib_cflags} -G0 -DPREFER_SIZE_OVER_SPEED -DCOMPACT_CTYPE -DCLOCK_PROVIDED -I${prefix}/psp/sdk/include" ;;
++	  *)
++		newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES" ;;
++	esac
+ 	;;
+   mmix-*)
+ 	syscall_dir=syscalls

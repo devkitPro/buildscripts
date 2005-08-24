@@ -1,6 +1,6 @@
-diff -NBaur binutils-2.16.1/bfd/Makefile.am binutils-2.16.1-psp/bfd/Makefile.am
+diff -Nbaur binutils-2.16.1/bfd/Makefile.am binutils-2.16.1-psp/bfd/Makefile.am
 --- binutils-2.16.1/bfd/Makefile.am	Sun Jun 12 19:58:52 2005
-+++ binutils-2.16.1-psp/bfd/Makefile.am	Mon Jul 25 20:30:03 2005
++++ binutils-2.16.1-psp/bfd/Makefile.am	Wed Aug 24 01:57:12 2005
 @@ -3,7 +3,7 @@
  AUTOMAKE_OPTIONS = 1.9 cygnus
  
@@ -10,9 +10,9 @@ diff -NBaur binutils-2.16.1/bfd/Makefile.am binutils-2.16.1-psp/bfd/Makefile.am
  
  INCDIR = $(srcdir)/../include
  CSEARCH = -I. -I$(srcdir) -I$(INCDIR)
-diff -NBaur binutils-2.16.1/bfd/Makefile.in binutils-2.16.1-psp/bfd/Makefile.in
+diff -Nbaur binutils-2.16.1/bfd/Makefile.in binutils-2.16.1-psp/bfd/Makefile.in
 --- binutils-2.16.1/bfd/Makefile.in	Sun Jun 12 19:58:55 2005
-+++ binutils-2.16.1-psp/bfd/Makefile.in	Mon Jul 25 20:30:03 2005
++++ binutils-2.16.1-psp/bfd/Makefile.in	Wed Aug 24 01:57:13 2005
 @@ -250,7 +250,7 @@
  AUTOMAKE_OPTIONS = 1.9 cygnus
  
@@ -22,9 +22,9 @@ diff -NBaur binutils-2.16.1/bfd/Makefile.in binutils-2.16.1-psp/bfd/Makefile.in
  INCDIR = $(srcdir)/../include
  CSEARCH = -I. -I$(srcdir) -I$(INCDIR)
  MKDEP = gcc -MM
-diff -NBaur binutils-2.16.1/bfd/archures.c binutils-2.16.1-psp/bfd/archures.c
+diff -Nbaur binutils-2.16.1/bfd/archures.c binutils-2.16.1-psp/bfd/archures.c
 --- binutils-2.16.1/bfd/archures.c	Mon Jan 17 14:08:03 2005
-+++ binutils-2.16.1-psp/bfd/archures.c	Mon Jul 25 20:30:03 2005
++++ binutils-2.16.1-psp/bfd/archures.c	Wed Aug 24 01:57:12 2005
 @@ -155,6 +155,7 @@
  .#define bfd_mach_mips16		16
  .#define bfd_mach_mips5                 5
@@ -33,9 +33,9 @@ diff -NBaur binutils-2.16.1/bfd/archures.c binutils-2.16.1-psp/bfd/archures.c
  .#define bfd_mach_mipsisa32             32
  .#define bfd_mach_mipsisa32r2           33
  .#define bfd_mach_mipsisa64             64
-diff -NBaur binutils-2.16.1/bfd/bfd-in2.h binutils-2.16.1-psp/bfd/bfd-in2.h
+diff -Nbaur binutils-2.16.1/bfd/bfd-in2.h binutils-2.16.1-psp/bfd/bfd-in2.h
 --- binutils-2.16.1/bfd/bfd-in2.h	Wed Mar  2 21:23:20 2005
-+++ binutils-2.16.1-psp/bfd/bfd-in2.h	Mon Jul 25 20:30:03 2005
++++ binutils-2.16.1-psp/bfd/bfd-in2.h	Wed Aug 24 01:57:12 2005
 @@ -1600,6 +1600,7 @@
  #define bfd_mach_mips16                16
  #define bfd_mach_mips5                 5
@@ -44,9 +44,9 @@ diff -NBaur binutils-2.16.1/bfd/bfd-in2.h binutils-2.16.1-psp/bfd/bfd-in2.h
  #define bfd_mach_mipsisa32             32
  #define bfd_mach_mipsisa32r2           33
  #define bfd_mach_mipsisa64             64
-diff -NBaur binutils-2.16.1/bfd/cpu-mips.c binutils-2.16.1-psp/bfd/cpu-mips.c
+diff -Nbaur binutils-2.16.1/bfd/cpu-mips.c binutils-2.16.1-psp/bfd/cpu-mips.c
 --- binutils-2.16.1/bfd/cpu-mips.c	Thu Mar  3 11:40:58 2005
-+++ binutils-2.16.1-psp/bfd/cpu-mips.c	Mon Jul 25 20:30:03 2005
++++ binutils-2.16.1-psp/bfd/cpu-mips.c	Wed Aug 24 01:57:13 2005
 @@ -86,6 +86,7 @@
    I_mipsisa64,
    I_mipsisa64r2,
@@ -65,9 +65,25 @@ diff -NBaur binutils-2.16.1/bfd/cpu-mips.c binutils-2.16.1-psp/bfd/cpu-mips.c
  };
  
  /* The default architecture is mips:3000, but with a machine number of
-diff -NBaur binutils-2.16.1/bfd/elfxx-mips.c binutils-2.16.1-psp/bfd/elfxx-mips.c
+diff -Nbaur binutils-2.16.1/bfd/doc/chew.c binutils-2.16.1-psp/bfd/doc/chew.c
+--- binutils-2.16.1/bfd/doc/chew.c	Thu Mar  3 11:41:02 2005
++++ binutils-2.16.1-psp/bfd/doc/chew.c	Wed Aug 24 02:05:41 2005
+@@ -91,6 +91,12 @@
+ #define DEF_SIZE 5000
+ #define STACK 50
+ 
++#ifdef __MINGW32__
++/* Prevent \r\n\ line endings */
++#include <fcntl.h>
++unsigned int _CRT_fmode = _O_BINARY;
++#endif
++
+ int internal_wanted;
+ int internal_mode;
+ 
+diff -Nbaur binutils-2.16.1/bfd/elfxx-mips.c binutils-2.16.1-psp/bfd/elfxx-mips.c
 --- binutils-2.16.1/bfd/elfxx-mips.c	Sat May 28 22:58:29 2005
-+++ binutils-2.16.1-psp/bfd/elfxx-mips.c	Mon Jul 25 20:30:03 2005
++++ binutils-2.16.1-psp/bfd/elfxx-mips.c	Wed Aug 24 01:57:12 2005
 @@ -4669,6 +4669,9 @@
      case E_MIPS_MACH_SB1:
        return bfd_mach_mips_sb1;
@@ -97,17 +113,17 @@ diff -NBaur binutils-2.16.1/bfd/elfxx-mips.c binutils-2.16.1-psp/bfd/elfxx-mips.
  
    /* MIPS I extensions.  */
    { bfd_mach_mips6000, bfd_mach_mips3000 },
-diff -NBaur binutils-2.16.1/bfd/version.h binutils-2.16.1-psp/bfd/version.h
+diff -Nbaur binutils-2.16.1/bfd/version.h binutils-2.16.1-psp/bfd/version.h
 --- binutils-2.16.1/bfd/version.h	Sun Jun 12 18:37:59 2005
-+++ binutils-2.16.1-psp/bfd/version.h	Mon Jul 25 20:30:55 2005
++++ binutils-2.16.1-psp/bfd/version.h	Wed Aug 24 01:58:28 2005
 @@ -1,3 +1,3 @@
 -#define BFD_VERSION_DATE 20050612
-+#define BFD_VERSION_DATE (PSPDEV 20050722)
++#define BFD_VERSION_DATE (PSPDEV 20050822)
  #define BFD_VERSION @bfd_version@
  #define BFD_VERSION_STRING @bfd_version_string@
-diff -NBaur binutils-2.16.1/binutils/readelf.c binutils-2.16.1-psp/binutils/readelf.c
+diff -Nbaur binutils-2.16.1/binutils/readelf.c binutils-2.16.1-psp/binutils/readelf.c
 --- binutils-2.16.1/binutils/readelf.c	Wed Apr 20 19:43:36 2005
-+++ binutils-2.16.1-psp/binutils/readelf.c	Mon Jul 25 20:30:03 2005
++++ binutils-2.16.1-psp/binutils/readelf.c	Wed Aug 24 01:57:13 2005
 @@ -2043,6 +2043,7 @@
  	    case E_MIPS_MACH_5500: strcat (buf, ", 5500"); break;
  	    case E_MIPS_MACH_SB1:  strcat (buf, ", sb1");  break;
@@ -116,9 +132,9 @@ diff -NBaur binutils-2.16.1/binutils/readelf.c binutils-2.16.1-psp/binutils/read
  	    case 0:
  	    /* We simply ignore the field in this case to avoid confusion:
  	       MIPS ELF does not specify EF_MIPS_MACH, it is a GNU
-diff -NBaur binutils-2.16.1/config.sub binutils-2.16.1-psp/config.sub
+diff -Nbaur binutils-2.16.1/config.sub binutils-2.16.1-psp/config.sub
 --- binutils-2.16.1/config.sub	Wed Jan 19 00:34:56 2005
-+++ binutils-2.16.1-psp/config.sub	Mon Jul 25 20:30:04 2005
++++ binutils-2.16.1-psp/config.sub	Wed Aug 24 01:57:13 2005
 @@ -253,6 +253,7 @@
  	| mipsisa64sb1 | mipsisa64sb1el \
  	| mipsisa64sr71k | mipsisa64sr71kel \
@@ -146,9 +162,9 @@ diff -NBaur binutils-2.16.1/config.sub binutils-2.16.1-psp/config.sub
  		;;
  	mips3*-*)
  		basic_machine=`echo $basic_machine | sed -e 's/mips3/mips64/'`
-diff -NBaur binutils-2.16.1/gas/config/tc-mips.c binutils-2.16.1-psp/gas/config/tc-mips.c
+diff -Nbaur binutils-2.16.1/gas/config/tc-mips.c binutils-2.16.1-psp/gas/config/tc-mips.c
 --- binutils-2.16.1/gas/config/tc-mips.c	Sun Jun 12 19:07:03 2005
-+++ binutils-2.16.1-psp/gas/config/tc-mips.c	Mon Jul 25 20:30:04 2005
++++ binutils-2.16.1-psp/gas/config/tc-mips.c	Wed Aug 24 01:57:13 2005
 @@ -365,11 +365,15 @@
  #define CPU_HAS_MDMX(cpu)	(FALSE                 \
  				 )
@@ -214,9 +230,9 @@ diff -NBaur binutils-2.16.1/gas/config/tc-mips.c binutils-2.16.1-psp/gas/config/
  
    /* MIPS III */
    { "r4000",          0,      ISA_MIPS3,      CPU_R4000 },
-diff -NBaur binutils-2.16.1/gas/configure binutils-2.16.1-psp/gas/configure
+diff -Nbaur binutils-2.16.1/gas/configure binutils-2.16.1-psp/gas/configure
 --- binutils-2.16.1/gas/configure	Tue Mar  1 00:43:51 2005
-+++ binutils-2.16.1-psp/gas/configure	Mon Jul 25 20:30:04 2005
++++ binutils-2.16.1-psp/gas/configure	Wed Aug 24 01:57:13 2005
 @@ -4537,6 +4537,9 @@
  	  mips64vr | mips64vrel)
  	    mips_cpu=vr4100
@@ -227,9 +243,9 @@ diff -NBaur binutils-2.16.1/gas/configure binutils-2.16.1-psp/gas/configure
  	  mipsisa32r2* | mipsisa64r2*)
  	    mips_cpu=`echo $target_cpu | sed -e 's/[a-z]*..r2//' -e 's/el$//'`
  	    ;;
-diff -NBaur binutils-2.16.1/gas/configure.in binutils-2.16.1-psp/gas/configure.in
+diff -Nbaur binutils-2.16.1/gas/configure.in binutils-2.16.1-psp/gas/configure.in
 --- binutils-2.16.1/gas/configure.in	Tue Mar  1 00:43:57 2005
-+++ binutils-2.16.1-psp/gas/configure.in	Mon Jul 25 20:30:04 2005
++++ binutils-2.16.1-psp/gas/configure.in	Wed Aug 24 01:57:13 2005
 @@ -222,6 +222,9 @@
  	  mips64vr | mips64vrel)
  	    mips_cpu=vr4100
@@ -240,17 +256,17 @@ diff -NBaur binutils-2.16.1/gas/configure.in binutils-2.16.1-psp/gas/configure.i
  	  mipsisa32r2* | mipsisa64r2*)
  changequote(,)dnl
  	    mips_cpu=`echo $target_cpu | sed -e 's/[a-z]*..r2//' -e 's/el$//'`
-diff -NBaur binutils-2.16.1/include/bin-bugs.h binutils-2.16.1-psp/include/bin-bugs.h
+diff -Nbaur binutils-2.16.1/include/bin-bugs.h binutils-2.16.1-psp/include/bin-bugs.h
 --- binutils-2.16.1/include/bin-bugs.h	Fri Jul 23 16:40:19 2004
-+++ binutils-2.16.1-psp/include/bin-bugs.h	Mon Jul 25 20:30:04 2005
++++ binutils-2.16.1-psp/include/bin-bugs.h	Wed Aug 24 01:57:13 2005
 @@ -1,3 +1,3 @@
  #ifndef REPORT_BUGS_TO
 -#define REPORT_BUGS_TO	"<URL:http://www.sourceware.org/bugzilla/>"
 +#define REPORT_BUGS_TO	"<URL:http://wiki.pspdev.org/psp:toolchain#bugs>"
  #endif
-diff -NBaur binutils-2.16.1/include/elf/common.h binutils-2.16.1-psp/include/elf/common.h
+diff -Nbaur binutils-2.16.1/include/elf/common.h binutils-2.16.1-psp/include/elf/common.h
 --- binutils-2.16.1/include/elf/common.h	Fri Oct  8 14:55:08 2004
-+++ binutils-2.16.1-psp/include/elf/common.h	Mon Jul 25 20:30:04 2005
++++ binutils-2.16.1-psp/include/elf/common.h	Wed Aug 24 01:57:13 2005
 @@ -93,6 +93,7 @@
  #define ET_HIOS		0xFEFF	/* Operating system-specific */
  #define ET_LOPROC	0xFF00	/* Processor-specific */
@@ -259,9 +275,9 @@ diff -NBaur binutils-2.16.1/include/elf/common.h binutils-2.16.1-psp/include/elf
  
  /* Values for e_machine, which identifies the architecture.  These numbers
     are officially assigned by registry@caldera.com.  See below for a list of
-diff -NBaur binutils-2.16.1/include/elf/mips.h binutils-2.16.1-psp/include/elf/mips.h
+diff -Nbaur binutils-2.16.1/include/elf/mips.h binutils-2.16.1-psp/include/elf/mips.h
 --- binutils-2.16.1/include/elf/mips.h	Thu Mar  3 11:58:06 2005
-+++ binutils-2.16.1-psp/include/elf/mips.h	Mon Jul 25 20:30:04 2005
++++ binutils-2.16.1-psp/include/elf/mips.h	Wed Aug 24 01:57:13 2005
 @@ -212,6 +212,7 @@
  #define E_MIPS_MACH_5400	0x00910000
  #define E_MIPS_MACH_5500	0x00980000
@@ -270,12 +286,12 @@ diff -NBaur binutils-2.16.1/include/elf/mips.h binutils-2.16.1-psp/include/elf/m
  
  /* Processor specific section indices.  These sections do not actually
     exist.  Symbols with a st_shndx field corresponding to one of these
-diff -NBaur binutils-2.16.1/include/opcode/mips.h binutils-2.16.1-psp/include/opcode/mips.h
+diff -Nbaur binutils-2.16.1/include/opcode/mips.h binutils-2.16.1-psp/include/opcode/mips.h
 --- binutils-2.16.1/include/opcode/mips.h	Thu Mar  3 11:58:10 2005
-+++ binutils-2.16.1-psp/include/opcode/mips.h	Mon Jul 25 20:30:04 2005
-@@ -148,6 +148,19 @@
- #define OP_MASK_EXTMSBD		0x1f	/* "ext" MSBD.  */
- #define OP_SH_EXTMSBD		11
++++ binutils-2.16.1-psp/include/opcode/mips.h	Wed Aug 24 01:57:13 2005
+@@ -171,6 +171,83 @@
+ #define MDMX_FMTSEL_VEC_QH	0x15
+ #define MDMX_FMTSEL_VEC_OB	0x16
  
 +#define OP_SH_VFPU_DELTA	0
 +#define OP_MASK_VFPU_DELTA	0xfffc
@@ -285,15 +301,109 @@ diff -NBaur binutils-2.16.1/include/opcode/mips.h binutils-2.16.1-psp/include/op
 +#define OP_MASK_VFPU_IMM5	0x1f
 +#define OP_SH_VFPU_IMM8		16
 +#define OP_MASK_VFPU_IMM8	0xff
-+#define OP_SH_VFPU_CC		18
++#define OP_SH_VFPU_CC		18	/* Condition code. */
 +#define OP_MASK_VFPU_CC		0x7
 +#define OP_SH_VFPU_CONST	16
 +#define OP_MASK_VFPU_CONST	0x1f
++#define OP_SH_VFPU_COND		0	/* Conditional compare. */
++#define OP_MASK_VFPU_COND	0xf
++#define OP_SH_VFPU_VMTVC	0
++#define OP_MASK_VFPU_VMTVC	0xff
++#define OP_SH_VFPU_VMFVC	8
++#define OP_MASK_VFPU_VMFVC	0xff
++#define OP_SH_VFPU_RWB		1
++#define OP_MASK_VFPU_RWB	0x1
++#define OP_SH_VFPU_ROT		16	/* Rotators used in vrot. */
++#define OP_MASK_VFPU_ROT	0x1f
++#define OP_SH_VFPU_FLOAT16	0
++#define OP_MASK_VFPU_FLOAT16	0xffff
 +
- #define	OP_OP_COP0		0x10
- #define	OP_OP_COP1		0x11
- #define	OP_OP_COP2		0x12
-@@ -442,6 +455,8 @@
++/* VFPU registers. */
++#define OP_SH_VFPU_VD		0
++#define OP_MASK_VFPU_VD		0x7f
++#define OP_SH_VFPU_VS		8
++#define OP_MASK_VFPU_VS		0x7f
++#define OP_SH_VFPU_VT		16
++#define OP_MASK_VFPU_VT		0x7f
++#define OP_SH_VFPU_VT_LO	16	/* Bits 0-4 of vt. */
++#define OP_MASK_VFPU_VT_LO	0x1f
++#define OP_SH_VFPU_VT_HI	5	/* Right-shifted. */
++#define OP_MASK_VFPU_VT_HI1	0x1	/* Bit 5 of vt. */
++#define OP_MASK_VFPU_VT_HI2	0x3	/* Bits 5-6 of vt. */
++/* Special handling of vs in vmmul instructions. */
++#define VFPU_OP_VT_VS_VD	0xff800000
++#define VFPU_OPCODE_VMMUL	0xf0000000
++
++/* VFPU prefix instruction operands.  The *_SH_* values really specify where
++   the bitfield begins, as VFPU prefix instructions have four operands
++   encoded within the immediate field. */
++#define VFPU_SH_PFX_NEG		16
++#define VFPU_MASK_PFX_NEG	0x1	/* Negation. */
++#define VFPU_SH_PFX_CST		12
++#define VFPU_MASK_PFX_CST	0x1	/* Constant. */
++#define VFPU_SH_PFX_ABS_CSTHI	8
++#define VFPU_MASK_PFX_ABS_CSTHI	0x1	/* Abs/Constant (bit 2). */
++#define VFPU_MASK_PFX_SWZ_CSTLO	0x3	/* Swizzle/Constant (bits 0-1). */
++#define VFPU_SH_PFX_MASK	8
++#define VFPU_MASK_PFX_MASK	0x1	/* Mask. */
++#define VFPU_MASK_PFX_SAT	0x3	/* Saturation. */
++
++/* Special handling of the vrot instructions. */
++#define VFPU_MASK_OP_SIZE	0x8080	/* Masks the operand size (pair, triple, quad). */
++#define VFPU_OP_SIZE_PAIR	0x80
++#define VFPU_OP_SIZE_TRIPLE	0x8000
++#define VFPU_OP_SIZE_QUAD	0x8080
++/* Note that these are within the rotators field, and not the full opcode. */
++#define VFPU_SH_ROT_HI		2
++#define VFPU_MASK_ROT_HI	0x3
++#define VFPU_SH_ROT_LO		0
++#define VFPU_MASK_ROT_LO	0x3
++#define VFPU_SH_ROT_NEG		4	/* Negation. */
++#define VFPU_MASK_ROT_NEG	0x1
++
++/* VFPU 16-bit floating-point format. */
++#define VFPU_FLOAT16_EXP_MAX	0x1f
++#define VFPU_SH_FLOAT16_SIGN	15
++#define VFPU_MASK_FLOAT16_SIGN	0x1
++#define VFPU_SH_FLOAT16_EXP	10
++#define VFPU_MASK_FLOAT16_EXP	0x1f
++#define VFPU_SH_FLOAT16_FRAC	0
++#define VFPU_MASK_FLOAT16_FRAC	0x3ff
++
+ /* This structure holds information for a particular instruction.  */
+ 
+ struct mips_opcode
+@@ -258,6 +335,29 @@
+ 	Requires that "+A" or "+E" occur first to set position.
+ 	Enforces: 32 < (pos+size) <= 64.
+ 
++   Sony Allegrex VFPU instructions:
++   "?o"
++   "?0" - "?3"
++   "?4" - "?7"
++   "?a"
++   "?b"
++   "?c"
++   "?e"
++   "?f"
++   "?i"
++   "?q"
++   "?r"
++   "?u"
++   "?w"
++   "?d"
++   "?m"
++   "?n"
++   "?s"
++   "?t"
++   "?v"
++   "?x"
++   "?z"
++
+    Floating point instructions:
+    "D" 5 bit destination register (OP_*_FD)
+    "M" 3 bit compare condition code (OP_*_CCC) (only used for mips4 and up)
+@@ -442,6 +542,8 @@
  #define INSN_5400		  0x01000000
  /* NEC VR5500 instruction.  */
  #define INSN_5500		  0x02000000
@@ -302,7 +412,7 @@ diff -NBaur binutils-2.16.1/include/opcode/mips.h binutils-2.16.1-psp/include/op
  
  /* MIPS ISA defines, use instead of hardcoding ISA level.  */
  
-@@ -489,6 +504,7 @@
+@@ -489,6 +591,7 @@
  #define CPU_MIPS64      64
  #define CPU_MIPS64R2	65
  #define CPU_SB1         12310201        /* octal 'SB', 01.  */
@@ -310,7 +420,7 @@ diff -NBaur binutils-2.16.1/include/opcode/mips.h binutils-2.16.1-psp/include/op
  
  /* Test for membership in an ISA including chip specific ISAs.  INSN
     is pointer to an element of the opcode table; ISA is the specified
-@@ -510,6 +526,7 @@
+@@ -510,6 +613,7 @@
       || (cpu == CPU_VR4120 && ((insn)->membership & INSN_4120) != 0)	\
       || (cpu == CPU_VR5400 && ((insn)->membership & INSN_5400) != 0)	\
       || (cpu == CPU_VR5500 && ((insn)->membership & INSN_5500) != 0)	\
@@ -318,9 +428,62 @@ diff -NBaur binutils-2.16.1/include/opcode/mips.h binutils-2.16.1-psp/include/op
       || 0)	/* Please keep this term for easier source merging.  */
  
  /* This is a list of macro expanded instructions.
-diff -NBaur binutils-2.16.1/ld/Makefile.am binutils-2.16.1-psp/ld/Makefile.am
+@@ -625,6 +729,16 @@
+   M_LL_AB,
+   M_LLD_AB,
+   M_LS_A,
++  M_LVHIP,
++  M_LVHIS,
++  M_LVIP,
++  M_LVIQ,
++  M_LVIS,
++  M_LVIT,
++  M_LVLQ_AB,
++  M_LVRQ_AB,
++  M_LVQ_AB,
++  M_LVQ_AB_2,
+   M_LW_A,
+   M_LW_AB,
+   M_LWC0_A,
+@@ -714,6 +828,10 @@
+   M_SUB_I,
+   M_SUBU_I,
+   M_SUBU_I_2,
++  M_SVLQ_AB,
++  M_SVQ_AB,
++  M_SVRQ_AB,
++  M_SVS_AB,
+   M_TEQ_I,
+   M_TGE_I,
+   M_TGEU_I,
+@@ -728,14 +846,24 @@
+   M_ULH_A,
+   M_ULHU,
+   M_ULHU_A,
++  M_ULVQ,
++  M_ULVQ_AB,
++  M_ULVS,
+   M_ULW,
+   M_ULW_A,
+   M_USH,
+   M_USH_A,
++  M_USVQ,
++  M_USVQ_AB,
++  M_USVS,
+   M_USW,
+   M_USW_A,
+   M_USD,
+   M_USD_A,
++  M_VCMOVP,
++  M_VCMOVQ,
++  M_VCMOVS,
++  M_VCMOVT,
+   M_XOR_I,
+   M_COP0,
+   M_COP1,
+diff -Nbaur binutils-2.16.1/ld/Makefile.am binutils-2.16.1-psp/ld/Makefile.am
 --- binutils-2.16.1/ld/Makefile.am	Thu Jan 20 19:37:49 2005
-+++ binutils-2.16.1-psp/ld/Makefile.am	Mon Jul 25 20:30:04 2005
++++ binutils-2.16.1-psp/ld/Makefile.am	Wed Aug 24 01:57:13 2005
 @@ -190,6 +190,7 @@
  	eelf_i386_chaos.o \
  	eelf_i386_fbsd.o \
@@ -339,9 +502,9 @@ diff -NBaur binutils-2.16.1/ld/Makefile.am binutils-2.16.1-psp/ld/Makefile.am
  eelf_s390.c: $(srcdir)/emulparams/elf_s390.sh \
    $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
  	${GENSCRIPTS} elf_s390 "$(tdir_elf_s390)"
-diff -NBaur binutils-2.16.1/ld/Makefile.in binutils-2.16.1-psp/ld/Makefile.in
+diff -Nbaur binutils-2.16.1/ld/Makefile.in binutils-2.16.1-psp/ld/Makefile.in
 --- binutils-2.16.1/ld/Makefile.in	Sun Jan 23 05:36:37 2005
-+++ binutils-2.16.1-psp/ld/Makefile.in	Mon Jul 25 20:30:04 2005
++++ binutils-2.16.1-psp/ld/Makefile.in	Wed Aug 24 01:57:13 2005
 @@ -315,6 +315,7 @@
  	eelf_i386_chaos.o \
  	eelf_i386_fbsd.o \
@@ -360,9 +523,9 @@ diff -NBaur binutils-2.16.1/ld/Makefile.in binutils-2.16.1-psp/ld/Makefile.in
  eelf_s390.c: $(srcdir)/emulparams/elf_s390.sh \
    $(srcdir)/emultempl/elf32.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
  	${GENSCRIPTS} elf_s390 "$(tdir_elf_s390)"
-diff -NBaur binutils-2.16.1/ld/configure.tgt binutils-2.16.1-psp/ld/configure.tgt
+diff -Nbaur binutils-2.16.1/ld/configure.tgt binutils-2.16.1-psp/ld/configure.tgt
 --- binutils-2.16.1/ld/configure.tgt	Tue Feb  8 19:54:27 2005
-+++ binutils-2.16.1-psp/ld/configure.tgt	Mon Jul 25 20:30:04 2005
++++ binutils-2.16.1-psp/ld/configure.tgt	Wed Aug 24 01:57:13 2005
 @@ -428,6 +428,8 @@
  mips*vr4100-*-elf*)	targ_emul=elf32b4300 ;;
  mips*vr5000el-*-elf*)	targ_emul=elf32l4300 ;;
@@ -372,9 +535,9 @@ diff -NBaur binutils-2.16.1/ld/configure.tgt binutils-2.16.1-psp/ld/configure.tg
  mips*el-*-elf*)		targ_emul=elf32elmip ;;
  mips*-*-elf*)		targ_emul=elf32ebmip ;;
  mips*el-*-rtems*)	targ_emul=elf32elmip ;;
-diff -NBaur binutils-2.16.1/ld/emulparams/elf_mipsallegrexel_psp.sh binutils-2.16.1-psp/ld/emulparams/elf_mipsallegrexel_psp.sh
+diff -Nbaur binutils-2.16.1/ld/emulparams/elf_mipsallegrexel_psp.sh binutils-2.16.1-psp/ld/emulparams/elf_mipsallegrexel_psp.sh
 --- binutils-2.16.1/ld/emulparams/elf_mipsallegrexel_psp.sh	Thu Jan  1 00:00:00 1970
-+++ binutils-2.16.1-psp/ld/emulparams/elf_mipsallegrexel_psp.sh	Mon Jul 25 20:30:04 2005
++++ binutils-2.16.1-psp/ld/emulparams/elf_mipsallegrexel_psp.sh	Wed Aug 24 01:57:13 2005
 @@ -0,0 +1,22 @@
 +# Based off of the default elf32 MIPS target.  However, we use a seperate
 +# script template because the PSP architecture defines sections that normally
@@ -398,9 +561,9 @@ diff -NBaur binutils-2.16.1/ld/emulparams/elf_mipsallegrexel_psp.sh binutils-2.1
 +
 +# Discard the .comment and .pdr sections.
 +OTHER_SECTIONS="/DISCARD/ : { *(.comment) *(.pdr) }"
-diff -NBaur binutils-2.16.1/ld/scripttempl/elf_psp.sc binutils-2.16.1-psp/ld/scripttempl/elf_psp.sc
+diff -Nbaur binutils-2.16.1/ld/scripttempl/elf_psp.sc binutils-2.16.1-psp/ld/scripttempl/elf_psp.sc
 --- binutils-2.16.1/ld/scripttempl/elf_psp.sc	Thu Jan  1 00:00:00 1970
-+++ binutils-2.16.1-psp/ld/scripttempl/elf_psp.sc	Mon Jul 25 20:30:04 2005
++++ binutils-2.16.1-psp/ld/scripttempl/elf_psp.sc	Wed Aug 24 01:57:13 2005
 @@ -0,0 +1,496 @@
 +#
 +# Unusual variables checked by this code:
@@ -898,9 +1061,9 @@ diff -NBaur binutils-2.16.1/ld/scripttempl/elf_psp.sc binutils-2.16.1-psp/ld/scr
 +  ${RELOCATING+${STACKNOTE}}
 +}
 +EOF
-diff -NBaur binutils-2.16.1/opcodes/mips-dis.c binutils-2.16.1-psp/opcodes/mips-dis.c
+diff -Nbaur binutils-2.16.1/opcodes/mips-dis.c binutils-2.16.1-psp/opcodes/mips-dis.c
 --- binutils-2.16.1/opcodes/mips-dis.c	Thu Mar  3 11:49:50 2005
-+++ binutils-2.16.1-psp/opcodes/mips-dis.c	Mon Jul 25 20:30:04 2005
++++ binutils-2.16.1-psp/opcodes/mips-dis.c	Wed Aug 24 01:57:13 2005
 @@ -140,6 +140,139 @@
    "c0_taglo",     "c0_taghi",     "c0_errorepc",  "c0_desave",
  };
@@ -1105,7 +1268,7 @@ diff -NBaur binutils-2.16.1/opcodes/mips-dis.c binutils-2.16.1-psp/opcodes/mips-
  
    /* For stock MIPS32, disassemble all applicable MIPS-specified ASEs.
       Note that MIPS-3D and MDMX are not applicable to MIPS32.  (See
-@@ -1029,6 +1212,121 @@
+@@ -1029,6 +1212,349 @@
  	case 'Z':
  	  (*info->fprintf_func) (info->stream, "$v%d",
  				 (l >> OP_SH_FT) & OP_MASK_FT);
@@ -1119,7 +1282,7 @@ diff -NBaur binutils-2.16.1/opcodes/mips-dis.c binutils-2.16.1-psp/opcodes/mips-
 +	    case '\0':
 +	      /* xgettext:c-format */
 +	      (*info->fprintf_func) (info->stream,
-+				     _("# internal error, incomplete extension sequence (?)"));
++				     _("# internal error, incomplete VFPU extension sequence (?)"));
 +	      return;
 +
 +	    case 'o':
@@ -1134,12 +1297,48 @@ diff -NBaur binutils-2.16.1/opcodes/mips-dis.c binutils-2.16.1-psp/opcodes/mips-
 +	    case '1':
 +	    case '2':
 +	    case '3':
++	      {
++		unsigned int pos = *d, base = '0';
++		unsigned int negation = (l >> (pos - (base - VFPU_SH_PFX_NEG))) & VFPU_MASK_PFX_NEG;
++		unsigned int constant = (l >> (pos - (base - VFPU_SH_PFX_CST))) & VFPU_MASK_PFX_CST;
++		unsigned int abs_consthi =
++		    (l >> (pos - (base - VFPU_SH_PFX_ABS_CSTHI))) & VFPU_MASK_PFX_ABS_CSTHI;
++		unsigned int swz_constlo = (l >> ((pos - base) * 2)) & VFPU_MASK_PFX_SWZ_CSTLO;
++
++		if (negation)
++		  (*info->fprintf_func) (info->stream, "-");
++		if (constant)
++		  {
++		    (*info->fprintf_func) (info->stream, "%s",
++                                           pfx_cst_names[(abs_consthi << 2) | swz_constlo]);
++		  }
++		else
++		  {
++		    if (abs_consthi)
++		      (*info->fprintf_func) (info->stream, "|%s|",
++					     pfx_swz_names[swz_constlo]);
++		    else
++		      (*info->fprintf_func) (info->stream, "%s",
++					     pfx_swz_names[swz_constlo]);
++		  }
++	      }
 +	      break;
 +
 +	    case '4':
 +	    case '5':
 +	    case '6':
 +	    case '7':
++	      {
++		unsigned int pos = *d, base = '4';
++		unsigned int mask = (l >> (pos - (base - VFPU_MASK_PFX_MASK))) & VFPU_MASK_PFX_MASK;
++		unsigned int saturation = (l >> ((pos - base) * 2)) & VFPU_MASK_PFX_SAT;
++
++		if (mask)
++		  (*info->fprintf_func) (info->stream, "m");
++		else
++		  (*info->fprintf_func) (info->stream, "%s",
++                                         pfx_sat_names[saturation]);
++	      }
 +	      break;
 +
 +	    case 'a':
@@ -1174,7 +1373,7 @@ diff -NBaur binutils-2.16.1/opcodes/mips-dis.c binutils-2.16.1-psp/opcodes/mips-
 +	    case 'f':
 +	      /* Conditional compare.  */
 +	      (*info->fprintf_func) (info->stream, "%s",
-+				     vfpu_cond_names[l & 0x0f]);
++				     vfpu_cond_names[(l >> OP_SH_VFPU_COND) & OP_MASK_VFPU_COND]);
 +	      /* Apparently this specifier is unused.  */
 +	      d++;
 +	      break;
@@ -1188,19 +1387,123 @@ diff -NBaur binutils-2.16.1/opcodes/mips-dis.c binutils-2.16.1-psp/opcodes/mips-
 +	    case 'q':
 +	      /* VFPU control register (vmtvc).  */
 +	      (*info->fprintf_func) (info->stream, "$%d",
-+				     l & 0xff);
++				     (l >> OP_SH_VFPU_VMTVC) & OP_MASK_VFPU_VMTVC);
 +	      break;
 +
 +	    case 'r':
 +	      /* VFPU control register (vmfvc).  */
 +	      (*info->fprintf_func) (info->stream, "$%d",
-+				     (l >> 8) & 0xff);
++				     (l >> OP_SH_VFPU_VMFVC) & OP_MASK_VFPU_VMFVC);
 +	      break;
 +
 +	    case 'u':
++	      /* Convert a VFPU 16-bit floating-point number to IEEE754. */
++	      {
++		union float2int {
++			unsigned int i;
++			float f;
++		} float2int;
++		unsigned short float16 = (l >> OP_SH_VFPU_FLOAT16) & OP_MASK_VFPU_FLOAT16;
++		unsigned int sign = (float16 >> VFPU_SH_FLOAT16_SIGN) & VFPU_MASK_FLOAT16_SIGN;
++		int exponent = (float16 >> VFPU_SH_FLOAT16_EXP) & VFPU_MASK_FLOAT16_EXP;
++		unsigned int fraction = float16 & VFPU_MASK_FLOAT16_FRAC;
++		char signchar = '+' + ((sign == 1) * 2);
++
++		if (exponent == VFPU_FLOAT16_EXP_MAX)
++		  {
++		    if (fraction == 0)
++		      (*info->fprintf_func) (info->stream, "%cInf", signchar);
++		    else
++		      (*info->fprintf_func) (info->stream, "%cNaN", signchar);
++		  }
++		else if (exponent == 0 && fraction == 0)
++		  {
++		    (*info->fprintf_func) (info->stream, "%c0", signchar);
++		  }
++		else
++		  {
++		    if (exponent == 0)
++		      {
++			do
++			  {
++			    fraction <<= 1;
++			    exponent--;
++			  }
++			while (!(fraction & (VFPU_MASK_FLOAT16_FRAC + 1)));
++
++			fraction &= VFPU_MASK_FLOAT16_FRAC;
++		      }
++
++		    /* Convert to 32-bit single-precision IEEE754. */
++		    float2int.i = sign << 31;
++		    float2int.i |= (exponent + 112) << 23;
++		    float2int.i |= fraction << 13;
++		    (*info->fprintf_func) (info->stream, "%g", float2int.f);
++		  }
++	      }
 +	      break;
 +
 +	    case 'w':
++	      {
++		const char *elements[4];
++		unsigned int opcode = l & VFPU_MASK_OP_SIZE;
++		unsigned int rotators = (l >> OP_SH_VFPU_ROT) & OP_MASK_VFPU_ROT;
++		unsigned int opsize, rothi, rotlo, negation, i;
++
++		/* Determine the operand size so we'll know how many elements to output. */
++		if (opcode == VFPU_OP_SIZE_PAIR)
++		  opsize = 2;
++		else if (opcode == VFPU_OP_SIZE_TRIPLE)
++		  opsize = 3;
++		else
++		  opsize = (opcode == VFPU_OP_SIZE_QUAD) * 4;	/* Sanity check. */
++
++		rothi = (rotators >> VFPU_SH_ROT_HI) & VFPU_MASK_ROT_HI;
++		rotlo = (rotators >> VFPU_SH_ROT_LO) & VFPU_MASK_ROT_LO;
++		negation = (rotators >> VFPU_SH_ROT_NEG) & VFPU_MASK_ROT_NEG;
++
++		if (rothi == rotlo)
++		  {
++		    if (negation)
++		      {
++			elements[0] = "-s";
++			elements[1] = "-s";
++			elements[2] = "-s";
++			elements[3] = "-s";
++		      }
++		    else
++		      {
++			elements[0] = "s";
++			elements[1] = "s";
++			elements[2] = "s";
++			elements[3] = "s";
++		      }
++		  }
++		else
++		  {
++		    elements[0] = "0";
++		    elements[1] = "0";
++		    elements[2] = "0";
++		    elements[3] = "0";
++		  }
++		if (negation)
++		  elements[rothi] = "-s";
++		else
++		  elements[rothi] = "s";
++		elements[rotlo] = "c";
++
++		(*info->fprintf_func) (info->stream, "[");
++		i = 0;
++		for (;;)
++		  {
++		    (*info->fprintf_func) (info->stream, "%s",
++					   elements[i++]);
++		    if (i >= opsize)
++		      break;
++		    (*info->fprintf_func) (info->stream, ",");
++		  }
++		(*info->fprintf_func) (info->stream, "]");
++	      }
 +	      break;
 +
 +	    case 'd':
@@ -1210,26 +1513,114 @@ diff -NBaur binutils-2.16.1/opcodes/mips-dis.c binutils-2.16.1-psp/opcodes/mips-
 +	    case 't':
 +	    case 'v':
 +	    case 'x':
++	      {
++		unsigned int vreg = 0;
++
++		/* The first char specifies the bitfield that contains the register number. */
++		switch (*d)
++		  {
++		  case 'd':
++		  case 'v':
++		  case 'x':
++		    vreg = (l >> OP_SH_VFPU_VD) & OP_MASK_VFPU_VD;
++		    break;
++
++		  case 'm':
++		    /* Combine bits 0-4 of vt with bits 5-6 of vt. */
++		    vreg = ((l >> OP_SH_VFPU_VT_LO) & OP_MASK_VFPU_VT_LO)
++			    | ((l & OP_MASK_VFPU_VT_HI2) << OP_SH_VFPU_VT_HI);
++		    break;
++
++		  case 'n':
++		    /* Combine bits 0-4 of vt with bit 5 of vt. */
++		    vreg = ((l >> OP_SH_VFPU_VT_LO) & OP_MASK_VFPU_VT_LO)
++			    | ((l & OP_MASK_VFPU_VT_HI1) << OP_SH_VFPU_VT_HI);
++		    break;
++
++		  case 's':
++		    {
++			unsigned int temp_vreg = l >> OP_SH_VFPU_VS;
++
++			vreg = temp_vreg & OP_MASK_VFPU_VS;
++			if ((l & VFPU_OP_VT_VS_VD) == VFPU_OPCODE_VMMUL)
++			  {
++			    /* vmmul instructions have the RXC bit (bit 13) inverted. */
++			    if (temp_vreg & 0x20)
++			      vreg = temp_vreg & 0x5f;
++			    else
++			      vreg |= 0x20;
++			  }
++		    }
++		    break;
++
++		  case 't':
++		    vreg = (l >> OP_SH_VFPU_VT) & OP_MASK_VFPU_VT;
++		    break;
++		  }
++
++		/* The next char is the register set vreg comes from. */
++		d++;
++		switch (*d)
++		  {
++		  case '0':
++		    (*info->fprintf_func) (info->stream, "%s.s",
++					   vfpu_sreg_names[vreg]);
++		    break;
++
++		  case '1':
++		    (*info->fprintf_func) (info->stream, "%s.p",
++					   vfpu_vpreg_names[vreg]);
++		    break;
++
++		  case '2':
++		    (*info->fprintf_func) (info->stream, "%s.t",
++					   vfpu_vtreg_names[vreg]);
++		    break;
++
++		  case '3':
++		    (*info->fprintf_func) (info->stream, "%s.q",
++					   vfpu_vqreg_names[vreg]);
++		    break;
++
++		  case '5':
++		    (*info->fprintf_func) (info->stream, "%s.p",
++					   vfpu_mpreg_names[vreg]);
++		    break;
++
++		  case '6':
++		    (*info->fprintf_func) (info->stream, "%s.t",
++					   vfpu_mtreg_names[vreg]);
++		    break;
++
++		  case '7':
++		    (*info->fprintf_func) (info->stream, "%s.q",
++					   vfpu_mqreg_names[vreg]);
++		    break;
++
++		  default:
++		    /* xgettext:c-format */
++		    (*info->fprintf_func) (info->stream,
++					   _("# internal error, undefined vreg modifier(%c)"),
++					   *d);
++		    break;
++		  }
++
++		/* The last char is unused for disassembly. */
++		d++;
++	      }
 +	      break;
 +
 +	    case 'z':
 +	      (*info->fprintf_func) (info->stream, "%s",
-+				     vfpu_rwb_names[(l >> 1) & 0x1]);
++				     vfpu_rwb_names[(l >> OP_SH_VFPU_RWB) & OP_MASK_VFPU_RWB]);
 +	      break;
-+
-+	    default:
-+	      /* xgettext:c-format */
-+	      (*info->fprintf_func) (info->stream,
-+				     _("# internal error, undefined extension sequence (?%c)"),
-+				     *d);
-+	      return;
 +	    }
  	  break;
  
  	default:
-diff -NBaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-opc.c
+diff -Nbaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-opc.c
 --- binutils-2.16.1/opcodes/mips-opc.c	Thu Mar  3 11:49:50 2005
-+++ binutils-2.16.1-psp/opcodes/mips-opc.c	Mon Jul 25 20:30:04 2005
++++ binutils-2.16.1-psp/opcodes/mips-opc.c	Wed Aug 24 01:57:13 2005
 @@ -109,6 +109,7 @@
  #define N5	(INSN_5400 | INSN_5500)
  #define N54	INSN_5400
@@ -1298,7 +1689,7 @@ diff -NBaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
  {"jr",      "s",	0x00000008, 0xfc1fffff,	UBD|RD_s,		0,		I1	},
  {"jr.hb",   "s",	0x00000408, 0xfc1fffff,	UBD|RD_s,		0,		I33	},
  {"j",       "s",	0x00000008, 0xfc1fffff,	UBD|RD_s,		0,		I1	}, /* jr */
-@@ -639,18 +645,11 @@
+@@ -639,18 +645,10 @@
  {"ld",	    "t,o(b)",   0xdc000000, 0xfc000000, WR_t|RD_b,		0,		I3	},
  {"ld",      "t,o(b)",	0,    (int) M_LD_OB,	INSN_MACRO,		0,		I1	},
  {"ld",      "t,A(b)",	0,    (int) M_LD_AB,	INSN_MACRO,		0,		I1	},
@@ -1311,16 +1702,17 @@ diff -NBaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
 -{"l.d",     "T,A(b)",	0,    (int) M_L_DAB,	INSN_MACRO,		0,		I1	},
 -{"ldc2",    "E,o(b)",	0xd8000000, 0xfc000000, CLD|RD_b|WR_CC,		0,		I2	},
 -{"ldc2",    "E,A(b)",	0,    (int) M_LDC2_AB,	INSN_MACRO,		0,		I2	},
+-{"ldc3",    "E,o(b)",	0xdc000000, 0xfc000000, CLD|RD_b|WR_CC,		0,		I2	},
+-{"ldc3",    "E,A(b)",	0,    (int) M_LDC3_AB,	INSN_MACRO,		0,		I2	},
+-{"ldl",	    "t,o(b)",	0x68000000, 0xfc000000, LDD|WR_t|RD_b,		0,		I3	},
 +/* ldc1 is at the bottom of the table.  */
 +/* ldc2 is at the bottom of the table.  */
- {"ldc3",    "E,o(b)",	0xdc000000, 0xfc000000, CLD|RD_b|WR_CC,		0,		I2	},
- {"ldc3",    "E,A(b)",	0,    (int) M_LDC3_AB,	INSN_MACRO,		0,		I2	},
--{"ldl",	    "t,o(b)",	0x68000000, 0xfc000000, LDD|WR_t|RD_b,		0,		I3	},
++/* ldc3 is at the bottom of the table.  */
 +{"ldl",	    "t,o(b)",	0x68000000, 0xfc000000, LDD|WR_t|RD_b,		0,		I3|AL	},
  {"ldl",	    "t,A(b)",	0,    (int) M_LDL_AB,	INSN_MACRO,		0,		I3	},
  {"ldr",	    "t,o(b)",	0x6c000000, 0xfc000000, LDD|WR_t|RD_b,		0,		I3	},
  {"ldr",     "t,A(b)",	0,    (int) M_LDR_AB,	INSN_MACRO,		0,		I3	},
-@@ -680,8 +679,7 @@
+@@ -680,8 +678,7 @@
  {"lwc1",    "E,A(b)",	0,    (int) M_LWC1_AB,	INSN_MACRO,		0,		I1	},
  {"l.s",     "T,o(b)",	0xc4000000, 0xfc000000,	CLD|RD_b|WR_T|FP_S,	0,		I1	}, /* lwc1 */
  {"l.s",     "T,A(b)",	0,    (int) M_LWC1_AB,	INSN_MACRO,		0,		I1	},
@@ -1330,7 +1722,7 @@ diff -NBaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
  {"lwc3",    "E,o(b)",	0xcc000000, 0xfc000000,	CLD|RD_b|WR_CC,		0,		I1	},
  {"lwc3",    "E,A(b)",	0,    (int) M_LWC3_AB,	INSN_MACRO,		0,		I1	},
  {"lwl",     "t,o(b)",	0x88000000, 0xfc000000,	LDD|RD_b|WR_t,		0,		I1	},
-@@ -713,10 +711,12 @@
+@@ -713,10 +710,12 @@
  {"madd.s",  "D,R,S,T",	0x4c000020, 0xfc00003f, RD_R|RD_S|RD_T|WR_D|FP_S,    0,		I4	},
  {"madd.ps", "D,R,S,T",	0x4c000026, 0xfc00003f, RD_R|RD_S|RD_T|WR_D|FP_D,    0,		I5	},
  {"madd",    "s,t",      0x0000001c, 0xfc00ffff, RD_s|RD_t|WR_HILO,           0,		L1 },
@@ -1343,7 +1735,7 @@ diff -NBaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
  {"maddu",   "s,t",      0x70000001, 0xfc00ffff, RD_s|RD_t|MOD_HILO,          0,		I32|N55},
  {"maddu",   "s,t",      0x70000001, 0xfc00ffff, RD_s|RD_t|WR_HILO|IS_M,      0,		G1	},
  {"maddu",   "d,s,t",    0x70000001, 0xfc0007ff, RD_s|RD_t|WR_HILO|WR_d|IS_M, 0,		G1	},
-@@ -756,7 +756,7 @@
+@@ -756,7 +755,7 @@
  {"movf.l",  "X,Y,N",	0x46a00011, 0xffe3003f, WR_D|RD_S|RD_CC|FP_D,	0,		MX|SB1	},
  {"movf.s",  "D,S,N",    0x46000011, 0xffe3003f, WR_D|RD_S|RD_CC|FP_S,   0,		I4|I32	},
  {"movf.ps", "D,S,N",	0x46c00011, 0xffe3003f, WR_D|RD_S|RD_CC|FP_D,	0,		I5	},
@@ -1352,7 +1744,7 @@ diff -NBaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
  {"ffc",     "d,v",	0x0000000b, 0xfc1f07ff,	WR_d|RD_s,		0,		L1	},
  {"movn.d",  "D,S,t",    0x46200013, 0xffe0003f, WR_D|RD_S|RD_t|FP_D,    0,		I4|I32	},
  {"movn.l",  "D,S,t",    0x46a00013, 0xffe0003f, WR_D|RD_S|RD_t|FP_D,    0,		MX|SB1	},
-@@ -769,7 +769,7 @@
+@@ -769,7 +768,7 @@
  {"movt.l",  "X,Y,N",    0x46a10011, 0xffe3003f, WR_D|RD_S|RD_CC|FP_D,   0,		MX|SB1	},
  {"movt.s",  "D,S,N",    0x46010011, 0xffe3003f, WR_D|RD_S|RD_CC|FP_S,   0,		I4|I32	},
  {"movt.ps", "D,S,N",	0x46c10011, 0xffe3003f, WR_D|RD_S|RD_CC|FP_D,	0,		I5	},
@@ -1361,7 +1753,7 @@ diff -NBaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
  {"ffs",     "d,v",	0x0000000a, 0xfc1f07ff,	WR_d|RD_s,		0,		L1	},
  {"movz.d",  "D,S,t",    0x46200012, 0xffe0003f, WR_D|RD_S|RD_t|FP_D,    0,		I4|I32	},
  {"movz.l",  "D,S,t",    0x46a00012, 0xffe0003f, WR_D|RD_S|RD_t|FP_D,    0,		MX|SB1	},
-@@ -786,8 +786,10 @@
+@@ -786,8 +785,10 @@
  {"msub.s",  "D,R,S,T",	0x4c000028, 0xfc00003f, RD_R|RD_S|RD_T|WR_D|FP_S, 0,		I4	},
  {"msub.ps", "D,R,S,T",	0x4c00002e, 0xfc00003f, RD_R|RD_S|RD_T|WR_D|FP_D, 0,		I5	},
  {"msub",    "s,t",      0x0000001e, 0xfc00ffff, RD_s|RD_t|WR_HILO,	0,		L1    	},
@@ -1372,7 +1764,7 @@ diff -NBaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
  {"msubu",   "s,t",      0x70000005, 0xfc00ffff, RD_s|RD_t|MOD_HILO,     0,		I32|N55	},
  {"mtpc",    "t,P",	0x4080c801, 0xffe0ffc1,	COD|RD_t|WR_C0,		0,		M1|N5	},
  {"mtps",    "t,P",	0x4080c800, 0xffe0ffc1,	COD|RD_t|WR_C0,		0,		M1|N5	},
-@@ -936,13 +938,13 @@
+@@ -936,13 +937,13 @@
  {"rol",     "d,v,I",	0,    (int) M_ROL_I,	INSN_MACRO,		0,		I1	},
  {"ror",     "d,v,t",	0,    (int) M_ROR,	INSN_MACRO,		0,		I1	},
  {"ror",     "d,v,I",	0,    (int) M_ROR_I,	INSN_MACRO,		0,		I1	},
@@ -1393,7 +1785,7 @@ diff -NBaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
  {"round.l.d", "D,S",	0x46200008, 0xffff003f, WR_D|RD_S|FP_D,		0,		I3	},
  {"round.l.s", "D,S",	0x46000008, 0xffff003f, WR_D|RD_S|FP_S,		0,		I3	},
  {"round.w.d", "D,S",	0x4620000c, 0xffff003f, WR_D|RD_S|FP_D,		0,		I2	},
-@@ -974,24 +976,18 @@
+@@ -974,24 +975,17 @@
  {"sdbbp",   "c,q",	0x0000000e, 0xfc00003f,	TRAP,			0,		G2	},
  {"sdbbp",   "",         0x7000003f, 0xffffffff, TRAP,           	0,		I32     },
  {"sdbbp",   "B",        0x7000003f, 0xfc00003f, TRAP,           	0,		I32     },
@@ -1403,14 +1795,15 @@ diff -NBaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
 -{"sdc1",    "E,A(b)",	0,    (int) M_SDC1_AB,	INSN_MACRO,		0,		I2	},
 -{"sdc2",    "E,o(b)",	0xf8000000, 0xfc000000, SM|RD_C2|RD_b,		0,		I2	},
 -{"sdc2",    "E,A(b)",	0,    (int) M_SDC2_AB,	INSN_MACRO,		0,		I2	},
-+/* sdc1 is at the bottom of the table.  */ 
-+/* sdc2 is at the bottom of the table.  */
- {"sdc3",    "E,o(b)",	0xfc000000, 0xfc000000, SM|RD_C3|RD_b,		0,		I2	},
- {"sdc3",    "E,A(b)",	0,    (int) M_SDC3_AB,	INSN_MACRO,		0,		I2	},
+-{"sdc3",    "E,o(b)",	0xfc000000, 0xfc000000, SM|RD_C3|RD_b,		0,		I2	},
+-{"sdc3",    "E,A(b)",	0,    (int) M_SDC3_AB,	INSN_MACRO,		0,		I2	},
 -{"s.d",     "T,o(b)",	0xf4000000, 0xfc000000, SM|RD_T|RD_b|FP_D,	0,		I2	},
 -{"s.d",     "T,o(b)",	0,    (int) M_S_DOB,	INSN_MACRO,		0,		I1	},
 -{"s.d",     "T,A(b)",	0,    (int) M_S_DAB,	INSN_MACRO,		0,		I1	},
 -{"sdl",     "t,o(b)",	0xb0000000, 0xfc000000,	SM|RD_t|RD_b,		0,		I3	},
++/* sdc1 is at the bottom of the table.  */
++/* sdc2 is at the bottom of the table.  */
++/* sdc3 is at the bottom of the table.  */
 +/* s.d (sdc1 is at the bottom of the table.  */
 +{"sdl",     "t,o(b)",	0xb0000000, 0xfc000000,	SM|RD_t|RD_b,		0,		I3|AL	},
  {"sdl",     "t,A(b)",	0,    (int) M_SDL_AB,	INSN_MACRO,		0,		I3	},
@@ -1424,7 +1817,7 @@ diff -NBaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
  {"selsl",   "d,v,t",	0x00000005, 0xfc0007ff,	WR_d|RD_s|RD_t,		0,		L1	},
  {"selsr",   "d,v,t",	0x00000001, 0xfc0007ff,	WR_d|RD_s|RD_t,		0,		L1	},
  {"seq",     "d,v,t",	0,    (int) M_SEQ,	INSN_MACRO,		0,		I1	},
-@@ -1083,8 +1079,7 @@
+@@ -1083,8 +1077,7 @@
  {"swc1",    "E,A(b)",	0,    (int) M_SWC1_AB,	INSN_MACRO,		0,		I1	},
  {"s.s",     "T,o(b)",	0xe4000000, 0xfc000000,	SM|RD_T|RD_b|FP_S,	0,		I1	}, /* swc1 */
  {"s.s",     "T,A(b)",	0,    (int) M_SWC1_AB,	INSN_MACRO,		0,		I1	},
@@ -1434,7 +1827,7 @@ diff -NBaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
  {"swc3",    "E,o(b)",	0xec000000, 0xfc000000,	SM|RD_C3|RD_b,		0,		I1	},
  {"swc3",    "E,A(b)",	0,    (int) M_SWC3_AB,	INSN_MACRO,		0,		I1	},
  {"swl",     "t,o(b)",	0xa8000000, 0xfc000000,	SM|RD_t|RD_b,		0,		I1	},
-@@ -1169,7 +1164,8 @@
+@@ -1169,7 +1162,8 @@
  {"waiti",   "",		0x42000020, 0xffffffff,	TRAP,			0,		L1	},
  {"wb", 	    "o(b)",	0xbc040000, 0xfc1f0000, SM|RD_b,		0,		L1	},
  {"wrpgpr",  "d,w",	0x41c00000, 0xffe007ff, RD_t,			0,		I33	},
@@ -1444,7 +1837,7 @@ diff -NBaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
  {"xor",     "d,v,t",	0x00000026, 0xfc0007ff,	WR_d|RD_s|RD_t,		0,		I1	},
  {"xor",     "t,r,I",	0,    (int) M_XOR_I,	INSN_MACRO,		0,		I1	},
  {"xor.ob",  "X,Y,Q",	0x7800000d, 0xfc20003f,	WR_D|RD_S|RD_T|FP_D,	0,		MX|SB1	},
-@@ -1179,6 +1175,320 @@
+@@ -1179,6 +1173,317 @@
  {"xor.qh",  "X,Y,Q",	0x7820000d, 0xfc20003f,	WR_D|RD_S|RD_T|FP_D,	0,		MX	},
  {"xori",    "t,r,i",	0x38000000, 0xfc000000,	WR_t|RD_s,		0,		I1	},
  
@@ -1452,327 +1845,324 @@ diff -NBaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
 +{"bitrev",  "d,t",      0x7c000520, 0xffe007ff, WR_d|RD_t,              0,              AL	},
 +
 +/* Sony Allegrex VFPU instructions.  */
-+/* MRB: I don't know all of the instructions that should be using WR_C2/RD_C2 (they're just synonyms
-+   for INSN_COP).  It's not that important and more for reference, but someone should fill them in later.  */
-+/* MRB: I don't know the real macro names either, so they are assumed from the opcode's name.  */
 +{"bvf",     "?c,p",		0x49000000, 0xffe30000, CBD|RD_CC,	0,		AL	},
 +{"bvfl",    "?c,p",		0x49020000, 0xffe30000, CBL|RD_CC,	0,		AL	},
 +{"bvt",     "?c,p",		0x49010000, 0xffe30000, CBD|RD_CC,	0,		AL	},
 +{"bvtl",    "?c,p",		0x49030000, 0xffe30000, CBL|RD_CC,	0,		AL	},
 +{"lv.s",    "?m0x,?o(b)",	0xc8000000, 0xfc000000, CLD|RD_s|WR_CC,	0,		AL	},
-+{"lv.s",    "?m0x,A(b)",	0         , 0x00000073, INSN_MACRO,	0,		AL	},
-+{"ulv.s",   "?m0x,o(b)",	0         , 0x000000da, INSN_MACRO,	0,		AL	},
++{"lv.s",    "?m0x,A(b)",	0,    (int) M_LVQ_AB,	INSN_MACRO,	0,		AL	},
++{"ulv.s",   "?m0x,o(b)",	0,    (int) M_ULVS,	INSN_MACRO,	0,		AL	},
 +{"lv.q",    "?n3x,?o(b)",	0xd8000000, 0xfc000002, CLD|RD_s|WR_CC,	0,		AL	},
-+{"lv.q",    "?n3x,A(b)",	0         , 0x00000074, INSN_MACRO,	0,		AL	},
-+{"ulv.q",   "?n3x,?o(b)",	0         , 0x000000dc, INSN_MACRO,	0,		AL	},
-+{"ulv.q",   "?n3x,A(b)",	0         , 0x000000dd, INSN_MACRO,	0,		AL	},
-+{"lvi.s",   "?t0x,l?y0",	0         , 0x00000062, INSN_MACRO,	0,		AL	},
-+{"lvi.p",   "?t1x,?[l?y0,l?y1?]", 0         , 0x00000063, INSN_MACRO,	0,		AL	},
-+{"lvi.t",   "?t2x,?[l?y0,l?y1,l?y2?]", 0         , 0x00000064, INSN_MACRO, 0,		AL	},
-+{"lvi.q",   "?t3x,?[l?y0,l?y1,l?y2,l?y3?]", 0         , 0x00000065, INSN_MACRO,	0,	AL	},
-+{"lvhi.s",  "?t0x,?[?u?y0,?u?y1?]", 0         , 0x00000060, INSN_MACRO, 0,		AL	},
-+{"lvhi.p",  "?t1x,?[?u?y0,?u?y1,?u?y2,?u?y3?]", 0         , 0x00000061, INSN_MACRO, 0,	AL	},
-+{"sv.s",    "?m0x,?o(b)",	0xe8000000, 0xfc000000, SM|RD_s|RD_C0,	0,		AL	},
-+{"sv.s",    "?m0x,A(b)",	0         , 0x000000bf, INSN_MACRO,	0,		AL	},
-+{"usv.s",   "?m0x,o(b)",	0         , 0x000000e4, INSN_MACRO,	0,		AL	},
-+{"sv.q",    "?n3x,?o(b)",	0xf8000000, 0xfc000002, SM|RD_s|RD_C0,	0,		AL	},
-+{"sv.q",    "?n3x,?o(b),?z",	0xf8000000, 0xfc000000, SM|RD_s|RD_C0,	0,		AL	},
-+{"sv.q",    "?n3x,A(b)",	0         , 0x000000c0, INSN_MACRO,	0,		AL	},
-+{"sv.q",    "?n3x,A(b),?z",	0         , 0x000000c0, INSN_MACRO,	0,		AL	},
-+{"sv.q",    "?n3x,A,?z",	0         , 0x000000c0, INSN_MACRO,	0,		AL	},
-+{"usv.q",   "?n3x,?o(b)",	0         , 0x000000e6, INSN_MACRO,	0,		AL	},
-+{"usv.q",   "?n3x,A(b)",	0         , 0x000000e7, INSN_MACRO,	0,		AL	},
-+{"vwb.q",   "?n3x,?o(b)",	0xf8000002, 0xfc000002, SM|RD_s|RD_C0,	0,		AL	},
++{"lv.q",    "?n3x,A(b)",	0,    (int) M_LVQ_AB_2,	INSN_MACRO,	0,		AL	},
++{"ulv.q",   "?n3x,?o(b)",	0,    (int) M_ULVQ,	INSN_MACRO,	0,		AL	},
++{"ulv.q",   "?n3x,A(b)",	0,    (int) M_ULVQ_AB,	INSN_MACRO,	0,		AL	},
++{"lvi.s",   "?t0x,l?y0",	0,    (int) M_LVIS,	INSN_MACRO,	0,		AL	},
++{"lvi.p",   "?t1x,?[l?y0,l?y1?]", 0,  (int) M_LVIP,	INSN_MACRO,	0,		AL	},
++{"lvi.t",   "?t2x,?[l?y0,l?y1,l?y2?]", 0, (int) M_LVIT,	INSN_MACRO,	0,		AL	},
++{"lvi.q",   "?t3x,?[l?y0,l?y1,l?y2,l?y3?]", 0, (int) M_LVIQ,	INSN_MACRO,	0,	AL	},
++{"lvhi.s",  "?t0x,?[?u?y0,?u?y1?]", 0, (int) M_LVHIS,	INSN_MACRO,	0,		AL	},
++{"lvhi.p",  "?t1x,?[?u?y0,?u?y1,?u?y2,?u?y3?]", 0, (int) M_LVHIP,	INSN_MACRO, 0,	AL	},
++{"sv.s",    "?m0x,?o(b)",	0xe8000000, 0xfc000000, SM|RD_s|RD_C2,	0,		AL	},
++{"sv.s",    "?m0x,A(b)",	0,    (int) M_SVS_AB,	INSN_MACRO,	0,		AL	},
++{"usv.s",   "?m0x,o(b)",	0,    (int) M_USVS,	INSN_MACRO,	0,		AL	},
++{"sv.q",    "?n3x,?o(b)",	0xf8000000, 0xfc000002, SM|RD_s|RD_C2,	0,		AL	},
++{"sv.q",    "?n3x,?o(b),?z",	0xf8000000, 0xfc000000, SM|RD_s|RD_C2,	0,		AL	},
++{"sv.q",    "?n3x,A(b)",	0,    (int) M_SVQ_AB,	INSN_MACRO,	0,		AL	},
++{"sv.q",    "?n3x,A(b),?z",	0,    (int) M_SVQ_AB,	INSN_MACRO,	0,		AL	},
++{"sv.q",    "?n3x,A,?z",	0,    (int) M_SVQ_AB,	INSN_MACRO,	0,		AL	},
++{"usv.q",   "?n3x,?o(b)",	0,    (int) M_USVQ,	INSN_MACRO,	0,		AL	},
++{"usv.q",   "?n3x,A(b)",	0,    (int) M_USVQ_AB,	INSN_MACRO,	0,		AL	},
++{"vwb.q",   "?n3x,?o(b)",	0xf8000002, 0xfc000002, SM|RD_s|RD_C2,	0,		AL	},
 +{"lvl.q",   "?n3x,?o(b)",	0xd4000000, 0xfc000002, CLD|RD_s|WR_CC,	0,		AL	},
-+{"lvl.q",   "?n3x,A(b)",	0         , 0x00000075, INSN_MACRO,	0,		AL	},
++{"lvl.q",   "?n3x,A(b)",	0,    (int) M_LVLQ_AB,	INSN_MACRO,	0,		AL	},
 +{"lvr.q",   "?n3x,?o(b)",	0xd4000002, 0xfc000002, CLD|RD_s|WR_CC,	0,		AL	},
-+{"lvr.q",   "?n3x,A(b)",	0         , 0x00000076, INSN_MACRO,	0,		AL	},
-+{"svl.q",   "?n3x,?o(b)",	0xf4000000, 0xfc000002, SM|RD_s|RD_C0,	0,		AL	},
-+{"svl.q",   "?n3x,A(b)",	0         , 0x000000c1, INSN_MACRO,	0,		AL	},
-+{"svr.q",   "?n3x,?o(b)",	0xf4000002, 0xfc000002, SM|RD_s|RD_C0,	0,		AL	},
-+{"svr.q",   "?n3x,A(b)",	0         , 0x000000c2, INSN_MACRO,	0,		AL	},
-+{"mtv",     "t,?d0z",		0x48e00000, 0xffe0ff80, LCD|WR_t|RD_C0,	0,		AL	},
-+{"mfv",     "t,?d0z",		0x48600000, 0xffe0ff80, COD|RD_t|WR_CC|RD_C0, 0,	AL	},
-+{"mtvc",    "t,?q",		0x48e00000, 0xffe0ff00, LCD|WR_t|RD_C0,	0,		AL	},
-+{"mfvc",    "t,?q",		0x48600000, 0xffe0ff00, COD|RD_t|WR_CC|RD_C0, 0,	AL	},
-+{"vmtvc",   "?q,?s0y",		0xd0510000, 0xffff8000, RD_C0,		0,		AL	},
-+{"vmfvc",   "?d0z,?r",		0xd0500000, 0xffff0080, RD_C0,		0,		AL	},
-+{"vadd.q",  "?d3d,?s3s,?t3t",	0x60008080, 0xff808080, RD_C0,		0,		AL	},
-+{"vsub.q",  "?d3d,?s3s,?t3t",	0x60808080, 0xff808080, RD_C0,		0,		AL	},
-+{"vdiv.q",  "?x3z,?s3y,?t3x",	0x63808080, 0xff808080, RD_C0,		0,		AL	},
-+{"vmul.q",  "?d3d,?s3s,?t3t",	0x64008080, 0xff808080, RD_C0,		0,		AL	},
-+{"vdot.q",  "?d0d,?s3s,?t3t",	0x64808080, 0xff808080, RD_C0,		0,		AL	},
-+{"vscl.q",  "?d3d,?s3s,?t0x",	0x65008080, 0xff808080, RD_C0,		0,		AL	},
-+{"vhdp.q",  "?d0d,?s3y,?t3t",	0x66008080, 0xff808080, RD_C0,		0,		AL	},
-+{"vcmp.q",  "?f2,?s3s,?t3t",	0x6c008080, 0xff8080f0, RD_C0,		0,		AL	},
-+{"vcmp.q",  "?f1,?s3s",		0x6c008080, 0xffff80f0, RD_C0,		0,		AL	},
-+{"vcmp.q",  "?f0",		0x6c008080, 0xfffffff0, RD_C0,		0,		AL	},
-+{"vmin.q",  "?d3d,?s3s,?t3t",	0x6d008080, 0xff808080, RD_C0,		0,		AL	},
-+{"vmax.q",  "?d3d,?s3s,?t3t",	0x6d808080, 0xff808080, RD_C0,		0,		AL	},
-+{"vsgn.q",  "?d3d,?s3s",	0xd04a8080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vcst.q",  "?d3d,?a",		0xd0608080, 0xffe0ff80, RD_C0,		0,		AL	},
-+{"vscmp.q", "?d3d,?s3s,?t3t",	0x6e808080, 0xff808080, RD_C0,		0,		AL	},
-+{"vsge.q",  "?d3d,?s3s,?t3t",	0x6f008080, 0xff808080, RD_C0,		0,		AL	},
-+{"vslt.q",  "?d3d,?s3s,?t3t",	0x6f808080, 0xff808080, RD_C0,		0,		AL	},
-+{"vi2uc.q", "?d0m,?s3w",	0xd03c8080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vi2c.q",  "?d0m,?s3w",	0xd03d8080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vi2us.q", "?d1m,?s3w",	0xd03e8080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vi2s.q",  "?d1m,?s3w",	0xd03f8080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vmov.q",  "?d3d,?s3s",	0xd0008080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vabs.q",  "?d3d,?s3w",	0xd0018080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vneg.q",  "?d3d,?s3w",	0xd0028080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vidt.q",  "?d3d",		0xd0038080, 0xffffff80, RD_C0,		0,		AL	},
-+{"vsat0.q", "?d3z,?s3s",	0xd0048080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsat1.q", "?d3z,?s3s",	0xd0058080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vzero.q", "?d3d",		0xd0068080, 0xffffff80, RD_C0,		0,		AL	},
-+{"vone.q",  "?d3d",		0xd0078080, 0xffffff80, RD_C0,		0,		AL	},
-+{"vrcp.q",  "?x3z,?s3y",	0xd0108080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vrsq.q",  "?x3z,?s3y",	0xd0118080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsin.q",  "?x3z,?s3y",	0xd0128080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vcos.q",  "?x3z,?s3y",	0xd0138080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vexp2.q", "?x3z,?s3y",	0xd0148080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vlog2.q", "?x3z,?s3y",	0xd0158080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsqrt.q", "?x3z,?s3y",	0xd0168080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vasin.q", "?x3z,?s3y",	0xd0178080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vnrcp.q", "?x3z,?s3y",	0xd0188080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vnsin.q", "?x3z,?s3y",	0xd01a8080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vrexp2.q", "?x3z,?s3y",	0xd01c8080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vrndi.q", "?d3z",		0xd0218080, 0xffffff80, RD_C0,		0,		AL	},
-+{"vrndf1.q", "?d3z",		0xd0228080, 0xffffff80, RD_C0,		0,		AL	},
-+{"vrndf2.q", "?d3z",		0xd0238080, 0xffffff80, RD_C0,		0,		AL	},
-+{"vf2h.q",  "?d1m,?s3s",	0xd0328080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsrt1.q", "?d3d,?s3s",	0xd0408080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsrt2.q", "?d3d,?s3s",	0xd0418080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsrt3.q", "?d3d,?s3s",	0xd0488080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsrt4.q", "?d3d,?s3s",	0xd0498080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vbfy1.q", "?d3d,?s3s",	0xd0428080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vbfy2.q", "?d3d,?s3s",	0xd0438080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vocp.q",  "?d3d,?s3y",	0xd0448080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vfad.q",  "?d0d,?s3s",	0xd0468080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vavg.q",  "?d0d,?s3s",	0xd0478080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vf2in.q", "?d3m,?s3s,?b",	0xd2008080, 0xffe08080, RD_C0,		0,		AL	},
-+{"vf2iz.q", "?d3m,?s3s,?b",	0xd2208080, 0xffe08080, RD_C0,		0,		AL	},
-+{"vf2iu.q", "?d3m,?s3s,?b",	0xd2408080, 0xffe08080, RD_C0,		0,		AL	},
-+{"vf2id.q", "?d3m,?s3s,?b",	0xd2608080, 0xffe08080, RD_C0,		0,		AL	},
-+{"vi2f.q",  "?d3d,?s3w,?b",	0xd2808080, 0xffe08080, RD_C0,		0,		AL	},
-+{"vcmov.q", "?d3d,?s3s,?e",	0         , 0x000000e9, INSN_MACRO,	0,		AL	},
-+{"vcmovt.q", "?d3d,?s3s,?e",	0xd2a08080, 0xfff88080, RD_C0,		0,		AL	},
-+{"vcmovf.q", "?d3d,?s3s,?e",	0xd2a88080, 0xfff88080, RD_C0,		0,		AL	},
-+{"vmmul.q", "?v7z,?s7y,?t7x",	0xf0008080, 0xff808080, RD_C0,		0,		AL	},
-+{"vtfm4.q", "?v3z,?s7y,?t3x",	0xf1808080, 0xff808080, RD_C0,		0,		AL	},
-+{"vhtfm4.q", "?v3z,?s7y,?t3x",	0xf1808000, 0xff808080, RD_C0,		0,		AL	},
-+{"vmscl.q", "?x7z,?s7y,?t0x",	0xf2008080, 0xff808080, RD_C0,		0,		AL	},
-+{"vqmul.q", "?v3z,?s3y,?t3x",	0xf2808080, 0xff808080, RD_C0,		0,		AL	},
-+{"vmmov.q", "?x7z,?s7y",	0xf3808080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vmidt.q", "?d7z",		0xf3838080, 0xffffff80, RD_C0,		0,		AL	},
-+{"vmzero.q", "?d7z",		0xf3868080, 0xffffff80, RD_C0,		0,		AL	},
-+{"vmone.q", "?d7z",		0xf3878080, 0xffffff80, RD_C0,		0,		AL	},
-+{"vrot.q",  "?x3z,?s0y,?w",	0xf3a08080, 0xffe08080, RD_C0,		0,		AL	},
-+{"vt4444.q", "?d1z,?s3w",	0xd0598080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vt5551.q", "?d1z,?s3w",	0xd05a8080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vt5650.q", "?d1z,?s3w",	0xd05b8080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vadd.t",  "?d2d,?s2s,?t2t",	0x60008000, 0xff808080, RD_C0,		0,		AL	},
-+{"vsub.t",  "?d2d,?s2s,?t2t",	0x60808000, 0xff808080, RD_C0,		0,		AL	},
-+{"vdiv.t",  "?x2z,?s2y,?t2x",	0x63808000, 0xff808080, RD_C0,		0,		AL	},
-+{"vmul.t",  "?d2d,?s2s,?t2t",	0x64008000, 0xff808080, RD_C0,		0,		AL	},
-+{"vdot.t",  "?d0d,?s2s,?t2t",	0x64808000, 0xff808080, RD_C0,		0,		AL	},
-+{"vscl.t",  "?d2d,?s2s,?t0x",	0x65008000, 0xff808080, RD_C0,		0,		AL	},
-+{"vhdp.t",  "?d0d,?s2y,?t2t",	0x66008000, 0xff808080, RD_C0,		0,		AL	},
-+{"vcrs.t",  "?d2d,?s2y,?t2x",	0x66808000, 0xff808080, RD_C0,		0,		AL	},
-+{"vcmp.t",  "?f2,?s2s,?t2t",	0x6c008000, 0xff8080f0, RD_C0,		0,		AL	},
-+{"vcmp.t",  "?f1,?s2s",		0x6c008000, 0xffff80f0, RD_C0,		0,		AL	},
-+{"vcmp.t",  "?f0",		0x6c008000, 0xfffffff0, RD_C0,		0,		AL	},
-+{"vmin.t",  "?d2d,?s2s,?t2t",	0x6d008000, 0xff808080, RD_C0,		0,		AL	},
-+{"vmax.t",  "?d2d,?s2s,?t2t",	0x6d808000, 0xff808080, RD_C0,		0,		AL	},
-+{"vsgn.t",  "?d2d,?s2s",	0xd04a8000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vcst.t",  "?d2d,?a",		0xd0608000, 0xffe0ff80, RD_C0,		0,		AL	},
-+{"vscmp.t", "?d2d,?s2s,?t2t",	0x6e808000, 0xff808080, RD_C0,		0,		AL	},
-+{"vsge.t",  "?d2d,?s2s,?t2t",	0x6f008000, 0xff808080, RD_C0,		0,		AL	},
-+{"vslt.t",  "?d2d,?s2s,?t2t",	0x6f808000, 0xff808080, RD_C0,		0,		AL	},
-+{"vmov.t",  "?d2d,?s2s",	0xd0008000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vabs.t",  "?d2d,?s2w",	0xd0018000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vneg.t",  "?d2d,?s2w",	0xd0028000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsat0.t", "?d2z,?s2s",	0xd0048000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsat1.t", "?d2z,?s2s",	0xd0058000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vzero.t", "?d2d",		0xd0068000, 0xffffff80, RD_C0,		0,		AL	},
-+{"vone.t",  "?d2d",		0xd0078000, 0xffffff80, RD_C0,		0,		AL	},
-+{"vrcp.t",  "?x2z,?s2y",	0xd0108000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vrsq.t",  "?x2z,?s2y",	0xd0118000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsin.t",  "?x2z,?s2y",	0xd0128000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vcos.t",  "?x2z,?s2y",	0xd0138000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vexp2.t", "?x2z,?s2y",	0xd0148000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vlog2.t", "?x2z,?s2y",	0xd0158000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsqrt.t", "?x2z,?s2y",	0xd0168000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vasin.t", "?x2z,?s2y",	0xd0178000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vnrcp.t", "?x2z,?s2y",	0xd0188000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vnsin.t", "?x2z,?s2y",	0xd01a8000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vrexp2.t", "?x2z,?s2y",	0xd01c8000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vrndi.t", "?d2z",		0xd0218000, 0xffffff80, RD_C0,		0,		AL	},
-+{"vrndf1.t", "?d2z",		0xd0228000, 0xffffff80, RD_C0,		0,		AL	},
-+{"vrndf2.t", "?d2z",		0xd0238000, 0xffffff80, RD_C0,		0,		AL	},
-+{"vocp.t",  "?d2d,?s2y",	0xd0448000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vfad.t",  "?d0d,?s2s",	0xd0468000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vavg.t",  "?d0d,?s2s",	0xd0478000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vf2in.t", "?d2m,?s2s,?b",	0xd2008000, 0xffe08080, RD_C0,		0,		AL	},
-+{"vf2iz.t", "?d2m,?s2s,?b",	0xd2208000, 0xffe08080, RD_C0,		0,		AL	},
-+{"vf2iu.t", "?d2m,?s2s,?b",	0xd2408000, 0xffe08080, RD_C0,		0,		AL	},
-+{"vf2id.t", "?d2m,?s2s,?b",	0xd2608000, 0xffe08080, RD_C0,		0,		AL	},
-+{"vi2f.t",  "?d2d,?s2w,?b",	0xd2808000, 0xffe08080, RD_C0,		0,		AL	},
-+{"vcmov.t", "?d2d,?s2s,?e",	0         , 0x000000eb, INSN_MACRO,	0,		AL	},
-+{"vcmovt.t", "?d2d,?s2s,?e",	0xd2a08000, 0xfff88080, RD_C0,		0,		AL	},
-+{"vcmovf.t", "?d2d,?s2s,?e",	0xd2a88000, 0xfff88080, RD_C0,		0,		AL	},
-+{"vmmul.t", "?v6z,?s6y,?t6x",	0xf0008000, 0xff808080, RD_C0,		0,		AL	},
-+{"vtfm3.t", "?v2z,?s6y,?t2x",	0xf1008000, 0xff808080, RD_C0,		0,		AL	},
-+{"vhtfm3.t", "?v2z,?s6y,?t2x",	0xf1000080, 0xff808080, RD_C0,		0,		AL	},
-+{"vmscl.t", "?x6z,?s6y,?t0x",	0xf2008000, 0xff808080, RD_C0,		0,		AL	},
-+{"vmmov.t", "?x6z,?s6y",	0xf3808000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vmidt.t", "?d6z",		0xf3838000, 0xffffff80, RD_C0,		0,		AL	},
-+{"vmzero.t", "?d6z",		0xf3868000, 0xffffff80, RD_C0,		0,		AL	},
-+{"vmone.t", "?d6z",		0xf3878000, 0xffffff80, RD_C0,		0,		AL	},
-+{"vrot.t",  "?x2z,?s0y,?w",	0xf3a08000, 0xffe08080, RD_C0,		0,		AL	},
-+{"vcrsp.t", "?d2z,?s2y,?t2x",	0xf2808000, 0xff808080, RD_C0,		0,		AL	},
-+{"vadd.p",  "?d1d,?s1s,?t1t",	0x60000080, 0xff808080, RD_C0,		0,		AL	},
-+{"vsub.p",  "?d1d,?s1s,?t1t",	0x60800080, 0xff808080, RD_C0,		0,		AL	},
-+{"vdiv.p",  "?x1z,?s1y,?t1x",	0x63800080, 0xff808080, RD_C0,		0,		AL	},
-+{"vmul.p",  "?d1d,?s1s,?t1t",	0x64000080, 0xff808080, RD_C0,		0,		AL	},
-+{"vdot.p",  "?d0d,?s1s,?t1t",	0x64800080, 0xff808080, RD_C0,		0,		AL	},
-+{"vscl.p",  "?d1d,?s1s,?t0x",	0x65000080, 0xff808080, RD_C0,		0,		AL	},
-+{"vhdp.p",  "?d0d,?s1y,?t1t",	0x66000080, 0xff808080, RD_C0,		0,		AL	},
-+{"vdet.p",  "?d0d,?s1s,?t1x",	0x67000080, 0xff808080, RD_C0,		0,		AL	},
-+{"vcmp.p",  "?f2,?s1s,?t1t",	0x6c000080, 0xff8080f0, RD_C0,		0,		AL	},
-+{"vcmp.p",  "?f1,?s1s",		0x6c000080, 0xffff80f0, RD_C0,		0,		AL	},
-+{"vcmp.p",  "?f0",		0x6c000080, 0xfffffff0, RD_C0,		0,		AL	},
-+{"vmin.p",  "?d1d,?s1s,?t1t",	0x6d000080, 0xff808080, RD_C0,		0,		AL	},
-+{"vmax.p",  "?d1d,?s1s,?t1t",	0x6d800080, 0xff808080, RD_C0,		0,		AL	},
-+{"vsgn.p",  "?d1d,?s1s",	0xd04a0080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vcst.p",  "?d1d,?a",		0xd0600080, 0xffe0ff80, RD_C0,		0,		AL	},
-+{"vscmp.p", "?d1d,?s1s,?t1t",	0x6e800080, 0xff808080, RD_C0,		0,		AL	},
-+{"vsge.p",  "?d1d,?s1s,?t1t",	0x6f000080, 0xff808080, RD_C0,		0,		AL	},
-+{"vslt.p",  "?d1d,?s1s,?t1t",	0x6f800080, 0xff808080, RD_C0,		0,		AL	},
-+{"vus2i.p", "?d3m,?s1y",	0xd03a0080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vs2i.p",  "?d3m,?s1y",	0xd03b0080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vi2us.p", "?d0m,?s1w",	0xd03e0080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vi2s.p",  "?d0m,?s1w",	0xd03f0080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vmov.p",  "?d1d,?s1s",	0xd0000080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vabs.p",  "?d1d,?s1w",	0xd0010080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vneg.p",  "?d1d,?s1w",	0xd0020080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vidt.p",  "?d1d",		0xd0030080, 0xffffff80, RD_C0,		0,		AL	},
-+{"vsat0.p", "?d1z,?s1s",	0xd0040080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsat1.p", "?d1z,?s1s",	0xd0050080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vzero.p", "?d1d",		0xd0060080, 0xffffff80, RD_C0,		0,		AL	},
-+{"vone.p",  "?d1d",		0xd0070080, 0xffffff80, RD_C0,		0,		AL	},
-+{"vrcp.p",  "?x1z,?s1y",	0xd0100080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vrsq.p",  "?x1z,?s1y",	0xd0110080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsin.p",  "?x1z,?s1y",	0xd0120080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vcos.p",  "?x1z,?s1y",	0xd0130080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vexp2.p", "?x1z,?s1y",	0xd0140080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vlog2.p", "?x1z,?s1y",	0xd0150080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsqrt.p", "?x1z,?s1y",	0xd0160080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vasin.p", "?x1z,?s1y",	0xd0170080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vnrcp.p", "?x1z,?s1y",	0xd0180080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vnsin.p", "?x1z,?s1y",	0xd01a0080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vrexp2.p", "?x1z,?s1y",	0xd01c0080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vrndi.p", "?d1z",		0xd0210080, 0xffffff80, RD_C0,		0,		AL	},
-+{"vrndf1.p", "?d1z",		0xd0220080, 0xffffff80, RD_C0,		0,		AL	},
-+{"vrndf2.p", "?d1z",		0xd0230080, 0xffffff80, RD_C0,		0,		AL	},
-+{"vf2h.p",  "?d0m,?s1s",	0xd0320080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vh2f.p",  "?d3d,?s1y",	0xd0330080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vbfy1.p", "?d1d,?s1s",	0xd0420080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vocp.p",  "?d1d,?s1y",	0xd0440080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsocp.p", "?d3z,?s1y",	0xd0450080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vfad.p",  "?d0d,?s1s",	0xd0460080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vavg.p",  "?d0d,?s1s",	0xd0470080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vf2in.p", "?d1m,?s1s,?b",	0xd2000080, 0xffe08080, RD_C0,		0,		AL	},
-+{"vf2iz.p", "?d1m,?s1s,?b",	0xd2200080, 0xffe08080, RD_C0,		0,		AL	},
-+{"vf2iu.p", "?d1m,?s1s,?b",	0xd2400080, 0xffe08080, RD_C0,		0,		AL	},
-+{"vf2id.p", "?d1m,?s1s,?b",	0xd2600080, 0xffe08080, RD_C0,		0,		AL	},
-+{"vi2f.p",  "?d1d,?s1w,?b",	0xd2800080, 0xffe08080, RD_C0,		0,		AL	},
-+{"vcmov.p", "?d1d,?s1s,?e",	0         , 0x000000e8, INSN_MACRO,	0,		AL	},
-+{"vcmovt.p", "?d1d,?s1s,?e",	0xd2a00080, 0xfff88080, RD_C0,		0,		AL	},
-+{"vcmovf.p", "?d1d,?s1s,?e",	0xd2a80080, 0xfff88080, RD_C0,		0,		AL	},
-+{"vmmul.p", "?v5z,?s5y,?t5x",	0xf0000080, 0xff808080, RD_C0,		0,		AL	},
-+{"vtfm2.p", "?v1z,?s5y,?t1x",	0xf0800080, 0xff808080, RD_C0,		0,		AL	},
-+{"vhtfm2.p", "?v1z,?s5y,?t1x",	0xf0800000, 0xff808080, RD_C0,		0,		AL	},
-+{"vmscl.p", "?x5z,?s5y,?t0x",	0xf2000080, 0xff808080, RD_C0,		0,		AL	},
-+{"vmmov.p", "?x5z,?s5y",	0xf3800080, 0xffff8080, RD_C0,		0,		AL	},
-+{"vmidt.p", "?d5z",		0xf3830080, 0xffffff80, RD_C0,		0,		AL	},
-+{"vmzero.p", "?d5z",		0xf3860080, 0xffffff80, RD_C0,		0,		AL	},
-+{"vmone.p", "?d5z",		0xf3870080, 0xffffff80, RD_C0,		0,		AL	},
-+{"vrot.p",  "?x1z,?s0y,?w",	0xf3a00080, 0xffe08080, RD_C0,		0,		AL	},
-+{"vadd.s",  "?d0d,?s0s,?t0t",	0x60000000, 0xff808080, RD_C0,		0,		AL	},
-+{"vsub.s",  "?d0d,?s0s,?t0t",	0x60800000, 0xff808080, RD_C0,		0,		AL	},
-+{"vdiv.s",  "?x0d,?s0s,?t0t",	0x63800000, 0xff808080, RD_C0,		0,		AL	},
-+{"vmul.s",  "?d0d,?s0s,?t0t",	0x64000000, 0xff808080, RD_C0,		0,		AL	},
-+{"vcmp.s",  "?f2,?s0s,?t0t",	0x6c000000, 0xff8080f0, RD_C0,		0,		AL	},
-+{"vcmp.s",  "?f1,?s0s",		0x6c000000, 0xffff80f0, RD_C0,		0,		AL	},
-+{"vcmp.s",  "?f0",		0x6c000000, 0xfffffff0, RD_C0,		0,		AL	},
-+{"vmin.s",  "?d0d,?s0s,?t0t",	0x6d000000, 0xff808080, RD_C0,		0,		AL	},
-+{"vmax.s",  "?d0d,?s0s,?t0t",	0x6d800000, 0xff808080, RD_C0,		0,		AL	},
-+{"vsgn.s",  "?d0d,?s0s",	0xd04a0000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vcst.s",  "?d0d,?a",		0xd0600000, 0xffe0ff80, RD_C0,		0,		AL	},
-+{"vscmp.s", "?d0d,?s0s,?t0t",	0x6e800000, 0xff808080, RD_C0,		0,		AL	},
-+{"vsge.s",  "?d0d,?s0s,?t0t",	0x6f000000, 0xff808080, RD_C0,		0,		AL	},
-+{"vslt.s",  "?d0d,?s0s,?t0t",	0x6f800000, 0xff808080, RD_C0,		0,		AL	},
-+{"vus2i.s", "?d1m,?s0y",	0xd03a0000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vs2i.s",  "?d1m,?s0y",	0xd03b0000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vmov.s",  "?d0d,?s0s",	0xd0000000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vabs.s",  "?d0d,?s0w",	0xd0010000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vneg.s",  "?d0d,?s0w",	0xd0020000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsat0.s", "?d0z,?s0s",	0xd0040000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsat1.s", "?d0z,?s0s",	0xd0050000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vzero.s", "?d0d",		0xd0060000, 0xffffff80, RD_C0,		0,		AL	},
-+{"vone.s",  "?d0d",		0xd0070000, 0xffffff80, RD_C0,		0,		AL	},
-+{"vrcp.s",  "?x0d,?s0s",	0xd0100000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vrsq.s",  "?x0d,?s0s",	0xd0110000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsin.s",  "?x0d,?s0s",	0xd0120000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vcos.s",  "?x0d,?s0s",	0xd0130000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vexp2.s", "?x0d,?s0s",	0xd0140000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vlog2.s", "?x0d,?s0s",	0xd0150000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsqrt.s", "?x0d,?s0s",	0xd0160000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vasin.s", "?x0d,?s0s",	0xd0170000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vnrcp.s", "?x0d,?s0y",	0xd0180000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vnsin.s", "?x0d,?s0y",	0xd01a0000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vrexp2.s", "?x0d,?s0y",	0xd01c0000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vrnds.s", "?s0y",		0xd0200000, 0xffff80ff, RD_C0,		0,		AL	},
-+{"vrndi.s", "?d0d",		0xd0210000, 0xffffff80, RD_C0,		0,		AL	},
-+{"vrndf1.s", "?d0d",		0xd0220000, 0xffffff80, RD_C0,		0,		AL	},
-+{"vrndf2.s", "?d0d",		0xd0230000, 0xffffff80, RD_C0,		0,		AL	},
-+{"vh2f.s",  "?d1d,?s0y",	0xd0330000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsbz.s",  "?d0d,?s0s",	0xd0360000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsbn.s",  "?d0d,?s0s,?t0t",	0x61000000, 0xff808080, RD_C0,		0,		AL	},
-+{"vlgb.s",  "?d0d,?s0s",	0xd0370000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vocp.s",  "?d0d,?s0y",	0xd0440000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vsocp.s", "?d1z,?s0y",	0xd0450000, 0xffff8080, RD_C0,		0,		AL	},
-+{"vf2in.s", "?d0m,?s0s,?b",	0xd2000000, 0xffe08080, RD_C0,		0,		AL	},
-+{"vf2iz.s", "?d0m,?s0s,?b",	0xd2200000, 0xffe08080, RD_C0,		0,		AL	},
-+{"vf2iu.s", "?d0m,?s0s,?b",	0xd2400000, 0xffe08080, RD_C0,		0,		AL	},
-+{"vf2id.s", "?d0m,?s0s,?b",	0xd2600000, 0xffe08080, RD_C0,		0,		AL	},
-+{"vi2f.s",  "?d0d,?s0w,?b",	0xd2800000, 0xffe08080, RD_C0,		0,		AL	},
-+{"vcmov.s", "?d0d,?s0s,?e",	0         , 0x000000ea, INSN_MACRO,	0,		AL	},
-+{"vcmovt.s", "?d0d,?s0s,?e",	0xd2a00000, 0xfff88080, RD_C0,		0,		AL	},
-+{"vcmovf.s", "?d0d,?s0s,?e",	0xd2a80000, 0xfff88080, RD_C0,		0,		AL	},
-+{"vwbn.s",  "?d0d,?s0s,?i",	0xd3000000, 0xff008080, RD_C0,		0,		AL	},
-+{"vpfxs",   "?0,?1,?2,?3",	0xdc000000, 0xff000000, RD_C0,		0,		AL	},
-+{"vpfxt",   "?0,?1,?2,?3",	0xdd000000, 0xff000000, RD_C0,		0,		AL	},
-+{"vpfxd",   "?4,?5,?6,?7",	0xde000000, 0xff000000, RD_C0,		0,		AL	},
-+{"viim.s",  "?t0d,j",		0xdf000000, 0xff800000, RD_C0,		0,		AL	},
-+{"vfim.s",  "?t0d,?u",		0xdf800000, 0xff800000, RD_C0,		0,		AL	},
-+{"vnop",    "",			0xffff0000, 0xffffffff, RD_C0,		0,		AL	},
-+{"vflush",  "",			0xffff040d, 0xffffffff, RD_C0,		0,		AL	},
-+{"vsync",   "",			0xffff0320, 0xffffffff, RD_C0,		0,		AL	},
-+{"vsync",   "i",		0xffff0000, 0xffff0000, RD_C0,		0,		AL	},
++{"lvr.q",   "?n3x,A(b)",	0,    (int) M_LVRQ_AB,	INSN_MACRO,	0,		AL	},
++{"svl.q",   "?n3x,?o(b)",	0xf4000000, 0xfc000002, SM|RD_s|RD_C2,	0,		AL	},
++{"svl.q",   "?n3x,A(b)",	0,    (int) M_SVLQ_AB,	INSN_MACRO,	0,		AL	},
++{"svr.q",   "?n3x,?o(b)",	0xf4000002, 0xfc000002, SM|RD_s|RD_C2,	0,		AL	},
++{"svr.q",   "?n3x,A(b)",	0,    (int) M_SVRQ_AB,	INSN_MACRO,	0,		AL	},
++{"mtv",     "t,?d0z",		0x48e00000, 0xffe0ff80, LCD|WR_t|WR_C2,	0,		AL	},
++{"mfv",     "t,?d0z",		0x48600000, 0xffe0ff80, COD|RD_t|WR_CC|RD_C2, 0,	AL	},
++{"mtvc",    "t,?q",		0x48e00000, 0xffe0ff00, LCD|WR_t|WR_C2,	0,		AL	},
++{"mfvc",    "t,?q",		0x48600000, 0xffe0ff00, COD|RD_t|WR_CC|RD_C2, 0,	AL	},
++{"vmtvc",   "?q,?s0y",		0xd0510000, 0xffff8000, WR_C2,		0,		AL	},
++{"vmfvc",   "?d0z,?r",		0xd0500000, 0xffff0080, RD_C2,		0,		AL	},
++{"vadd.q",  "?d3d,?s3s,?t3t",	0x60008080, 0xff808080, RD_C2,		0,		AL	},
++{"vsub.q",  "?d3d,?s3s,?t3t",	0x60808080, 0xff808080, RD_C2,		0,		AL	},
++{"vdiv.q",  "?x3z,?s3y,?t3x",	0x63808080, 0xff808080, RD_C2,		0,		AL	},
++{"vmul.q",  "?d3d,?s3s,?t3t",	0x64008080, 0xff808080, RD_C2,		0,		AL	},
++{"vdot.q",  "?d0d,?s3s,?t3t",	0x64808080, 0xff808080, RD_C2,		0,		AL	},
++{"vscl.q",  "?d3d,?s3s,?t0x",	0x65008080, 0xff808080, RD_C2,		0,		AL	},
++{"vhdp.q",  "?d0d,?s3y,?t3t",	0x66008080, 0xff808080, RD_C2,		0,		AL	},
++{"vcmp.q",  "?f2,?s3s,?t3t",	0x6c008080, 0xff8080f0, RD_C2,		0,		AL	},
++{"vcmp.q",  "?f1,?s3s",		0x6c008080, 0xffff80f0, RD_C2,		0,		AL	},
++{"vcmp.q",  "?f0",		0x6c008080, 0xfffffff0, RD_C2,		0,		AL	},
++{"vmin.q",  "?d3d,?s3s,?t3t",	0x6d008080, 0xff808080, RD_C2,		0,		AL	},
++{"vmax.q",  "?d3d,?s3s,?t3t",	0x6d808080, 0xff808080, RD_C2,		0,		AL	},
++{"vsgn.q",  "?d3d,?s3s",	0xd04a8080, 0xffff8080, RD_C2,		0,		AL	},
++{"vcst.q",  "?d3d,?a",		0xd0608080, 0xffe0ff80, RD_C2,		0,		AL	},
++{"vscmp.q", "?d3d,?s3s,?t3t",	0x6e808080, 0xff808080, RD_C2,		0,		AL	},
++{"vsge.q",  "?d3d,?s3s,?t3t",	0x6f008080, 0xff808080, RD_C2,		0,		AL	},
++{"vslt.q",  "?d3d,?s3s,?t3t",	0x6f808080, 0xff808080, RD_C2,		0,		AL	},
++{"vi2uc.q", "?d0m,?s3w",	0xd03c8080, 0xffff8080, RD_C2,		0,		AL	},
++{"vi2c.q",  "?d0m,?s3w",	0xd03d8080, 0xffff8080, RD_C2,		0,		AL	},
++{"vi2us.q", "?d1m,?s3w",	0xd03e8080, 0xffff8080, RD_C2,		0,		AL	},
++{"vi2s.q",  "?d1m,?s3w",	0xd03f8080, 0xffff8080, RD_C2,		0,		AL	},
++{"vmov.q",  "?d3d,?s3s",	0xd0008080, 0xffff8080, RD_C2,		0,		AL	},
++{"vabs.q",  "?d3d,?s3w",	0xd0018080, 0xffff8080, RD_C2,		0,		AL	},
++{"vneg.q",  "?d3d,?s3w",	0xd0028080, 0xffff8080, RD_C2,		0,		AL	},
++{"vidt.q",  "?d3d",		0xd0038080, 0xffffff80, RD_C2,		0,		AL	},
++{"vsat0.q", "?d3z,?s3s",	0xd0048080, 0xffff8080, RD_C2,		0,		AL	},
++{"vsat1.q", "?d3z,?s3s",	0xd0058080, 0xffff8080, RD_C2,		0,		AL	},
++{"vzero.q", "?d3d",		0xd0068080, 0xffffff80, RD_C2,		0,		AL	},
++{"vone.q",  "?d3d",		0xd0078080, 0xffffff80, RD_C2,		0,		AL	},
++{"vrcp.q",  "?x3z,?s3y",	0xd0108080, 0xffff8080, RD_C2,		0,		AL	},
++{"vrsq.q",  "?x3z,?s3y",	0xd0118080, 0xffff8080, RD_C2,		0,		AL	},
++{"vsin.q",  "?x3z,?s3y",	0xd0128080, 0xffff8080, RD_C2,		0,		AL	},
++{"vcos.q",  "?x3z,?s3y",	0xd0138080, 0xffff8080, RD_C2,		0,		AL	},
++{"vexp2.q", "?x3z,?s3y",	0xd0148080, 0xffff8080, RD_C2,		0,		AL	},
++{"vlog2.q", "?x3z,?s3y",	0xd0158080, 0xffff8080, RD_C2,		0,		AL	},
++{"vsqrt.q", "?x3z,?s3y",	0xd0168080, 0xffff8080, RD_C2,		0,		AL	},
++{"vasin.q", "?x3z,?s3y",	0xd0178080, 0xffff8080, RD_C2,		0,		AL	},
++{"vnrcp.q", "?x3z,?s3y",	0xd0188080, 0xffff8080, RD_C2,		0,		AL	},
++{"vnsin.q", "?x3z,?s3y",	0xd01a8080, 0xffff8080, RD_C2,		0,		AL	},
++{"vrexp2.q", "?x3z,?s3y",	0xd01c8080, 0xffff8080, RD_C2,		0,		AL	},
++{"vrndi.q", "?d3z",		0xd0218080, 0xffffff80, RD_C2,		0,		AL	},
++{"vrndf1.q", "?d3z",		0xd0228080, 0xffffff80, RD_C2,		0,		AL	},
++{"vrndf2.q", "?d3z",		0xd0238080, 0xffffff80, RD_C2,		0,		AL	},
++{"vf2h.q",  "?d1m,?s3s",	0xd0328080, 0xffff8080, RD_C2,		0,		AL	},
++{"vsrt1.q", "?d3d,?s3s",	0xd0408080, 0xffff8080, RD_C2,		0,		AL	},
++{"vsrt2.q", "?d3d,?s3s",	0xd0418080, 0xffff8080, RD_C2,		0,		AL	},
++{"vsrt3.q", "?d3d,?s3s",	0xd0488080, 0xffff8080, RD_C2,		0,		AL	},
++{"vsrt4.q", "?d3d,?s3s",	0xd0498080, 0xffff8080, RD_C2,		0,		AL	},
++{"vbfy1.q", "?d3d,?s3s",	0xd0428080, 0xffff8080, RD_C2,		0,		AL	},
++{"vbfy2.q", "?d3d,?s3s",	0xd0438080, 0xffff8080, RD_C2,		0,		AL	},
++{"vocp.q",  "?d3d,?s3y",	0xd0448080, 0xffff8080, RD_C2,		0,		AL	},
++{"vfad.q",  "?d0d,?s3s",	0xd0468080, 0xffff8080, RD_C2,		0,		AL	},
++{"vavg.q",  "?d0d,?s3s",	0xd0478080, 0xffff8080, RD_C2,		0,		AL	},
++{"vf2in.q", "?d3m,?s3s,?b",	0xd2008080, 0xffe08080, RD_C2,		0,		AL	},
++{"vf2iz.q", "?d3m,?s3s,?b",	0xd2208080, 0xffe08080, RD_C2,		0,		AL	},
++{"vf2iu.q", "?d3m,?s3s,?b",	0xd2408080, 0xffe08080, RD_C2,		0,		AL	},
++{"vf2id.q", "?d3m,?s3s,?b",	0xd2608080, 0xffe08080, RD_C2,		0,		AL	},
++{"vi2f.q",  "?d3d,?s3w,?b",	0xd2808080, 0xffe08080, RD_C2,		0,		AL	},
++{"vcmov.q", "?d3d,?s3s,?e",	0,    (int) M_VCMOVQ,	INSN_MACRO,	0,		AL	},
++{"vcmovt.q", "?d3d,?s3s,?e",	0xd2a08080, 0xfff88080, RD_C2,		0,		AL	},
++{"vcmovf.q", "?d3d,?s3s,?e",	0xd2a88080, 0xfff88080, RD_C2,		0,		AL	},
++{"vmmul.q", "?v7z,?s7y,?t7x",	0xf0008080, 0xff808080, RD_C2,		0,		AL	},
++{"vtfm4.q", "?v3z,?s7y,?t3x",	0xf1808080, 0xff808080, RD_C2,		0,		AL	},
++{"vhtfm4.q", "?v3z,?s7y,?t3x",	0xf1808000, 0xff808080, RD_C2,		0,		AL	},
++{"vmscl.q", "?x7z,?s7y,?t0x",	0xf2008080, 0xff808080, RD_C2,		0,		AL	},
++{"vqmul.q", "?v3z,?s3y,?t3x",	0xf2808080, 0xff808080, RD_C2,		0,		AL	},
++{"vmmov.q", "?x7z,?s7y",	0xf3808080, 0xffff8080, RD_C2,		0,		AL	},
++{"vmidt.q", "?d7z",		0xf3838080, 0xffffff80, RD_C2,		0,		AL	},
++{"vmzero.q", "?d7z",		0xf3868080, 0xffffff80, RD_C2,		0,		AL	},
++{"vmone.q", "?d7z",		0xf3878080, 0xffffff80, RD_C2,		0,		AL	},
++{"vrot.q",  "?x3z,?s0y,?w",	0xf3a08080, 0xffe08080, RD_C2,		0,		AL	},
++{"vt4444.q", "?d1z,?s3w",	0xd0598080, 0xffff8080, RD_C2,		0,		AL	},
++{"vt5551.q", "?d1z,?s3w",	0xd05a8080, 0xffff8080, RD_C2,		0,		AL	},
++{"vt5650.q", "?d1z,?s3w",	0xd05b8080, 0xffff8080, RD_C2,		0,		AL	},
++{"vadd.t",  "?d2d,?s2s,?t2t",	0x60008000, 0xff808080, RD_C2,		0,		AL	},
++{"vsub.t",  "?d2d,?s2s,?t2t",	0x60808000, 0xff808080, RD_C2,		0,		AL	},
++{"vdiv.t",  "?x2z,?s2y,?t2x",	0x63808000, 0xff808080, RD_C2,		0,		AL	},
++{"vmul.t",  "?d2d,?s2s,?t2t",	0x64008000, 0xff808080, RD_C2,		0,		AL	},
++{"vdot.t",  "?d0d,?s2s,?t2t",	0x64808000, 0xff808080, RD_C2,		0,		AL	},
++{"vscl.t",  "?d2d,?s2s,?t0x",	0x65008000, 0xff808080, RD_C2,		0,		AL	},
++{"vhdp.t",  "?d0d,?s2y,?t2t",	0x66008000, 0xff808080, RD_C2,		0,		AL	},
++{"vcrs.t",  "?d2d,?s2y,?t2x",	0x66808000, 0xff808080, RD_C2,		0,		AL	},
++{"vcmp.t",  "?f2,?s2s,?t2t",	0x6c008000, 0xff8080f0, RD_C2,		0,		AL	},
++{"vcmp.t",  "?f1,?s2s",		0x6c008000, 0xffff80f0, RD_C2,		0,		AL	},
++{"vcmp.t",  "?f0",		0x6c008000, 0xfffffff0, RD_C2,		0,		AL	},
++{"vmin.t",  "?d2d,?s2s,?t2t",	0x6d008000, 0xff808080, RD_C2,		0,		AL	},
++{"vmax.t",  "?d2d,?s2s,?t2t",	0x6d808000, 0xff808080, RD_C2,		0,		AL	},
++{"vsgn.t",  "?d2d,?s2s",	0xd04a8000, 0xffff8080, RD_C2,		0,		AL	},
++{"vcst.t",  "?d2d,?a",		0xd0608000, 0xffe0ff80, RD_C2,		0,		AL	},
++{"vscmp.t", "?d2d,?s2s,?t2t",	0x6e808000, 0xff808080, RD_C2,		0,		AL	},
++{"vsge.t",  "?d2d,?s2s,?t2t",	0x6f008000, 0xff808080, RD_C2,		0,		AL	},
++{"vslt.t",  "?d2d,?s2s,?t2t",	0x6f808000, 0xff808080, RD_C2,		0,		AL	},
++{"vmov.t",  "?d2d,?s2s",	0xd0008000, 0xffff8080, RD_C2,		0,		AL	},
++{"vabs.t",  "?d2d,?s2w",	0xd0018000, 0xffff8080, RD_C2,		0,		AL	},
++{"vneg.t",  "?d2d,?s2w",	0xd0028000, 0xffff8080, RD_C2,		0,		AL	},
++{"vsat0.t", "?d2z,?s2s",	0xd0048000, 0xffff8080, RD_C2,		0,		AL	},
++{"vsat1.t", "?d2z,?s2s",	0xd0058000, 0xffff8080, RD_C2,		0,		AL	},
++{"vzero.t", "?d2d",		0xd0068000, 0xffffff80, RD_C2,		0,		AL	},
++{"vone.t",  "?d2d",		0xd0078000, 0xffffff80, RD_C2,		0,		AL	},
++{"vrcp.t",  "?x2z,?s2y",	0xd0108000, 0xffff8080, RD_C2,		0,		AL	},
++{"vrsq.t",  "?x2z,?s2y",	0xd0118000, 0xffff8080, RD_C2,		0,		AL	},
++{"vsin.t",  "?x2z,?s2y",	0xd0128000, 0xffff8080, RD_C2,		0,		AL	},
++{"vcos.t",  "?x2z,?s2y",	0xd0138000, 0xffff8080, RD_C2,		0,		AL	},
++{"vexp2.t", "?x2z,?s2y",	0xd0148000, 0xffff8080, RD_C2,		0,		AL	},
++{"vlog2.t", "?x2z,?s2y",	0xd0158000, 0xffff8080, RD_C2,		0,		AL	},
++{"vsqrt.t", "?x2z,?s2y",	0xd0168000, 0xffff8080, RD_C2,		0,		AL	},
++{"vasin.t", "?x2z,?s2y",	0xd0178000, 0xffff8080, RD_C2,		0,		AL	},
++{"vnrcp.t", "?x2z,?s2y",	0xd0188000, 0xffff8080, RD_C2,		0,		AL	},
++{"vnsin.t", "?x2z,?s2y",	0xd01a8000, 0xffff8080, RD_C2,		0,		AL	},
++{"vrexp2.t", "?x2z,?s2y",	0xd01c8000, 0xffff8080, RD_C2,		0,		AL	},
++{"vrndi.t", "?d2z",		0xd0218000, 0xffffff80, RD_C2,		0,		AL	},
++{"vrndf1.t", "?d2z",		0xd0228000, 0xffffff80, RD_C2,		0,		AL	},
++{"vrndf2.t", "?d2z",		0xd0238000, 0xffffff80, RD_C2,		0,		AL	},
++{"vocp.t",  "?d2d,?s2y",	0xd0448000, 0xffff8080, RD_C2,		0,		AL	},
++{"vfad.t",  "?d0d,?s2s",	0xd0468000, 0xffff8080, RD_C2,		0,		AL	},
++{"vavg.t",  "?d0d,?s2s",	0xd0478000, 0xffff8080, RD_C2,		0,		AL	},
++{"vf2in.t", "?d2m,?s2s,?b",	0xd2008000, 0xffe08080, RD_C2,		0,		AL	},
++{"vf2iz.t", "?d2m,?s2s,?b",	0xd2208000, 0xffe08080, RD_C2,		0,		AL	},
++{"vf2iu.t", "?d2m,?s2s,?b",	0xd2408000, 0xffe08080, RD_C2,		0,		AL	},
++{"vf2id.t", "?d2m,?s2s,?b",	0xd2608000, 0xffe08080, RD_C2,		0,		AL	},
++{"vi2f.t",  "?d2d,?s2w,?b",	0xd2808000, 0xffe08080, RD_C2,		0,		AL	},
++{"vcmov.t", "?d2d,?s2s,?e",	0,    (int) M_VCMOVT,	INSN_MACRO,	0,		AL	},
++{"vcmovt.t", "?d2d,?s2s,?e",	0xd2a08000, 0xfff88080, RD_C2,		0,		AL	},
++{"vcmovf.t", "?d2d,?s2s,?e",	0xd2a88000, 0xfff88080, RD_C2,		0,		AL	},
++{"vmmul.t", "?v6z,?s6y,?t6x",	0xf0008000, 0xff808080, RD_C2,		0,		AL	},
++{"vtfm3.t", "?v2z,?s6y,?t2x",	0xf1008000, 0xff808080, RD_C2,		0,		AL	},
++{"vhtfm3.t", "?v2z,?s6y,?t2x",	0xf1000080, 0xff808080, RD_C2,		0,		AL	},
++{"vmscl.t", "?x6z,?s6y,?t0x",	0xf2008000, 0xff808080, RD_C2,		0,		AL	},
++{"vmmov.t", "?x6z,?s6y",	0xf3808000, 0xffff8080, RD_C2,		0,		AL	},
++{"vmidt.t", "?d6z",		0xf3838000, 0xffffff80, RD_C2,		0,		AL	},
++{"vmzero.t", "?d6z",		0xf3868000, 0xffffff80, RD_C2,		0,		AL	},
++{"vmone.t", "?d6z",		0xf3878000, 0xffffff80, RD_C2,		0,		AL	},
++{"vrot.t",  "?x2z,?s0y,?w",	0xf3a08000, 0xffe08080, RD_C2,		0,		AL	},
++{"vcrsp.t", "?d2z,?s2y,?t2x",	0xf2808000, 0xff808080, RD_C2,		0,		AL	},
++{"vadd.p",  "?d1d,?s1s,?t1t",	0x60000080, 0xff808080, RD_C2,		0,		AL	},
++{"vsub.p",  "?d1d,?s1s,?t1t",	0x60800080, 0xff808080, RD_C2,		0,		AL	},
++{"vdiv.p",  "?x1z,?s1y,?t1x",	0x63800080, 0xff808080, RD_C2,		0,		AL	},
++{"vmul.p",  "?d1d,?s1s,?t1t",	0x64000080, 0xff808080, RD_C2,		0,		AL	},
++{"vdot.p",  "?d0d,?s1s,?t1t",	0x64800080, 0xff808080, RD_C2,		0,		AL	},
++{"vscl.p",  "?d1d,?s1s,?t0x",	0x65000080, 0xff808080, RD_C2,		0,		AL	},
++{"vhdp.p",  "?d0d,?s1y,?t1t",	0x66000080, 0xff808080, RD_C2,		0,		AL	},
++{"vdet.p",  "?d0d,?s1s,?t1x",	0x67000080, 0xff808080, RD_C2,		0,		AL	},
++{"vcmp.p",  "?f2,?s1s,?t1t",	0x6c000080, 0xff8080f0, RD_C2,		0,		AL	},
++{"vcmp.p",  "?f1,?s1s",		0x6c000080, 0xffff80f0, RD_C2,		0,		AL	},
++{"vcmp.p",  "?f0",		0x6c000080, 0xfffffff0, RD_C2,		0,		AL	},
++{"vmin.p",  "?d1d,?s1s,?t1t",	0x6d000080, 0xff808080, RD_C2,		0,		AL	},
++{"vmax.p",  "?d1d,?s1s,?t1t",	0x6d800080, 0xff808080, RD_C2,		0,		AL	},
++{"vsgn.p",  "?d1d,?s1s",	0xd04a0080, 0xffff8080, RD_C2,		0,		AL	},
++{"vcst.p",  "?d1d,?a",		0xd0600080, 0xffe0ff80, RD_C2,		0,		AL	},
++{"vscmp.p", "?d1d,?s1s,?t1t",	0x6e800080, 0xff808080, RD_C2,		0,		AL	},
++{"vsge.p",  "?d1d,?s1s,?t1t",	0x6f000080, 0xff808080, RD_C2,		0,		AL	},
++{"vslt.p",  "?d1d,?s1s,?t1t",	0x6f800080, 0xff808080, RD_C2,		0,		AL	},
++{"vus2i.p", "?d3m,?s1y",	0xd03a0080, 0xffff8080, RD_C2,		0,		AL	},
++{"vs2i.p",  "?d3m,?s1y",	0xd03b0080, 0xffff8080, RD_C2,		0,		AL	},
++{"vi2us.p", "?d0m,?s1w",	0xd03e0080, 0xffff8080, RD_C2,		0,		AL	},
++{"vi2s.p",  "?d0m,?s1w",	0xd03f0080, 0xffff8080, RD_C2,		0,		AL	},
++{"vmov.p",  "?d1d,?s1s",	0xd0000080, 0xffff8080, RD_C2,		0,		AL	},
++{"vabs.p",  "?d1d,?s1w",	0xd0010080, 0xffff8080, RD_C2,		0,		AL	},
++{"vneg.p",  "?d1d,?s1w",	0xd0020080, 0xffff8080, RD_C2,		0,		AL	},
++{"vidt.p",  "?d1d",		0xd0030080, 0xffffff80, RD_C2,		0,		AL	},
++{"vsat0.p", "?d1z,?s1s",	0xd0040080, 0xffff8080, RD_C2,		0,		AL	},
++{"vsat1.p", "?d1z,?s1s",	0xd0050080, 0xffff8080, RD_C2,		0,		AL	},
++{"vzero.p", "?d1d",		0xd0060080, 0xffffff80, RD_C2,		0,		AL	},
++{"vone.p",  "?d1d",		0xd0070080, 0xffffff80, RD_C2,		0,		AL	},
++{"vrcp.p",  "?x1z,?s1y",	0xd0100080, 0xffff8080, RD_C2,		0,		AL	},
++{"vrsq.p",  "?x1z,?s1y",	0xd0110080, 0xffff8080, RD_C2,		0,		AL	},
++{"vsin.p",  "?x1z,?s1y",	0xd0120080, 0xffff8080, RD_C2,		0,		AL	},
++{"vcos.p",  "?x1z,?s1y",	0xd0130080, 0xffff8080, RD_C2,		0,		AL	},
++{"vexp2.p", "?x1z,?s1y",	0xd0140080, 0xffff8080, RD_C2,		0,		AL	},
++{"vlog2.p", "?x1z,?s1y",	0xd0150080, 0xffff8080, RD_C2,		0,		AL	},
++{"vsqrt.p", "?x1z,?s1y",	0xd0160080, 0xffff8080, RD_C2,		0,		AL	},
++{"vasin.p", "?x1z,?s1y",	0xd0170080, 0xffff8080, RD_C2,		0,		AL	},
++{"vnrcp.p", "?x1z,?s1y",	0xd0180080, 0xffff8080, RD_C2,		0,		AL	},
++{"vnsin.p", "?x1z,?s1y",	0xd01a0080, 0xffff8080, RD_C2,		0,		AL	},
++{"vrexp2.p", "?x1z,?s1y",	0xd01c0080, 0xffff8080, RD_C2,		0,		AL	},
++{"vrndi.p", "?d1z",		0xd0210080, 0xffffff80, RD_C2,		0,		AL	},
++{"vrndf1.p", "?d1z",		0xd0220080, 0xffffff80, RD_C2,		0,		AL	},
++{"vrndf2.p", "?d1z",		0xd0230080, 0xffffff80, RD_C2,		0,		AL	},
++{"vf2h.p",  "?d0m,?s1s",	0xd0320080, 0xffff8080, RD_C2,		0,		AL	},
++{"vh2f.p",  "?d3d,?s1y",	0xd0330080, 0xffff8080, RD_C2,		0,		AL	},
++{"vbfy1.p", "?d1d,?s1s",	0xd0420080, 0xffff8080, RD_C2,		0,		AL	},
++{"vocp.p",  "?d1d,?s1y",	0xd0440080, 0xffff8080, RD_C2,		0,		AL	},
++{"vsocp.p", "?d3z,?s1y",	0xd0450080, 0xffff8080, RD_C2,		0,		AL	},
++{"vfad.p",  "?d0d,?s1s",	0xd0460080, 0xffff8080, RD_C2,		0,		AL	},
++{"vavg.p",  "?d0d,?s1s",	0xd0470080, 0xffff8080, RD_C2,		0,		AL	},
++{"vf2in.p", "?d1m,?s1s,?b",	0xd2000080, 0xffe08080, RD_C2,		0,		AL	},
++{"vf2iz.p", "?d1m,?s1s,?b",	0xd2200080, 0xffe08080, RD_C2,		0,		AL	},
++{"vf2iu.p", "?d1m,?s1s,?b",	0xd2400080, 0xffe08080, RD_C2,		0,		AL	},
++{"vf2id.p", "?d1m,?s1s,?b",	0xd2600080, 0xffe08080, RD_C2,		0,		AL	},
++{"vi2f.p",  "?d1d,?s1w,?b",	0xd2800080, 0xffe08080, RD_C2,		0,		AL	},
++{"vcmov.p", "?d1d,?s1s,?e",	0,    (int) M_VCMOVP,	INSN_MACRO,	0,		AL	},
++{"vcmovt.p", "?d1d,?s1s,?e",	0xd2a00080, 0xfff88080, RD_C2,		0,		AL	},
++{"vcmovf.p", "?d1d,?s1s,?e",	0xd2a80080, 0xfff88080, RD_C2,		0,		AL	},
++{"vmmul.p", "?v5z,?s5y,?t5x",	0xf0000080, 0xff808080, RD_C2,		0,		AL	},
++{"vtfm2.p", "?v1z,?s5y,?t1x",	0xf0800080, 0xff808080, RD_C2,		0,		AL	},
++{"vhtfm2.p", "?v1z,?s5y,?t1x",	0xf0800000, 0xff808080, RD_C2,		0,		AL	},
++{"vmscl.p", "?x5z,?s5y,?t0x",	0xf2000080, 0xff808080, RD_C2,		0,		AL	},
++{"vmmov.p", "?x5z,?s5y",	0xf3800080, 0xffff8080, RD_C2,		0,		AL	},
++{"vmidt.p", "?d5z",		0xf3830080, 0xffffff80, RD_C2,		0,		AL	},
++{"vmzero.p", "?d5z",		0xf3860080, 0xffffff80, RD_C2,		0,		AL	},
++{"vmone.p", "?d5z",		0xf3870080, 0xffffff80, RD_C2,		0,		AL	},
++{"vrot.p",  "?x1z,?s0y,?w",	0xf3a00080, 0xffe08080, RD_C2,		0,		AL	},
++{"vadd.s",  "?d0d,?s0s,?t0t",	0x60000000, 0xff808080, RD_C2,		0,		AL	},
++{"vsub.s",  "?d0d,?s0s,?t0t",	0x60800000, 0xff808080, RD_C2,		0,		AL	},
++{"vdiv.s",  "?x0d,?s0s,?t0t",	0x63800000, 0xff808080, RD_C2,		0,		AL	},
++{"vmul.s",  "?d0d,?s0s,?t0t",	0x64000000, 0xff808080, RD_C2,		0,		AL	},
++{"vcmp.s",  "?f2,?s0s,?t0t",	0x6c000000, 0xff8080f0, RD_C2,		0,		AL	},
++{"vcmp.s",  "?f1,?s0s",		0x6c000000, 0xffff80f0, RD_C2,		0,		AL	},
++{"vcmp.s",  "?f0",		0x6c000000, 0xfffffff0, RD_C2,		0,		AL	},
++{"vmin.s",  "?d0d,?s0s,?t0t",	0x6d000000, 0xff808080, RD_C2,		0,		AL	},
++{"vmax.s",  "?d0d,?s0s,?t0t",	0x6d800000, 0xff808080, RD_C2,		0,		AL	},
++{"vsgn.s",  "?d0d,?s0s",	0xd04a0000, 0xffff8080, RD_C2,		0,		AL	},
++{"vcst.s",  "?d0d,?a",		0xd0600000, 0xffe0ff80, RD_C2,		0,		AL	},
++{"vscmp.s", "?d0d,?s0s,?t0t",	0x6e800000, 0xff808080, RD_C2,		0,		AL	},
++{"vsge.s",  "?d0d,?s0s,?t0t",	0x6f000000, 0xff808080, RD_C2,		0,		AL	},
++{"vslt.s",  "?d0d,?s0s,?t0t",	0x6f800000, 0xff808080, RD_C2,		0,		AL	},
++{"vus2i.s", "?d1m,?s0y",	0xd03a0000, 0xffff8080, RD_C2,		0,		AL	},
++{"vs2i.s",  "?d1m,?s0y",	0xd03b0000, 0xffff8080, RD_C2,		0,		AL	},
++{"vmov.s",  "?d0d,?s0s",	0xd0000000, 0xffff8080, RD_C2,		0,		AL	},
++{"vabs.s",  "?d0d,?s0w",	0xd0010000, 0xffff8080, RD_C2,		0,		AL	},
++{"vneg.s",  "?d0d,?s0w",	0xd0020000, 0xffff8080, RD_C2,		0,		AL	},
++{"vsat0.s", "?d0z,?s0s",	0xd0040000, 0xffff8080, RD_C2,		0,		AL	},
++{"vsat1.s", "?d0z,?s0s",	0xd0050000, 0xffff8080, RD_C2,		0,		AL	},
++{"vzero.s", "?d0d",		0xd0060000, 0xffffff80, RD_C2,		0,		AL	},
++{"vone.s",  "?d0d",		0xd0070000, 0xffffff80, RD_C2,		0,		AL	},
++{"vrcp.s",  "?x0d,?s0s",	0xd0100000, 0xffff8080, RD_C2,		0,		AL	},
++{"vrsq.s",  "?x0d,?s0s",	0xd0110000, 0xffff8080, RD_C2,		0,		AL	},
++{"vsin.s",  "?x0d,?s0s",	0xd0120000, 0xffff8080, RD_C2,		0,		AL	},
++{"vcos.s",  "?x0d,?s0s",	0xd0130000, 0xffff8080, RD_C2,		0,		AL	},
++{"vexp2.s", "?x0d,?s0s",	0xd0140000, 0xffff8080, RD_C2,		0,		AL	},
++{"vlog2.s", "?x0d,?s0s",	0xd0150000, 0xffff8080, RD_C2,		0,		AL	},
++{"vsqrt.s", "?x0d,?s0s",	0xd0160000, 0xffff8080, RD_C2,		0,		AL	},
++{"vasin.s", "?x0d,?s0s",	0xd0170000, 0xffff8080, RD_C2,		0,		AL	},
++{"vnrcp.s", "?x0d,?s0y",	0xd0180000, 0xffff8080, RD_C2,		0,		AL	},
++{"vnsin.s", "?x0d,?s0y",	0xd01a0000, 0xffff8080, RD_C2,		0,		AL	},
++{"vrexp2.s", "?x0d,?s0y",	0xd01c0000, 0xffff8080, RD_C2,		0,		AL	},
++{"vrnds.s", "?s0y",		0xd0200000, 0xffff80ff, RD_C2,		0,		AL	},
++{"vrndi.s", "?d0d",		0xd0210000, 0xffffff80, RD_C2,		0,		AL	},
++{"vrndf1.s", "?d0d",		0xd0220000, 0xffffff80, RD_C2,		0,		AL	},
++{"vrndf2.s", "?d0d",		0xd0230000, 0xffffff80, RD_C2,		0,		AL	},
++{"vh2f.s",  "?d1d,?s0y",	0xd0330000, 0xffff8080, RD_C2,		0,		AL	},
++{"vsbz.s",  "?d0d,?s0s",	0xd0360000, 0xffff8080, RD_C2,		0,		AL	},
++{"vsbn.s",  "?d0d,?s0s,?t0t",	0x61000000, 0xff808080, RD_C2,		0,		AL	},
++{"vlgb.s",  "?d0d,?s0s",	0xd0370000, 0xffff8080, RD_C2,		0,		AL	},
++{"vocp.s",  "?d0d,?s0y",	0xd0440000, 0xffff8080, RD_C2,		0,		AL	},
++{"vsocp.s", "?d1z,?s0y",	0xd0450000, 0xffff8080, RD_C2,		0,		AL	},
++{"vf2in.s", "?d0m,?s0s,?b",	0xd2000000, 0xffe08080, RD_C2,		0,		AL	},
++{"vf2iz.s", "?d0m,?s0s,?b",	0xd2200000, 0xffe08080, RD_C2,		0,		AL	},
++{"vf2iu.s", "?d0m,?s0s,?b",	0xd2400000, 0xffe08080, RD_C2,		0,		AL	},
++{"vf2id.s", "?d0m,?s0s,?b",	0xd2600000, 0xffe08080, RD_C2,		0,		AL	},
++{"vi2f.s",  "?d0d,?s0w,?b",	0xd2800000, 0xffe08080, RD_C2,		0,		AL	},
++{"vcmov.s", "?d0d,?s0s,?e",	0,    (int) M_VCMOVS,	INSN_MACRO,	0,		AL	},
++{"vcmovt.s", "?d0d,?s0s,?e",	0xd2a00000, 0xfff88080, RD_C2,		0,		AL	},
++{"vcmovf.s", "?d0d,?s0s,?e",	0xd2a80000, 0xfff88080, RD_C2,		0,		AL	},
++{"vwbn.s",  "?d0d,?s0s,?i",	0xd3000000, 0xff008080, RD_C2,		0,		AL	},
++{"vpfxs",   "?0,?1,?2,?3",	0xdc000000, 0xff000000, RD_C2,		0,		AL	},
++{"vpfxt",   "?0,?1,?2,?3",	0xdd000000, 0xff000000, RD_C2,		0,		AL	},
++{"vpfxd",   "?4,?5,?6,?7",	0xde000000, 0xff000000, RD_C2,		0,		AL	},
++{"viim.s",  "?t0d,j",		0xdf000000, 0xff800000, RD_C2,		0,		AL	},
++{"vfim.s",  "?t0d,?u",		0xdf800000, 0xff800000, RD_C2,		0,		AL	},
++{"vnop",    "",			0xffff0000, 0xffffffff, RD_C2,		0,		AL	},
++{"vflush",  "",			0xffff040d, 0xffffffff, RD_C2,		0,		AL	},
++{"vsync",   "",			0xffff0320, 0xffffffff, RD_C2,		0,		AL	},
++{"vsync",   "i",		0xffff0000, 0xffff0000, RD_C2,		0,		AL	},
 +
  /* Coprocessor 2 move/branch operations overlap with VR5400 .ob format
     instructions so they are here for the latters to take precedence.  */
  {"bc2f",    "p",	0x49000000, 0xffff0000,	CBD|RD_CC,		0,		I1	},
-@@ -1197,6 +1507,32 @@
+@@ -1197,6 +1502,36 @@
  {"mtc2",    "t,G",	0x48800000, 0xffe007ff,	COD|RD_t|WR_C2|WR_CC,	0,		I1	},
  {"mtc2",    "t,G,H",	0x48800000, 0xffe007f8,	COD|RD_t|WR_C2|WR_CC,	0,		I32	},
  {"mthc2",   "t,i",	0x48e00000, 0xffe00000,	COD|RD_t|WR_C2|WR_CC,	0,		I33	},
 +
 +/* Coprocessor 2 load/store operations overlap with the Allegrex VFPU
 +   instructions so they are here for the latters to take precedence.  */
-+/* Coprocessor 1 ldc1 and sdc1 also overlap with the VFPU.  */
++/* COP1 ldc1 and sdc1 and COP3 ldc3 and sdc3 also overlap with the VFPU.  */
 +{"ldc1",    "T,o(b)",	0xd4000000, 0xfc000000, CLD|RD_b|WR_T|FP_D,	0,		I2	},
 +{"ldc1",    "E,o(b)",	0xd4000000, 0xfc000000, CLD|RD_b|WR_T|FP_D,	0,		I2	},
 +{"ldc1",    "T,A(b)",	0,    (int) M_LDC1_AB,	INSN_MACRO,		0,		I2	},
@@ -1782,6 +2172,8 @@ diff -NBaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
 +{"l.d",     "T,A(b)",	0,    (int) M_L_DAB,	INSN_MACRO,		0,		I1	},
 +{"ldc2",    "E,o(b)",	0xd8000000, 0xfc000000, CLD|RD_b|WR_CC,		0,		I2	},
 +{"ldc2",    "E,A(b)",	0,    (int) M_LDC2_AB,	INSN_MACRO,		0,		I2	},
++{"ldc3",    "E,o(b)",	0xdc000000, 0xfc000000, CLD|RD_b|WR_CC,		0,		I2	},
++{"ldc3",    "E,A(b)",	0,    (int) M_LDC3_AB,	INSN_MACRO,		0,		I2	},
 +{"lwc2",    "E,o(b)",	0xc8000000, 0xfc000000,	CLD|RD_b|WR_CC,		0,		I1	},
 +{"lwc2",    "E,A(b)",	0,    (int) M_LWC2_AB,	INSN_MACRO,		0,		I1	},
 +{"sdc1",    "T,o(b)",	0xf4000000, 0xfc000000, SM|RD_T|RD_b|FP_D,	0,		I2	},
@@ -1793,6 +2185,8 @@ diff -NBaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
 +{"s.d",     "T,A(b)",	0,    (int) M_S_DAB,	INSN_MACRO,		0,		I1	},
 +{"sdc2",    "E,o(b)",	0xf8000000, 0xfc000000, SM|RD_C2|RD_b,		0,		I2	},
 +{"sdc2",    "E,A(b)",	0,    (int) M_SDC2_AB,	INSN_MACRO,		0,		I2	},
++{"sdc3",    "E,o(b)",	0xfc000000, 0xfc000000, SM|RD_C3|RD_b,		0,		I2	},
++{"sdc3",    "E,A(b)",	0,    (int) M_SDC3_AB,	INSN_MACRO,		0,		I2	},
 +{"swc2",    "E,o(b)",	0xe8000000, 0xfc000000,	SM|RD_C2|RD_b,		0,		I1	},
 +{"swc2",    "E,A(b)",	0,    (int) M_SWC2_AB,	INSN_MACRO,		0,		I1	},
  

@@ -102,7 +102,7 @@ do
       DOWNLOAD=0
   else
     if test "`wget -V`" ; then
-      WGET="wget"
+      WGET=wget
     else
       echo "ERROR: Please make sure you have 'wget' installed."
       exit
@@ -164,7 +164,7 @@ then
       else
 	  FOUND=1
       fi
-    
+
     if [ $VERSION -eq 1 ]
     then
       if [ ! -f $SRCDIR/$LIBGBA ]
@@ -209,14 +209,14 @@ else
 
 	if [ $VERSION -eq 2 ]
 	then
-		wget -c $LIBOGC_URL || { echo "Error: Failed to download "$LIBOGC; exit; }
+		$WGET -c $LIBOGC_URL || { echo "Error: Failed to download "$LIBOGC; exit; }
 	fi
 
 
 	if [ $VERSION -eq 1 ]
 	then
-		wget -c $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit; }
-		wget -c $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit; }
+		$WGET -c $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit; }
+		$WGET -c $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit; }
 	fi
 	SRCDIR=`pwd`
 fi
@@ -317,13 +317,11 @@ patch -p1 -d $NEWLIB_SRCDIR -i $patchdir/newlib-$NEWLIB_VER.patch || { echo "Err
 #
 #else
 
-  export CFLAGS='-O2 -pipe' 
   export LDFLAGS='-s'
+  export DEBUG_FLAGS=''
 
 #fi
 
-export CXXFLAGS='-O2 -pipe'
-export DEBUG_FLAGS=''
 
 #---------------------------------------------------------------------------------
 # Build and install devkit components

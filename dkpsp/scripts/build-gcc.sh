@@ -13,7 +13,7 @@ cd $target/binutils
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
 	--disable-threads --with-gcc --with-gnu-as --with-gnu-ld --with-stabs \
 	|| { echo "Error configuring binutils"; exit 1; }
-	
+
 
 $MAKE || { echo "Error building binutils"; exit 1; }
 $MAKE install || { echo "Error installing binutils"; exit 1; }
@@ -35,13 +35,12 @@ cd $target/gcc
 
 ../../$GCC_SRCDIR/configure \
 	--enable-languages=c,c++ \
-	--enable-interwork --disable-multilib\
-	--with-gcc --with-gnu-ld --with-gnu-as --with-stabs \
+	--disable-multilib\
+	--with-gcc --with-gnu-ld --with-gnu-as\
 	--disable-shared --disable-win32-registry --disable-nls\
 	--enable-cxx-flags="-G0" \
 	--target=$target \
 	--with-newlib \
-	--without-headers \
 	--prefix=$prefix \
 	|| { echo "Error configuring gcc"; exit 1; }
 
