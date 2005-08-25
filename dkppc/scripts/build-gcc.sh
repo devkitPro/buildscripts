@@ -44,12 +44,14 @@ cd mn10200/binutils
 $MAKE || { echo "Error building mn10200 binutils"; exit 1; }
 $MAKE install || { echo "Error installing mn10200 binutils"; exit 1; }
 
+strip $INSTALLDIR/mn10200/bin/*
+
 cd $BUILDSCRIPTDIR
 
 #---------------------------------------------------------------------------------
 # remove temp stuff to conserve disc space
 #---------------------------------------------------------------------------------
-rm -fr mn10200/binutils
+rm -fr mn10200
 
 rm -fr $BINUTILS_SRCDIR
 
