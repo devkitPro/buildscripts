@@ -15,7 +15,7 @@ cd $target/binutils
 ../../$BINUTILS_SRCDIR/configure \
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
 	--disable-threads --with-gcc --with-gnu-as --with-gnu-ld --with-stabs \
-	|| { echo "Error configuring binutils"; exit 1; }	
+	|| { echo "Error configuring binutils"; exit 1; }
 
 $MAKE || { echo "Error building binutils"; exit 1; }
 $MAKE install || { echo "Error installing binutils"; exit 1; }
@@ -40,7 +40,7 @@ cd $target/gcc
 	--with-cpu=arm7tdmi\
 	--enable-interwork --enable-multilib\
 	--with-gcc --with-gnu-ld --with-gnu-as --with-stabs \
-	--disable-shared --disable-threads --disable-win32-registry --disable-nls\
+	--disable-shared --disable-threads --disable-win32-registry --disable-nls --disable-debug\
 	--target=$target \
 	--with-newlib \
 	--prefix=$prefix -v\
@@ -61,10 +61,9 @@ cd $target/newlib
 mkdir -p etc
 
 $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure \
-	--enable-serial-configure \
+	--disable-debug \
 	--target=$target \
 	--prefix=$prefix \
-	--enable-newlib-mb \
 	|| { echo "Error configuring newlib"; exit 1; }
 
 $MAKE || { echo "Error building newlib"; exit 1; }

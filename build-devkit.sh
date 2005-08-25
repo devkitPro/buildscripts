@@ -260,8 +260,6 @@ export MAKE
 patchdir=$(pwd)/$basedir/patches
 scriptdir=$(pwd)/$basedir/scripts
 
-echo $patchdir
-
 #---------------------------------------------------------------------------------
 # Extract source packages
 #---------------------------------------------------------------------------------

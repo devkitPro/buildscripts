@@ -6,7 +6,7 @@
 prefix=$INSTALLDIR/devkitPPC
 
 #---------------------------------------------------------------------------------
-# build and install binutils
+# build and install ppc binutils
 #---------------------------------------------------------------------------------
 
 mkdir -p $target/binutils
@@ -15,11 +15,11 @@ cd $target/binutils
 ../../$BINUTILS_SRCDIR/configure \
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
 	--with-gcc --with-gnu-as --with-gnu-ld --with-stabs \
-	2>&1 | tee binutils_configure.log
-	
+	|| { echo "Error configuing ppc binutils"; exit 1; }
 
-$MAKE | tee binutils_make.log 2>&1
-$MAKE install | tee binutils_install.log 2>&1
+
+$MAKE || { echo "Error building ppc binutils"; exit 1; }
+$MAKE install || { echo "Error installing ppc binutils"; exit 1; }
 
 cd $BUILDSCRIPTDIR
 
@@ -27,6 +27,30 @@ cd $BUILDSCRIPTDIR
 # remove temp stuff to conserve disc space
 #---------------------------------------------------------------------------------
 rm -fr $target/binutils
+
+#---------------------------------------------------------------------------------
+# build and install mn10200 binutils
+#---------------------------------------------------------------------------------
+
+mkdir -p mn10200/binutils
+cd mn10200/binutils
+
+../../$BINUTILS_SRCDIR/configure \
+	--prefix=$prefix --target=mn10200 --disable-nls --disable-shared --disable-debug \
+	--with-gcc --with-gnu-as --with-gnu-ld --with-stabs \
+	|| { echo "Error configuing mn10200 binutils"; exit 1; }
+
+
+$MAKE || { echo "Error building mn10200 binutils"; exit 1; }
+$MAKE install || { echo "Error installing mn10200 binutils"; exit 1; }
+
+cd $BUILDSCRIPTDIR
+
+#---------------------------------------------------------------------------------
+# remove temp stuff to conserve disc space
+#---------------------------------------------------------------------------------
+rm -fr mn10200/binutils
+
 rm -fr $BINUTILS_SRCDIR
 
 #---------------------------------------------------------------------------------
@@ -41,7 +65,7 @@ cd $target/gcc
 	--with-cpu=750\
 	--with-gcc --with-gnu-ld --with-gnu-as --with-stabs \
 	--with-included-gettext --without-headers\
-	--disable-nls --disable-shared --enable-threads --disable-multilib\
+	--disable-nls --disable-shared --enable-threads --disable-multilib --disable-debug\
 	--disable-win32-registry\
 	--target=$target \
 	--with-newlib \
@@ -50,8 +74,8 @@ cd $target/gcc
 
 mkdir -p libiberty libcpp fixincludes
 
-$MAKE all-gcc | tee gcc_make.log 2>&1
-$MAKE install-gcc | tee gcc_install.log 2>&1
+$MAKE all-gcc || { echo "Error building gcc"; exit 1; }
+$MAKE install-gcc || { echo "Error installing gcc"; exit 1; }
 
 #---------------------------------------------------------------------------------
 # build and install newlib
@@ -62,12 +86,12 @@ cd $target/newlib
 mkdir -p etc
 
 $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure	--target=$target \
-											--prefix=$prefix \
-											--enable-serial-configure \
-											| tee newlib_configure.log 2>&1
+						--prefix=$prefix \
+						--disable-debug \
+						|| { echo "Error configuring newlib"; exit 1; }
 
-$MAKE all | tee newlib_make.log
-$MAKE install | tee newlib_install.log
+$MAKE || { echo "Error building newlib"; exit 1; }
+$MAKE install || { echo "Error installing newlib"; exit 1; }
 
 cd $BUILDSCRIPTDIR
 
@@ -83,8 +107,8 @@ rm -fr $NEWLIB_SRCDIR
 
 cd $target/gcc
 
-$MAKE | tee gcc_final_make.log 2>&1
-$MAKE install | tee gcc_final_install.log 2>&1
+$MAKE || { echo "Error building g++"; exit 1; }
+$MAKE install || { echo "Error installing g++"; exit 1; }
 
 cd $BUILDSCRIPTDIR
 
