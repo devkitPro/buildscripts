@@ -100,15 +100,18 @@ do
   if [ "$DOWNLOAD" -ne 1 -a "$DOWNLOAD" -ne 2 ]
   then
       DOWNLOAD=0
-  else
-    if test "`wget -V`" ; then
-      WGET=wget
-    else
-      echo "ERROR: Please make sure you have 'wget' installed."
-      exit
-    fi
   fi
 done
+
+if [ "$DOWNLOAD" -eq 2]
+then
+  if test "`wget -V`" ; then
+    WGET=wget
+  else
+    echo "ERROR: Please make sure you have 'wget' installed."
+    exit
+  fi
+fi
 
 
 #---------------------------------------------------------------------------------
