@@ -61,6 +61,7 @@ cd $target/newlib
 mkdir -p etc
 
 $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure \
+	--disable-newlib-supplied-syscalls \
 	--disable-debug \
 	--target=$target \
 	--prefix=$prefix \
