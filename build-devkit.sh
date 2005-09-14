@@ -357,7 +357,15 @@ read answer
 if [ "$answer" = "y" -o "$answer" = "Y" ]
 then
     echo "removing archives"
-    rm -f $SRCDIR/$BINUTILS $SRCDIR/$GCC_CORE $SRCDIR/$GCC_GPP $SRCDIR/$NEWLIB $SRCDIR/$LIBGBA $SRCDIR/$LIBNDS $SRCDIR/$LIBOGC $SRCDIR/$PSPSDK
+    rm -f $SRCDIR/$BINUTILS $SRCDIR/$GCC_CORE $SRCDIR/$GCC_GPP $SRCDIR/$NEWLIB
+    if [ $VERSION -eq 1 ]
+    then
+      rm -f  $SRCDIR/$LIBGBA $SRCDIR/$LIBNDS
+    fi
+    if [ $VERSION -eq 2 ]
+    then
+      rm -f  $SRCDIR/$LIBOGC
+    fi
 fi
 
 echo
