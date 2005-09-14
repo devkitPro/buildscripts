@@ -77,7 +77,8 @@ then
   target=psp
   toolchain=DEVKITPSP
 
-  if test "`svn help`" ; then
+  if test "`svn help`"
+  then
     SVN="svn"
   else
      echo "ERROR: Please make sure you have 'subversion (svn)' installed."
@@ -103,9 +104,10 @@ do
   fi
 done
 
-if [ "$DOWNLOAD" -eq 2]
+if [ "$DOWNLOAD" -eq 2 ]
 then
-  if test "`wget -V`" ; then
+  if test "`wget -V`"
+  then
     WGET=wget
   else
     echo "ERROR: Please make sure you have 'wget' installed."

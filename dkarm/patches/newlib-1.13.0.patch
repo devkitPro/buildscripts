@@ -2649,7 +2649,7 @@ diff -Nbaur newlib-1.13.0/newlib/libc/include/stdio.h newlib-1.13.0-new/newlib/l
  int	_EXFUN(vfiscanf, (FILE *, const char *, __VALIST));
  int	_EXFUN(vfscanf, (FILE *, const char *, __VALIST));
  int	_EXFUN(viscanf, (const char *, __VALIST));
-+int	_EXFUN(viprintf, (const char *, ...));
++int	_EXFUN(viprintf, (const char *, __VALIST));
  int	_EXFUN(vscanf, (const char *, __VALIST));
  int	_EXFUN(vsiscanf, (const char *, const char *, __VALIST));
  int	_EXFUN(vsscanf, (const char *, const char *, __VALIST));
