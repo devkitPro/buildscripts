@@ -2140,7 +2140,7 @@ diff -Nbaur newlib-1.13.0/libgloss/libsysbase/gettod.c newlib-1.13.0-new/libglos
 +stub_warning(_gettimeofday)
 diff -Nbaur newlib-1.13.0/libgloss/libsysbase/iosupport.c newlib-1.13.0-new/libgloss/libsysbase/iosupport.c
 --- newlib-1.13.0/libgloss/libsysbase/iosupport.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.13.0-new/libgloss/libsysbase/iosupport.c	Fri Sep 16 09:37:03 2005
++++ newlib-1.13.0-new/libgloss/libsysbase/iosupport.c	Wed Oct 19 20:09:40 2005
 @@ -0,0 +1,91 @@
 +#include <stdlib.h>
 +#include <sys/iosupport.h>
@@ -2202,7 +2202,7 @@ diff -Nbaur newlib-1.13.0/libgloss/libsysbase/iosupport.c newlib-1.13.0-new/libg
 +	while(i<STD_MAX) {
 +		if(devoptab_list[i]) {
 +			namelen = strlen(devoptab_list[i]->name);
-+			if(strncmp(devoptab_list[i]->name,file,namelen)==0 && file[namelen] == ':' ) {
++			if(strncmp(devoptab_list[i]->name,name,namelen)==0 && name[namelen] == ':' ) {
 +				dev = i;
 +				break;
 +			}
@@ -2229,7 +2229,7 @@ diff -Nbaur newlib-1.13.0/libgloss/libsysbase/iosupport.c newlib-1.13.0-new/libg
 +	if ( devnum == STD_MAX ) {
 +		devnum = -1;
 +	} else {
-+		devoptab[devnum] = device;
++		devoptab_list[devnum] = device;
 +	}
 +	return devnum;
 +}
