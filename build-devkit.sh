@@ -10,8 +10,8 @@ BINUTILS_VER=2.16.1
 GCC_VER=4.0.2
 NEWLIB_VER=1.13.0
 LIBOGC_VER=20050812
-LIBGBA_VER=20050914
-LIBNDS_VER=20050921
+LIBGBA_VER=20051018
+LIBNDS_VER=20051018
 
 BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
 GCC_CORE="gcc-core-$GCC_VER.tar.bz2"
@@ -272,42 +272,42 @@ scriptdir=$(pwd)/$basedir/scripts
 BUILDSCRIPTDIR=$(pwd)
 
 echo "Extracting $BINUTILS"
-#tar -xjvf $SRCDIR/$BINUTILS || { echo "Error extracting "$BINUTILS; exit; }
+tar -xjvf $SRCDIR/$BINUTILS || { echo "Error extracting "$BINUTILS; exit; }
 
 echo "Extracting $GCC_CORE"
-#tar -xjvf $SRCDIR/$GCC_CORE || { echo "Error extracting "$GCC_CORE; exit; }
+tar -xjvf $SRCDIR/$GCC_CORE || { echo "Error extracting "$GCC_CORE; exit; }
 
 echo "Extracting $GCC_GPP"
-#tar -xjvf $SRCDIR/$GCC_GPP || { echo "Error extracting "$GCC_GPP; exit; }
+tar -xjvf $SRCDIR/$GCC_GPP || { echo "Error extracting "$GCC_GPP; exit; }
 
 echo "Extracting $NEWLIB"
-#tar -xzvf $SRCDIR/$NEWLIB || { echo "Error extracting "$NEWLIB; exit; }
+tar -xzvf $SRCDIR/$NEWLIB || { echo "Error extracting "$NEWLIB; exit; }
 
 if [ $VERSION -eq 2 ]
 then
   echo "Extracting $LIBOGC"
-#  mkdir -p $LIBOGC_SRCDIR
-#  bzip2 -cd $SRCDIR/$LIBOGC | tar -xv -C $LIBOGC_SRCDIR  || { echo "Error extracting "$LIBOGC; exit; }
+  mkdir -p $LIBOGC_SRCDIR
+  bzip2 -cd $SRCDIR/$LIBOGC | tar -xv -C $LIBOGC_SRCDIR  || { echo "Error extracting "$LIBOGC; exit; }
 fi
 
 
 if [ $VERSION -eq 1 ]
 then
   echo "Extracting $LIBNDS"
-#  mkdir -p $LIBNDS_SRCDIR
-#  bzip2 -cd $SRCDIR/$LIBNDS | tar -xv -C $LIBNDS_SRCDIR  || { echo "Error extracting "$LIBNDS; exit; }
+  mkdir -p $LIBNDS_SRCDIR
+  bzip2 -cd $SRCDIR/$LIBNDS | tar -xv -C $LIBNDS_SRCDIR  || { echo "Error extracting "$LIBNDS; exit; }
   echo "Extracting $LIBGBA"
-#  mkdir -p $LIBGBA_SRCDIR
-#  bzip2 -cd $SRCDIR/$LIBGBA | tar -xv -C $LIBGBA_SRCDIR || { echo "Error extracting "$LIBGBA; exit; }
+  mkdir -p $LIBGBA_SRCDIR
+  bzip2 -cd $SRCDIR/$LIBGBA | tar -xv -C $LIBGBA_SRCDIR || { echo "Error extracting "$LIBGBA; exit; }
 fi
 
 
 #---------------------------------------------------------------------------------
 # apply patches
 #---------------------------------------------------------------------------------
-#patch -p1 -d $BINUTILS_SRCDIR -i $patchdir/binutils-$BINUTILS_VER.patch || { echo "Error patching binutils"; exit; }
-#patch -p1 -d $GCC_SRCDIR -i $patchdir/gcc-$GCC_VER.patch || { echo "Error patching gcc"; exit; }
-#patch -p1 -d $NEWLIB_SRCDIR -i $patchdir/newlib-$NEWLIB_VER.patch || { echo "Error patching newlib"; exit; }
+patch -p1 -d $BINUTILS_SRCDIR -i $patchdir/binutils-$BINUTILS_VER.patch || { echo "Error patching binutils"; exit; }
+patch -p1 -d $GCC_SRCDIR -i $patchdir/gcc-$GCC_VER.patch || { echo "Error patching gcc"; exit; }
+patch -p1 -d $NEWLIB_SRCDIR -i $patchdir/newlib-$NEWLIB_VER.patch || { echo "Error patching newlib"; exit; }
 
 
 #---------------------------------------------------------------------------------

@@ -1,4 +1,8 @@
 %rename link                old_link
+%rename link_gcc_c_sequence old_gcc_c_sequence
+
+*link_gcc_c_sequence:
+%(old_gcc_c_sequence) --start-group -lsysbase -lc --end-group
 
 *link:
 %(old_link) -T ds_cart.ld%s
