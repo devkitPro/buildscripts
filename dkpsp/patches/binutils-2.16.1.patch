@@ -1,6 +1,6 @@
 diff -Nbaur binutils-2.16.1/bfd/Makefile.am binutils-2.16.1-psp/bfd/Makefile.am
 --- binutils-2.16.1/bfd/Makefile.am	Sun Jun 12 19:58:52 2005
-+++ binutils-2.16.1-psp/bfd/Makefile.am	Wed Aug 24 01:57:12 2005
++++ binutils-2.16.1-psp/bfd/Makefile.am	Thu Nov  3 18:04:53 2005
 @@ -3,7 +3,7 @@
  AUTOMAKE_OPTIONS = 1.9 cygnus
  
@@ -12,7 +12,7 @@ diff -Nbaur binutils-2.16.1/bfd/Makefile.am binutils-2.16.1-psp/bfd/Makefile.am
  CSEARCH = -I. -I$(srcdir) -I$(INCDIR)
 diff -Nbaur binutils-2.16.1/bfd/Makefile.in binutils-2.16.1-psp/bfd/Makefile.in
 --- binutils-2.16.1/bfd/Makefile.in	Sun Jun 12 19:58:55 2005
-+++ binutils-2.16.1-psp/bfd/Makefile.in	Wed Aug 24 01:57:13 2005
++++ binutils-2.16.1-psp/bfd/Makefile.in	Thu Nov  3 18:04:53 2005
 @@ -250,7 +250,7 @@
  AUTOMAKE_OPTIONS = 1.9 cygnus
  
@@ -24,7 +24,7 @@ diff -Nbaur binutils-2.16.1/bfd/Makefile.in binutils-2.16.1-psp/bfd/Makefile.in
  MKDEP = gcc -MM
 diff -Nbaur binutils-2.16.1/bfd/archures.c binutils-2.16.1-psp/bfd/archures.c
 --- binutils-2.16.1/bfd/archures.c	Mon Jan 17 14:08:03 2005
-+++ binutils-2.16.1-psp/bfd/archures.c	Wed Aug 24 01:57:12 2005
++++ binutils-2.16.1-psp/bfd/archures.c	Thu Nov  3 18:04:53 2005
 @@ -155,6 +155,7 @@
  .#define bfd_mach_mips16		16
  .#define bfd_mach_mips5                 5
@@ -35,7 +35,7 @@ diff -Nbaur binutils-2.16.1/bfd/archures.c binutils-2.16.1-psp/bfd/archures.c
  .#define bfd_mach_mipsisa64             64
 diff -Nbaur binutils-2.16.1/bfd/bfd-in2.h binutils-2.16.1-psp/bfd/bfd-in2.h
 --- binutils-2.16.1/bfd/bfd-in2.h	Wed Mar  2 21:23:20 2005
-+++ binutils-2.16.1-psp/bfd/bfd-in2.h	Wed Aug 24 01:57:12 2005
++++ binutils-2.16.1-psp/bfd/bfd-in2.h	Thu Nov  3 18:04:54 2005
 @@ -1600,6 +1600,7 @@
  #define bfd_mach_mips16                16
  #define bfd_mach_mips5                 5
@@ -46,7 +46,7 @@ diff -Nbaur binutils-2.16.1/bfd/bfd-in2.h binutils-2.16.1-psp/bfd/bfd-in2.h
  #define bfd_mach_mipsisa64             64
 diff -Nbaur binutils-2.16.1/bfd/cpu-mips.c binutils-2.16.1-psp/bfd/cpu-mips.c
 --- binutils-2.16.1/bfd/cpu-mips.c	Thu Mar  3 11:40:58 2005
-+++ binutils-2.16.1-psp/bfd/cpu-mips.c	Wed Aug 24 01:57:13 2005
++++ binutils-2.16.1-psp/bfd/cpu-mips.c	Thu Nov  3 18:04:54 2005
 @@ -86,6 +86,7 @@
    I_mipsisa64,
    I_mipsisa64r2,
@@ -67,7 +67,7 @@ diff -Nbaur binutils-2.16.1/bfd/cpu-mips.c binutils-2.16.1-psp/bfd/cpu-mips.c
  /* The default architecture is mips:3000, but with a machine number of
 diff -Nbaur binutils-2.16.1/bfd/doc/chew.c binutils-2.16.1-psp/bfd/doc/chew.c
 --- binutils-2.16.1/bfd/doc/chew.c	Thu Mar  3 11:41:02 2005
-+++ binutils-2.16.1-psp/bfd/doc/chew.c	Wed Aug 24 02:05:41 2005
++++ binutils-2.16.1-psp/bfd/doc/chew.c	Thu Nov  3 18:30:10 2005
 @@ -91,6 +91,12 @@
  #define DEF_SIZE 5000
  #define STACK 50
@@ -83,7 +83,7 @@ diff -Nbaur binutils-2.16.1/bfd/doc/chew.c binutils-2.16.1-psp/bfd/doc/chew.c
  
 diff -Nbaur binutils-2.16.1/bfd/elfxx-mips.c binutils-2.16.1-psp/bfd/elfxx-mips.c
 --- binutils-2.16.1/bfd/elfxx-mips.c	Sat May 28 22:58:29 2005
-+++ binutils-2.16.1-psp/bfd/elfxx-mips.c	Wed Aug 24 01:57:12 2005
++++ binutils-2.16.1-psp/bfd/elfxx-mips.c	Thu Nov  3 18:04:54 2005
 @@ -4669,6 +4669,9 @@
      case E_MIPS_MACH_SB1:
        return bfd_mach_mips_sb1;
@@ -105,7 +105,24 @@ diff -Nbaur binutils-2.16.1/bfd/elfxx-mips.c binutils-2.16.1-psp/bfd/elfxx-mips.
      case bfd_mach_mipsisa32:
        val = E_MIPS_ARCH_32;
        break;
-@@ -9641,6 +9648,7 @@
+@@ -8422,6 +8429,8 @@
+   if (dynobj != NULL && force_local && h->root.type != STT_TLS)
+     {
+       got = mips_elf_got_section (dynobj, FALSE);
++      if (got)
++        {
+       g = mips_elf_section_data (got)->u.got_info;
+ 
+       if (g->next)
+@@ -8472,6 +8481,7 @@
+ 	  g->global_gotno--;
+ 	}
+     }
++   }
+ 
+   _bfd_elf_link_hash_hide_symbol (info, &h->root, force_local);
+ }
+@@ -9641,6 +9651,7 @@
    /* MIPS II extensions.  */
    { bfd_mach_mips4000, bfd_mach_mips6000 },
    { bfd_mach_mipsisa32, bfd_mach_mips6000 },
@@ -115,15 +132,15 @@ diff -Nbaur binutils-2.16.1/bfd/elfxx-mips.c binutils-2.16.1-psp/bfd/elfxx-mips.
    { bfd_mach_mips6000, bfd_mach_mips3000 },
 diff -Nbaur binutils-2.16.1/bfd/version.h binutils-2.16.1-psp/bfd/version.h
 --- binutils-2.16.1/bfd/version.h	Sun Jun 12 18:37:59 2005
-+++ binutils-2.16.1-psp/bfd/version.h	Wed Aug 24 01:58:28 2005
++++ binutils-2.16.1-psp/bfd/version.h	Thu Nov  3 18:04:54 2005
 @@ -1,3 +1,3 @@
 -#define BFD_VERSION_DATE 20050612
-+#define BFD_VERSION_DATE (PSPDEV 20050822)
++#define BFD_VERSION_DATE (PSPDEV 20051022)
  #define BFD_VERSION @bfd_version@
  #define BFD_VERSION_STRING @bfd_version_string@
 diff -Nbaur binutils-2.16.1/binutils/readelf.c binutils-2.16.1-psp/binutils/readelf.c
 --- binutils-2.16.1/binutils/readelf.c	Wed Apr 20 19:43:36 2005
-+++ binutils-2.16.1-psp/binutils/readelf.c	Wed Aug 24 01:57:13 2005
++++ binutils-2.16.1-psp/binutils/readelf.c	Thu Nov  3 18:04:54 2005
 @@ -2043,6 +2043,7 @@
  	    case E_MIPS_MACH_5500: strcat (buf, ", 5500"); break;
  	    case E_MIPS_MACH_SB1:  strcat (buf, ", sb1");  break;
@@ -134,7 +151,7 @@ diff -Nbaur binutils-2.16.1/binutils/readelf.c binutils-2.16.1-psp/binutils/read
  	       MIPS ELF does not specify EF_MIPS_MACH, it is a GNU
 diff -Nbaur binutils-2.16.1/config.sub binutils-2.16.1-psp/config.sub
 --- binutils-2.16.1/config.sub	Wed Jan 19 00:34:56 2005
-+++ binutils-2.16.1-psp/config.sub	Wed Aug 24 01:57:13 2005
++++ binutils-2.16.1-psp/config.sub	Thu Nov  3 18:04:54 2005
 @@ -253,6 +253,7 @@
  	| mipsisa64sb1 | mipsisa64sb1el \
  	| mipsisa64sr71k | mipsisa64sr71kel \
@@ -164,7 +181,7 @@ diff -Nbaur binutils-2.16.1/config.sub binutils-2.16.1-psp/config.sub
  		basic_machine=`echo $basic_machine | sed -e 's/mips3/mips64/'`
 diff -Nbaur binutils-2.16.1/gas/config/tc-mips.c binutils-2.16.1-psp/gas/config/tc-mips.c
 --- binutils-2.16.1/gas/config/tc-mips.c	Sun Jun 12 19:07:03 2005
-+++ binutils-2.16.1-psp/gas/config/tc-mips.c	Wed Aug 24 01:57:13 2005
++++ binutils-2.16.1-psp/gas/config/tc-mips.c	Thu Nov  3 18:04:54 2005
 @@ -365,11 +365,15 @@
  #define CPU_HAS_MDMX(cpu)	(FALSE                 \
  				 )
@@ -182,7 +199,95 @@ diff -Nbaur binutils-2.16.1/gas/config/tc-mips.c binutils-2.16.1-psp/gas/config/
  
  /* True if mflo and mfhi can be immediately followed by instructions
     which write to the HI and LO registers.
-@@ -7817,6 +7821,30 @@
+@@ -393,6 +397,7 @@
+    || mips_opts.arch == CPU_R12000                    \
+    || mips_opts.arch == CPU_RM7000                    \
+    || mips_opts.arch == CPU_VR5500                    \
++   || mips_opts.arch == CPU_ALLEGREX                  \
+    )
+ 
+ /* Whether the processor uses hardware interlocks to protect reads
+@@ -1161,6 +1166,20 @@
+ static segT pdr_seg;
+ #endif
+ 
++/* Expressions saved for use in VFPU immediate mode macros.  */
++
++static expressionS vimm_expr[4];
++static expressionS voffset_expr[4];
++
++/* VFPU instruction prefixes to apply to the current VFPU instruction.  */
++
++static int vfpu_has_dprefix;
++static int vfpu_has_sprefix;
++static int vfpu_has_tprefix;
++static char vfpu_dprefix_operands[64];
++static char vfpu_sprefix_operands[64];
++static char vfpu_tprefix_operands[64];
++
+ /* The default target format to use.  */
+ 
+ const char *
+@@ -1641,6 +1660,58 @@
+       return;
+     }
+ 
++  /* If we've generated operands for a VFPU prefix instruction then we need
++     to assemble and append the prefix instruction before emitting the
++     instruction it prefixes.  Note that in mips_ip prefix operands do not
++     cause any side effects with imm_expr or offset_expr.  If they did
++     we'd have to save and restore them here.  */
++  if (CPU_IS_ALLEGREX (mips_opts.arch)
++      && (vfpu_has_dprefix || vfpu_has_sprefix || vfpu_has_tprefix))
++    {
++      if (mips_opts.noreorder &&
++	  (history[0].insn_mo->pinfo & (INSN_UNCOND_BRANCH_DELAY
++					| INSN_COND_BRANCH_DELAY
++					| INSN_COND_BRANCH_LIKELY)))
++	as_bad (_("VFPU instruction with prefix can't be used in a branch delay slot"));
++
++      if (vfpu_has_dprefix)
++        {
++	  struct mips_cl_insn dprefix_insn;
++	  bfd_reloc_code_real_type dprefix_unused_reloc[3]
++	    = {BFD_RELOC_UNUSED, BFD_RELOC_UNUSED, BFD_RELOC_UNUSED};
++	  char dprefix_str[80];
++
++	  sprintf (dprefix_str, "vpfxd %s", vfpu_dprefix_operands);
++	  mips_ip (str, &dprefix_insn);
++	  append_insn (&dprefix_insn, NULL, dprefix_unused_reloc);
++	  vfpu_has_dprefix = 0;
++        }
++      if (vfpu_has_sprefix)
++        {
++	  struct mips_cl_insn sprefix_insn;
++	  bfd_reloc_code_real_type sprefix_unused_reloc[3]
++	    = {BFD_RELOC_UNUSED, BFD_RELOC_UNUSED, BFD_RELOC_UNUSED};
++	  char sprefix_str[80];
++
++	  sprintf (sprefix_str, "vpfxs %s", vfpu_sprefix_operands);
++	  mips_ip (str, &sprefix_insn);
++	  append_insn (&sprefix_insn, NULL, sprefix_unused_reloc);
++	  vfpu_has_sprefix = 0;
++        }
++      if (vfpu_has_tprefix)
++        {
++	  struct mips_cl_insn tprefix_insn;
++	  bfd_reloc_code_real_type tprefix_unused_reloc[3]
++	    = {BFD_RELOC_UNUSED, BFD_RELOC_UNUSED, BFD_RELOC_UNUSED};
++	  char tprefix_str[80];
++
++	  sprintf (tprefix_str, "vpfxt %s", vfpu_tprefix_operands);
++	  mips_ip (str, &tprefix_insn);
++	  append_insn (&tprefix_insn, NULL, tprefix_unused_reloc);
++	  vfpu_has_tprefix = 0;
++        }
++    }
++
+   if (insn.insn_mo->pinfo == INSN_MACRO)
+     {
+       macro_start ();
+@@ -7817,6 +7888,30 @@
        case '%': USE_BITS (OP_MASK_VECALIGN,	OP_SH_VECALIGN); break;
        case '[': break;
        case ']': break;
@@ -213,7 +318,525 @@ diff -Nbaur binutils-2.16.1/gas/config/tc-mips.c binutils-2.16.1-psp/gas/config/
        default:
  	as_bad (_("internal: bad mips opcode (unknown operand type `%c'): %s %s"),
  		c, opc->name, opc->args);
-@@ -8485,6 +8513,7 @@
+@@ -8125,6 +8220,517 @@
+ 		}
+ 	      break;
+ 
++	    case '?':		/* VFPU extension character.  */
++	      switch (*++args)
++	        {
++	        case '[':	/* these must match exactly */
++	        case ']':
++		  if (*s++ == *args)
++		    continue;
++		  break;
++
++	        case '0':	/* Source or target prefix. */
++	        case '1':
++	        case '2':
++	        case '3':
++		  {
++		    char *orig_s = s;
++		    int pos = *args - '0';
++		    int negation = 0;
++		    int is_constant = 0;
++		    int abs_consthi = 0;
++		    int swz_constlo = 0;
++		    int constant_code = 0;
++		    int bad_format = 0;
++		    unsigned int operand;
++
++		    if (*s == '-')
++		      {
++			negation = 1;
++			++s;
++		      }
++		    if (ISDIGIT (*s))
++		      {
++			is_constant = 1;
++			if (*s == '0')
++			  constant_code = 0;
++			else if (*s == '1')
++			  {
++			    if (s[1] == '/')
++			      {
++				s += 2;
++				if (*s == '2')
++				  constant_code = 3;
++				else if (*s == '3')
++				  constant_code = 5;
++				else if (*s == '4')
++				  constant_code = 6;
++				else if (*s == '6')
++				  constant_code = 7;
++				else
++				  bad_format = 1;
++			      }
++			    else
++			      constant_code = 1;
++			  }
++			else if (*s == '2')
++			  constant_code = 2;
++			else if (*s == '3')
++			  constant_code = 4;
++			else
++			  bad_format = 1;
++
++			/* Bits 0-1 of the constant code are stored in the
++			   SWZ/CST[1:0] field, and bit 2 is stored in the
++			   ABS/CST[2] field.  */
++			swz_constlo = constant_code & VFPU_MASK_PFX_SWZ_CSTLO;
++			abs_consthi = constant_code >> 2;
++		      }
++		    else
++		      {
++			if (*s == '|')
++			  {
++			    abs_consthi = 1;
++			    ++s;
++			  }
++			if (*s == 'x' || *s == 'X')
++			  {
++			    swz_constlo = 0;
++			    ++s;
++			  }
++			else if (*s == 'y' || *s == 'Y')
++			  {
++			    swz_constlo = 1;
++			    ++s;
++			  }
++			else if (*s == 'z' || *s == 'Z')
++			  {
++			    swz_constlo = 2;
++			    ++s;
++			  }
++			else if (*s == 'w' || *s == 'W')
++			  {
++			    swz_constlo = 3;
++			    ++s;
++			  }
++			else if (*s != ',' && *s != '|'
++				 && ! IS_SPACE_OR_NUL (*s))
++			  bad_format = 1;
++			if (! bad_format)
++			  {
++			    /* Make sure the abs value was written properly.  */
++			    if (*s == '|')
++			      {
++			        ++s;
++				if (! abs_consthi)
++				  bad_format = 1;
++			      }
++			    else if (abs_consthi)
++			      bad_format = 1;
++			  }
++		      }
++
++		    if (bad_format
++			|| (*s != ',' && ! IS_SPACE_OR_NUL (*s)))
++		      as_bad (_("Invalid prefix format (%s)"), orig_s);
++
++		    /* The bit positions of each field vary depending on the
++		       position of our operand.  We can't use INSERT_OPERAND()
++		       as it would mask out the values set by other operands.  */
++		    operand = (((negation & VFPU_MASK_PFX_NEG)
++				<< (VFPU_SH_PFX_NEG + pos))
++			       || ((is_constant & VFPU_MASK_PFX_CST)
++				   << (VFPU_SH_PFX_CST + pos))
++			       || ((abs_consthi & VFPU_MASK_PFX_ABS_CSTHI)
++				   << (VFPU_SH_PFX_ABS_CSTHI + pos))
++			       || ((swz_constlo & VFPU_MASK_PFX_SWZ_CSTLO)
++				   << (VFPU_SH_PFX_SWZ_CSTLO + pos * 2)));
++		    ip->insn_opcode |= operand;
++		  }
++		  continue;
++
++	        case '4':	/* Destination prefix. */
++	        case '5':
++	        case '6':
++	        case '7':
++		  {
++		    char *orig_s = s;
++		    int mask = 0;
++		    int saturation = 0;
++		    int pos = *args - '4';
++		    unsigned int operand;
++
++		    if (*s == '[')
++		      ++s;
++		    if (*s == '-')
++		      ++s;
++		    if (*s == 'm' || *s == 'M')
++		      {
++			mask = 1;
++			++s;
++		      }
++		    else if (*s == '0')
++		      {
++		        saturation = 1;
++		        ++s;
++		      }
++		    else if (*s == '1')
++		      {
++		        saturation = 3;
++		        ++s;
++		      }
++		    if (*s == ':')
++		      {
++		        ++s;
++		        if (*s == '+')
++		          ++s;
++		        if (*s == '1')
++		          ++s;
++		      }
++		    if (*s == ']')
++		      ++s;
++		    if (*s != ',' && ! IS_SPACE_OR_NUL (*s))
++		      as_bad (_("Invalid prefix format (%s)"), orig_s);
++
++		    /* The position of the stored mask and saturation code
++		       depend on the position of the prefix operand.  Because
++		       the bits aren't consecutive, we have to be careful to
++		       insert them without masking out any other operands.  */
++		    operand = (((mask & VFPU_MASK_PFX_MASK)
++				<< (VFPU_SH_PFX_MASK + pos))
++			       || ((saturation & VFPU_MASK_PFX_SAT)
++				   << (VFPU_SH_PFX_SAT + pos * 2)));
++		    ip->insn_opcode |= operand;
++		  }
++    		  continue;
++
++	        case 'a':	/* Constant. */
++		  {
++		    static const char * const vfpu_const_names[20] = {
++		      "", "VFPU_HUGE", "VFPU_SQRT2", "VFPU_SQRT1_2",
++		      "VFPU_2_SQRTPI", "VFPU_2_PI", "VFPU_1_PI", "VFPU_PI_4",
++		      "VFPU_PI_2", "VFPU_PI", "VFPU_E", "VFPU_LOG2E",
++		      "VFPU_LOG10E", "VFPU_LN2", "VFPU_LN10", "VFPU_2PI",
++		      "VFPU_PI_6", "VFPU_LOG10TWO", "VFPU_LOG2TEN", "VFPU_SQRT3_2"
++		    };
++		    const int vfpu_num_constants = ARRAY_SIZE (vfpu_const_names) - 1;
++		    int i;
++
++		    if (!ISDIGIT (*s))
++		      {
++			/* Try to match one of the predefined constants.  */
++			for (i = 1; i <= vfpu_num_constants; i++)
++			  if (!strcasecmp (s, vfpu_const_names[i]))
++			    break;
++			if (i <= vfpu_num_constants)
++			  s += strlen (vfpu_const_names[i]);
++			else
++			  as_bad (_("Invalid constant code (%s)"), s);
++		        INSERT_OPERAND (VFPU_CONST, *ip, i);
++		      }
++		    else
++		      {
++			my_getExpression (&imm_expr, s);
++			check_absolute_expr (ip, &imm_expr);
++			if (imm_expr.X_add_number == 0
++			    || imm_expr.X_add_number > vfpu_num_constants)
++			  as_bad (_("Improper constant code (%lu)"),
++				    (unsigned long) imm_expr.X_add_number);
++			INSERT_OPERAND (VFPU_CONST, *ip, imm_expr.X_add_number);
++			imm_expr.X_op = O_absent;
++			s = expr_end;
++		      }
++		  }
++		  continue;
++
++	        case 'b':
++		  my_getExpression (&imm_expr, s);
++		  check_absolute_expr (ip, &imm_expr);
++		  if ((unsigned long) imm_expr.X_add_number > 31)
++		    as_bad (_("Improper scale (%lu)"),
++			    (unsigned long) imm_expr.X_add_number);
++		  INSERT_OPERAND (VFPU_IMM5, *ip, imm_expr.X_add_number);
++		  imm_expr.X_op = O_absent;
++		  s = expr_end;
++    		  continue;
++
++	        case 'c':	/* Condition code bit. */
++		  my_getExpression (&imm_expr, s);
++		  check_absolute_expr (ip, &imm_expr);
++		  if ((unsigned long) imm_expr.X_add_number > 5)
++		    as_bad (_("Improper condition bit (%lu)"),
++			    (unsigned long) imm_expr.X_add_number);
++		  INSERT_OPERAND (VFPU_CC, *ip, imm_expr.X_add_number);
++		  imm_expr.X_op = O_absent;
++		  s = expr_end;
++		  continue;
++
++		case 'e':	/* Condition code bit for conditional moves. */
++		  my_getExpression (&imm_expr, s);
++		  check_absolute_expr (ip, &imm_expr);
++		  if ((unsigned long) imm_expr.X_add_number > 6)
++		    as_bad (_("Improper condition bit (%lu)"),
++			    (unsigned long) imm_expr.X_add_number);
++		  INSERT_OPERAND (VFPU_IMM3, *ip, imm_expr.X_add_number);
++		  imm_expr.X_op = O_absent;
++		  s = expr_end;
++		  continue;
++
++	        case 'f':	/* Condition code. */
++		  {
++		    static const char * const vfpu_cond_names[16] = {
++		      "FL",  "EQ",  "LT",  "LE",  "TR",  "NE",  "GE",  "GT",
++		      "EZ",  "EN",  "EI",  "ES",  "NZ",  "NN",  "NI",  "NS"
++		    };
++		    unsigned long cond;
++		    int i, arg_count;
++
++		    if (!ISDIGIT (*s))
++		      {
++			for (i = 0; i < VFPU_NUM_CONDS; i++)
++			  if (!strncasecmp (s, vfpu_cond_names[i], 2))
++			    break;
++			if (i < VFPU_NUM_CONDS)
++			  s += 2;
++			else
++			  as_bad (_("Invalid VFPU condition code (%s)"), s);
++			cond = i;
++		      }
++		    else
++		      {
++			my_getExpression (&imm_expr, s);
++			check_absolute_expr (ip, &imm_expr);
++			cond = imm_expr.X_add_number;
++			if (cond >= VFPU_NUM_CONDS)
++			  as_bad (_("Invalid VFPU condition code (%lu)"), cond);
++			imm_expr.X_op = O_absent;
++			s = expr_end;
++		      }
++
++		    /* Verify that the right number of arguments were passed
++		       for the selected condition code. */
++		    arg_count = *++args - '0';
++		    if (cond != VFPU_COND_FL && cond != VFPU_COND_TR
++			&& ((cond >= VFPU_COND_EZ && arg_count < 1)
++			    || (arg_count <= 1)))
++		      as_bad (_("Invalid VFPU condition operation"));
++		    INSERT_OPERAND (VFPU_COND, *ip, cond);
++		  }
++		  continue;
++
++	        case 'i':	/* Wrap. */
++		  my_getExpression (&imm_expr, s);
++		  check_absolute_expr (ip, &imm_expr);
++		  if ((unsigned long) imm_expr.X_add_number > 255)
++		    as_bad (_("Improper wrap (%lu)"),
++			    (unsigned long) imm_expr.X_add_number);
++		  INSERT_OPERAND (VFPU_IMM8, *ip, imm_expr.X_add_number);
++		  imm_expr.X_op = O_absent;
++		  s = expr_end;
++		  continue;
++
++		case 'o':	/* VFPU 16-bit offset. */
++		  /* Check whether there is only a single bracketed expression
++		     left.  If so, it must be the base register and the
++		     constant must be zero.  */
++		  if (*s == '(' && strchr (s + 1, '(') == 0)
++		    {
++		      offset_expr.X_op = O_constant;
++		      offset_expr.X_add_number = 0;
++		      continue;
++		    }
++
++		  /* If this value won't fit into a 16 bit offset, then go
++		     find a macro that will generate the 32 bit offset
++		     code pattern.  */
++		  if (my_getSmallExpression (&offset_expr, offset_reloc, s) == 0
++		      && (offset_expr.X_op != O_constant
++			  || offset_expr.X_add_number >= 0x8000
++			  || offset_expr.X_add_number < -0x8000))
++		    break;
++
++		  s = expr_end;
++		  continue;
++
++	        case 'q':
++	        case 'r':	/* VFPU control register. */
++		  if (s[0] != '$' || !ISDIGIT (s[1]))
++		    {
++		      as_bad (_("Invalid VFPU control register name (%s)"), s);
++		      continue;
++		    }
++
++		  ++s;
++		  regno = 0;
++		  do
++		    {
++		      regno *= 10;
++		      regno += *s - '0';
++		      ++s;
++		    }
++		  while (ISDIGIT (*s));
++		  if (regno < 128 || regno > 143)
++		    as_bad (_("Invalid VFPU control register number (%d)"), regno);
++		  else if (regno == 133 || regno == 134)
++		    as_bad (_("Improper VFPU control register number (%d)"), regno);
++		  if (*args == 'q')
++		    INSERT_OPERAND (VFPU_VMTVC, *ip, regno);
++		  else
++		    INSERT_OPERAND (VFPU_VMFVC, *ip, regno);
++		  continue;
++
++	        case 'u':	/* 16-bit floating point constant. */
++		  {
++		    if (s[0] == '0' && (s[1] == 'x' || s[1] == 'X'))
++		      {
++			my_getExpression (&imm_expr, s);
++			check_absolute_expr (ip, &imm_expr);
++			if ((unsigned long) imm_expr.X_add_number > 0xffff)
++			  as_bad (_("Improper half floating point constant: (%lu)"),
++				  (unsigned long) imm_expr.X_add_number);
++			INSERT_OPERAND (VFPU_FLOAT16, *ip, imm_expr.X_add_number);
++			imm_expr.X_op = O_absent;
++			s = expr_end;
++		      }
++		    else
++		      {
++			union flt2int {
++			  unsigned long i;
++			  float f;
++			} flt2int;
++			unsigned char temp[8];
++			char *save_in;
++			char *err;
++			int len;
++			int sign, exponent, fraction, exponent16;
++			unsigned int float16 = 0;
++
++			save_in = input_line_pointer;
++			input_line_pointer = s;
++			err = md_atof ('f', (char *) temp, &len);
++			s = input_line_pointer;
++			input_line_pointer = save_in;
++			if (err != NULL && *err != '\0')
++			  {
++			    as_bad (_("Bad half floating point constant: %s"), err);
++			    memset (temp, '\0', sizeof temp);
++			  }
++
++			/* Convert the 32-bit IEEE754 float into the VFPU
++			   16-bit float format.  */
++			if (! target_big_endian)
++			  flt2int.i = bfd_getl32 (temp);
++			else
++			  flt2int.i = bfd_getb32 (temp);
++			/* TODO: There must be constants for these somewhere... */
++			sign = (flt2int.i >> 31) & 0x1;
++			exponent = (flt2int.i >> 23) & 0xff;
++			fraction = flt2int.i & 0x7fffff;
++			exponent16 = exponent - 112;
++			if (exponent16 >= 0)
++			  {
++			    if (exponent16 > VFPU_FLOAT16_EXP_MAX
++				&& exponent != 0xff)
++			      {
++				as_warn (_("Half floating point overflow: %g"),
++					 flt2int.f);
++				exponent16 = VFPU_FLOAT16_EXP_MAX;
++				fraction = 0;
++			      }
++			    else if (exponent16 <= VFPU_FLOAT16_EXP_MAX)
++			      fraction = (flt2int.i >> 13) & VFPU_MASK_FLOAT16_FRAC;
++			    else if (exponent == 0xff)
++			      {
++				exponent16 = VFPU_FLOAT16_EXP_MAX;
++				if (! fraction)
++				  fraction = 0;
++				else
++				  fraction = 1;
++			      }
++			  }
++			else
++			  {
++			    if (exponent != 0 || fraction != 0)
++			      as_warn (_("Half floating point underflow: %g"),
++				       flt2int.f);
++			    exponent16 = 0;
++			    fraction = 0;
++			  }
++			INSERT_BITS (float16, sign, VFPU_MASK_FLOAT16_SIGN,
++				     VFPU_SH_FLOAT16_SIGN);
++			INSERT_BITS (float16, exponent16, VFPU_MASK_FLOAT16_EXP,
++				     VFPU_SH_FLOAT16_EXP);
++			INSERT_BITS (float16, fraction, VFPU_MASK_FLOAT16_FRAC,
++				     VFPU_SH_FLOAT16_FRAC);
++			INSERT_OPERAND (VFPU_FLOAT16, *ip, float16);
++			/* Parse the 16-bit constant.  */
++			sprintf ((char *) temp, "0x%04x", float16);
++			my_getExpression (&imm_expr, (char *) temp);
++		      }
++		  }
++		  continue;
++
++	        case 'w':	/* Rotation code. */
++		  {
++		    int bad_code = 0;
++		    int opsize;
++
++		    if (*s != '[')
++		      {
++			my_getExpression (&imm_expr, s);
++			check_absolute_expr (ip, &imm_expr);
++			if ((unsigned long) imm_expr.X_add_number > 31)
++			  as_bad (_("Improper rotation code (%lu)"),
++				    (unsigned long) imm_expr.X_add_number);
++			INSERT_OPERAND (VFPU_ROT, *ip, imm_expr.X_add_number);
++			imm_expr.X_op = O_absent;
++			s = expr_end;
++			continue;
++		      }
++
++
++		  }
++		  continue;
++
++	        case 'y':
++		  /* Save the current immediate and offset expressions for
++		     the lvi macro.  */
++		  {
++		    int slot = *++args - '0';
++
++		    assert (slot >= 0 && slot < 4);
++
++		    memcpy (&vimm_expr[slot], &imm_expr, sizeof (imm_expr));
++		    memcpy (&voffset_expr[slot], &offset_expr, sizeof (offset_expr));
++		    imm_expr.X_op = O_absent;
++		    offset_expr.X_op = O_absent;
++		    imm_reloc[0] = BFD_RELOC_UNUSED;
++		    imm_reloc[1] = BFD_RELOC_UNUSED;
++		    imm_reloc[2] = BFD_RELOC_UNUSED;
++		    offset_reloc[0] = BFD_RELOC_UNUSED;
++		    offset_reloc[1] = BFD_RELOC_UNUSED;
++		    offset_reloc[2] = BFD_RELOC_UNUSED;
++		  }
++		  continue;
++
++	        case 'z':	/* Store to write buffer. */
++		  {
++		    int wb = 0;
++
++		    if (strncasecmp (s, "WT", 2) == 0)
++		      wb = 0;
++		    else if (strncasecmp (s, "WB", 2) == 0)
++		      wb = 1;
++		    else
++		      as_bad (_("Invalid memory access type (%s)"), s);
++		    s += 2;
++		    INSERT_OPERAND (VFPU_RWB, *ip, wb);
++		  }
++		  continue;
++
++	        }
++	      break;
++
+ 	    case '<':		/* must be at least one digit */
+ 	      /*
+ 	       * According to the manual, if the shift amount is greater
+@@ -8485,6 +9091,7 @@
  
  		  if ((regno & 1) != 0
  		      && HAVE_32BIT_FPRS
@@ -221,7 +844,7 @@ diff -Nbaur binutils-2.16.1/gas/config/tc-mips.c binutils-2.16.1-psp/gas/config/
  		      && ! (strcmp (str, "mtc1") == 0
  			    || strcmp (str, "mfc1") == 0
  			    || strcmp (str, "lwc1") == 0
-@@ -13743,6 +13772,8 @@
+@@ -13743,6 +14350,8 @@
  
    /* MIPS II */
    { "r6000",          0,      ISA_MIPS2,      CPU_R6000 },
@@ -232,7 +855,7 @@ diff -Nbaur binutils-2.16.1/gas/config/tc-mips.c binutils-2.16.1-psp/gas/config/
    { "r4000",          0,      ISA_MIPS3,      CPU_R4000 },
 diff -Nbaur binutils-2.16.1/gas/configure binutils-2.16.1-psp/gas/configure
 --- binutils-2.16.1/gas/configure	Tue Mar  1 00:43:51 2005
-+++ binutils-2.16.1-psp/gas/configure	Wed Aug 24 01:57:13 2005
++++ binutils-2.16.1-psp/gas/configure	Thu Nov  3 18:04:54 2005
 @@ -4537,6 +4537,9 @@
  	  mips64vr | mips64vrel)
  	    mips_cpu=vr4100
@@ -245,7 +868,7 @@ diff -Nbaur binutils-2.16.1/gas/configure binutils-2.16.1-psp/gas/configure
  	    ;;
 diff -Nbaur binutils-2.16.1/gas/configure.in binutils-2.16.1-psp/gas/configure.in
 --- binutils-2.16.1/gas/configure.in	Tue Mar  1 00:43:57 2005
-+++ binutils-2.16.1-psp/gas/configure.in	Wed Aug 24 01:57:13 2005
++++ binutils-2.16.1-psp/gas/configure.in	Thu Nov  3 18:04:54 2005
 @@ -222,6 +222,9 @@
  	  mips64vr | mips64vrel)
  	    mips_cpu=vr4100
@@ -256,9 +879,22 @@ diff -Nbaur binutils-2.16.1/gas/configure.in binutils-2.16.1-psp/gas/configure.i
  	  mipsisa32r2* | mipsisa64r2*)
  changequote(,)dnl
  	    mips_cpu=`echo $target_cpu | sed -e 's/[a-z]*..r2//' -e 's/el$//'`
+diff -Nbaur binutils-2.16.1/gas/testsuite/gas/mips/mips.exp binutils-2.16.1-psp/gas/testsuite/gas/mips/mips.exp
+--- binutils-2.16.1/gas/testsuite/gas/mips/mips.exp	Tue Apr 19 18:09:45 2005
++++ binutils-2.16.1-psp/gas/testsuite/gas/mips/mips.exp	Thu Nov  3 18:04:54 2005
+@@ -382,6 +382,9 @@
+ mips_arch_create sb1 	64	mips64	{ mips3d } \
+ 			{ -march=sb1 -mtune=sb1 } { -mmips:sb1 } \
+ 			{ mipsisa64sb1-*-* mipsisa64sb1el-*-* }
++mips_arch_create allegrex 32	mips2	{ ror } \
++			{ -march=allegrex -mtune=allegrex } { -mmips:allegrex } \
++			{ mipsallegrex-*-* mipsallegrexel-*-* }
+ 
+ 
+ #
 diff -Nbaur binutils-2.16.1/include/bin-bugs.h binutils-2.16.1-psp/include/bin-bugs.h
 --- binutils-2.16.1/include/bin-bugs.h	Fri Jul 23 16:40:19 2004
-+++ binutils-2.16.1-psp/include/bin-bugs.h	Wed Aug 24 01:57:13 2005
++++ binutils-2.16.1-psp/include/bin-bugs.h	Thu Nov  3 18:04:54 2005
 @@ -1,3 +1,3 @@
  #ifndef REPORT_BUGS_TO
 -#define REPORT_BUGS_TO	"<URL:http://www.sourceware.org/bugzilla/>"
@@ -266,7 +902,7 @@ diff -Nbaur binutils-2.16.1/include/bin-bugs.h binutils-2.16.1-psp/include/bin-b
  #endif
 diff -Nbaur binutils-2.16.1/include/elf/common.h binutils-2.16.1-psp/include/elf/common.h
 --- binutils-2.16.1/include/elf/common.h	Fri Oct  8 14:55:08 2004
-+++ binutils-2.16.1-psp/include/elf/common.h	Wed Aug 24 01:57:13 2005
++++ binutils-2.16.1-psp/include/elf/common.h	Thu Nov  3 18:04:54 2005
 @@ -93,6 +93,7 @@
  #define ET_HIOS		0xFEFF	/* Operating system-specific */
  #define ET_LOPROC	0xFF00	/* Processor-specific */
@@ -277,7 +913,7 @@ diff -Nbaur binutils-2.16.1/include/elf/common.h binutils-2.16.1-psp/include/elf
     are officially assigned by registry@caldera.com.  See below for a list of
 diff -Nbaur binutils-2.16.1/include/elf/mips.h binutils-2.16.1-psp/include/elf/mips.h
 --- binutils-2.16.1/include/elf/mips.h	Thu Mar  3 11:58:06 2005
-+++ binutils-2.16.1-psp/include/elf/mips.h	Wed Aug 24 01:57:13 2005
++++ binutils-2.16.1-psp/include/elf/mips.h	Thu Nov  3 18:04:54 2005
 @@ -212,6 +212,7 @@
  #define E_MIPS_MACH_5400	0x00910000
  #define E_MIPS_MACH_5500	0x00980000
@@ -288,8 +924,8 @@ diff -Nbaur binutils-2.16.1/include/elf/mips.h binutils-2.16.1-psp/include/elf/m
     exist.  Symbols with a st_shndx field corresponding to one of these
 diff -Nbaur binutils-2.16.1/include/opcode/mips.h binutils-2.16.1-psp/include/opcode/mips.h
 --- binutils-2.16.1/include/opcode/mips.h	Thu Mar  3 11:58:10 2005
-+++ binutils-2.16.1-psp/include/opcode/mips.h	Wed Aug 24 01:57:13 2005
-@@ -171,6 +171,83 @@
++++ binutils-2.16.1-psp/include/opcode/mips.h	Thu Nov  3 18:04:54 2005
+@@ -171,6 +171,97 @@
  #define MDMX_FMTSEL_VEC_QH	0x15
  #define MDMX_FMTSEL_VEC_OB	0x16
  
@@ -334,6 +970,18 @@ diff -Nbaur binutils-2.16.1/include/opcode/mips.h binutils-2.16.1-psp/include/op
 +#define VFPU_OP_VT_VS_VD	0xff800000
 +#define VFPU_OPCODE_VMMUL	0xf0000000
 +
++/* VFPU condition codes.  FL and TR accept no arguments, while any conditions
++   above and including EZ only accept one argument.  The rest require two
++   arguments.  */
++enum
++{
++  VFPU_COND_FL, VFPU_COND_EQ, VFPU_COND_LT, VFPU_COND_LE,
++  VFPU_COND_TR, VFPU_COND_NE, VFPU_COND_GE, VFPU_COND_GT,
++  VFPU_COND_EZ, VFPU_COND_EN, VFPU_COND_EI, VFPU_COND_ES,
++  VFPU_COND_NZ, VFPU_COND_NN, VFPU_COND_NI, VFPU_COND_NS,
++  VFPU_NUM_CONDS
++};
++
 +/* VFPU prefix instruction operands.  The *_SH_* values really specify where
 +   the bitfield begins, as VFPU prefix instructions have four operands
 +   encoded within the immediate field. */
@@ -343,9 +991,11 @@ diff -Nbaur binutils-2.16.1/include/opcode/mips.h binutils-2.16.1-psp/include/op
 +#define VFPU_MASK_PFX_CST	0x1	/* Constant. */
 +#define VFPU_SH_PFX_ABS_CSTHI	8
 +#define VFPU_MASK_PFX_ABS_CSTHI	0x1	/* Abs/Constant (bit 2). */
++#define VFPU_SH_PFX_SWZ_CSTLO	0
 +#define VFPU_MASK_PFX_SWZ_CSTLO	0x3	/* Swizzle/Constant (bits 0-1). */
 +#define VFPU_SH_PFX_MASK	8
 +#define VFPU_MASK_PFX_MASK	0x1	/* Mask. */
++#define VFPU_SH_PFX_SAT		0
 +#define VFPU_MASK_PFX_SAT	0x3	/* Saturation. */
 +
 +/* Special handling of the vrot instructions. */
@@ -373,7 +1023,7 @@ diff -Nbaur binutils-2.16.1/include/opcode/mips.h binutils-2.16.1-psp/include/op
  /* This structure holds information for a particular instruction.  */
  
  struct mips_opcode
-@@ -258,6 +335,29 @@
+@@ -258,6 +349,29 @@
  	Requires that "+A" or "+E" occur first to set position.
  	Enforces: 32 < (pos+size) <= 64.
  
@@ -403,7 +1053,7 @@ diff -Nbaur binutils-2.16.1/include/opcode/mips.h binutils-2.16.1-psp/include/op
     Floating point instructions:
     "D" 5 bit destination register (OP_*_FD)
     "M" 3 bit compare condition code (OP_*_CCC) (only used for mips4 and up)
-@@ -442,6 +542,8 @@
+@@ -442,6 +556,8 @@
  #define INSN_5400		  0x01000000
  /* NEC VR5500 instruction.  */
  #define INSN_5500		  0x02000000
@@ -412,7 +1062,7 @@ diff -Nbaur binutils-2.16.1/include/opcode/mips.h binutils-2.16.1-psp/include/op
  
  /* MIPS ISA defines, use instead of hardcoding ISA level.  */
  
-@@ -489,6 +591,7 @@
+@@ -489,6 +605,7 @@
  #define CPU_MIPS64      64
  #define CPU_MIPS64R2	65
  #define CPU_SB1         12310201        /* octal 'SB', 01.  */
@@ -420,7 +1070,7 @@ diff -Nbaur binutils-2.16.1/include/opcode/mips.h binutils-2.16.1-psp/include/op
  
  /* Test for membership in an ISA including chip specific ISAs.  INSN
     is pointer to an element of the opcode table; ISA is the specified
-@@ -510,6 +613,7 @@
+@@ -510,6 +627,7 @@
       || (cpu == CPU_VR4120 && ((insn)->membership & INSN_4120) != 0)	\
       || (cpu == CPU_VR5400 && ((insn)->membership & INSN_5400) != 0)	\
       || (cpu == CPU_VR5500 && ((insn)->membership & INSN_5500) != 0)	\
@@ -428,62 +1078,62 @@ diff -Nbaur binutils-2.16.1/include/opcode/mips.h binutils-2.16.1-psp/include/op
       || 0)	/* Please keep this term for easier source merging.  */
  
  /* This is a list of macro expanded instructions.
-@@ -625,6 +729,16 @@
+@@ -625,6 +743,16 @@
    M_LL_AB,
    M_LLD_AB,
    M_LS_A,
-+  M_LVHIP,
-+  M_LVHIS,
-+  M_LVIP,
-+  M_LVIQ,
-+  M_LVIS,
-+  M_LVIT,
-+  M_LVLQ_AB,
-+  M_LVRQ_AB,
-+  M_LVQ_AB,
-+  M_LVQ_AB_2,
++  M_LVHI_P,
++  M_LVHI_S,
++  M_LVI_P,
++  M_LVI_Q,
++  M_LVI_S,
++  M_LVI_T,
++  M_LVL_Q_AB,
++  M_LVR_Q_AB,
++  M_LV_Q_AB,
++  M_LV_Q_AB_2,
    M_LW_A,
    M_LW_AB,
    M_LWC0_A,
-@@ -714,6 +828,10 @@
+@@ -714,6 +842,10 @@
    M_SUB_I,
    M_SUBU_I,
    M_SUBU_I_2,
-+  M_SVLQ_AB,
-+  M_SVQ_AB,
-+  M_SVRQ_AB,
-+  M_SVS_AB,
++  M_SVL_Q_AB,
++  M_SV_Q_AB,
++  M_SVR_Q_AB,
++  M_SV_S_AB,
    M_TEQ_I,
    M_TGE_I,
    M_TGEU_I,
-@@ -728,14 +846,24 @@
+@@ -728,14 +860,24 @@
    M_ULH_A,
    M_ULHU,
    M_ULHU_A,
-+  M_ULVQ,
-+  M_ULVQ_AB,
-+  M_ULVS,
++  M_ULV_Q,
++  M_ULV_Q_AB,
++  M_ULV_S,
    M_ULW,
    M_ULW_A,
    M_USH,
    M_USH_A,
-+  M_USVQ,
-+  M_USVQ_AB,
-+  M_USVS,
++  M_USV_Q,
++  M_USV_Q_AB,
++  M_USV_S,
    M_USW,
    M_USW_A,
    M_USD,
    M_USD_A,
-+  M_VCMOVP,
-+  M_VCMOVQ,
-+  M_VCMOVS,
-+  M_VCMOVT,
++  M_VCMOV_P,
++  M_VCMOV_Q,
++  M_VCMOV_S,
++  M_VCMOV_T,
    M_XOR_I,
    M_COP0,
    M_COP1,
 diff -Nbaur binutils-2.16.1/ld/Makefile.am binutils-2.16.1-psp/ld/Makefile.am
 --- binutils-2.16.1/ld/Makefile.am	Thu Jan 20 19:37:49 2005
-+++ binutils-2.16.1-psp/ld/Makefile.am	Wed Aug 24 01:57:13 2005
++++ binutils-2.16.1-psp/ld/Makefile.am	Thu Nov  3 18:04:54 2005
 @@ -190,6 +190,7 @@
  	eelf_i386_chaos.o \
  	eelf_i386_fbsd.o \
@@ -504,7 +1154,7 @@ diff -Nbaur binutils-2.16.1/ld/Makefile.am binutils-2.16.1-psp/ld/Makefile.am
  	${GENSCRIPTS} elf_s390 "$(tdir_elf_s390)"
 diff -Nbaur binutils-2.16.1/ld/Makefile.in binutils-2.16.1-psp/ld/Makefile.in
 --- binutils-2.16.1/ld/Makefile.in	Sun Jan 23 05:36:37 2005
-+++ binutils-2.16.1-psp/ld/Makefile.in	Wed Aug 24 01:57:13 2005
++++ binutils-2.16.1-psp/ld/Makefile.in	Thu Nov  3 18:04:54 2005
 @@ -315,6 +315,7 @@
  	eelf_i386_chaos.o \
  	eelf_i386_fbsd.o \
@@ -525,7 +1175,7 @@ diff -Nbaur binutils-2.16.1/ld/Makefile.in binutils-2.16.1-psp/ld/Makefile.in
  	${GENSCRIPTS} elf_s390 "$(tdir_elf_s390)"
 diff -Nbaur binutils-2.16.1/ld/configure.tgt binutils-2.16.1-psp/ld/configure.tgt
 --- binutils-2.16.1/ld/configure.tgt	Tue Feb  8 19:54:27 2005
-+++ binutils-2.16.1-psp/ld/configure.tgt	Wed Aug 24 01:57:13 2005
++++ binutils-2.16.1-psp/ld/configure.tgt	Thu Nov  3 18:04:54 2005
 @@ -428,6 +428,8 @@
  mips*vr4100-*-elf*)	targ_emul=elf32b4300 ;;
  mips*vr5000el-*-elf*)	targ_emul=elf32l4300 ;;
@@ -537,7 +1187,7 @@ diff -Nbaur binutils-2.16.1/ld/configure.tgt binutils-2.16.1-psp/ld/configure.tg
  mips*el-*-rtems*)	targ_emul=elf32elmip ;;
 diff -Nbaur binutils-2.16.1/ld/emulparams/elf_mipsallegrexel_psp.sh binutils-2.16.1-psp/ld/emulparams/elf_mipsallegrexel_psp.sh
 --- binutils-2.16.1/ld/emulparams/elf_mipsallegrexel_psp.sh	Thu Jan  1 00:00:00 1970
-+++ binutils-2.16.1-psp/ld/emulparams/elf_mipsallegrexel_psp.sh	Wed Aug 24 01:57:13 2005
++++ binutils-2.16.1-psp/ld/emulparams/elf_mipsallegrexel_psp.sh	Thu Nov  3 18:04:54 2005
 @@ -0,0 +1,22 @@
 +# Based off of the default elf32 MIPS target.  However, we use a seperate
 +# script template because the PSP architecture defines sections that normally
@@ -563,7 +1213,7 @@ diff -Nbaur binutils-2.16.1/ld/emulparams/elf_mipsallegrexel_psp.sh binutils-2.1
 +OTHER_SECTIONS="/DISCARD/ : { *(.comment) *(.pdr) }"
 diff -Nbaur binutils-2.16.1/ld/scripttempl/elf_psp.sc binutils-2.16.1-psp/ld/scripttempl/elf_psp.sc
 --- binutils-2.16.1/ld/scripttempl/elf_psp.sc	Thu Jan  1 00:00:00 1970
-+++ binutils-2.16.1-psp/ld/scripttempl/elf_psp.sc	Wed Aug 24 01:57:13 2005
++++ binutils-2.16.1-psp/ld/scripttempl/elf_psp.sc	Thu Nov  3 18:04:54 2005
 @@ -0,0 +1,496 @@
 +#
 +# Unusual variables checked by this code:
@@ -1063,7 +1713,7 @@ diff -Nbaur binutils-2.16.1/ld/scripttempl/elf_psp.sc binutils-2.16.1-psp/ld/scr
 +EOF
 diff -Nbaur binutils-2.16.1/opcodes/mips-dis.c binutils-2.16.1-psp/opcodes/mips-dis.c
 --- binutils-2.16.1/opcodes/mips-dis.c	Thu Mar  3 11:49:50 2005
-+++ binutils-2.16.1-psp/opcodes/mips-dis.c	Wed Aug 24 01:57:13 2005
++++ binutils-2.16.1-psp/opcodes/mips-dis.c	Thu Nov  3 18:04:54 2005
 @@ -140,6 +140,139 @@
    "c0_taglo",     "c0_taghi",     "c0_errorepc",  "c0_desave",
  };
@@ -1330,7 +1980,7 @@ diff -Nbaur binutils-2.16.1/opcodes/mips-dis.c binutils-2.16.1-psp/opcodes/mips-
 +	    case '7':
 +	      {
 +		unsigned int pos = *d, base = '4';
-+		unsigned int mask = (l >> (pos - (base - VFPU_MASK_PFX_MASK))) & VFPU_MASK_PFX_MASK;
++		unsigned int mask = (l >> (pos - (base - VFPU_SH_PFX_MASK))) & VFPU_MASK_PFX_MASK;
 +		unsigned int saturation = (l >> ((pos - base) * 2)) & VFPU_MASK_PFX_SAT;
 +
 +		if (mask)
@@ -1620,7 +2270,7 @@ diff -Nbaur binutils-2.16.1/opcodes/mips-dis.c binutils-2.16.1-psp/opcodes/mips-
  	default:
 diff -Nbaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-opc.c
 --- binutils-2.16.1/opcodes/mips-opc.c	Thu Mar  3 11:49:50 2005
-+++ binutils-2.16.1-psp/opcodes/mips-opc.c	Wed Aug 24 01:57:13 2005
++++ binutils-2.16.1-psp/opcodes/mips-opc.c	Thu Nov  3 18:04:54 2005
 @@ -109,6 +109,7 @@
  #define N5	(INSN_5400 | INSN_5500)
  #define N54	INSN_5400
@@ -1633,7 +2283,7 @@ diff -Nbaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
  {"bnel",    "s,t,p",	0x54000000, 0xfc000000,	CBL|RD_s|RD_t, 		0,		I2|T3	},
  {"bnel",    "s,I,p",	0,    (int) M_BNEL_I,	INSN_MACRO,		0,		I2|T3	},
  {"break",   "",		0x0000000d, 0xffffffff,	TRAP,			0,		I1	},
-+{"break",   "B",	0x0000000d, 0xfc00003f,	TRAP,			0,		I32|AL	},
++{"break",   "B",	0x0000000d, 0xfc00003f,	TRAP,			0,		AL	},
  {"break",   "c",	0x0000000d, 0xfc00ffff,	TRAP,			0,		I1	},
  {"break",   "c,q",	0x0000000d, 0xfc00003f,	TRAP,			0,		I1	},
  {"c.f.d",   "S,T",	0x46200030, 0xffe007ff,	RD_S|RD_T|WR_CC|FP_D,	0,		I1	},
@@ -1656,7 +2306,7 @@ diff -Nbaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
  {"ctc0",    "t,G",	0x40c00000, 0xffe007ff,	COD|RD_t|WR_CC,		0,		I1	},
  {"ctc1",    "t,G",	0x44c00000, 0xffe007ff,	COD|RD_t|WR_CC|FP_S,	0,		I1	},
  {"ctc1",    "t,S",	0x44c00000, 0xffe007ff,	COD|RD_t|WR_CC|FP_S,	0,		I1	},
-@@ -465,10 +469,12 @@
+@@ -465,13 +469,15 @@
  {"cvt.ps.s","D,V,T",	0x46000026, 0xffe0003f,	WR_D|RD_S|RD_T|FP_D,	0,		I5	},
  {"cvt.pw.ps", "D,S",	0x46c00024, 0xffff003f,	WR_D|RD_S|FP_S|FP_D,	0,		M3D	},
  {"dabs",    "d,v",	0,    (int) M_DABS,	INSN_MACRO,		0,		I3	},
@@ -1668,7 +2318,20 @@ diff -Nbaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
 +{"min",     "d,v,t",    0x0000002d, 0xfc0007ff, WR_d|RD_s|RD_t,         0,              AL	},
  {"daddu",   "d,v,t",	0x0000002d, 0xfc0007ff, WR_d|RD_s|RD_t,		0,		I3	},
  {"daddu",   "t,r,I",	0,    (int) M_DADDU_I,	INSN_MACRO,		0,		I3	},
- {"dbreak",  "",		0x7000003f, 0xffffffff,	0,			0,		N5	},
+-{"dbreak",  "",		0x7000003f, 0xffffffff,	0,			0,		N5	},
++{"dbreak",  "",		0x7000003f, 0xffffffff,	0,			0,		N5|AL	},
+ {"dclo",    "U,s",      0x70000025, 0xfc0007ff, RD_s|WR_d|WR_t, 	0,		I64|N55 },
+ {"dclz",    "U,s",      0x70000024, 0xfc0007ff, RD_s|WR_d|WR_t, 	0,		I64|N55 },
+ /* dctr and dctw are used on the r5000.  */
+@@ -558,7 +564,7 @@
+ {"dremu",   "z,s,t",    0x0000001f, 0xfc00ffff, RD_s|RD_t|WR_HILO,      0,		I3      },
+ {"dremu",   "d,v,t",	3,    (int) M_DREMU_3,	INSN_MACRO,		0,		I3	},
+ {"dremu",   "d,v,I",	3,    (int) M_DREMU_3I,	INSN_MACRO,		0,		I3	},
+-{"dret",    "",		0x7000003e, 0xffffffff,	0,			0,		N5	},
++{"dret",    "",		0x7000003e, 0xffffffff,	0,			0,		N5|AL	},
+ {"drol",    "d,v,t",	0,    (int) M_DROL,	INSN_MACRO,		0,		I3	},
+ {"drol",    "d,v,I",	0,    (int) M_DROL_I,	INSN_MACRO,		0,		I3	},
+ {"dror",    "d,v,t",	0,    (int) M_DROR,	INSN_MACRO,		0,		I3	},
 @@ -595,8 +601,8 @@
  {"dsubu",   "d,v,I",	0,    (int) M_DSUBU_I,	INSN_MACRO,		0,		I3	},
  {"ei",      "",		0x41606020, 0xffffffff,	WR_t|WR_C0,		0,		I33	},
@@ -1735,6 +2398,15 @@ diff -Nbaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
  {"maddu",   "s,t",      0x70000001, 0xfc00ffff, RD_s|RD_t|MOD_HILO,          0,		I32|N55},
  {"maddu",   "s,t",      0x70000001, 0xfc00ffff, RD_s|RD_t|WR_HILO|IS_M,      0,		G1	},
  {"maddu",   "d,s,t",    0x70000001, 0xfc0007ff, RD_s|RD_t|WR_HILO|WR_d|IS_M, 0,		G1	},
+@@ -739,7 +738,7 @@
+ /* mfhc2 is at the bottom of the table.  */
+ {"mfc3",    "t,G",	0x4c000000, 0xffe007ff,	LCD|WR_t|RD_C3,		0,		I1	},
+ {"mfc3",    "t,G,H",    0x4c000000, 0xffe007f8, LCD|WR_t|RD_C3, 	0,		I32     },
+-{"mfdr",    "t,G",	0x7000003d, 0xffe007ff,	LCD|WR_t|RD_C0,		0,		N5      },
++{"mfdr",    "t,G",	0x7000003d, 0xffe007ff,	LCD|WR_t|RD_C0,		0,		N5|AL   },
+ {"mfhi",    "d",	0x00000010, 0xffff07ff,	WR_d|RD_HI,		0,		I1	},
+ {"mflo",    "d",	0x00000012, 0xffff07ff,	WR_d|RD_LO,		0,		I1	},
+ {"min.ob",  "X,Y,Q",	0x78000006, 0xfc20003f,	WR_D|RD_S|RD_T|FP_D,	0,		MX|SB1	},
 @@ -756,7 +755,7 @@
  {"movf.l",  "X,Y,N",	0x46a00011, 0xffe3003f, WR_D|RD_S|RD_CC|FP_D,	0,		MX|SB1	},
  {"movf.s",  "D,S,N",    0x46000011, 0xffe3003f, WR_D|RD_S|RD_CC|FP_S,   0,		I4|I32	},
@@ -1764,6 +2436,15 @@ diff -Nbaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
  {"msubu",   "s,t",      0x70000005, 0xfc00ffff, RD_s|RD_t|MOD_HILO,     0,		I32|N55	},
  {"mtpc",    "t,P",	0x4080c801, 0xffe0ffc1,	COD|RD_t|WR_C0,		0,		M1|N5	},
  {"mtps",    "t,P",	0x4080c800, 0xffe0ffc1,	COD|RD_t|WR_C0,		0,		M1|N5	},
+@@ -802,7 +803,7 @@
+ /* mthc2 is at the bottom of the table.  */
+ {"mtc3",    "t,G",	0x4c800000, 0xffe007ff,	COD|RD_t|WR_C3|WR_CC,	0,		I1	},
+ {"mtc3",    "t,G,H",    0x4c800000, 0xffe007f8, COD|RD_t|WR_C3|WR_CC,   0,		I32     },
+-{"mtdr",    "t,G",	0x7080003d, 0xffe007ff,	COD|RD_t|WR_C0,		0,		N5	},
++{"mtdr",    "t,G",	0x7080003d, 0xffe007ff,	COD|RD_t|WR_C0,		0,		N5|AL	},
+ {"mthi",    "s",	0x00000011, 0xfc1fffff,	RD_s|WR_HI,		0,		I1	},
+ {"mtlo",    "s",	0x00000013, 0xfc1fffff,	RD_s|WR_LO,		0,		I1	},
+ {"mul.d",   "D,V,T",	0x46200002, 0xffe0003f,	WR_D|RD_S|RD_T|FP_D,	0,		I1	},
 @@ -936,13 +937,13 @@
  {"rol",     "d,v,I",	0,    (int) M_ROL_I,	INSN_MACRO,		0,		I1	},
  {"ror",     "d,v,t",	0,    (int) M_ROR,	INSN_MACRO,		0,		I1	},
@@ -1837,12 +2518,14 @@ diff -Nbaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
  {"xor",     "d,v,t",	0x00000026, 0xfc0007ff,	WR_d|RD_s|RD_t,		0,		I1	},
  {"xor",     "t,r,I",	0,    (int) M_XOR_I,	INSN_MACRO,		0,		I1	},
  {"xor.ob",  "X,Y,Q",	0x7800000d, 0xfc20003f,	WR_D|RD_S|RD_T|FP_D,	0,		MX|SB1	},
-@@ -1179,6 +1173,317 @@
+@@ -1179,6 +1173,319 @@
  {"xor.qh",  "X,Y,Q",	0x7820000d, 0xfc20003f,	WR_D|RD_S|RD_T|FP_D,	0,		MX	},
  {"xori",    "t,r,i",	0x38000000, 0xfc000000,	WR_t|RD_s,		0,		I1	},
  
 +/* Sony Allegrex CPU core.  */
 +{"bitrev",  "d,t",      0x7c000520, 0xffe007ff, WR_d|RD_t,              0,              AL	},
++{"mfic",    "t,G",	0x70000024, 0xffe007ff, LCD|WR_t|RD_C0,		0,		AL	},
++{"mtic",    "t,G",	0x70000026, 0xffe007ff, COD|RD_t|WR_C0,		0,		AL	},
 +
 +/* Sony Allegrex VFPU instructions.  */
 +{"bvf",     "?c,p",		0x49000000, 0xffe30000, CBD|RD_CC,	0,		AL	},
@@ -1850,37 +2533,37 @@ diff -Nbaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
 +{"bvt",     "?c,p",		0x49010000, 0xffe30000, CBD|RD_CC,	0,		AL	},
 +{"bvtl",    "?c,p",		0x49030000, 0xffe30000, CBL|RD_CC,	0,		AL	},
 +{"lv.s",    "?m0x,?o(b)",	0xc8000000, 0xfc000000, CLD|RD_s|WR_CC,	0,		AL	},
-+{"lv.s",    "?m0x,A(b)",	0,    (int) M_LVQ_AB,	INSN_MACRO,	0,		AL	},
-+{"ulv.s",   "?m0x,o(b)",	0,    (int) M_ULVS,	INSN_MACRO,	0,		AL	},
++{"lv.s",    "?m0x,A(b)",	0,    (int) M_LV_Q_AB,	INSN_MACRO,	0,		AL	},
++{"ulv.s",   "?m0x,o(b)",	0,    (int) M_ULV_S,	INSN_MACRO,	0,		AL	},
 +{"lv.q",    "?n3x,?o(b)",	0xd8000000, 0xfc000002, CLD|RD_s|WR_CC,	0,		AL	},
-+{"lv.q",    "?n3x,A(b)",	0,    (int) M_LVQ_AB_2,	INSN_MACRO,	0,		AL	},
-+{"ulv.q",   "?n3x,?o(b)",	0,    (int) M_ULVQ,	INSN_MACRO,	0,		AL	},
-+{"ulv.q",   "?n3x,A(b)",	0,    (int) M_ULVQ_AB,	INSN_MACRO,	0,		AL	},
-+{"lvi.s",   "?t0x,l?y0",	0,    (int) M_LVIS,	INSN_MACRO,	0,		AL	},
-+{"lvi.p",   "?t1x,?[l?y0,l?y1?]", 0,  (int) M_LVIP,	INSN_MACRO,	0,		AL	},
-+{"lvi.t",   "?t2x,?[l?y0,l?y1,l?y2?]", 0, (int) M_LVIT,	INSN_MACRO,	0,		AL	},
-+{"lvi.q",   "?t3x,?[l?y0,l?y1,l?y2,l?y3?]", 0, (int) M_LVIQ,	INSN_MACRO,	0,	AL	},
-+{"lvhi.s",  "?t0x,?[?u?y0,?u?y1?]", 0, (int) M_LVHIS,	INSN_MACRO,	0,		AL	},
-+{"lvhi.p",  "?t1x,?[?u?y0,?u?y1,?u?y2,?u?y3?]", 0, (int) M_LVHIP,	INSN_MACRO, 0,	AL	},
++{"lv.q",    "?n3x,A(b)",	0,    (int) M_LV_Q_AB_2,	INSN_MACRO,	0,	AL	},
++{"ulv.q",   "?n3x,?o(b)",	0,    (int) M_ULV_Q,	INSN_MACRO,	0,		AL	},
++{"ulv.q",   "?n3x,A(b)",	0,    (int) M_ULV_Q_AB,	INSN_MACRO,	0,		AL	},
++{"lvi.s",   "?t0x,l?y0",	0,    (int) M_LVI_S,	INSN_MACRO,	0,		AL	},
++{"lvi.p",   "?t1x,?[l?y0,l?y1?]", 0,  (int) M_LVI_P,	INSN_MACRO,	0,		AL	},
++{"lvi.t",   "?t2x,?[l?y0,l?y1,l?y2?]", 0, (int) M_LVI_T,	INSN_MACRO,	0,	AL	},
++{"lvi.q",   "?t3x,?[l?y0,l?y1,l?y2,l?y3?]", 0, (int) M_LVI_Q,	INSN_MACRO,	0,	AL	},
++{"lvhi.s",  "?t0x,?[?u?y0,?u?y1?]", 0, (int) M_LVHI_S,	INSN_MACRO,	0,		AL	},
++{"lvhi.p",  "?t1x,?[?u?y0,?u?y1,?u?y2,?u?y3?]", 0, (int) M_LVHI_P,	INSN_MACRO, 0,	AL	},
 +{"sv.s",    "?m0x,?o(b)",	0xe8000000, 0xfc000000, SM|RD_s|RD_C2,	0,		AL	},
-+{"sv.s",    "?m0x,A(b)",	0,    (int) M_SVS_AB,	INSN_MACRO,	0,		AL	},
-+{"usv.s",   "?m0x,o(b)",	0,    (int) M_USVS,	INSN_MACRO,	0,		AL	},
++{"sv.s",    "?m0x,A(b)",	0,    (int) M_SV_S_AB,	INSN_MACRO,	0,		AL	},
++{"usv.s",   "?m0x,o(b)",	0,    (int) M_USV_S,	INSN_MACRO,	0,		AL	},
 +{"sv.q",    "?n3x,?o(b)",	0xf8000000, 0xfc000002, SM|RD_s|RD_C2,	0,		AL	},
 +{"sv.q",    "?n3x,?o(b),?z",	0xf8000000, 0xfc000000, SM|RD_s|RD_C2,	0,		AL	},
-+{"sv.q",    "?n3x,A(b)",	0,    (int) M_SVQ_AB,	INSN_MACRO,	0,		AL	},
-+{"sv.q",    "?n3x,A(b),?z",	0,    (int) M_SVQ_AB,	INSN_MACRO,	0,		AL	},
-+{"sv.q",    "?n3x,A,?z",	0,    (int) M_SVQ_AB,	INSN_MACRO,	0,		AL	},
-+{"usv.q",   "?n3x,?o(b)",	0,    (int) M_USVQ,	INSN_MACRO,	0,		AL	},
-+{"usv.q",   "?n3x,A(b)",	0,    (int) M_USVQ_AB,	INSN_MACRO,	0,		AL	},
++{"sv.q",    "?n3x,A(b)",	0,    (int) M_SV_Q_AB,	INSN_MACRO,	0,		AL	},
++{"sv.q",    "?n3x,A(b),?z",	0,    (int) M_SV_Q_AB,	INSN_MACRO,	0,		AL	},
++{"sv.q",    "?n3x,A,?z",	0,    (int) M_SV_Q_AB,	INSN_MACRO,	0,		AL	},
++{"usv.q",   "?n3x,?o(b)",	0,    (int) M_USV_Q,	INSN_MACRO,	0,		AL	},
++{"usv.q",   "?n3x,A(b)",	0,    (int) M_USV_Q_AB,	INSN_MACRO,	0,		AL	},
 +{"vwb.q",   "?n3x,?o(b)",	0xf8000002, 0xfc000002, SM|RD_s|RD_C2,	0,		AL	},
 +{"lvl.q",   "?n3x,?o(b)",	0xd4000000, 0xfc000002, CLD|RD_s|WR_CC,	0,		AL	},
-+{"lvl.q",   "?n3x,A(b)",	0,    (int) M_LVLQ_AB,	INSN_MACRO,	0,		AL	},
++{"lvl.q",   "?n3x,A(b)",	0,    (int) M_LVL_Q_AB,	INSN_MACRO,	0,		AL	},
 +{"lvr.q",   "?n3x,?o(b)",	0xd4000002, 0xfc000002, CLD|RD_s|WR_CC,	0,		AL	},
-+{"lvr.q",   "?n3x,A(b)",	0,    (int) M_LVRQ_AB,	INSN_MACRO,	0,		AL	},
++{"lvr.q",   "?n3x,A(b)",	0,    (int) M_LVR_Q_AB,	INSN_MACRO,	0,		AL	},
 +{"svl.q",   "?n3x,?o(b)",	0xf4000000, 0xfc000002, SM|RD_s|RD_C2,	0,		AL	},
-+{"svl.q",   "?n3x,A(b)",	0,    (int) M_SVLQ_AB,	INSN_MACRO,	0,		AL	},
++{"svl.q",   "?n3x,A(b)",	0,    (int) M_SVL_Q_AB,	INSN_MACRO,	0,		AL	},
 +{"svr.q",   "?n3x,?o(b)",	0xf4000002, 0xfc000002, SM|RD_s|RD_C2,	0,		AL	},
-+{"svr.q",   "?n3x,A(b)",	0,    (int) M_SVRQ_AB,	INSN_MACRO,	0,		AL	},
++{"svr.q",   "?n3x,A(b)",	0,    (int) M_SVR_Q_AB,	INSN_MACRO,	0,		AL	},
 +{"mtv",     "t,?d0z",		0x48e00000, 0xffe0ff80, LCD|WR_t|WR_C2,	0,		AL	},
 +{"mfv",     "t,?d0z",		0x48600000, 0xffe0ff80, COD|RD_t|WR_CC|RD_C2, 0,	AL	},
 +{"mtvc",    "t,?q",		0x48e00000, 0xffe0ff00, LCD|WR_t|WR_C2,	0,		AL	},
@@ -1945,7 +2628,7 @@ diff -Nbaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
 +{"vf2iu.q", "?d3m,?s3s,?b",	0xd2408080, 0xffe08080, RD_C2,		0,		AL	},
 +{"vf2id.q", "?d3m,?s3s,?b",	0xd2608080, 0xffe08080, RD_C2,		0,		AL	},
 +{"vi2f.q",  "?d3d,?s3w,?b",	0xd2808080, 0xffe08080, RD_C2,		0,		AL	},
-+{"vcmov.q", "?d3d,?s3s,?e",	0,    (int) M_VCMOVQ,	INSN_MACRO,	0,		AL	},
++{"vcmov.q", "?d3d,?s3s,?e",	0,    (int) M_VCMOV_Q,	INSN_MACRO,	0,		AL	},
 +{"vcmovt.q", "?d3d,?s3s,?e",	0xd2a08080, 0xfff88080, RD_C2,		0,		AL	},
 +{"vcmovf.q", "?d3d,?s3s,?e",	0xd2a88080, 0xfff88080, RD_C2,		0,		AL	},
 +{"vmmul.q", "?v7z,?s7y,?t7x",	0xf0008080, 0xff808080, RD_C2,		0,		AL	},
@@ -2008,7 +2691,7 @@ diff -Nbaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
 +{"vf2iu.t", "?d2m,?s2s,?b",	0xd2408000, 0xffe08080, RD_C2,		0,		AL	},
 +{"vf2id.t", "?d2m,?s2s,?b",	0xd2608000, 0xffe08080, RD_C2,		0,		AL	},
 +{"vi2f.t",  "?d2d,?s2w,?b",	0xd2808000, 0xffe08080, RD_C2,		0,		AL	},
-+{"vcmov.t", "?d2d,?s2s,?e",	0,    (int) M_VCMOVT,	INSN_MACRO,	0,		AL	},
++{"vcmov.t", "?d2d,?s2s,?e",	0,    (int) M_VCMOV_T,	INSN_MACRO,	0,		AL	},
 +{"vcmovt.t", "?d2d,?s2s,?e",	0xd2a08000, 0xfff88080, RD_C2,		0,		AL	},
 +{"vcmovf.t", "?d2d,?s2s,?e",	0xd2a88000, 0xfff88080, RD_C2,		0,		AL	},
 +{"vmmul.t", "?v6z,?s6y,?t6x",	0xf0008000, 0xff808080, RD_C2,		0,		AL	},
@@ -2077,7 +2760,7 @@ diff -Nbaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
 +{"vf2iu.p", "?d1m,?s1s,?b",	0xd2400080, 0xffe08080, RD_C2,		0,		AL	},
 +{"vf2id.p", "?d1m,?s1s,?b",	0xd2600080, 0xffe08080, RD_C2,		0,		AL	},
 +{"vi2f.p",  "?d1d,?s1w,?b",	0xd2800080, 0xffe08080, RD_C2,		0,		AL	},
-+{"vcmov.p", "?d1d,?s1s,?e",	0,    (int) M_VCMOVP,	INSN_MACRO,	0,		AL	},
++{"vcmov.p", "?d1d,?s1s,?e",	0,    (int) M_VCMOV_P,	INSN_MACRO,	0,		AL	},
 +{"vcmovt.p", "?d1d,?s1s,?e",	0xd2a00080, 0xfff88080, RD_C2,		0,		AL	},
 +{"vcmovf.p", "?d1d,?s1s,?e",	0xd2a80080, 0xfff88080, RD_C2,		0,		AL	},
 +{"vmmul.p", "?v5z,?s5y,?t5x",	0xf0000080, 0xff808080, RD_C2,		0,		AL	},
@@ -2138,7 +2821,7 @@ diff -Nbaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
 +{"vf2iu.s", "?d0m,?s0s,?b",	0xd2400000, 0xffe08080, RD_C2,		0,		AL	},
 +{"vf2id.s", "?d0m,?s0s,?b",	0xd2600000, 0xffe08080, RD_C2,		0,		AL	},
 +{"vi2f.s",  "?d0d,?s0w,?b",	0xd2800000, 0xffe08080, RD_C2,		0,		AL	},
-+{"vcmov.s", "?d0d,?s0s,?e",	0,    (int) M_VCMOVS,	INSN_MACRO,	0,		AL	},
++{"vcmov.s", "?d0d,?s0s,?e",	0,    (int) M_VCMOV_S,	INSN_MACRO,	0,		AL	},
 +{"vcmovt.s", "?d0d,?s0s,?e",	0xd2a00000, 0xfff88080, RD_C2,		0,		AL	},
 +{"vcmovf.s", "?d0d,?s0s,?e",	0xd2a80000, 0xfff88080, RD_C2,		0,		AL	},
 +{"vwbn.s",  "?d0d,?s0s,?i",	0xd3000000, 0xff008080, RD_C2,		0,		AL	},
@@ -2155,7 +2838,7 @@ diff -Nbaur binutils-2.16.1/opcodes/mips-opc.c binutils-2.16.1-psp/opcodes/mips-
  /* Coprocessor 2 move/branch operations overlap with VR5400 .ob format
     instructions so they are here for the latters to take precedence.  */
  {"bc2f",    "p",	0x49000000, 0xffff0000,	CBD|RD_CC,		0,		I1	},
-@@ -1197,6 +1502,36 @@
+@@ -1197,6 +1504,36 @@
  {"mtc2",    "t,G",	0x48800000, 0xffe007ff,	COD|RD_t|WR_C2|WR_CC,	0,		I1	},
  {"mtc2",    "t,G,H",	0x48800000, 0xffe007f8,	COD|RD_t|WR_C2|WR_CC,	0,		I32	},
  {"mthc2",   "t,i",	0x48e00000, 0xffe00000,	COD|RD_t|WR_C2|WR_CC,	0,		I33	},

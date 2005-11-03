@@ -53,7 +53,7 @@ cd $BUILDSCRIPTDIR
 
 svn checkout svn://svn.pspdev.org/psp/trunk/pspsdk || { echo "ERROR GETTING PSPSDK"; exit 1; }
 cd pspsdk
-./bootstrap || { echo "ERROR RUNNING PSPSDK BOOSTRAP"; exit 1; }
+./bootstrap || { echo "ERROR RUNNING PSPSDK BOOTSTRAP"; exit 1; }
 ./configure || { echo "ERROR RUNNING PSPSDK CONFIGURE"; exit 1; }
 $MAKE install-data || { echo "ERROR INSTALLING PSPSDK HEADERS"; exit 1; }
 
