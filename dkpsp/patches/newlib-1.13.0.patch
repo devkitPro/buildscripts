@@ -1,5 +1,5 @@
---- newlib-1.13.0.orig/config.sub	2004-11-15 20:18:39.000000000 -0500
-+++ newlib-psp/config.sub	2005-07-06 22:53:22.000000000 -0400
+--- newlib-1.13.0.orig/config.sub	2004-11-15 17:18:39.000000000 -0800
++++ newlib-psp/config.sub	2005-06-24 17:04:02.000000000 -0700
 @@ -253,6 +253,7 @@
  	| mipsisa64sb1 | mipsisa64sb1el \
  	| mipsisa64sr71k | mipsisa64sr71kel \
@@ -27,8 +27,8 @@
  	mips3*-*)
  		basic_machine=`echo $basic_machine | sed -e 's/mips3/mips64/'`
  		;;
---- newlib-1.13.0.orig/configure	2004-12-16 14:51:28.000000000 -0500
-+++ newlib-psp/configure	2005-07-06 22:53:22.000000000 -0400
+--- newlib-1.13.0.orig/configure	2004-12-16 11:51:28.000000000 -0800
++++ newlib-psp/configure	2005-06-19 18:09:12.000000000 -0700
 @@ -1507,6 +1507,9 @@
    mips*-*-linux*)
      noconfigdirs="$noconfigdirs target-newlib target-libgloss"
@@ -39,8 +39,8 @@
    mips*-*-*)
      noconfigdirs="$noconfigdirs gprof ${libgcj}"
      ;;
---- newlib-1.13.0.orig/configure.in	2004-12-16 14:51:28.000000000 -0500
-+++ newlib-psp/configure.in	2005-07-06 22:53:22.000000000 -0400
+--- newlib-1.13.0.orig/configure.in	2004-12-16 11:51:28.000000000 -0800
++++ newlib-psp/configure.in	2005-06-19 18:09:12.000000000 -0700
 @@ -716,6 +716,9 @@
    mips*-*-linux*)
      noconfigdirs="$noconfigdirs target-newlib target-libgloss"
@@ -51,8 +51,8 @@
    mips*-*-*)
      noconfigdirs="$noconfigdirs gprof ${libgcj}"
      ;;
---- newlib-1.13.0.orig/newlib/configure.host	2004-10-05 15:44:24.000000000 -0400
-+++ newlib-psp/newlib/configure.host	2005-07-28 15:42:00.000000000 -0400
+--- newlib-1.13.0.orig/newlib/configure.host	2004-10-05 12:44:24.000000000 -0700
++++ newlib-psp/newlib/configure.host	2005-07-23 23:02:26.000000000 -0700
 @@ -570,7 +570,14 @@
  	;;
    mips*-*-elf*)
@@ -69,8 +69,8 @@
  	;;
    mmix-*)
  	syscall_dir=syscalls
---- newlib-1.13.0.orig/newlib/libc/include/machine/time.h	2000-12-04 14:06:37.000000000 -0500
-+++ newlib-psp/newlib/libc/include/machine/time.h	2005-10-24 16:08:22.000000000 -0400
+--- newlib-1.13.0.orig/newlib/libc/include/machine/time.h	2000-12-04 11:06:37.000000000 -0800
++++ newlib-psp/newlib/libc/include/machine/time.h	2005-10-24 17:37:47.000000000 -0700
 @@ -9,6 +9,10 @@
  #endif
  #endif /* !__rtems__ */
@@ -82,8 +82,8 @@
  #endif	/* _MACHTIME_H_ */
  
  
---- newlib-1.13.0.orig/newlib/libc/include/sys/config.h	2004-06-22 17:54:51.000000000 -0400
-+++ newlib-psp/newlib/libc/include/sys/config.h	2005-08-16 16:40:10.000000000 -0400
+--- newlib-1.13.0.orig/newlib/libc/include/sys/config.h	2004-06-22 14:54:51.000000000 -0700
++++ newlib-psp/newlib/libc/include/sys/config.h	2005-08-15 14:11:50.000000000 -0700
 @@ -94,6 +94,12 @@
  #endif
  #endif
@@ -97,8 +97,8 @@
  #ifdef __xstormy16__
  #define __SMALL_BITFIELDS
  #undef INT_MAX
---- newlib-1.13.0.orig/newlib/libc/sys/psp/Makefile.am	1969-12-31 19:00:00.000000000 -0500
-+++ newlib-psp/newlib/libc/sys/psp/Makefile.am	2005-11-01 03:28:52.000000000 -0500
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/Makefile.am	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/Makefile.am	2005-11-04 01:32:44.000000000 -0800
 @@ -0,0 +1,31 @@
 +## Process this file with automake to generate Makefile.in
 +
@@ -116,7 +116,7 @@
 +                     realpath.o _stat.o truncate.o access.o tzset.o	\
 +                     __psp_set_errno.o	
 +
-+XPRINTF_MULT_OBJS = vxprintf.o _xprintf.o __sout.o vsnprintf.o snprintf.o vsprintf.o sprintf.o __mout.o mprintf.o vmprintf.o asprintf.o vasprintf.o __fout.o fprintf.o vfprintf.o printf.o vprintf.o
++XPRINTF_MULT_OBJS = vxprintf.o _xprintf.o __sout.o vsnprintf.o snprintf.o vsprintf.o sprintf.o __mout.o mprintf.o vmprintf.o asprintf.o vasprintf.o __fout.o fprintf.o vfprintf.o printf.o vprintf.o _sprintf_r.o
 +
 +lib_a_SOURCES = libcglue.c pspcwd.c xprintf.c
 +lib_a_LIBADD  = $(LIBCGLUE_MULT_OBJS) $(XPRINTF_MULT_OBJS)
@@ -131,8 +131,8 @@
 +
 +ACLOCAL_AMFLAGS = -I ../../..
 +CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host
---- newlib-1.13.0.orig/newlib/libc/sys/psp/Makefile.in	1969-12-31 19:00:00.000000000 -0500
-+++ newlib-psp/newlib/libc/sys/psp/Makefile.in	2005-11-01 03:28:52.000000000 -0500
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/Makefile.in	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/Makefile.in	2005-11-04 01:45:35.000000000 -0800
 @@ -0,0 +1,352 @@
 +# Makefile.in generated automatically by automake 1.4-p6 from Makefile.am
 +
@@ -231,7 +231,7 @@
 +LIBCGLUE_MULT_OBJS = _close.o _exit.o _fork.o _fstat.o _getpid.o	                     _gettimeofday.o _kill.o _lseek.o _open.o _read.o	                     _sbrk.o _wait.o _write.o clock.o isatty.o time.o	                     _link.o _unlink.o sleep.o opendir.o readdir.o	                     closedir.o getcwd.o chdir.o mkdir.o rmdir.o	                     realpath.o _stat.o truncate.o access.o tzset.o	                     __psp_set_errno.o	
 +
 +
-+XPRINTF_MULT_OBJS = vxprintf.o _xprintf.o __sout.o vsnprintf.o snprintf.o vsprintf.o sprintf.o __mout.o mprintf.o vmprintf.o asprintf.o vasprintf.o __fout.o fprintf.o vfprintf.o printf.o vprintf.o
++XPRINTF_MULT_OBJS = vxprintf.o _xprintf.o __sout.o vsnprintf.o snprintf.o vsprintf.o sprintf.o __mout.o mprintf.o vmprintf.o asprintf.o vasprintf.o __fout.o fprintf.o vfprintf.o printf.o vprintf.o _sprintf_r.o
 +
 +lib_a_SOURCES = libcglue.c pspcwd.c xprintf.c
 +lib_a_LIBADD = $(LIBCGLUE_MULT_OBJS) $(XPRINTF_MULT_OBJS)
@@ -254,7 +254,7 @@
 +_stat.o truncate.o access.o __psp_set_errno.o vxprintf.o _xprintf.o \
 +__sout.o vsnprintf.o snprintf.o vsprintf.o sprintf.o __mout.o \
 +mprintf.o vmprintf.o asprintf.o vasprintf.o __fout.o fprintf.o \
-+vfprintf.o printf.o vprintf.o tzset.o
++vfprintf.o printf.o vprintf.o _sprintf_r.o tzset.o
 +lib_a_OBJECTS =  libcglue.o pspcwd.o xprintf.o
 +CFLAGS = @CFLAGS@
 +COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -486,8 +486,8 @@
 +# Tell versions [3.59,3.63) of GNU make to not export all variables.
 +# Otherwise a system limit (for SysV at least) may be exceeded.
 +.NOEXPORT:
---- newlib-1.13.0.orig/newlib/libc/sys/psp/README	1969-12-31 19:00:00.000000000 -0500
-+++ newlib-psp/newlib/libc/sys/psp/README	2005-07-28 15:42:00.000000000 -0400
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/README	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/README	2005-07-23 23:25:55.000000000 -0700
 @@ -0,0 +1,16 @@
 +Newlib for PSP
 +--
@@ -505,8 +505,8 @@
 +
 +--
 +Marcus R. Brown <mrbrown@ocgnet.org>
---- newlib-1.13.0.orig/newlib/libc/sys/psp/aclocal.m4	1969-12-31 19:00:00.000000000 -0500
-+++ newlib-psp/newlib/libc/sys/psp/aclocal.m4	2005-09-29 21:46:30.000000000 -0400
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/aclocal.m4	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/aclocal.m4	2005-07-23 23:18:42.000000000 -0700
 @@ -0,0 +1,1185 @@
 +dnl aclocal.m4 generated automatically by aclocal 1.4-p6
 +
@@ -1693,8 +1693,8 @@
 +]
 +)
 +
---- newlib-1.13.0.orig/newlib/libc/sys/psp/configure	1969-12-31 19:00:00.000000000 -0500
-+++ newlib-psp/newlib/libc/sys/psp/configure	2005-07-28 15:42:00.000000000 -0400
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/configure	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/configure	2005-07-23 22:50:02.000000000 -0700
 @@ -0,0 +1,1880 @@
 +#! /bin/sh
 +
@@ -3576,8 +3576,8 @@
 +rm -fr confdefs* $ac_clean_files
 +test "$no_create" = yes || ${CONFIG_SHELL-/bin/sh} $CONFIG_STATUS || exit 1
 +
---- newlib-1.13.0.orig/newlib/libc/sys/psp/configure.in	1969-12-31 19:00:00.000000000 -0500
-+++ newlib-psp/newlib/libc/sys/psp/configure.in	2005-07-28 15:42:00.000000000 -0400
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/configure.in	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/configure.in	2005-07-23 22:43:33.000000000 -0700
 @@ -0,0 +1,12 @@
 +dnl This is the newlib/libc/sys/psp configure.in file.
 +dnl Process this file with autoconf to produce a configure script.
@@ -3591,14 +3591,14 @@
 +NEWLIB_CONFIGURE(../../..)
 +
 +AC_OUTPUT(Makefile)
---- newlib-1.13.0.orig/newlib/libc/sys/psp/crt0.c	1969-12-31 19:00:00.000000000 -0500
-+++ newlib-psp/newlib/libc/sys/psp/crt0.c	2005-07-28 15:42:00.000000000 -0400
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/crt0.c	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/crt0.c	2005-07-23 23:27:06.000000000 -0700
 @@ -0,0 +1,3 @@
 +/* The real crt0.c lives in PSPSDK. */
 +
 +void _start() { }
---- newlib-1.13.0.orig/newlib/libc/sys/psp/libcglue.c	1969-12-31 19:00:00.000000000 -0500
-+++ newlib-psp/newlib/libc/sys/psp/libcglue.c	2005-11-01 11:23:24.000000000 -0500
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/libcglue.c	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/libcglue.c	2005-11-04 01:09:24.000000000 -0800
 @@ -0,0 +1,700 @@
 +/*
 + * PSP Software Development Kit - http://www.pspdev.org
@@ -4300,8 +4300,8 @@
 +
 +#endif /* F__exit */
 +
---- newlib-1.13.0.orig/newlib/libc/sys/psp/pspcwd.c	1969-12-31 19:00:00.000000000 -0500
-+++ newlib-psp/newlib/libc/sys/psp/pspcwd.c	2005-10-06 05:24:40.000000000 -0400
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/pspcwd.c	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/pspcwd.c	2005-10-10 21:57:57.000000000 -0700
 @@ -0,0 +1,167 @@
 +/*
 + * PSP Software Development Kit - http://www.pspdev.org
@@ -4470,8 +4470,8 @@
 +	return __psp_path_normalize(out + dr, len - dr);
 +}
 +
---- newlib-1.13.0.orig/newlib/libc/sys/psp/sys/dirent.h	1969-12-31 19:00:00.000000000 -0500
-+++ newlib-psp/newlib/libc/sys/psp/sys/dirent.h	2005-10-20 00:38:25.000000000 -0400
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/sys/dirent.h	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/sys/dirent.h	2005-10-20 07:40:24.000000000 -0700
 @@ -0,0 +1,39 @@
 +#ifndef _SYS_DIRENT_H
 +#define _SYS_DIRENT_H
@@ -4512,8 +4512,8 @@
 +#endif
 +
 +#endif
---- newlib-1.13.0.orig/newlib/libc/sys/psp/sys/errno.h	1969-12-31 19:00:00.000000000 -0500
-+++ newlib-psp/newlib/libc/sys/psp/sys/errno.h	2005-10-25 05:58:18.000000000 -0400
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/sys/errno.h	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/sys/errno.h	2005-10-25 03:19:17.000000000 -0700
 @@ -0,0 +1,158 @@
 +/* errno.h for PSP, based on newlib/libc/include/sys/errno.h. */
 +
@@ -4673,9 +4673,9 @@
 +}
 +#endif
 +#endif /* _SYS_ERRNO_H */
---- newlib-1.13.0.orig/newlib/libc/sys/psp/xprintf.c	1969-12-31 19:00:00.000000000 -0500
-+++ newlib-psp/newlib/libc/sys/psp/xprintf.c	2005-11-01 03:28:52.000000000 -0500
-@@ -0,0 +1,964 @@
+--- newlib-1.13.0.orig/newlib/libc/sys/psp/xprintf.c	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/sys/psp/xprintf.c	2005-11-04 01:56:43.000000000 -0800
+@@ -0,0 +1,984 @@
 +/*
 + * PSP Software Development Kit - http://www.pspdev.org
 + * -----------------------------------------------------------------------
@@ -4687,7 +4687,7 @@
 + * Copyright (c) 2005 James Forshaw <tyranid@gmail.com>
 + * Copyright (c) 2005 John Kelley <ps2dev@kelley.ca>
 + *
-+ * $Id: newlib-1.13.0.patch,v 1.5 2005-11-03 19:19:12 wntrmute Exp $
++ * $Id: newlib-1.13.0.patch,v 1.6 2005-11-15 12:49:48 wntrmute Exp $
 + */
 +/* Code borrowed from mysql's xprintf.c, by Richard Hipp */
 +/* This xprintf.c file on which this one is based is in public domain. */
@@ -5418,7 +5418,6 @@
 +#endif
 +
 +#ifdef F_sprintf
-+__attribute__((weak))
 +int sprintf (char *str, const char *format, ...)
 +{
 +	va_list args;
@@ -5444,7 +5443,6 @@
 +/* This structure is used to store state information about the
 +** write in progress
 +*/
-+__attribute__((weak))
 +struct sgMprintf {
 +  char *zBase;     /* A base allocation */
 +  char *zText;     /* The string collected so far */
@@ -5640,3 +5638,107 @@
 +	return vxprintf(__fout, stdout, format, args);
 +}
 +#endif
++
++#ifdef F__sprintf_r
++/* Idiotic kludge to get around newlib stupidity.  tmpnam() calls this
++   directly, but since sprintf() above replaces newlib's sprintf() (and
++   _sprintf_r()) we have to define this in order to link tmpnam(). */
++int _sprintf_r(struct _reent *unused, char *str, const char *format, ...)
++{
++	va_list args;
++	struct s_strargument arg;
++	int ret;
++
++	(void) unused;
++	arg.next = str;
++	arg.last = NULL;
++ 
++	va_start(args, format);
++	ret = vxprintf(__sout, &arg, format, args);
++	va_end(args);
++
++	return ret;
++}
++#endif
+--- newlib-1.13.0.orig/newlib/libc/time/Makefile.am	2002-04-17 14:23:31.000000000 -0700
++++ newlib-psp/newlib/libc/time/Makefile.am	2005-11-10 01:07:48.000000000 -0800
+@@ -22,7 +22,8 @@
+ 	time.c		\
+ 	tzlock.c	\
+ 	tzset.c		\
+-	tzset_r.c
++	tzset_r.c	\
++	tzvars.c
+ 
+ libtime_la_LDFLAGS = -Xcompiler -nostdlib
+ 
+--- newlib-1.13.0.orig/newlib/libc/time/Makefile.in	2004-01-27 15:26:26.000000000 -0800
++++ newlib-psp/newlib/libc/time/Makefile.in	2005-11-10 01:09:18.000000000 -0800
+@@ -110,7 +110,7 @@
+ 
+ INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
+ 
+-LIB_SOURCES =  	asctime.c		asctime_r.c		clock.c			ctime.c			ctime_r.c		difftime.c		gmtime.c		gmtime_r.c		lcltime.c		lcltime_r.c		mktime.c		mktm_r.c		strftime.c  		strptime.c		time.c			tzlock.c		tzset.c			tzset_r.c
++LIB_SOURCES =  	asctime.c		asctime_r.c		clock.c			ctime.c			ctime_r.c		difftime.c		gmtime.c		gmtime_r.c		lcltime.c		lcltime_r.c		mktime.c		mktm_r.c		strftime.c  		strptime.c		time.c			tzlock.c		tzset.c			tzset_r.c		tzvars.c
+ 
+ 
+ libtime_la_LDFLAGS = -Xcompiler -nostdlib
+@@ -148,7 +148,7 @@
+ @USE_LIBTOOL_FALSE@lcltime.$(OBJEXT) lcltime_r.$(OBJEXT) \
+ @USE_LIBTOOL_FALSE@mktime.$(OBJEXT) mktm_r.$(OBJEXT) strftime.$(OBJEXT) \
+ @USE_LIBTOOL_FALSE@strptime.$(OBJEXT) time.$(OBJEXT) tzlock.$(OBJEXT) \
+-@USE_LIBTOOL_FALSE@tzset.$(OBJEXT) tzset_r.$(OBJEXT)
++@USE_LIBTOOL_FALSE@tzset.$(OBJEXT) tzset_r.$(OBJEXT) tzvars.$(OBJEXT)
+ LTLIBRARIES =  $(noinst_LTLIBRARIES)
+ 
+ libtime_la_LIBADD = 
+@@ -156,7 +156,7 @@
+ @USE_LIBTOOL_TRUE@ctime.lo ctime_r.lo difftime.lo gmtime.lo gmtime_r.lo \
+ @USE_LIBTOOL_TRUE@lcltime.lo lcltime_r.lo mktime.lo mktm_r.lo \
+ @USE_LIBTOOL_TRUE@strftime.lo strptime.lo time.lo tzlock.lo tzset.lo \
+-@USE_LIBTOOL_TRUE@tzset_r.lo
++@USE_LIBTOOL_TRUE@tzset_r.lo tzvars.lo
+ CFLAGS = @CFLAGS@
+ COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+ LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+--- newlib-1.13.0.orig/newlib/libc/time/tzset_r.c	2004-12-09 13:36:48.000000000 -0800
++++ newlib-psp/newlib/libc/time/tzset_r.c	2005-11-10 01:06:04.000000000 -0800
+@@ -11,18 +11,6 @@
+ static char __tzname_dst[11];
+ static char *prev_tzenv = NULL;
+ 
+-/* default to GMT */
+-char *_tzname[2] = {"GMT" "GMT"};
+-int _daylight = 0;
+-time_t _timezone = (time_t)0;
+-
+-int __tzyear = 0;
+-
+-int __tznorth = 1;
+-
+-__tzrule_type __tzrule[2] = { {'J', 0, 0, 0, 0, (time_t)0, 0 }, 
+-			      {'J', 0, 0, 0, 0, (time_t)0, 0 } };
+-
+ _VOID
+ _DEFUN (_tzset_r, (reent_ptr),
+         struct _reent *reent_ptr)
+--- newlib-1.13.0.orig/newlib/libc/time/tzvars.c	1969-12-31 16:00:00.000000000 -0800
++++ newlib-psp/newlib/libc/time/tzvars.c	2005-11-10 01:05:54.000000000 -0800
+@@ -0,0 +1,17 @@
++/* Moved these variables from tzset_r.c to avoid including all of _tzset_r()
++   and the functions it uses. -- MRB (PSPDEV LOCAL) */
++
++#include <sys/time.h>
++#include "local.h"
++
++/* default to GMT */
++char *_tzname[2] = {"GMT" "GMT"};
++int _daylight = 0;
++time_t _timezone = (time_t)0;
++
++int __tzyear = 0;
++
++int __tznorth = 1;
++
++__tzrule_type __tzrule[2] = { {'J', 0, 0, 0, 0, (time_t)0, 0 }, 
++			      {'J', 0, 0, 0, 0, (time_t)0, 0 } };
