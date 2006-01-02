@@ -1,5 +1,6 @@
---- newlib-1.13.0.orig/config.sub	2004-11-15 17:18:39.000000000 -0800
-+++ newlib-psp/config.sub	2005-06-24 17:04:02.000000000 -0700
+diff -burN newlib-1.13.0/config.sub newlib-psp/config.sub
+--- newlib-1.13.0/config.sub	2004-11-16 01:18:39.000000000 +0000
++++ newlib-psp/config.sub	2005-12-31 00:12:26.000000000 +0000
 @@ -253,6 +253,7 @@
  	| mipsisa64sb1 | mipsisa64sb1el \
  	| mipsisa64sr71k | mipsisa64sr71kel \
@@ -27,8 +28,9 @@
  	mips3*-*)
  		basic_machine=`echo $basic_machine | sed -e 's/mips3/mips64/'`
  		;;
---- newlib-1.13.0.orig/configure	2004-12-16 11:51:28.000000000 -0800
-+++ newlib-psp/configure	2005-06-19 18:09:12.000000000 -0700
+diff -burN newlib-1.13.0/configure newlib-psp/configure
+--- newlib-1.13.0/configure	2004-12-16 19:51:28.000000000 +0000
++++ newlib-psp/configure	2005-12-31 00:12:26.000000000 +0000
 @@ -1507,6 +1507,9 @@
    mips*-*-linux*)
      noconfigdirs="$noconfigdirs target-newlib target-libgloss"
@@ -39,8 +41,9 @@
    mips*-*-*)
      noconfigdirs="$noconfigdirs gprof ${libgcj}"
      ;;
---- newlib-1.13.0.orig/configure.in	2004-12-16 11:51:28.000000000 -0800
-+++ newlib-psp/configure.in	2005-06-19 18:09:12.000000000 -0700
+diff -burN newlib-1.13.0/configure.in newlib-psp/configure.in
+--- newlib-1.13.0/configure.in	2004-12-16 19:51:28.000000000 +0000
++++ newlib-psp/configure.in	2005-12-31 00:12:26.000000000 +0000
 @@ -716,6 +716,9 @@
    mips*-*-linux*)
      noconfigdirs="$noconfigdirs target-newlib target-libgloss"
@@ -51,8 +54,9 @@
    mips*-*-*)
      noconfigdirs="$noconfigdirs gprof ${libgcj}"
      ;;
---- newlib-1.13.0.orig/newlib/configure.host	2004-10-05 12:44:24.000000000 -0700
-+++ newlib-psp/newlib/configure.host	2005-07-23 23:02:26.000000000 -0700
+diff -burN newlib-1.13.0/newlib/configure.host newlib-psp/newlib/configure.host
+--- newlib-1.13.0/newlib/configure.host	2004-10-05 20:44:24.000000000 +0100
++++ newlib-psp/newlib/configure.host	2005-12-31 00:12:26.000000000 +0000
 @@ -570,7 +570,14 @@
  	;;
    mips*-*-elf*)
@@ -62,15 +66,310 @@
 +	  mipsallegrex*-psp-*)
 +		sys_dir=psp
 +		syscall_dir=syscalls
-+		newlib_cflags="${newlib_cflags} -G0 -DPREFER_SIZE_OVER_SPEED -DCOMPACT_CTYPE -DCLOCK_PROVIDED -I${prefix}/psp/sdk/include" ;;
++		newlib_cflags="${newlib_cflags} -G0 -DCOMPACT_CTYPE -DCLOCK_PROVIDED -I${prefix}/psp/sdk/include" ;;
 +	  *)
 +		newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES" ;;
 +	esac
  	;;
    mmix-*)
  	syscall_dir=syscalls
---- newlib-1.13.0.orig/newlib/libc/include/machine/time.h	2000-12-04 11:06:37.000000000 -0800
-+++ newlib-psp/newlib/libc/include/machine/time.h	2005-10-24 17:37:47.000000000 -0700
+diff -burN newlib-1.13.0/newlib/libc/include/inttypes.h newlib-psp/newlib/libc/include/inttypes.h
+--- newlib-1.13.0/newlib/libc/include/inttypes.h	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/include/inttypes.h	2005-12-31 00:12:26.000000000 +0000
+@@ -0,0 +1,290 @@
++/*
++ * Copyright (c) 2004, 2005 by
++ * Ralf Corsepius, Ulm/Germany. All rights reserved.
++ *
++ * Permission to use, copy, modify, and distribute this software
++ * is freely granted, provided that this notice is preserved.
++ */
++
++/**
++ *  @file  inttypes.h
++ */
++
++#ifndef _INTTYPES_H
++#define _INTTYPES_H
++
++#include <stdint.h>
++#define __need_wchar_t
++#include <stddef.h>
++
++#define __STRINGIFY(a) #a
++
++/* 8-bit types */
++#define __PRI8(x) __STRINGIFY(x)
++#define __SCN8(x) __STRINGIFY(hh##x)
++
++
++#define PRId8		__PRI8(d)
++#define PRIi8		__PRI8(i)
++#define PRIo8		__PRI8(o)
++#define PRIu8		__PRI8(u)
++#define PRIx8		__PRI8(x)
++#define PRIX8		__PRI8(X)
++
++#define SCNd8		__SCN8(d)
++#define SCNi8		__SCN8(i)
++#define SCNo8		__SCN8(o)
++#define SCNu8		__SCN8(u)
++#define SCNx8		__SCN8(x)
++
++
++#define PRIdLEAST8	__PRI8(d)
++#define PRIiLEAST8	__PRI8(i)
++#define PRIoLEAST8	__PRI8(o)
++#define PRIuLEAST8	__PRI8(u)
++#define PRIxLEAST8	__PRI8(x)
++#define PRIXLEAST8	__PRI8(X)
++
++#define SCNdLEAST8	__SCN8(d)
++#define SCNiLEAST8	__SCN8(i)
++#define SCNoLEAST8	__SCN8(o)
++#define SCNuLEAST8	__SCN8(u)
++#define SCNxLEAST8	__SCN8(x)
++
++
++#define PRIdFAST8	__PRI8(d)
++#define PRIiFAST8	__PRI8(i)
++#define PRIoFAST8	__PRI8(o)
++#define PRIuFAST8	__PRI8(u)
++#define PRIxFAST8	__PRI8(x)
++#define PRIXFAST8	__PRI8(X)
++
++#define SCNdFAST8	__SCN8(d)
++#define SCNiFAST8	__SCN8(i)
++#define SCNoFAST8	__SCN8(o)
++#define SCNuFAST8	__SCN8(u)
++#define SCNxFAST8	__SCN8(x)
++
++/* 16-bit types */
++#define __PRI16(x) __STRINGIFY(x)
++#define __SCN16(x) __STRINGIFY(h##x)
++
++
++#define PRId16		__PRI16(d)
++#define PRIi16		__PRI16(i)
++#define PRIo16		__PRI16(o)
++#define PRIu16		__PRI16(u)
++#define PRIx16		__PRI16(x)
++#define PRIX16		__PRI16(X)
++
++#define SCNd16		__SCN16(d)
++#define SCNi16		__SCN16(i)
++#define SCNo16		__SCN16(o)
++#define SCNu16		__SCN16(u)
++#define SCNx16		__SCN16(x)
++
++
++#define PRIdLEAST16	__PRI16(d)
++#define PRIiLEAST16	__PRI16(i)
++#define PRIoLEAST16	__PRI16(o)
++#define PRIuLEAST16	__PRI16(u)
++#define PRIxLEAST16	__PRI16(x)
++#define PRIXLEAST16	__PRI16(X)
++
++#define SCNdLEAST16	__SCN16(d)
++#define SCNiLEAST16	__SCN16(i)
++#define SCNoLEAST16	__SCN16(o)
++#define SCNuLEAST16	__SCN16(u)
++#define SCNxLEAST16	__SCN16(x)
++
++
++#define PRIdFAST16	__PRI16(d)
++#define PRIiFAST16	__PRI16(i)
++#define PRIoFAST16	__PRI16(o)
++#define PRIuFAST16	__PRI16(u)
++#define PRIxFAST16	__PRI16(x)
++#define PRIXFAST16	__PRI16(X)
++
++#define SCNdFAST16	__SCN16(d)
++#define SCNiFAST16	__SCN16(i)
++#define SCNoFAST16	__SCN16(o)
++#define SCNuFAST16	__SCN16(u)
++#define SCNxFAST16	__SCN16(x)
++
++/* 32-bit types */
++#if defined(__have_long32)
++#define __PRI32(x) __STRINGIFY(l##x)
++#define __SCN32(x) __STRINGIFY(l##x)
++#else
++#define __PRI32(x) __STRINGIFY(x)
++#define __SCN32(x) __STRINGIFY(x)
++#endif
++
++#define PRId32		__PRI32(d)
++#define PRIi32		__PRI32(i)
++#define PRIo32		__PRI32(o)
++#define PRIu32		__PRI32(u)
++#define PRIx32		__PRI32(x)
++#define PRIX32		__PRI32(X)
++
++#define SCNd32		__SCN32(d)
++#define SCNi32		__SCN32(i)
++#define SCNo32		__SCN32(o)
++#define SCNu32		__SCN32(u)
++#define SCNx32		__SCN32(x)
++
++
++#define PRIdLEAST32	__PRI32(d)
++#define PRIiLEAST32	__PRI32(i)
++#define PRIoLEAST32	__PRI32(o)
++#define PRIuLEAST32	__PRI32(u)
++#define PRIxLEAST32	__PRI32(x)
++#define PRIXLEAST32	__PRI32(X)
++
++#define SCNdLEAST32	__SCN32(d)
++#define SCNiLEAST32	__SCN32(i)
++#define SCNoLEAST32	__SCN32(o)
++#define SCNuLEAST32	__SCN32(u)
++#define SCNxLEAST32	__SCN32(x)
++
++
++#define PRIdFAST32	__PRI32(d)
++#define PRIiFAST32	__PRI32(i)
++#define PRIoFAST32	__PRI32(o)
++#define PRIuFAST32	__PRI32(u)
++#define PRIxFAST32	__PRI32(x)
++#define PRIXFAST32	__PRI32(X)
++
++#define SCNdFAST32	__SCN32(d)
++#define SCNiFAST32	__SCN32(i)
++#define SCNoFAST32	__SCN32(o)
++#define SCNuFAST32	__SCN32(u)
++#define SCNxFAST32	__SCN32(x)
++
++
++/* 64-bit types */
++#if defined(__have_longlong64)
++#define __PRI64(x) __STRINGIFY(ll##x)
++#define __SCN64(x) __STRINGIFY(ll##x)
++#elif defined(__have_long64)
++#define __PRI64(x) __STRINGIFY(l##x)
++#define __SCN64(x) __STRINGIFY(l##x)
++#else
++#define __PRI64(x) __STRINGIFY(x)
++#define __SCN64(x) __STRINGIFY(x)
++#endif
++
++#define PRId64		__PRI64(d)
++#define PRIi64		__PRI64(i)
++#define PRIo64		__PRI64(o)
++#define PRIu64		__PRI64(u)
++#define PRIx64		__PRI64(x)
++#define PRIX64		__PRI64(X)
++
++#define SCNd64		__SCN64(d)
++#define SCNi64		__SCN64(i)
++#define SCNo64		__SCN64(o)
++#define SCNu64		__SCN64(u)
++#define SCNx64		__SCN64(x)
++
++#if __int64_t_defined
++#define PRIdLEAST64	__PRI64(d)
++#define PRIiLEAST64	__PRI64(i)
++#define PRIoLEAST64	__PRI64(o)
++#define PRIuLEAST64	__PRI64(u)
++#define PRIxLEAST64	__PRI64(x)
++#define PRIXLEAST64	__PRI64(X)
++
++#define SCNdLEAST64	__SCN64(d)
++#define SCNiLEAST64	__SCN64(i)
++#define SCNoLEAST64	__SCN64(o)
++#define SCNuLEAST64	__SCN64(u)
++#define SCNxLEAST64	__SCN64(x)
++
++
++#define PRIdFAST64	__PRI64(d)
++#define PRIiFAST64	__PRI64(i)
++#define PRIoFAST64	__PRI64(o)
++#define PRIuFAST64	__PRI64(u)
++#define PRIxFAST64	__PRI64(x)
++#define PRIXFAST64	__PRI64(X)
++
++#define SCNdFAST64	__SCN64(d)
++#define SCNiFAST64	__SCN64(i)
++#define SCNoFAST64	__SCN64(o)
++#define SCNuFAST64	__SCN64(u)
++#define SCNxFAST64	__SCN64(x)
++#endif
++
++/* max-bit types */
++#if defined(__have_longlong64)
++#define __PRIMAX(x) __STRINGIFY(ll##x)
++#define __SCNMAX(x) __STRINGIFY(ll##x)
++#elif defined(__have_long64)
++#define __PRIMAX(x) __STRINGIFY(l##x)
++#define __SCNMAX(x) __STRINGIFY(l##x)
++#else
++#define __PRIMAX(x) __STRINGIFY(x)
++#define __SCNMAX(x) __STRINGIFY(x)
++#endif
++
++#define PRIdMAX		__PRIMAX(d)
++#define PRIiMAX		__PRIMAX(i)
++#define PRIoMAX		__PRIMAX(o)
++#define PRIuMAX		__PRIMAX(u)
++#define PRIxMAX		__PRIMAX(x)
++#define PRIXMAX		__PRIMAX(X)
++
++#define SCNdMAX		__SCNMAX(d)
++#define SCNiMAX		__SCNMAX(i)
++#define SCNoMAX		__SCNMAX(o)
++#define SCNuMAX		__SCNMAX(u)
++#define SCNxMAX		__SCNMAX(x)
++
++/* ptr types */
++#if defined(__have_longlong64)
++#define __PRIPTR(x) __STRINGIFY(ll##x)
++#define __SCNPTR(x) __STRINGIFY(ll##x)
++#elif defined(__have_long64)
++#define __PRIPTR(x) __STRINGIFY(l##x)
++#define __SCNPTR(x) __STRINGIFY(l##x)
++#else
++#define __PRIPTR(x) __STRINGIFY(x)
++#define __SCNPTR(x) __STRINGIFY(x)
++#endif
++
++#define PRIdPTR		__PRIPTR(d)
++#define PRIiPTR		__PRIPTR(i)
++#define PRIoPTR		__PRIPTR(o)
++#define PRIuPTR		__PRIPTR(u)
++#define PRIxPTR		__PRIPTR(x)
++#define PRIXPTR		__PRIPTR(X)
++
++#define SCNdPTR		__SCNPTR(d)
++#define SCNiPTR		__SCNPTR(i)
++#define SCNoPTR		__SCNPTR(o)
++#define SCNuPTR		__SCNPTR(u)
++#define SCNxPTR		__SCNPTR(x)
++
++
++typedef struct {
++  intmax_t	quot;
++  intmax_t	rem;
++} imaxdiv_t;
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++extern intmax_t  imaxabs(intmax_t j);
++extern imaxdiv_t imaxdiv(intmax_t numer, intmax_t denomer);
++extern intmax_t  strtoimax(const char *__restrict, char **__restrict, int);
++extern uintmax_t strtoumax(const char *__restrict, char **__restrict, int);
++extern intmax_t  wcstoimax(const wchar_t *__restrict, wchar_t **__restrict, int);
++extern uintmax_t wcstoumax(const wchar_t *__restrict, wchar_t **__restrict, int);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif
+diff -burN newlib-1.13.0/newlib/libc/include/machine/time.h newlib-psp/newlib/libc/include/machine/time.h
+--- newlib-1.13.0/newlib/libc/include/machine/time.h	2000-12-04 19:06:37.000000000 +0000
++++ newlib-psp/newlib/libc/include/machine/time.h	2005-12-31 00:12:26.000000000 +0000
 @@ -9,6 +9,10 @@
  #endif
  #endif /* !__rtems__ */
@@ -82,8 +381,414 @@
  #endif	/* _MACHTIME_H_ */
  
  
---- newlib-1.13.0.orig/newlib/libc/include/sys/config.h	2004-06-22 14:54:51.000000000 -0700
-+++ newlib-psp/newlib/libc/include/sys/config.h	2005-08-15 14:11:50.000000000 -0700
+diff -burN newlib-1.13.0/newlib/libc/include/stdint.h newlib-psp/newlib/libc/include/stdint.h
+--- newlib-1.13.0/newlib/libc/include/stdint.h	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/include/stdint.h	2005-12-31 00:12:26.000000000 +0000
+@@ -0,0 +1,401 @@
++/*
++ * Copyright (c) 2004, 2005 by
++ * Ralf Corsepius, Ulm/Germany. All rights reserved.
++ *
++ * Permission to use, copy, modify, and distribute this software
++ * is freely granted, provided that this notice is preserved.
++ */
++
++/*
++ * @todo - Add support for wint_t types.
++ */
++
++#ifndef _STDINT_H
++#define _STDINT_H
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#if defined(__GNUC__) && \
++  ( (__GNUC__ >= 4) || \
++    ( (__GNUC__ >= 3) && defined(__GNUC_MINOR__) && (__GNUC_MINOR__ > 2) ) )
++/* gcc > 3.2 implicitly defines the values we are interested */
++#define __STDINT_EXP(x) __##x##__
++#else
++#define __STDINT_EXP(x) x
++#include <limits.h>
++#endif
++
++/* Check if "long long" is 64bit wide */
++/* Modern GCCs provide __LONG_LONG_MAX__, SUSv3 wants LLONG_MAX */
++#if ( defined(__LONG_LONG_MAX__) && (__LONG_LONG_MAX__ > 0x7fffffff) ) \
++  || ( defined(LLONG_MAX) && (LLONG_MAX > 0x7fffffff) )
++#define __have_longlong64 1
++#endif
++
++/* Check if "long" is 64bit or 32bit wide */
++#if __STDINT_EXP(LONG_MAX) > 0x7fffffff
++#define __have_long64 1
++#elif __STDINT_EXP(LONG_MAX) == 0x7fffffff
++#define __have_long32 1
++#endif
++
++#if __STDINT_EXP(SCHAR_MAX) == 0x7f
++typedef signed char int8_t ;
++typedef unsigned char uint8_t ;
++#define __int8_t_defined 1
++#endif
++
++#if __int8_t_defined
++typedef signed char int_least8_t;
++typedef unsigned char uint_least8_t;
++#define __int_least8_t_defined 1
++#endif
++
++#if __STDINT_EXP(SHRT_MAX) == 0x7fff
++typedef signed short int16_t;
++typedef unsigned short uint16_t;
++#define __int16_t_defined 1
++#elif __STDINT_EXP(INT_MAX) == 0x7fff
++typedef signed int int16_t;
++typedef unsigned int uint16_t;
++#define __int16_t_defined 1
++#elif __STDINT_EXP(SCHAR_MAX) == 0x7fff
++typedef signed char int16_t;
++typedef unsigned char uint16_t;
++#define __int16_t_defined 1
++#endif
++
++#if __int16_t_defined
++typedef int16_t   	int_least16_t;
++typedef uint16_t 	uint_least16_t;
++#define __int_least16_t_defined 1
++
++#if !__int_least8_t_defined
++typedef int16_t	   	int_least8_t;
++typedef uint16_t  	uint_least8_t;
++#define __int_least8_t_defined 1
++#endif
++#endif
++
++#if __STDINT_EXP(INT_MAX) == 0x7fffffffL
++typedef signed int int32_t;
++typedef unsigned int uint32_t;
++#define __int32_t_defined 1
++#elif __STDINT_EXP(LONG_MAX) == 0x7fffffffL
++typedef signed long int32_t;
++typedef unsigned long uint32_t;
++#define __int32_t_defined 1
++#elif __STDINT_EXP(SHRT_MAX) == 0x7fffffffL
++typedef signed short int32_t;
++typedef unsigned short uint32_t;
++#define __int32_t_defined 1
++#elif __STDINT_EXP(SCHAR_MAX) == 0x7fffffffL
++typedef signed char int32_t;
++typedef unsigned char uint32_t;
++#define __int32_t_defined 1
++#endif
++
++#if __int32_t_defined
++typedef int32_t   	int_least32_t;
++typedef uint32_t 	uint_least32_t;
++#define __int_least32_t_defined 1
++
++#if !__int_least8_t_defined
++typedef int32_t	   	int_least8_t;
++typedef uint32_t  	uint_least8_t;
++#define __int_least8_t_defined 1
++#endif
++
++#if !__int_least16_t_defined
++typedef int32_t	   	int_least16_t;
++typedef uint32_t  	uint_least16_t;
++#define __int_least16_t_defined 1
++#endif
++#endif
++
++#if __have_long64
++typedef signed long int64_t;
++typedef unsigned long uint64_t;
++#define __int64_t_defined 1
++#elif __have_longlong64
++typedef signed long long int64_t;
++typedef unsigned long long uint64_t;
++#define __int64_t_defined 1
++#elif  __STDINT_EXP(INT_MAX) > 0x7fffffff
++typedef signed int int64_t;
++typedef unsigned int uint64_t;
++#define __int64_t_defined 1
++#endif
++
++#if __int64_t_defined
++typedef int64_t   	int_least64_t;
++typedef uint64_t 	uint_least64_t;
++#define __int_least64_t_defined 1
++
++#if !__int_least8_t_defined
++typedef int64_t	   	int_least8_t;
++typedef uint64_t  	uint_least8_t;
++#define __int_least8_t_defined 1
++#endif
++
++#if !__int_least16_t_defined
++typedef int64_t	   	int_least16_t;
++typedef uint64_t  	uint_least16_t;
++#define __int_least16_t_defined 1
++#endif
++
++#if !__int_least32_t_defined
++typedef int64_t	   	int_least32_t;
++typedef uint64_t  	uint_least32_t;
++#define __int_least32_t_defined 1
++#endif
++#endif
++
++/*
++ * Fastest minimum-width integer types
++ *
++ * Assume int to be the fastest type for all types with a width 
++ * less than __INT_MAX__ rsp. INT_MAX
++ */
++#if __STDINT_EXP(INT_MAX) >= 0x7f
++  typedef signed int int_fast8_t;
++  typedef unsigned int uint_fast8_t;
++#define __int_fast8_t_defined 1
++#endif
++
++#if __STDINT_EXP(INT_MAX) >= 0x7fff
++  typedef signed int int_fast16_t;
++  typedef unsigned int uint_fast16_t;
++#define __int_fast16_t_defined 1
++#endif
++
++#if __STDINT_EXP(INT_MAX) >= 0x7fffffff
++  typedef signed int int_fast32_t;
++  typedef unsigned int uint_fast32_t;
++#define __int_fast32_t_defined 1
++#endif
++
++#if __STDINT_EXP(INT_MAX) > 0x7fffffff
++  typedef signed int int_fast64_t;
++  typedef unsigned int uint_fast64_t;
++#define __int_fast64_t_defined 1
++#endif
++
++/*
++ * Fall back to [u]int_least<N>_t for [u]int_fast<N>_t types
++ * not having been defined, yet.
++ * Leave undefined, if [u]int_least<N>_t should not be available.
++ */
++#if !__int_fast8_t_defined
++#if __int_least8_t_defined
++  typedef int_least8_t int_fast8_t;
++  typedef uint_least8_t uint_fast8_t;
++#define __int_fast8_t_defined 1
++#endif
++#endif
++
++#if !__int_fast16_t_defined
++#if __int_least16_t_defined
++  typedef int_least16_t int_fast16_t;
++  typedef uint_least16_t uint_fast16_t;
++#define __int_fast16_t_defined 1
++#endif
++#endif
++
++#if !__int_fast32_t_defined
++#if __int_least32_t_defined
++  typedef int_least32_t int_fast32_t;
++  typedef uint_least32_t uint_fast32_t;
++#define __int_fast32_t_defined 1
++#endif
++#endif
++
++#if !__int_fast64_t_defined
++#if __int_least64_t_defined
++  typedef int_least64_t int_fast64_t;
++  typedef uint_least64_t uint_fast64_t;
++#define __int_fast64_t_defined 1
++#endif
++#endif
++
++/* Greatest-width integer types */
++/* Modern GCCs provide __INTMAX_TYPE__ */
++#if defined(__INTMAX_TYPE__)
++  typedef __INTMAX_TYPE__ intmax_t;
++#elif __have_longlong64
++  typedef signed long long intmax_t;
++#else
++  typedef signed long intmax_t;
++#endif
++
++/* Modern GCCs provide __UINTMAX_TYPE__ */
++#if defined(__UINTMAX_TYPE__)
++  typedef __UINTMAX_TYPE__ uintmax_t;
++#elif __have_longlong64
++  typedef unsigned long long uintmax_t;
++#else
++  typedef unsigned long uintmax_t;
++#endif
++
++/*
++ * GCC doesn't provide an appropriate macro for [u]intptr_t
++ * For now, use __PTRDIFF_TYPE__
++ */
++#if defined(__PTRDIFF_TYPE__)
++typedef signed __PTRDIFF_TYPE__ intptr_t;
++typedef unsigned __PTRDIFF_TYPE__ uintptr_t;
++#else
++/*
++ * Fallback to hardcoded values, 
++ * should be valid on cpu's with 32bit int/32bit void*
++ */
++typedef signed long intptr_t;
++typedef unsigned long uintptr_t;
++#endif
++
++/* Limits of Specified-Width Integer Types */
++
++#if __int8_t_defined
++#define INT8_MIN 	-128
++#define INT8_MAX 	 127
++#define UINT8_MAX 	 255
++#endif
++
++#if __int_least8_t_defined
++#define INT_LEAST8_MIN 	-128
++#define INT_LEAST8_MAX 	 127
++#define UINT_LEAST8_MAX	 255
++#else
++#error required type int_least8_t missing
++#endif
++
++#if __int16_t_defined
++#define INT16_MIN 	-32768
++#define INT16_MAX 	 32767
++#define UINT16_MAX 	 65535
++#endif
++
++#if __int_least16_t_defined
++#define INT_LEAST16_MIN	-32768
++#define INT_LEAST16_MAX	 32767
++#define UINT_LEAST16_MAX 65535
++#else
++#error required type int_least16_t missing
++#endif
++
++#if __int32_t_defined
++#define INT32_MIN 	 (-2147483647-1)
++#define INT32_MAX 	 2147483647
++#define UINT32_MAX       4294967295U
++#endif
++
++#if __int_least32_t_defined
++#define INT_LEAST32_MIN  (-2147483647-1)
++#define INT_LEAST32_MAX  2147483647
++#define UINT_LEAST32_MAX 4294967295U
++#else
++#error required type int_least32_t missing
++#endif
++
++#if __int64_t_defined
++#if __have_long64
++#define INT64_MIN 	(-9223372036854775807L-1L)
++#define INT64_MAX 	 9223372036854775807L
++#define UINT64_MAX 	18446744073709551615U
++#elif __have_longlong64
++#define INT64_MIN 	(-9223372036854775807LL-1LL)
++#define INT64_MAX 	 9223372036854775807LL
++#define UINT64_MAX 	18446744073709551615ULL
++#endif
++#endif
++
++#if __int_least64_t_defined
++#if __have_long64
++#define INT_LEAST64_MIN  (-9223372036854775807L-1L)
++#define INT_LEAST64_MAX  9223372036854775807L
++#define UINT_LEAST64_MAX 18446744073709551615U
++#elif __have_longlong64
++#define INT_LEAST64_MIN  (-9223372036854775807LL-1LL)
++#define INT_LEAST64_MAX  9223372036854775807LL
++#define UINT_LEAST64_MAX 18446744073709551615ULL
++#endif
++#endif
++
++#if __int_fast8_t_defined
++#define INT_FAST8_MIN	INT8_MIN
++#define INT_FAST8_MAX	INT8_MAX
++#define UINT_FAST8_MAX	UINT8_MAX
++#endif
++
++#if __int_fast16_t_defined
++#define INT_FAST16_MIN	INT16_MIN
++#define INT_FAST16_MAX	INT16_MAX
++#define UINT_FAST16_MAX	UINT16_MAX
++#endif
++
++#if __int_fast32_t_defined
++#define INT_FAST32_MIN	INT32_MIN
++#define INT_FAST32_MAX	INT32_MAX
++#define UINT_FAST32_MAX	UINT32_MAX
++#endif
++
++#if __int_fast64_t_defined
++#define INT_FAST64_MIN	INT64_MIN
++#define INT_FAST64_MAX	INT64_MAX
++#define UINT_FAST64_MAX	UINT64_MAX
++#endif
++
++/* This must match size_t in stddef.h, currently long unsigned int */
++#define SIZE_MIN (-__STDINT_EXP(LONG_MAX) - 1L)
++#define SIZE_MAX __STDINT_EXP(LONG_MAX)
++
++/* This must match sig_atomic_t in <signal.h> (currently int) */
++#define SIG_ATOMIC_MIN (-__STDINT_EXP(INT_MAX) - 1)
++#define SIG_ATOMIC_MAX __STDINT_EXP(INT_MAX)
++
++/* This must match ptrdiff_t  in <stddef.h> (currently long int) */
++#define PTRDIFF_MIN (-__STDINT_EXP(LONG_MAX) - 1L)
++#define PTRDIFF_MAX __STDINT_EXP(LONG_MAX)
++
++/** Macros for minimum-width integer constant expressions */
++#define INT8_C(x)	x
++#define UINT8_C(x)	x##U
++
++#define INT16_C(x)	x
++#define UINT16_C(x)	x##U
++
++#if __have_long32
++#define INT32_C(x)	x##L
++#define UINT32_C(x)	x##UL
++#else
++#define INT32_C(x)	x
++#define UINT32_C(x)	x##U
++#endif
++
++#if __int64_t_defined
++#if __have_longlong64
++#define INT64_C(x)	x##LL
++#define UINT64_C(x)	x##ULL
++#else
++#define INT64_C(x)	x##L
++#define UINT64_C(x)	x##UL
++#endif
++#endif
++
++/** Macros for greatest-width integer constant expression */
++#if __have_longlong64
++#define INTMAX_C(x)	x##LL
++#define UINTMAX_C(x)	x##ULL
++#else
++#define INTMAX_C(x)	x##L
++#define UINTMAX_C(x)	x##UL
++#endif
++
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _STDINT_H */
+diff -burN newlib-1.13.0/newlib/libc/include/sys/config.h newlib-psp/newlib/libc/include/sys/config.h
+--- newlib-1.13.0/newlib/libc/include/sys/config.h	2004-06-22 22:54:51.000000000 +0100
++++ newlib-psp/newlib/libc/include/sys/config.h	2005-12-31 00:12:26.000000000 +0000
 @@ -94,6 +94,12 @@
  #endif
  #endif
@@ -97,416 +802,65 @@
  #ifdef __xstormy16__
  #define __SMALL_BITFIELDS
  #undef INT_MAX
---- newlib-1.13.0.orig/newlib/libc/sys/psp/Makefile.am	1969-12-31 16:00:00.000000000 -0800
-+++ newlib-psp/newlib/libc/sys/psp/Makefile.am	2005-11-04 01:32:44.000000000 -0800
-@@ -0,0 +1,31 @@
-+## Process this file with automake to generate Makefile.in
-+
-+AUTOMAKE_OPTIONS = cygnus
-+
-+INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
-+
-+noinst_LIBRARIES = lib.a
-+
-+LIBCGLUE_MULT_OBJS = _close.o _exit.o _fork.o _fstat.o _getpid.o	\
-+                     _gettimeofday.o _kill.o _lseek.o _open.o _read.o	\
-+                     _sbrk.o _wait.o _write.o clock.o isatty.o time.o	\
-+                     _link.o _unlink.o sleep.o opendir.o readdir.o	\
-+                     closedir.o getcwd.o chdir.o mkdir.o rmdir.o	\
-+                     realpath.o _stat.o truncate.o access.o tzset.o	\
-+                     __psp_set_errno.o	
-+
-+XPRINTF_MULT_OBJS = vxprintf.o _xprintf.o __sout.o vsnprintf.o snprintf.o vsprintf.o sprintf.o __mout.o mprintf.o vmprintf.o asprintf.o vasprintf.o __fout.o fprintf.o vfprintf.o printf.o vprintf.o _sprintf_r.o
-+
-+lib_a_SOURCES = libcglue.c pspcwd.c xprintf.c
-+lib_a_LIBADD  = $(LIBCGLUE_MULT_OBJS) $(XPRINTF_MULT_OBJS)
-+
-+all: crt0.o
-+
-+$(LIBCGLUE_MULT_OBJS): libcglue.c
-+	$(COMPILE) -DF_$* $< -c -o $@
-+
-+$(XPRINTF_MULT_OBJS): xprintf.c
-+	$(COMPILE) -DF_$* $< -c -o $@
-+
-+ACLOCAL_AMFLAGS = -I ../../..
-+CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host
---- newlib-1.13.0.orig/newlib/libc/sys/psp/Makefile.in	1969-12-31 16:00:00.000000000 -0800
-+++ newlib-psp/newlib/libc/sys/psp/Makefile.in	2005-11-04 01:45:35.000000000 -0800
-@@ -0,0 +1,352 @@
-+# Makefile.in generated automatically by automake 1.4-p6 from Makefile.am
-+
-+# Copyright (C) 1994, 1995-8, 1999, 2001 Free Software Foundation, Inc.
-+# This Makefile.in is free software; the Free Software Foundation
-+# gives unlimited permission to copy and/or distribute it,
-+# with or without modifications, as long as this notice is preserved.
-+
-+# This program is distributed in the hope that it will be useful,
-+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
-+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-+# PARTICULAR PURPOSE.
-+
-+
-+SHELL = @SHELL@
-+
-+srcdir = @srcdir@
-+top_srcdir = @top_srcdir@
-+VPATH = @srcdir@
-+prefix = @prefix@
-+exec_prefix = @exec_prefix@
-+
-+bindir = @bindir@
-+sbindir = @sbindir@
-+libexecdir = @libexecdir@
-+datadir = @datadir@
-+sysconfdir = @sysconfdir@
-+sharedstatedir = @sharedstatedir@
-+localstatedir = @localstatedir@
-+libdir = @libdir@
-+infodir = @infodir@
-+mandir = @mandir@
-+includedir = @includedir@
-+oldincludedir = /usr/include
-+
-+DESTDIR =
-+
-+pkgdatadir = $(datadir)/@PACKAGE@
-+pkglibdir = $(libdir)/@PACKAGE@
-+pkgincludedir = $(includedir)/@PACKAGE@
-+
-+top_builddir = .
-+
-+ACLOCAL = @ACLOCAL@
-+AUTOCONF = @AUTOCONF@
-+AUTOMAKE = @AUTOMAKE@
-+AUTOHEADER = @AUTOHEADER@
-+
-+INSTALL = @INSTALL@
-+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
-+INSTALL_DATA = @INSTALL_DATA@
-+INSTALL_SCRIPT = @INSTALL_SCRIPT@
-+transform = @program_transform_name@
-+
-+NORMAL_INSTALL = :
-+PRE_INSTALL = :
-+POST_INSTALL = :
-+NORMAL_UNINSTALL = :
-+PRE_UNINSTALL = :
-+POST_UNINSTALL = :
-+build_alias = @build_alias@
-+build_triplet = @build@
-+host_alias = @host_alias@
-+host_triplet = @host@
-+target_alias = @target_alias@
-+target_triplet = @target@
-+AR = @AR@
-+AS = @AS@
-+CC = @CC@
-+CPP = @CPP@
-+EXEEXT = @EXEEXT@
-+HAVE_LIB = @HAVE_LIB@
-+LDFLAGS = @LDFLAGS@
-+LIB = @LIB@
-+LTLIB = @LTLIB@
-+MAINT = @MAINT@
-+MAKEINFO = @MAKEINFO@
-+NEWLIB_CFLAGS = @NEWLIB_CFLAGS@
-+OBJEXT = @OBJEXT@
-+PACKAGE = @PACKAGE@
-+RANLIB = @RANLIB@
-+VERSION = @VERSION@
-+aext = @aext@
-+libm_machine_dir = @libm_machine_dir@
-+machine_dir = @machine_dir@
-+newlib_basedir = @newlib_basedir@
-+oext = @oext@
-+sys_dir = @sys_dir@
-+
-+AUTOMAKE_OPTIONS = cygnus
-+
-+INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
-+
-+noinst_LIBRARIES = lib.a
-+
-+LIBCGLUE_MULT_OBJS = _close.o _exit.o _fork.o _fstat.o _getpid.o	                     _gettimeofday.o _kill.o _lseek.o _open.o _read.o	                     _sbrk.o _wait.o _write.o clock.o isatty.o time.o	                     _link.o _unlink.o sleep.o opendir.o readdir.o	                     closedir.o getcwd.o chdir.o mkdir.o rmdir.o	                     realpath.o _stat.o truncate.o access.o tzset.o	                     __psp_set_errno.o	
-+
-+
-+XPRINTF_MULT_OBJS = vxprintf.o _xprintf.o __sout.o vsnprintf.o snprintf.o vsprintf.o sprintf.o __mout.o mprintf.o vmprintf.o asprintf.o vasprintf.o __fout.o fprintf.o vfprintf.o printf.o vprintf.o _sprintf_r.o
-+
-+lib_a_SOURCES = libcglue.c pspcwd.c xprintf.c
-+lib_a_LIBADD = $(LIBCGLUE_MULT_OBJS) $(XPRINTF_MULT_OBJS)
-+
-+ACLOCAL_AMFLAGS = -I ../../..
-+CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host
-+ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-+mkinstalldirs = $(SHELL) $(top_srcdir)/../../../../mkinstalldirs
-+CONFIG_CLEAN_FILES = 
-+LIBRARIES =  $(noinst_LIBRARIES)
-+
-+
-+DEFS = @DEFS@ -I. -I$(srcdir) 
-+CPPFLAGS = @CPPFLAGS@
-+LIBS = @LIBS@
-+lib_a_DEPENDENCIES =  _close.o _exit.o _fork.o _fstat.o _getpid.o \
-+_gettimeofday.o _kill.o _lseek.o _open.o _read.o _sbrk.o _wait.o \
-+_write.o clock.o isatty.o time.o _link.o _unlink.o sleep.o opendir.o \
-+readdir.o closedir.o getcwd.o chdir.o mkdir.o rmdir.o realpath.o \
-+_stat.o truncate.o access.o __psp_set_errno.o vxprintf.o _xprintf.o \
-+__sout.o vsnprintf.o snprintf.o vsprintf.o sprintf.o __mout.o \
-+mprintf.o vmprintf.o asprintf.o vasprintf.o __fout.o fprintf.o \
-+vfprintf.o printf.o vprintf.o _sprintf_r.o tzset.o
-+lib_a_OBJECTS =  libcglue.o pspcwd.o xprintf.o
-+CFLAGS = @CFLAGS@
-+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-+CCLD = $(CC)
-+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
-+DIST_COMMON =  README Makefile.am Makefile.in aclocal.m4 configure \
-+configure.in
-+
-+
-+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
-+
-+TAR = tar
-+GZIP_ENV = --best
-+SOURCES = $(lib_a_SOURCES)
-+OBJECTS = $(lib_a_OBJECTS)
-+
-+all: all-redirect
-+.SUFFIXES:
-+.SUFFIXES: .S .c .o .s
-+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-+	cd $(top_srcdir) && $(AUTOMAKE) --cygnus Makefile
-+
-+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
-+	cd $(top_builddir) \
-+	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
-+
-+$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ configure.in  \
-+		../../../acinclude.m4 ../../../aclocal.m4 \
-+		../../../libtool.m4
-+	cd $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
-+
-+config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
-+	$(SHELL) ./config.status --recheck
-+$(srcdir)/configure: @MAINTAINER_MODE_TRUE@$(srcdir)/configure.in $(ACLOCAL_M4) $(CONFIGURE_DEPENDENCIES)
-+	cd $(srcdir) && $(AUTOCONF)
-+
-+mostlyclean-noinstLIBRARIES:
-+
-+clean-noinstLIBRARIES:
-+	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-+
-+distclean-noinstLIBRARIES:
-+
-+maintainer-clean-noinstLIBRARIES:
-+
-+.c.o:
-+	$(COMPILE) -c $<
-+
-+.s.o:
-+	$(COMPILE) -c $<
-+
-+.S.o:
-+	$(COMPILE) -c $<
-+
-+mostlyclean-compile:
-+	-rm -f *.o core *.core
-+
-+clean-compile:
-+
-+distclean-compile:
-+	-rm -f *.tab.c
-+
-+maintainer-clean-compile:
-+
-+lib.a: $(lib_a_OBJECTS) $(lib_a_DEPENDENCIES)
-+	-rm -f lib.a
-+	$(AR) cru lib.a $(lib_a_OBJECTS) $(lib_a_LIBADD)
-+	$(RANLIB) lib.a
-+
-+tags: TAGS
-+
-+ID: $(HEADERS) $(SOURCES) $(LISP)
-+	list='$(SOURCES) $(HEADERS)'; \
-+	unique=`for i in $$list; do echo $$i; done | \
-+	  awk '    { files[$$0] = 1; } \
-+	       END { for (i in files) print i; }'`; \
-+	here=`pwd` && cd $(srcdir) \
-+	  && mkid -f$$here/ID $$unique $(LISP)
-+
-+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
-+	tags=; \
-+	here=`pwd`; \
-+	list='$(SOURCES) $(HEADERS)'; \
-+	unique=`for i in $$list; do echo $$i; done | \
-+	  awk '    { files[$$0] = 1; } \
-+	       END { for (i in files) print i; }'`; \
-+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
-+	  || (cd $(srcdir) && etags -o $$here/TAGS $(ETAGS_ARGS) $$tags  $$unique $(LISP))
-+
-+mostlyclean-tags:
-+
-+clean-tags:
-+
-+distclean-tags:
-+	-rm -f TAGS ID
-+
-+maintainer-clean-tags:
-+
-+distdir = $(PACKAGE)-$(VERSION)
-+top_distdir = $(distdir)
-+
-+# This target untars the dist file and tries a VPATH configuration.  Then
-+# it guarantees that the distribution is self-contained by making another
-+# tarfile.
-+distcheck: dist
-+	-rm -rf $(distdir)
-+	GZIP=$(GZIP_ENV) $(TAR) zxf $(distdir).tar.gz
-+	mkdir $(distdir)/=build
-+	mkdir $(distdir)/=inst
-+	dc_install_base=`cd $(distdir)/=inst && pwd`; \
-+	cd $(distdir)/=build \
-+	  && ../configure --srcdir=.. --prefix=$$dc_install_base \
-+	  && $(MAKE) $(AM_MAKEFLAGS) \
-+	  && $(MAKE) $(AM_MAKEFLAGS) dvi \
-+	  && $(MAKE) $(AM_MAKEFLAGS) check \
-+	  && $(MAKE) $(AM_MAKEFLAGS) install \
-+	  && $(MAKE) $(AM_MAKEFLAGS) installcheck \
-+	  && $(MAKE) $(AM_MAKEFLAGS) dist
-+	-rm -rf $(distdir)
-+	@banner="$(distdir).tar.gz is ready for distribution"; \
-+	dashes=`echo "$$banner" | sed s/./=/g`; \
-+	echo "$$dashes"; \
-+	echo "$$banner"; \
-+	echo "$$dashes"
-+dist: distdir
-+	-chmod -R a+r $(distdir)
-+	GZIP=$(GZIP_ENV) $(TAR) chozf $(distdir).tar.gz $(distdir)
-+	-rm -rf $(distdir)
-+dist-all: distdir
-+	-chmod -R a+r $(distdir)
-+	GZIP=$(GZIP_ENV) $(TAR) chozf $(distdir).tar.gz $(distdir)
-+	-rm -rf $(distdir)
-+distdir: $(DISTFILES)
-+	-rm -rf $(distdir)
-+	mkdir $(distdir)
-+	-chmod 777 $(distdir)
-+	@for file in $(DISTFILES); do \
-+	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
-+	  if test -d $$d/$$file; then \
-+	    cp -pr $$d/$$file $(distdir)/$$file; \
-+	  else \
-+	    test -f $(distdir)/$$file \
-+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
-+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
-+	  fi; \
-+	done
-+info-am:
-+info: info-am
-+dvi-am:
-+dvi: dvi-am
-+check-am:
-+check: check-am
-+installcheck-am:
-+installcheck: installcheck-am
-+install-info-am: 
-+install-info: install-info-am
-+install-exec-am:
-+install-exec: install-exec-am
-+
-+install-data-am:
-+install-data: install-data-am
-+
-+install-am: all-am
-+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
-+install: install-am
-+uninstall-am:
-+uninstall: uninstall-am
-+all-am: Makefile $(LIBRARIES)
-+all-redirect: all-am
-+install-strip:
-+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
-+installdirs:
-+
-+
-+mostlyclean-generic:
-+
-+clean-generic:
-+
-+distclean-generic:
-+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
-+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
-+
-+maintainer-clean-generic:
-+mostlyclean-am:  mostlyclean-noinstLIBRARIES mostlyclean-compile \
-+		mostlyclean-tags mostlyclean-generic
-+
-+mostlyclean: mostlyclean-am
-+
-+clean-am:  clean-noinstLIBRARIES clean-compile clean-tags clean-generic \
-+		mostlyclean-am
-+
-+clean: clean-am
-+
-+distclean-am:  distclean-noinstLIBRARIES distclean-compile \
-+		distclean-tags distclean-generic clean-am
-+
-+distclean: distclean-am
-+	-rm -f config.status
-+
-+maintainer-clean-am:  maintainer-clean-noinstLIBRARIES \
-+		maintainer-clean-compile maintainer-clean-tags \
-+		maintainer-clean-generic distclean-am
-+	@echo "This command is intended for maintainers to use;"
-+	@echo "it deletes files that may require special tools to rebuild."
-+
-+maintainer-clean: maintainer-clean-am
-+	-rm -f config.status
-+
-+.PHONY: mostlyclean-noinstLIBRARIES distclean-noinstLIBRARIES \
-+clean-noinstLIBRARIES maintainer-clean-noinstLIBRARIES \
-+mostlyclean-compile distclean-compile clean-compile \
-+maintainer-clean-compile tags mostlyclean-tags distclean-tags \
-+clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
-+check-am installcheck-am installcheck install-info-am install-info \
-+install-exec-am install-exec install-data-am install-data install-am \
-+install uninstall-am uninstall all-redirect all-am all installdirs \
-+mostlyclean-generic distclean-generic clean-generic \
-+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
-+
-+
-+all: crt0.o
-+
-+$(LIBCGLUE_MULT_OBJS): libcglue.c
-+	$(COMPILE) -DF_$* $< -c -o $@
-+
-+$(XPRINTF_MULT_OBJS): xprintf.c
-+	$(COMPILE) -DF_$* $< -c -o $@
-+
-+# Tell versions [3.59,3.63) of GNU make to not export all variables.
-+# Otherwise a system limit (for SysV at least) may be exceeded.
-+.NOEXPORT:
---- newlib-1.13.0.orig/newlib/libc/sys/psp/README	1969-12-31 16:00:00.000000000 -0800
-+++ newlib-psp/newlib/libc/sys/psp/README	2005-07-23 23:25:55.000000000 -0700
-@@ -0,0 +1,16 @@
-+Newlib for PSP
-+--
-+
-+This sys/psp directory depends on PSPSDK headers.  It expects them to live in
-+${prefix}/psp/sdk/include (see newlib/configure.host).
-+
-+I used automake 1.4-p6 to generate aclocal.m4 and Makefile.in:
-+
-+	aclocal -I ../../..
-+	automake --cygnus
-+
-+Autoconf refused to work for me, so I copied configure from sys/sh and modified
-+$ac_unique_file to point libcglue.c.
-+
-+--
-+Marcus R. Brown <mrbrown@ocgnet.org>
---- newlib-1.13.0.orig/newlib/libc/sys/psp/aclocal.m4	1969-12-31 16:00:00.000000000 -0800
-+++ newlib-psp/newlib/libc/sys/psp/aclocal.m4	2005-07-23 23:18:42.000000000 -0700
+diff -burN newlib-1.13.0/newlib/libc/include/sys/types.h newlib-psp/newlib/libc/include/sys/types.h
+--- newlib-1.13.0/newlib/libc/include/sys/types.h	2003-07-02 21:32:07.000000000 +0100
++++ newlib-psp/newlib/libc/include/sys/types.h	2005-12-31 00:12:26.000000000 +0000
+@@ -188,52 +188,6 @@
+ 
+ typedef unsigned short nlink_t;
+ 
+-/* We don't define fd_set and friends if we are compiling POSIX
+-   source, or if we have included (or may include as indicated
+-   by __USE_W32_SOCKETS) the W32api winsock[2].h header which
+-   defines Windows versions of them.   Note that a program which
+-   includes the W32api winsock[2].h header must know what it is doing;
+-   it must not call the cygwin32 select function.
+-*/
+-# if !(defined (_POSIX_SOURCE) || defined (_WINSOCK_H) || defined (__USE_W32_SOCKETS)) 
+-#  define _SYS_TYPES_FD_SET
+-#  define	NBBY	8		/* number of bits in a byte */
+-/*
+- * Select uses bit masks of file descriptors in longs.
+- * These macros manipulate such bit fields (the filesystem macros use chars).
+- * FD_SETSIZE may be defined by the user, but the default here
+- * should be >= NOFILE (param.h).
+- */
+-#  ifndef	FD_SETSIZE
+-#	define	FD_SETSIZE	64
+-#  endif
+-
+-typedef	long	fd_mask;
+-#  define	NFDBITS	(sizeof (fd_mask) * NBBY)	/* bits per mask */
+-#  ifndef	howmany
+-#	define	howmany(x,y)	(((x)+((y)-1))/(y))
+-#  endif
+-
+-/* We use a macro for fd_set so that including Sockets.h afterwards
+-   can work.  */
+-typedef	struct _types_fd_set {
+-	fd_mask	fds_bits[howmany(FD_SETSIZE, NFDBITS)];
+-} _types_fd_set;
+-
+-#define fd_set _types_fd_set
+-
+-#  define	FD_SET(n, p)	((p)->fds_bits[(n)/NFDBITS] |= (1L << ((n) % NFDBITS)))
+-#  define	FD_CLR(n, p)	((p)->fds_bits[(n)/NFDBITS] &= ~(1L << ((n) % NFDBITS)))
+-#  define	FD_ISSET(n, p)	((p)->fds_bits[(n)/NFDBITS] & (1L << ((n) % NFDBITS)))
+-#  define	FD_ZERO(p)	(__extension__ (void)({ \
+-     size_t __i; \
+-     char *__tmp = (char *)p; \
+-     for (__i = 0; __i < sizeof (*(p)); ++__i) \
+-       *__tmp++ = 0; \
+-}))
+-
+-# endif	/* !(defined (_POSIX_SOURCE) || defined (_WINSOCK_H) || defined (__USE_W32_SOCKETS)) */
+-
+ #undef __MS_types__
+ #undef _ST_INT32
+ 
+diff -burN newlib-1.13.0/newlib/libc/sys/psp/aclocal.m4 newlib-psp/newlib/libc/sys/psp/aclocal.m4
+--- newlib-1.13.0/newlib/libc/sys/psp/aclocal.m4	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/sys/psp/aclocal.m4	2005-12-31 00:12:26.000000000 +0000
 @@ -0,0 +1,1185 @@
 +dnl aclocal.m4 generated automatically by aclocal 1.4-p6
 +
@@ -1693,8 +2047,39 @@
 +]
 +)
 +
---- newlib-1.13.0.orig/newlib/libc/sys/psp/configure	1969-12-31 16:00:00.000000000 -0800
-+++ newlib-psp/newlib/libc/sys/psp/configure	2005-07-23 22:50:02.000000000 -0700
+diff -burN newlib-1.13.0/newlib/libc/sys/psp/arpa/inet.h newlib-psp/newlib/libc/sys/psp/arpa/inet.h
+--- newlib-1.13.0/newlib/libc/sys/psp/arpa/inet.h	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/sys/psp/arpa/inet.h	2005-12-31 00:13:41.000000000 +0000
+@@ -0,0 +1,26 @@
++/* arpa/inet.h - Functions for converting IP addresses between strings and numbers */
++
++#ifndef _ARPA_INET_H_
++#define _ARPA_INET_H_
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#include <netinet/in.h>
++
++in_addr_t sceNetInetInetAddr(const char *ip);
++int sceNetInetInetAton(const char *ip, struct in_addr *in);
++const char* sceNetInetInetNtop(int af, const void *src, char *dst, socklen_t cnt);
++int sceNetInetInetPton(int af, const char *src, void *dst);
++
++char *inet_ntoa(struct in_addr in);
++#define inet_addr sceNetInetInetAddr
++#define inet_aton sceNetInetInetAton
++#define inet_ntop sceNetInetInetNtop
++#define inet_pton sceNetInetInetPton
++
++#ifdef __cplusplus
++}
++#endif
++#endif /* _ARPA_INET_H_ */
+diff -burN newlib-1.13.0/newlib/libc/sys/psp/configure newlib-psp/newlib/libc/sys/psp/configure
+--- newlib-1.13.0/newlib/libc/sys/psp/configure	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/sys/psp/configure	2005-12-31 00:12:26.000000000 +0000
 @@ -0,0 +1,1880 @@
 +#! /bin/sh
 +
@@ -3576,8 +3961,9 @@
 +rm -fr confdefs* $ac_clean_files
 +test "$no_create" = yes || ${CONFIG_SHELL-/bin/sh} $CONFIG_STATUS || exit 1
 +
---- newlib-1.13.0.orig/newlib/libc/sys/psp/configure.in	1969-12-31 16:00:00.000000000 -0800
-+++ newlib-psp/newlib/libc/sys/psp/configure.in	2005-07-23 22:43:33.000000000 -0700
+diff -burN newlib-1.13.0/newlib/libc/sys/psp/configure.in newlib-psp/newlib/libc/sys/psp/configure.in
+--- newlib-1.13.0/newlib/libc/sys/psp/configure.in	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/sys/psp/configure.in	2005-12-31 00:12:26.000000000 +0000
 @@ -0,0 +1,12 @@
 +dnl This is the newlib/libc/sys/psp configure.in file.
 +dnl Process this file with autoconf to produce a configure script.
@@ -3591,15 +3977,17 @@
 +NEWLIB_CONFIGURE(../../..)
 +
 +AC_OUTPUT(Makefile)
---- newlib-1.13.0.orig/newlib/libc/sys/psp/crt0.c	1969-12-31 16:00:00.000000000 -0800
-+++ newlib-psp/newlib/libc/sys/psp/crt0.c	2005-07-23 23:27:06.000000000 -0700
+diff -burN newlib-1.13.0/newlib/libc/sys/psp/crt0.c newlib-psp/newlib/libc/sys/psp/crt0.c
+--- newlib-1.13.0/newlib/libc/sys/psp/crt0.c	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/sys/psp/crt0.c	2005-12-31 00:12:26.000000000 +0000
 @@ -0,0 +1,3 @@
 +/* The real crt0.c lives in PSPSDK. */
 +
 +void _start() { }
---- newlib-1.13.0.orig/newlib/libc/sys/psp/libcglue.c	1969-12-31 16:00:00.000000000 -0800
-+++ newlib-psp/newlib/libc/sys/psp/libcglue.c	2005-11-04 01:09:24.000000000 -0800
-@@ -0,0 +1,700 @@
+diff -burN newlib-1.13.0/newlib/libc/sys/psp/libcglue.c newlib-psp/newlib/libc/sys/psp/libcglue.c
+--- newlib-1.13.0/newlib/libc/sys/psp/libcglue.c	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/sys/psp/libcglue.c	2005-12-31 00:12:26.000000000 +0000
+@@ -0,0 +1,744 @@
 +/*
 + * PSP Software Development Kit - http://www.pspdev.org
 + * -----------------------------------------------------------------------
@@ -3626,6 +4014,7 @@
 +#include <sys/types.h>
 +#include <sys/unistd.h>
 +#include <sys/dirent.h>
++#include <sys/socket.h>
 +
 +#include <psptypes.h>
 +#include <pspiofilemgr.h>
@@ -3635,10 +4024,18 @@
 +#include <psputils.h>
 +#include <psputility.h>
 +#include <pspstdio.h>
++#include <pspintrman.h>
 +
 +extern char __psp_cwd[MAXPATHLEN + 1];
 +extern void __psp_init_cwd(char *argv_0);
 +extern int __psp_path_absolute(const char *in, char *out, int len);
++
++/* The following functions are defined in socket.c.  They have weak linkage so
++   that the user doesn't have to link against the PSP network libraries if they
++   don't use the sockets API. */
++extern int __psp_socket_close(int s) __attribute__((weak));
++extern ssize_t __psp_socket_recv(int s, void *buf, size_t len, int flags) __attribute__((weak));
++extern ssize_t __psp_socket_send(int s, const void *buf, size_t len, int flags) __attribute__((weak));
 +
 +#define __PSP_FILENO_MAX 1024
 +extern char * __psp_filename_map[__PSP_FILENO_MAX];
@@ -3797,6 +4194,10 @@
 +		return -1;
 +	}
 +
++	if (SOCKET_IS_VALID(fd) && __psp_socket_close != NULL) {
++		return __psp_socket_close(fd);
++	}
++
 +	if ((fd >= 0) && (fd < __PSP_FILENO_MAX)) {
 +		if (__psp_filename_map[fd] != NULL) {
 +			free(__psp_filename_map[fd]);
@@ -3816,6 +4217,10 @@
 +		return -1;
 +	}
 +
++	if (SOCKET_IS_VALID(fd) && __psp_socket_recv != NULL) {
++		return __psp_socket_recv(fd, buf, size, 0);
++	}
++
 +	return __psp_set_errno(sceIoRead(fd, buf, size));
 +}
 +#endif
@@ -3826,6 +4231,10 @@
 +	if (fd < 0) {
 +		errno = EBADF;
 +		return -1;
++	}
++
++	if (SOCKET_IS_VALID(fd) && __psp_socket_send != NULL) {
++		return __psp_socket_send(fd, buf, size, 0);
 +	}
 +
 +	return __psp_set_errno(sceIoWrite(fd, buf, size));
@@ -3947,7 +4356,7 @@
 +#if defined(F_clock)
 +clock_t clock(void)
 +{
-+	return __psp_set_errno(sceKernelLibcClock());
++	return sceKernelLibcClock();
 +}
 +#endif
 +
@@ -3986,6 +4395,7 @@
 +
 +/* If defined it specifies the desired size of the heap, in KB. */
 +extern unsigned int sce_newlib_heap_kb_size __attribute__((weak));
++extern int __pspsdk_is_prx __attribute__((weak));
 +
 +/* UID of the memory block that represents the heap. */
 +static SceUID __psp_heap_blockid;
@@ -4004,9 +4414,7 @@
 +		if (&sce_newlib_heap_kb_size != NULL) {
 +			heap_size = sce_newlib_heap_kb_size * 1024;
 +		} else {
-+			/* TODO: Here we should distinguish between a PRX and a normal
-+			   executable.  Right now we assume it's an executable. */
-+			if (0 /* is a prx */) {
++			if (&__pspsdk_is_prx != NULL) {
 +				heap_size = DEFAULT_PRX_HEAP_SIZE_KB * 1024;
 +			} else {
 +				heap_size = sceKernelMaxFreeMemSize();
@@ -4240,6 +4648,29 @@
 +}
 +#endif
 +
++#ifdef F_mlock
++static unsigned int lock_count = 0;
++static unsigned int intr_flags = 0;
++
++void __malloc_lock(struct _reent *ptr)
++{
++	unsigned int flags = 0;/* = sceKernelCpuSuspendIntr();*/
++
++	if (lock_count == 0) {
++		intr_flags = flags;
++	}
++
++	lock_count++;
++}
++
++void __malloc_unlock(struct _reent *ptr)
++{
++	if (--lock_count == 0) {
++		/*sceKernelCpuResumeIntr(intr_flags);*/
++	}
++}
++#endif
++
 +/* Exit. */
 +#if defined(F__exit) || defined(F_glue__exit)
 +extern int sce_newlib_nocreate_thread_in_start __attribute__((weak));
@@ -4284,6 +4715,7 @@
 +
 +	/* Initialize filenamap */
 +	memset(__psp_filename_map, '\0', sizeof(char *) * __PSP_FILENO_MAX);
++
 +	fd = sceKernelStdin();
 +	if ((fd >= 0) && (fd < __PSP_FILENO_MAX)) {
 +		 __psp_filename_map[fd] = strdup("  __PSP_STDIO");
@@ -4300,8 +4732,692 @@
 +
 +#endif /* F__exit */
 +
---- newlib-1.13.0.orig/newlib/libc/sys/psp/pspcwd.c	1969-12-31 16:00:00.000000000 -0800
-+++ newlib-psp/newlib/libc/sys/psp/pspcwd.c	2005-10-10 21:57:57.000000000 -0700
+diff -burN newlib-1.13.0/newlib/libc/sys/psp/Makefile.am newlib-psp/newlib/libc/sys/psp/Makefile.am
+--- newlib-1.13.0/newlib/libc/sys/psp/Makefile.am	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/sys/psp/Makefile.am	2005-12-31 00:12:26.000000000 +0000
+@@ -0,0 +1,39 @@
++## Process this file with automake to generate Makefile.in
++
++AUTOMAKE_OPTIONS = cygnus
++
++INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
++
++noinst_LIBRARIES = lib.a
++
++LIBCGLUE_MULT_OBJS = _close.o _exit.o _fork.o _fstat.o _getpid.o	\
++                     _gettimeofday.o _kill.o _lseek.o _open.o _read.o	\
++                     _sbrk.o _wait.o _write.o clock.o isatty.o time.o	\
++                     _link.o _unlink.o sleep.o opendir.o readdir.o	\
++                     closedir.o getcwd.o chdir.o mkdir.o rmdir.o	\
++                     realpath.o _stat.o truncate.o access.o tzset.o	\
++                     __psp_set_errno.o mlock.o
++
++SOCKET_MULT_OBJS = socket.o accept.o bind.o connect.o getsockopt.o \
++				   listen.o recv.o recvfrom.o send.o sendto.o \
++				   setsockopt.o shutdown.o __psp_socket_map.o \
++				   getsockname.o getpeername.o select.o inet_ntoa.o
++
++XPRINTF_MULT_OBJS = vxprintf.o _xprintf.o __sout.o vsnprintf.o snprintf.o vsprintf.o sprintf.o __mout.o mprintf.o vmprintf.o asprintf.o vasprintf.o __fout.o fprintf.o vfprintf.o printf.o vprintf.o _sprintf_r.o
++
++lib_a_SOURCES = libcglue.c socket.c pspcwd.c xprintf.c
++lib_a_LIBADD  = $(LIBCGLUE_MULT_OBJS) $(SOCKET_MULT_OBJS) $(XPRINTF_MULT_OBJS)
++
++all: crt0.o
++
++$(LIBCGLUE_MULT_OBJS): libcglue.c
++	$(COMPILE) -DF_$* $< -c -o $@
++
++$(SOCKET_MULT_OBJS): socket.c
++	$(COMPILE) -DF_$* $< -c -o $@
++
++$(XPRINTF_MULT_OBJS): xprintf.c
++	$(COMPILE) -DF_$* $< -c -o $@
++
++ACLOCAL_AMFLAGS = -I ../../..
++CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host
+diff -burN newlib-1.13.0/newlib/libc/sys/psp/Makefile.in newlib-psp/newlib/libc/sys/psp/Makefile.in
+--- newlib-1.13.0/newlib/libc/sys/psp/Makefile.in	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/sys/psp/Makefile.in	2005-12-31 00:12:26.000000000 +0000
+@@ -0,0 +1,361 @@
++# Makefile.in generated automatically by automake 1.4-p6 from Makefile.am
++
++# Copyright (C) 1994, 1995-8, 1999, 2001 Free Software Foundation, Inc.
++# This Makefile.in is free software; the Free Software Foundation
++# gives unlimited permission to copy and/or distribute it,
++# with or without modifications, as long as this notice is preserved.
++
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
++# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
++# PARTICULAR PURPOSE.
++
++
++SHELL = @SHELL@
++
++srcdir = @srcdir@
++top_srcdir = @top_srcdir@
++VPATH = @srcdir@
++prefix = @prefix@
++exec_prefix = @exec_prefix@
++
++bindir = @bindir@
++sbindir = @sbindir@
++libexecdir = @libexecdir@
++datadir = @datadir@
++sysconfdir = @sysconfdir@
++sharedstatedir = @sharedstatedir@
++localstatedir = @localstatedir@
++libdir = @libdir@
++infodir = @infodir@
++mandir = @mandir@
++includedir = @includedir@
++oldincludedir = /usr/include
++
++DESTDIR =
++
++pkgdatadir = $(datadir)/@PACKAGE@
++pkglibdir = $(libdir)/@PACKAGE@
++pkgincludedir = $(includedir)/@PACKAGE@
++
++top_builddir = .
++
++ACLOCAL = @ACLOCAL@
++AUTOCONF = @AUTOCONF@
++AUTOMAKE = @AUTOMAKE@
++AUTOHEADER = @AUTOHEADER@
++
++INSTALL = @INSTALL@
++INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
++INSTALL_DATA = @INSTALL_DATA@
++INSTALL_SCRIPT = @INSTALL_SCRIPT@
++transform = @program_transform_name@
++
++NORMAL_INSTALL = :
++PRE_INSTALL = :
++POST_INSTALL = :
++NORMAL_UNINSTALL = :
++PRE_UNINSTALL = :
++POST_UNINSTALL = :
++build_alias = @build_alias@
++build_triplet = @build@
++host_alias = @host_alias@
++host_triplet = @host@
++target_alias = @target_alias@
++target_triplet = @target@
++AR = @AR@
++AS = @AS@
++CC = @CC@
++CPP = @CPP@
++EXEEXT = @EXEEXT@
++HAVE_LIB = @HAVE_LIB@
++LDFLAGS = @LDFLAGS@
++LIB = @LIB@
++LTLIB = @LTLIB@
++MAINT = @MAINT@
++MAKEINFO = @MAKEINFO@
++NEWLIB_CFLAGS = @NEWLIB_CFLAGS@
++OBJEXT = @OBJEXT@
++PACKAGE = @PACKAGE@
++RANLIB = @RANLIB@
++VERSION = @VERSION@
++aext = @aext@
++libm_machine_dir = @libm_machine_dir@
++machine_dir = @machine_dir@
++newlib_basedir = @newlib_basedir@
++oext = @oext@
++sys_dir = @sys_dir@
++
++AUTOMAKE_OPTIONS = cygnus
++
++INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
++
++noinst_LIBRARIES = lib.a
++
++LIBCGLUE_MULT_OBJS = _close.o _exit.o _fork.o _fstat.o _getpid.o	                     _gettimeofday.o _kill.o _lseek.o _open.o _read.o	                     _sbrk.o _wait.o _write.o clock.o isatty.o time.o	                     _link.o _unlink.o sleep.o opendir.o readdir.o	                     closedir.o getcwd.o chdir.o mkdir.o rmdir.o	                     realpath.o _stat.o truncate.o access.o tzset.o	                     __psp_set_errno.o mlock.o
++
++
++SOCKET_MULT_OBJS = socket.o accept.o bind.o connect.o getsockopt.o 				   listen.o recv.o recvfrom.o send.o sendto.o 				   setsockopt.o shutdown.o __psp_socket_map.o 				   getsockname.o getpeername.o select.o inet_ntoa.o
++
++
++XPRINTF_MULT_OBJS = vxprintf.o _xprintf.o __sout.o vsnprintf.o snprintf.o vsprintf.o sprintf.o __mout.o mprintf.o vmprintf.o asprintf.o vasprintf.o __fout.o fprintf.o vfprintf.o printf.o vprintf.o _sprintf_r.o
++
++lib_a_SOURCES = libcglue.c socket.c pspcwd.c xprintf.c
++lib_a_LIBADD = $(LIBCGLUE_MULT_OBJS) $(SOCKET_MULT_OBJS) $(XPRINTF_MULT_OBJS)
++
++ACLOCAL_AMFLAGS = -I ../../..
++CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host
++ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
++mkinstalldirs = $(SHELL) $(top_srcdir)/../../../../mkinstalldirs
++CONFIG_CLEAN_FILES = 
++LIBRARIES =  $(noinst_LIBRARIES)
++
++
++DEFS = @DEFS@ -I. -I$(srcdir) 
++CPPFLAGS = @CPPFLAGS@
++LIBS = @LIBS@
++lib_a_DEPENDENCIES =  _close.o _exit.o _fork.o _fstat.o _getpid.o \
++_gettimeofday.o _kill.o _lseek.o _open.o _read.o _sbrk.o _wait.o \
++_write.o clock.o isatty.o time.o _link.o _unlink.o sleep.o opendir.o \
++readdir.o closedir.o getcwd.o chdir.o mkdir.o rmdir.o realpath.o \
++_stat.o truncate.o access.o tzset.o __psp_set_errno.o mlock.o socket.o accept.o \
++bind.o connect.o getsockopt.o listen.o recv.o recvfrom.o send.o \
++sendto.o setsockopt.o shutdown.o __psp_socket_map.o getsockname.o \
++getpeername.o select.o inet_ntoa.o vxprintf.o _xprintf.o __sout.o \
++vsnprintf.o snprintf.o vsprintf.o sprintf.o __mout.o mprintf.o \
++vmprintf.o asprintf.o vasprintf.o __fout.o fprintf.o vfprintf.o \
++printf.o vprintf.o _sprintf_r.o
++lib_a_OBJECTS =  libcglue.o socket.o pspcwd.o xprintf.o
++CFLAGS = @CFLAGS@
++COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
++CCLD = $(CC)
++LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
++DIST_COMMON =  README Makefile.am Makefile.in aclocal.m4 configure \
++configure.in
++
++
++DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
++
++TAR = tar
++GZIP_ENV = --best
++SOURCES = $(lib_a_SOURCES)
++OBJECTS = $(lib_a_OBJECTS)
++
++all: all-redirect
++.SUFFIXES:
++.SUFFIXES: .S .c .o .s
++$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
++	cd $(top_srcdir) && $(AUTOMAKE) --cygnus Makefile
++
++Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
++	cd $(top_builddir) \
++	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
++
++$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ configure.in  \
++		../../../acinclude.m4 ../../../aclocal.m4 \
++		../../../libtool.m4
++	cd $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
++
++config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
++	$(SHELL) ./config.status --recheck
++$(srcdir)/configure: @MAINTAINER_MODE_TRUE@$(srcdir)/configure.in $(ACLOCAL_M4) $(CONFIGURE_DEPENDENCIES)
++	cd $(srcdir) && $(AUTOCONF)
++
++mostlyclean-noinstLIBRARIES:
++
++clean-noinstLIBRARIES:
++	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
++
++distclean-noinstLIBRARIES:
++
++maintainer-clean-noinstLIBRARIES:
++
++.c.o:
++	$(COMPILE) -c $<
++
++.s.o:
++	$(COMPILE) -c $<
++
++.S.o:
++	$(COMPILE) -c $<
++
++mostlyclean-compile:
++	-rm -f *.o core *.core
++
++clean-compile:
++
++distclean-compile:
++	-rm -f *.tab.c
++
++maintainer-clean-compile:
++
++lib.a: $(lib_a_OBJECTS) $(lib_a_DEPENDENCIES)
++	-rm -f lib.a
++	$(AR) cru lib.a $(lib_a_OBJECTS) $(lib_a_LIBADD)
++	$(RANLIB) lib.a
++
++tags: TAGS
++
++ID: $(HEADERS) $(SOURCES) $(LISP)
++	list='$(SOURCES) $(HEADERS)'; \
++	unique=`for i in $$list; do echo $$i; done | \
++	  awk '    { files[$$0] = 1; } \
++	       END { for (i in files) print i; }'`; \
++	here=`pwd` && cd $(srcdir) \
++	  && mkid -f$$here/ID $$unique $(LISP)
++
++TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
++	tags=; \
++	here=`pwd`; \
++	list='$(SOURCES) $(HEADERS)'; \
++	unique=`for i in $$list; do echo $$i; done | \
++	  awk '    { files[$$0] = 1; } \
++	       END { for (i in files) print i; }'`; \
++	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
++	  || (cd $(srcdir) && etags -o $$here/TAGS $(ETAGS_ARGS) $$tags  $$unique $(LISP))
++
++mostlyclean-tags:
++
++clean-tags:
++
++distclean-tags:
++	-rm -f TAGS ID
++
++maintainer-clean-tags:
++
++distdir = $(PACKAGE)-$(VERSION)
++top_distdir = $(distdir)
++
++# This target untars the dist file and tries a VPATH configuration.  Then
++# it guarantees that the distribution is self-contained by making another
++# tarfile.
++distcheck: dist
++	-rm -rf $(distdir)
++	GZIP=$(GZIP_ENV) $(TAR) zxf $(distdir).tar.gz
++	mkdir $(distdir)/=build
++	mkdir $(distdir)/=inst
++	dc_install_base=`cd $(distdir)/=inst && pwd`; \
++	cd $(distdir)/=build \
++	  && ../configure --srcdir=.. --prefix=$$dc_install_base \
++	  && $(MAKE) $(AM_MAKEFLAGS) \
++	  && $(MAKE) $(AM_MAKEFLAGS) dvi \
++	  && $(MAKE) $(AM_MAKEFLAGS) check \
++	  && $(MAKE) $(AM_MAKEFLAGS) install \
++	  && $(MAKE) $(AM_MAKEFLAGS) installcheck \
++	  && $(MAKE) $(AM_MAKEFLAGS) dist
++	-rm -rf $(distdir)
++	@banner="$(distdir).tar.gz is ready for distribution"; \
++	dashes=`echo "$$banner" | sed s/./=/g`; \
++	echo "$$dashes"; \
++	echo "$$banner"; \
++	echo "$$dashes"
++dist: distdir
++	-chmod -R a+r $(distdir)
++	GZIP=$(GZIP_ENV) $(TAR) chozf $(distdir).tar.gz $(distdir)
++	-rm -rf $(distdir)
++dist-all: distdir
++	-chmod -R a+r $(distdir)
++	GZIP=$(GZIP_ENV) $(TAR) chozf $(distdir).tar.gz $(distdir)
++	-rm -rf $(distdir)
++distdir: $(DISTFILES)
++	-rm -rf $(distdir)
++	mkdir $(distdir)
++	-chmod 777 $(distdir)
++	@for file in $(DISTFILES); do \
++	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
++	  if test -d $$d/$$file; then \
++	    cp -pr $$d/$$file $(distdir)/$$file; \
++	  else \
++	    test -f $(distdir)/$$file \
++	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
++	    || cp -p $$d/$$file $(distdir)/$$file || :; \
++	  fi; \
++	done
++info-am:
++info: info-am
++dvi-am:
++dvi: dvi-am
++check-am:
++check: check-am
++installcheck-am:
++installcheck: installcheck-am
++install-info-am: 
++install-info: install-info-am
++install-exec-am:
++install-exec: install-exec-am
++
++install-data-am:
++install-data: install-data-am
++
++install-am: all-am
++	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
++install: install-am
++uninstall-am:
++uninstall: uninstall-am
++all-am: Makefile $(LIBRARIES)
++all-redirect: all-am
++install-strip:
++	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
++installdirs:
++
++
++mostlyclean-generic:
++
++clean-generic:
++
++distclean-generic:
++	-rm -f Makefile $(CONFIG_CLEAN_FILES)
++	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
++
++maintainer-clean-generic:
++mostlyclean-am:  mostlyclean-noinstLIBRARIES mostlyclean-compile \
++		mostlyclean-tags mostlyclean-generic
++
++mostlyclean: mostlyclean-am
++
++clean-am:  clean-noinstLIBRARIES clean-compile clean-tags clean-generic \
++		mostlyclean-am
++
++clean: clean-am
++
++distclean-am:  distclean-noinstLIBRARIES distclean-compile \
++		distclean-tags distclean-generic clean-am
++
++distclean: distclean-am
++	-rm -f config.status
++
++maintainer-clean-am:  maintainer-clean-noinstLIBRARIES \
++		maintainer-clean-compile maintainer-clean-tags \
++		maintainer-clean-generic distclean-am
++	@echo "This command is intended for maintainers to use;"
++	@echo "it deletes files that may require special tools to rebuild."
++
++maintainer-clean: maintainer-clean-am
++	-rm -f config.status
++
++.PHONY: mostlyclean-noinstLIBRARIES distclean-noinstLIBRARIES \
++clean-noinstLIBRARIES maintainer-clean-noinstLIBRARIES \
++mostlyclean-compile distclean-compile clean-compile \
++maintainer-clean-compile tags mostlyclean-tags distclean-tags \
++clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
++check-am installcheck-am installcheck install-info-am install-info \
++install-exec-am install-exec install-data-am install-data install-am \
++install uninstall-am uninstall all-redirect all-am all installdirs \
++mostlyclean-generic distclean-generic clean-generic \
++maintainer-clean-generic clean mostlyclean distclean maintainer-clean
++
++
++all: crt0.o
++
++$(LIBCGLUE_MULT_OBJS): libcglue.c
++	$(COMPILE) -DF_$* $< -c -o $@
++
++$(SOCKET_MULT_OBJS): socket.c
++	$(COMPILE) -DF_$* $< -c -o $@
++
++$(XPRINTF_MULT_OBJS): xprintf.c
++	$(COMPILE) -DF_$* $< -c -o $@
++
++# Tell versions [3.59,3.63) of GNU make to not export all variables.
++# Otherwise a system limit (for SysV at least) may be exceeded.
++.NOEXPORT:
+diff -burN newlib-1.13.0/newlib/libc/sys/psp/netinet/in.h newlib-psp/newlib/libc/sys/psp/netinet/in.h
+--- newlib-1.13.0/newlib/libc/sys/psp/netinet/in.h	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/sys/psp/netinet/in.h	2005-12-31 00:12:26.000000000 +0000
+@@ -0,0 +1,271 @@
++/*	$NetBSD: in.h,v 1.71 2005/08/05 09:21:25 elad Exp $	*/
++
++/*
++ * Copyright (c) 1982, 1986, 1990, 1993
++ *	The Regents of the University of California.  All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ * 3. Neither the name of the University nor the names of its contributors
++ *    may be used to endorse or promote products derived from this software
++ *    without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
++ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
++ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
++ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ * SUCH DAMAGE.
++ *
++ *	@(#)in.h	8.3 (Berkeley) 1/3/94
++ */
++
++/*
++ * Constants and structures defined by the internet system,
++ * Per RFC 790, September 1981, and numerous additions.
++ */
++
++#ifndef _NETINET_IN_H_
++#define	_NETINET_IN_H_
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#include <sys/socket.h>
++
++typedef uint32_t in_addr_t;
++typedef uint16_t	in_port_t;
++
++/*
++ * Protocols
++ */
++#define	IPPROTO_IP		0		/* dummy for IP */
++#define	IPPROTO_HOPOPTS		0		/* IP6 hop-by-hop options */
++#define	IPPROTO_ICMP		1		/* control message protocol */
++#define	IPPROTO_IGMP		2		/* group mgmt protocol */
++#define	IPPROTO_GGP		3		/* gateway^2 (deprecated) */
++#define	IPPROTO_IPV4		4 		/* IP header */
++#define	IPPROTO_IPIP		4		/* IP inside IP */
++#define	IPPROTO_TCP		6		/* tcp */
++#define	IPPROTO_EGP		8		/* exterior gateway protocol */
++#define	IPPROTO_PUP		12		/* pup */
++#define	IPPROTO_UDP		17		/* user datagram protocol */
++#define	IPPROTO_IDP		22		/* xns idp */
++#define	IPPROTO_TP		29 		/* tp-4 w/ class negotiation */
++#define	IPPROTO_IPV6		41		/* IP6 header */
++#define	IPPROTO_ROUTING		43		/* IP6 routing header */
++#define	IPPROTO_FRAGMENT	44		/* IP6 fragmentation header */
++#define	IPPROTO_RSVP		46		/* resource reservation */
++#define	IPPROTO_GRE		47		/* GRE encaps RFC 1701 */
++#define	IPPROTO_ESP		50 		/* encap. security payload */
++#define	IPPROTO_AH		51 		/* authentication header */
++#define	IPPROTO_MOBILE		55		/* IP Mobility RFC 2004 */
++#define	IPPROTO_IPV6_ICMP	58		/* IPv6 ICMP */
++#define	IPPROTO_ICMPV6		58		/* ICMP6 */
++#define	IPPROTO_NONE		59		/* IP6 no next header */
++#define	IPPROTO_DSTOPTS		60		/* IP6 destination option */
++#define	IPPROTO_EON		80		/* ISO cnlp */
++#define	IPPROTO_ETHERIP		97		/* Ethernet-in-IP */
++#define	IPPROTO_ENCAP		98		/* encapsulation header */
++#define	IPPROTO_PIM		103		/* Protocol indep. multicast */
++#define	IPPROTO_IPCOMP		108		/* IP Payload Comp. Protocol */
++#define	IPPROTO_VRRP		112		/* VRRP RFC 2338 */
++
++#define	IPPROTO_RAW		255		/* raw IP packet */
++#define	IPPROTO_MAX		256
++
++/* last return value of *_input(), meaning "all job for this pkt is done".  */
++#define	IPPROTO_DONE		257
++
++/* sysctl placeholder for (FAST_)IPSEC */
++#define CTL_IPPROTO_IPSEC	258
++
++
++/*
++ * Local port number conventions:
++ *
++ * Ports < IPPORT_RESERVED are reserved for privileged processes (e.g. root),
++ * unless a kernel is compiled with IPNOPRIVPORTS defined.
++ *
++ * When a user does a bind(2) or connect(2) with a port number of zero,
++ * a non-conflicting local port address is chosen.
++ *
++ * The default range is IPPORT_ANONMIN to IPPORT_ANONMAX, although
++ * that is settable by sysctl(3); net.inet.ip.anonportmin and
++ * net.inet.ip.anonportmax respectively.
++ *
++ * A user may set the IPPROTO_IP option IP_PORTRANGE to change this
++ * default assignment range.
++ *
++ * The value IP_PORTRANGE_DEFAULT causes the default behavior.
++ *
++ * The value IP_PORTRANGE_HIGH is the same as IP_PORTRANGE_DEFAULT,
++ * and exists only for FreeBSD compatibility purposes.
++ *
++ * The value IP_PORTRANGE_LOW changes the range to the "low" are
++ * that is (by convention) restricted to privileged processes.
++ * This convention is based on "vouchsafe" principles only.
++ * It is only secure if you trust the remote host to restrict these ports.
++ * The range is IPPORT_RESERVEDMIN to IPPORT_RESERVEDMAX.
++ */
++
++#define	IPPORT_RESERVED		1024
++#define	IPPORT_ANONMIN		49152
++#define	IPPORT_ANONMAX		65535
++#define	IPPORT_RESERVEDMIN	600
++#define	IPPORT_RESERVEDMAX	(IPPORT_RESERVED-1)
++
++/*
++ * Internet address (a structure for historical reasons)
++ */
++struct in_addr {
++	in_addr_t s_addr;
++} __attribute__((__packed__));
++
++#define	__IPADDR(x)	((uint32_t)(x))
++
++#define	IN_CLASSA(i)		(((uint32_t)(i) & __IPADDR(0x80000000)) == \
++				 __IPADDR(0x00000000))
++#define	IN_CLASSA_NET		__IPADDR(0xff000000)
++#define	IN_CLASSA_NSHIFT	24
++#define	IN_CLASSA_HOST		__IPADDR(0x00ffffff)
++#define	IN_CLASSA_MAX		128
++
++#define	IN_CLASSB(i)		(((uint32_t)(i) & __IPADDR(0xc0000000)) == \
++				 __IPADDR(0x80000000))
++#define	IN_CLASSB_NET		__IPADDR(0xffff0000)
++#define	IN_CLASSB_NSHIFT	16
++#define	IN_CLASSB_HOST		__IPADDR(0x0000ffff)
++#define	IN_CLASSB_MAX		65536
++
++#define	IN_CLASSC(i)		(((uint32_t)(i) & __IPADDR(0xe0000000)) == \
++				 __IPADDR(0xc0000000))
++#define	IN_CLASSC_NET		__IPADDR(0xffffff00)
++#define	IN_CLASSC_NSHIFT	8
++#define	IN_CLASSC_HOST		__IPADDR(0x000000ff)
++
++#define	IN_CLASSD(i)		(((uint32_t)(i) & __IPADDR(0xf0000000)) == \
++				 __IPADDR(0xe0000000))
++/* These ones aren't really net and host fields, but routing needn't know. */
++#define	IN_CLASSD_NET		__IPADDR(0xf0000000)
++#define	IN_CLASSD_NSHIFT	28
++#define	IN_CLASSD_HOST		__IPADDR(0x0fffffff)
++#define	IN_MULTICAST(i)		IN_CLASSD(i)
++
++#define	IN_EXPERIMENTAL(i)	(((uint32_t)(i) & __IPADDR(0xf0000000)) == \
++				 __IPADDR(0xf0000000))
++#define	IN_BADCLASS(i)		(((uint32_t)(i) & __IPADDR(0xf0000000)) == \
++				 __IPADDR(0xf0000000))
++
++#define	IN_LOCAL_GROUP(i)	(((uint32_t)(i) & __IPADDR(0xffffff00)) == \
++				 __IPADDR(0xe0000000))
++
++#define	INADDR_ANY		__IPADDR(0x00000000)
++#define	INADDR_LOOPBACK		__IPADDR(0x7f000001)
++#define	INADDR_BROADCAST	__IPADDR(0xffffffff)	/* must be masked */
++
++#define	INADDR_UNSPEC_GROUP	__IPADDR(0xe0000000)	/* 224.0.0.0 */
++#define	INADDR_ALLHOSTS_GROUP	__IPADDR(0xe0000001)	/* 224.0.0.1 */
++#define	INADDR_ALLRTRS_GROUP	__IPADDR(0xe0000002)	/* 224.0.0.2 */
++#define	INADDR_MAX_LOCAL_GROUP	__IPADDR(0xe00000ff)	/* 224.0.0.255 */
++
++#define	IN_LOOPBACKNET		127			/* official! */
++
++/*
++ * Socket address, internet style.
++ */
++struct sockaddr_in {
++	uint8_t		sin_len;
++	sa_family_t	sin_family;
++	in_port_t	sin_port;
++	struct in_addr	sin_addr;
++	int8_t	sin_zero[8];
++};
++
++#define	INET_ADDRSTRLEN                 16
++
++/*
++ * Structure used to describe IP options.
++ * Used to store options internally, to pass them to a process,
++ * or to restore options retrieved earlier.
++ * The ip_dst is used for the first-hop gateway when using a source route
++ * (this gets put into the header proper).
++ */
++struct ip_opts {
++	struct in_addr	ip_dst;		/* first hop, 0 w/o src rt */
++#if defined(__cplusplus)
++	int8_t	Ip_opts[40];	/* actually variable in size */
++#else
++	int8_t	ip_opts[40];	/* actually variable in size */
++#endif
++};
++
++/*
++ * Options for use with [gs]etsockopt at the IP level.
++ * First word of comment is data type; bool is stored in int.
++ */
++#define	IP_OPTIONS		1    /* buf/ip_opts; set/get IP options */
++#define	IP_HDRINCL		2    /* int; header is included with data */
++#define	IP_TOS			3    /* int; IP type of service and preced. */
++#define	IP_TTL			4    /* int; IP time to live */
++#define	IP_RECVOPTS		5    /* bool; receive all IP opts w/dgram */
++#define	IP_RECVRETOPTS		6    /* bool; receive IP opts for response */
++#define	IP_RECVDSTADDR		7    /* bool; receive IP dst addr w/dgram */
++#define	IP_RETOPTS		8    /* ip_opts; set/get IP options */
++#define	IP_MULTICAST_IF		9    /* in_addr; set/get IP multicast i/f  */
++#define	IP_MULTICAST_TTL	10   /* u_char; set/get IP multicast ttl */
++#define	IP_MULTICAST_LOOP	11   /* u_char; set/get IP multicast loopback */
++#define	IP_ADD_MEMBERSHIP	12   /* ip_mreq; add an IP group membership */
++#define	IP_DROP_MEMBERSHIP	13   /* ip_mreq; drop an IP group membership */
++#define	IP_PORTRANGE		19   /* int; range to use for ephemeral port */
++#define	IP_RECVIF		20   /* bool; receive reception if w/dgram */
++#define	IP_ERRORMTU		21   /* int; get MTU of last xmit = EMSGSIZE */
++#if 1 /*IPSEC*/
++#define	IP_IPSEC_POLICY		22 /* struct; get/set security policy */
++#endif
++
++/*
++ * Defaults and limits for options
++ */
++#define	IP_DEFAULT_MULTICAST_TTL  1	/* normally limit m'casts to 1 hop  */
++#define	IP_DEFAULT_MULTICAST_LOOP 1	/* normally hear sends if a member  */
++#define	IP_MAX_MEMBERSHIPS	20	/* per socket; must fit in one mbuf */
++
++/*
++ * Argument structure for IP_ADD_MEMBERSHIP and IP_DROP_MEMBERSHIP.
++ */
++struct ip_mreq {
++	struct	in_addr imr_multiaddr;	/* IP multicast address of group */
++	struct	in_addr imr_interface;	/* local IP address of interface */
++};
++
++/*
++ * Argument for IP_PORTRANGE:
++ * - which range to search when port is unspecified at bind() or connect()
++ */
++#define	IP_PORTRANGE_DEFAULT	0	/* default range */
++#define	IP_PORTRANGE_HIGH	1	/* same as DEFAULT (FreeBSD compat) */
++#define	IP_PORTRANGE_LOW	2	/* use privileged range */
++
++#define ntohs(x) __builtin_allegrex_wsbh(x)
++#define ntohl(x) __builtin_allegrex_wsbw(x)
++#define htons(x) __builtin_allegrex_wsbh(x)
++#define htonl(x) __builtin_allegrex_wsbw(x)
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* !_NETINET_IN_H_ */
+diff -burN newlib-1.13.0/newlib/libc/sys/psp/pspcwd.c newlib-psp/newlib/libc/sys/psp/pspcwd.c
+--- newlib-1.13.0/newlib/libc/sys/psp/pspcwd.c	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/sys/psp/pspcwd.c	2005-12-31 00:12:26.000000000 +0000
 @@ -0,0 +1,167 @@
 +/*
 + * PSP Software Development Kit - http://www.pspdev.org
@@ -4470,8 +5586,560 @@
 +	return __psp_path_normalize(out + dr, len - dr);
 +}
 +
---- newlib-1.13.0.orig/newlib/libc/sys/psp/sys/dirent.h	1969-12-31 16:00:00.000000000 -0800
-+++ newlib-psp/newlib/libc/sys/psp/sys/dirent.h	2005-10-20 07:40:24.000000000 -0700
+diff -burN newlib-1.13.0/newlib/libc/sys/psp/README newlib-psp/newlib/libc/sys/psp/README
+--- newlib-1.13.0/newlib/libc/sys/psp/README	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/sys/psp/README	2005-12-31 00:12:26.000000000 +0000
+@@ -0,0 +1,16 @@
++Newlib for PSP
++--
++
++This sys/psp directory depends on PSPSDK headers.  It expects them to live in
++${prefix}/psp/sdk/include (see newlib/configure.host).
++
++I used automake 1.4-p6 to generate aclocal.m4 and Makefile.in:
++
++	aclocal -I ../../..
++	automake --cygnus
++
++Autoconf refused to work for me, so I copied configure from sys/sh and modified
++$ac_unique_file to point libcglue.c.
++
++--
++Marcus R. Brown <mrbrown@ocgnet.org>
+diff -burN newlib-1.13.0/newlib/libc/sys/psp/socket.c newlib-psp/newlib/libc/sys/psp/socket.c
+--- newlib-1.13.0/newlib/libc/sys/psp/socket.c	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/sys/psp/socket.c	2005-12-31 00:12:26.000000000 +0000
+@@ -0,0 +1,527 @@
++/*
++ * PSP Software Development Kit - http://www.pspdev.org
++ * -----------------------------------------------------------------------
++ * Licensed under the BSD license, see LICENSE in PSPSDK root for details.
++ *
++ * socket.c - Socket wrappers to provide similar functions to normal unix
++ *
++ * Copyright (c) 2005 Marcus R. Brown <mrbrown@ocgnet.org>
++ * Copyright (c) 2005 James Forshaw <tyranid@gmail.com>
++ * 
++ */
++#include <errno.h>
++#include <sys/socket.h>
++#include <sys/select.h>
++#include <netinet/in.h>
++
++#include <psptypes.h>
++
++#define __PSP_SOCKET_MAX 1024
++extern char __psp_socket_map[__PSP_SOCKET_MAX];
++
++#ifdef F___psp_socket_map
++char __psp_socket_map[__PSP_SOCKET_MAX];
++#endif
++
++#ifdef F_socket
++int	socket(int domain, int type, int protocol)
++{
++	int sock;
++	int i;
++
++	sock = sceNetInetSocket(domain, type, protocol);
++	if(sock < 0)
++	{
++		errno = sceNetInetGetErrno();
++		return -1;
++	}
++
++	if((sock >= 0) && (sock < __PSP_SOCKET_MAX))
++	{
++		__psp_socket_map[sock] = 1;
++	}
++	else
++	{
++		sceNetInetClose(sock);
++		errno = ENOENT;
++		return -1;
++	}
++
++	return sock | SOCKET_FD_PAT;
++}
++
++/* These are glue routines that are called from _close(), _read(), and
++   _write().  They are here so that any program that uses socket() will pull
++   them in and have expanded socket capability. */
++
++int __psp_socket_close(int s)
++{
++	int ret;
++	int sock;
++
++	sock = SOCKET_GET_SOCK(s);
++	if((sock > 0) && (sock < __PSP_SOCKET_MAX))
++	{
++		__psp_socket_map[sock] = 0;
++	}
++
++	ret = sceNetInetClose(sock);
++	if(ret < 0)
++	{
++		/* If close is defined likely errno is */
++		errno = sceNetInetGetErrno();
++		return -1;
++	}
++
++	return 0;
++}
++
++ssize_t __psp_socket_recv(int s, void *buf, size_t len, int flags)
++{
++	return recv(s, buf, len, flags);
++}
++
++ssize_t __psp_socket_send(int s, const void *buf, size_t len, int flags)
++{
++	return send(s, buf, len, flags);
++}
++#endif
++
++#ifdef F_accept
++int	accept(int s, struct sockaddr *addr, socklen_t *addrlen)
++{
++	int sock;
++	int new;
++
++	if(!(SOCKET_IS_VALID(s)))
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	sock = SOCKET_GET_SOCK(s);
++
++	if(__psp_socket_map[sock] == 0)
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	new = sceNetInetAccept(sock, addr, addrlen);
++	if((new >= 0) && (new < __PSP_SOCKET_MAX))
++	{
++		__psp_socket_map[new] = 1;
++	}
++	else
++	{
++		sceNetInetClose(new);
++		errno = ENOENT;
++		return -1;
++	}
++
++	return new | SOCKET_FD_PAT;
++}
++#endif
++
++#ifdef F_bind
++int	bind(int s, const struct sockaddr *my_addr, socklen_t addrlen)
++{
++	int ret;
++	int sock;
++	
++	if(!(SOCKET_IS_VALID(s)))
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	sock = SOCKET_GET_SOCK(s);
++
++	if(__psp_socket_map[sock] == 0)
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	ret = sceNetInetBind(sock, my_addr, addrlen);
++	if(ret < 0)
++	{
++		errno = sceNetInetGetErrno();
++		return -1;
++	}
++
++	return 0;
++}
++#endif
++
++#ifdef F_connect
++int	connect(int s, const struct sockaddr *serv_addr, socklen_t addrlen)
++{
++	int sock;
++	int ret;
++
++	if(!(SOCKET_IS_VALID(s)))
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	sock = SOCKET_GET_SOCK(s);
++
++	if(__psp_socket_map[sock] == 0)
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	ret = sceNetInetConnect(sock, serv_addr, addrlen);
++	if(ret < 0)
++	{
++		errno = sceNetInetGetErrno();
++		return -1;
++	}
++
++	return 0;
++}
++#endif
++
++#ifdef F_setsockopt
++int	getsockopt(int s, int level, int optname, void *optval, socklen_t *optlen)
++{
++	int sock;
++	int ret;
++
++	if(!(SOCKET_IS_VALID(s)))
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	sock = SOCKET_GET_SOCK(s);
++
++	if(__psp_socket_map[sock] == 0)
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	ret = sceNetInetGetsockopt(sock, level, optname, optval, optlen);
++	if(ret < 0)
++	{
++		errno = sceNetInetGetErrno();
++		return -1;
++	}
++
++	return 0;
++}
++#endif
++
++#ifdef F_listen
++int	listen(int s, int backlog)
++{
++	int sock;
++	int ret;
++
++	if(!(SOCKET_IS_VALID(s)))
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	sock = SOCKET_GET_SOCK(s);
++
++	if(__psp_socket_map[sock] == 0)
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	ret = sceNetInetListen(sock, backlog);
++	if(ret < 0)
++	{
++		errno = sceNetInetGetErrno();
++		return -1;
++	}
++
++	return 0;
++}
++#endif
++
++#ifdef F_recv
++ssize_t	recv(int s, void *buf, size_t len, int flags)
++{
++	int sock;
++	int ret;
++
++	if(!(SOCKET_IS_VALID(s)))
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	sock = SOCKET_GET_SOCK(s);
++
++	if(__psp_socket_map[sock] == 0)
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	ret = sceNetInetRecv(sock, buf, len, flags);
++	if(ret < 0)
++	{
++		errno = sceNetInetGetErrno();
++		return -1;
++	}
++
++	return ret;
++}
++#endif
++
++#ifdef F_recvfrom
++ssize_t	recvfrom(int s, void *buf, size_t len, int flags, struct sockaddr *from, socklen_t *fromlen)
++{
++	int sock;
++	int ret;
++
++	if(!(SOCKET_IS_VALID(s)))
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	sock = SOCKET_GET_SOCK(s);
++
++	if(__psp_socket_map[sock] == 0)
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	ret = sceNetInetRecvfrom(sock, buf, len, flags, from, fromlen);
++	if(ret < 0)
++	{
++		errno = sceNetInetGetErrno();
++		return -1;
++	}
++
++	return ret;
++}
++#endif
++
++#ifdef F_send
++ssize_t	send(int s, const void *buf, size_t len, int flags)
++{
++	int sock;
++	int ret;
++
++	if(!(SOCKET_IS_VALID(s)))
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	sock = SOCKET_GET_SOCK(s);
++
++	if(__psp_socket_map[sock] == 0)
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	ret = sceNetInetSend(sock, buf, len, flags);
++	if(ret < 0)
++	{
++		errno = sceNetInetGetErrno();
++		return -1;
++	}
++
++	return ret;
++}
++#endif
++
++#ifdef F_sendto
++ssize_t	sendto(int s, const void *buf, size_t len, int flags, const struct sockaddr *to, socklen_t tolen)
++{
++	int sock;
++	int ret;
++
++	if(!(SOCKET_IS_VALID(s)))
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	sock = SOCKET_GET_SOCK(s);
++
++	if(__psp_socket_map[sock] == 0)
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	ret = sceNetInetSendto(sock, buf, len, flags, to, tolen);
++	if(ret < 0)
++	{
++		errno = sceNetInetGetErrno();
++		return -1;
++	}
++
++	return ret;
++}
++#endif
++
++#ifdef F_setsockopt
++int	setsockopt(int s, int level, int optname, const void *optval, socklen_t optlen)
++{
++	int sock;
++	int ret;
++
++	if(!(SOCKET_IS_VALID(s)))
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	sock = SOCKET_GET_SOCK(s);
++
++	if(__psp_socket_map[sock] == 0)
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	ret = sceNetInetSetsockopt(sock, level, optname, optval, optlen);
++	if(ret < 0)
++	{
++		errno = sceNetInetGetErrno();
++		return -1;
++	}
++
++	return 0;
++}
++#endif
++
++#ifdef F_shutdown
++int	shutdown(int s, int how)
++{
++	int sock;
++	int ret;
++
++	if(!(SOCKET_IS_VALID(s)))
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	sock = SOCKET_GET_SOCK(s);
++
++	if(__psp_socket_map[sock] == 0)
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	ret = sceNetInetShutdown(sock, how);
++	if(ret < 0)
++	{
++		errno = sceNetInetGetErrno();
++		return -1;
++	}
++
++	return 0;
++}
++#endif
++
++#ifdef F_getpeername
++int	getpeername(int s, struct sockaddr *name, socklen_t *namelen)
++{
++	int sock;
++	int ret;
++
++	if(!(SOCKET_IS_VALID(s)))
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	sock = SOCKET_GET_SOCK(s);
++
++	if(__psp_socket_map[sock] == 0)
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	ret = sceNetInetGetpeername(sock, name, namelen);
++	if(ret < 0)
++	{
++		errno = sceNetInetGetErrno();
++		return -1;
++	}
++
++	return 0;
++}
++#endif
++
++#ifdef F_getsockname
++int	getsockname(int s, struct sockaddr *name, socklen_t *namelen)
++{
++	int sock;
++	int ret;
++
++	if(!(SOCKET_IS_VALID(s)))
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	sock = SOCKET_GET_SOCK(s);
++
++	if(__psp_socket_map[sock] == 0)
++	{
++		errno = EBADF;
++		return -1;
++	}
++
++	ret = sceNetInetGetsockname(sock, name, namelen);
++	if(ret < 0)
++	{
++		errno = sceNetInetGetErrno();
++		return -1;
++	}
++
++	return 0;
++}
++#endif
++
++#ifdef F_select
++int	select(int n, fd_set *readfds, fd_set *writefds,
++	    fd_set *exceptfds, struct timeval *timeout)
++{
++	int ret;
++
++	ret = sceNetInetSelect(n, readfds, writefds, exceptfds, timeout);
++	if(ret < 0)
++	{
++		errno = sceNetInetGetErrno();
++		return -1;
++	}
++
++	return ret;
++}
++#endif
++
++#ifdef F_inet_ntoa
++char *inet_ntoa(struct in_addr in)
++{
++	static char ip_addr[INET_ADDRSTRLEN+1];
++
++	if(sceNetInetInetNtop(AF_INET, &in, ip_addr, INET_ADDRSTRLEN) == NULL)
++	{
++		strcpy(ip_addr, "Invalid");
++	}
++
++	return ip_addr;
++}
++#endif
+diff -burN newlib-1.13.0/newlib/libc/sys/psp/sys/dirent.h newlib-psp/newlib/libc/sys/psp/sys/dirent.h
+--- newlib-1.13.0/newlib/libc/sys/psp/sys/dirent.h	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/sys/psp/sys/dirent.h	2005-12-31 00:12:26.000000000 +0000
 @@ -0,0 +1,39 @@
 +#ifndef _SYS_DIRENT_H
 +#define _SYS_DIRENT_H
@@ -4512,8 +6180,9 @@
 +#endif
 +
 +#endif
---- newlib-1.13.0.orig/newlib/libc/sys/psp/sys/errno.h	1969-12-31 16:00:00.000000000 -0800
-+++ newlib-psp/newlib/libc/sys/psp/sys/errno.h	2005-10-25 03:19:17.000000000 -0700
+diff -burN newlib-1.13.0/newlib/libc/sys/psp/sys/errno.h newlib-psp/newlib/libc/sys/psp/sys/errno.h
+--- newlib-1.13.0/newlib/libc/sys/psp/sys/errno.h	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/sys/psp/sys/errno.h	2005-12-31 00:12:26.000000000 +0000
 @@ -0,0 +1,158 @@
 +/* errno.h for PSP, based on newlib/libc/include/sys/errno.h. */
 +
@@ -4673,8 +6342,430 @@
 +}
 +#endif
 +#endif /* _SYS_ERRNO_H */
---- newlib-1.13.0.orig/newlib/libc/sys/psp/xprintf.c	1969-12-31 16:00:00.000000000 -0800
-+++ newlib-psp/newlib/libc/sys/psp/xprintf.c	2005-11-04 01:56:43.000000000 -0800
+diff -burN newlib-1.13.0/newlib/libc/sys/psp/sys/fd_set.h newlib-psp/newlib/libc/sys/psp/sys/fd_set.h
+--- newlib-1.13.0/newlib/libc/sys/psp/sys/fd_set.h	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/sys/psp/sys/fd_set.h	2005-12-31 00:12:26.000000000 +0000
+@@ -0,0 +1,66 @@
++/*	$NetBSD: fd_set.h,v 1.1 2005/05/22 12:44:24 kleink Exp $	*/
++
++/*-
++ * Copyright (c) 1992, 1993
++ *	The Regents of the University of California.  All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ * 3. Neither the name of the University nor the names of its contributors
++ *    may be used to endorse or promote products derived from this software
++ *    without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
++ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
++ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
++ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ * SUCH DAMAGE.
++ *
++ *	from: @(#)types.h	8.4 (Berkeley) 1/21/94
++ */
++
++#ifndef _SYS_FD_SET_H_
++#define	_SYS_FD_SET_H_
++
++#include <sys/socket.h>
++#include <stdint.h>
++
++/*
++ * Implementation dependent defines, hidden from user space. X/Open does not
++ * specify them.
++ */
++#define	__NBBY		8		/* number of bits in a byte */
++typedef uint32_t	__fd_mask;
++
++/* bits per mask */
++#define __NFDBITS	((unsigned int)sizeof(__fd_mask) * __NBBY)
++
++#define	__howmany(x, y)	(((x) + ((y) - 1)) / (y))
++
++#define	FD_SETSIZE	256
++
++typedef	struct fd_set {
++	__fd_mask	fds_bits[__howmany(FD_SETSIZE, __NFDBITS)];
++} fd_set;
++
++#define	FD_SET(n, p)	\
++    ((p)->fds_bits[((n) & 0xFF) /__NFDBITS] |= (1 << ((n) % __NFDBITS)))
++#define	FD_CLR(n, p)	\
++    ((p)->fds_bits[((n) & 0xFF) /__NFDBITS] &= ~(1 << ((n) % __NFDBITS)))
++#define	FD_ISSET(n, p)	\
++    ((p)->fds_bits[((n) & 0xFF) /__NFDBITS] & (1 << ((n) % __NFDBITS)))
++#define	FD_ZERO(p)	(void)__builtin_memset((p), 0, sizeof(*(p)))
++
++#endif /* _SYS_FD_SET_H_ */
+diff -burN newlib-1.13.0/newlib/libc/sys/psp/sys/select.h newlib-psp/newlib/libc/sys/psp/sys/select.h
+--- newlib-1.13.0/newlib/libc/sys/psp/sys/select.h	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/sys/psp/sys/select.h	2005-12-31 00:12:26.000000000 +0000
+@@ -0,0 +1,46 @@
++/*	$NetBSD: select.h,v 1.24 2005/05/22 12:44:24 kleink Exp $	*/
++
++/*-
++ * Copyright (c) 1992, 1993
++ *	The Regents of the University of California.  All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ * 3. Neither the name of the University nor the names of its contributors
++ *    may be used to endorse or promote products derived from this software
++ *    without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
++ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
++ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
++ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ * SUCH DAMAGE.
++ *
++ *	@(#)select.h	8.2 (Berkeley) 1/4/94
++ */
++
++#ifndef _SYS_SELECT_H_
++#define	_SYS_SELECT_H_
++
++#include <sys/fd_set.h>
++#include <sys/time.h>
++
++int	sceNetInetSelect(int n, fd_set *readfds, fd_set *writefds,
++	    fd_set *exceptfds, struct timeval *timeout);
++
++int	select(int n, fd_set *readfds, fd_set *writefds,
++	    fd_set *exceptfds, struct timeval *timeout);
++
++#endif /* !_SYS_SELECT_H_ */
+diff -burN newlib-1.13.0/newlib/libc/sys/psp/sys/socket.h newlib-psp/newlib/libc/sys/psp/sys/socket.h
+--- newlib-1.13.0/newlib/libc/sys/psp/sys/socket.h	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/sys/psp/sys/socket.h	2005-12-31 00:12:26.000000000 +0000
+@@ -0,0 +1,297 @@
++/*	$NetBSD: socket.h,v 1.77 2005/11/29 03:12:16 christos Exp $	*/
++
++/*
++ * Copyright (C) 1995, 1996, 1997, and 1998 WIDE Project.
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ * 3. Neither the name of the project nor the names of its contributors
++ *    may be used to endorse or promote products derived from this software
++ *    without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE PROJECT AND CONTRIBUTORS ``AS IS'' AND
++ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED.  IN NO EVENT SHALL THE PROJECT OR CONTRIBUTORS BE LIABLE
++ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
++ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ * SUCH DAMAGE.
++ */
++
++/*
++ * Copyright (c) 1982, 1985, 1986, 1988, 1993, 1994
++ *	The Regents of the University of California.  All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ * 3. Neither the name of the University nor the names of its contributors
++ *    may be used to endorse or promote products derived from this software
++ *    without specific prior written permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
++ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
++ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
++ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
++ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
++ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
++ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
++ * SUCH DAMAGE.
++ *
++ *	@(#)socket.h	8.6 (Berkeley) 5/3/95
++ */
++
++#ifndef _SYS_SOCKET_H_
++#define	_SYS_SOCKET_H_
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++#include <stdint.h>
++#include <stddef.h>
++#include <sys/types.h>
++
++typedef uint8_t sa_family_t;
++typedef uint32_t socklen_t;
++
++/*
++ * Socket types.
++ */
++#define	SOCK_STREAM	1		/* stream socket */
++#define	SOCK_DGRAM	2		/* datagram socket */
++#define	SOCK_RAW	3		/* raw-protocol interface */
++#define	SOCK_RDM	4		/* reliably-delivered message */
++#define	SOCK_SEQPACKET	5		/* sequenced packet stream */
++
++/*
++ * Option flags per-socket.
++ */
++#define	SO_DEBUG	0x0001		/* turn on debugging info recording */
++#define	SO_ACCEPTCONN	0x0002		/* socket has had listen() */
++#define	SO_REUSEADDR	0x0004		/* allow local address reuse */
++#define	SO_KEEPALIVE	0x0008		/* keep connections alive */
++#define	SO_DONTROUTE	0x0010		/* just use interface addresses */
++#define	SO_BROADCAST	0x0020		/* permit sending of broadcast msgs */
++#define	SO_USELOOPBACK	0x0040		/* bypass hardware when possible */
++#define	SO_LINGER	0x0080		/* linger on close if data present */
++#define	SO_OOBINLINE	0x0100		/* leave received OOB data in line */
++#define	SO_REUSEPORT	0x0200		/* allow local address & port reuse */
++#define	SO_TIMESTAMP	0x0400		/* timestamp received dgram traffic */
++
++/*
++ * Additional options, not kept in so_options.
++ */
++#define SO_SNDBUF	0x1001		/* send buffer size */
++#define SO_RCVBUF	0x1002		/* receive buffer size */
++#define SO_SNDLOWAT	0x1003		/* send low-water mark */
++#define SO_RCVLOWAT	0x1004		/* receive low-water mark */
++#define SO_SNDTIMEO	0x1005		/* send timeout */
++#define SO_RCVTIMEO	0x1006		/* receive timeout */
++#define	SO_ERROR	0x1007		/* get error status and clear */
++#define	SO_TYPE		0x1008		/* get socket type */
++#define	SO_OVERFLOWED	0x1009		/* datagrams: return packets dropped */
++
++/*
++ * Structure used for manipulating linger option.
++ */
++struct	linger {
++	int	l_onoff;		/* option on/off */
++	int	l_linger;		/* linger time in seconds */
++};
++
++/*
++ * Level number for (get/set)sockopt() to apply to socket itself.
++ */
++#define	SOL_SOCKET	0xffff		/* options for socket level */
++
++/*
++ * Address families.
++ */
++#define	AF_UNSPEC	0		/* unspecified */
++#define	AF_LOCAL	1		/* local to host (pipes, portals) */
++#define	AF_UNIX		AF_LOCAL	/* backward compatibility */
++#define	AF_INET		2		/* internetwork: UDP, TCP, etc. */
++#define	AF_IMPLINK	3		/* arpanet imp addresses */
++#define	AF_PUP		4		/* pup protocols: e.g. BSP */
++#define	AF_CHAOS	5		/* mit CHAOS protocols */
++#define	AF_NS		6		/* XEROX NS protocols */
++#define	AF_ISO		7		/* ISO protocols */
++#define	AF_OSI		AF_ISO
++#define	AF_ECMA		8		/* european computer manufacturers */
++#define	AF_DATAKIT	9		/* datakit protocols */
++#define	AF_CCITT	10		/* CCITT protocols, X.25 etc */
++#define	AF_SNA		11		/* IBM SNA */
++#define AF_DECnet	12		/* DECnet */
++#define AF_DLI		13		/* DEC Direct data link interface */
++#define AF_LAT		14		/* LAT */
++#define	AF_HYLINK	15		/* NSC Hyperchannel */
++#define	AF_APPLETALK	16		/* Apple Talk */
++#define	AF_ROUTE	17		/* Internal Routing Protocol */
++#define	AF_LINK		18		/* Link layer interface */
++#define	AF_COIP		20		/* connection-oriented IP, aka ST II */
++#define	AF_CNT		21		/* Computer Network Technology */
++#define	AF_IPX		23		/* Novell Internet Protocol */
++#define	AF_INET6	24		/* IP version 6 */
++#define AF_ISDN		26		/* Integrated Services Digital Network*/
++#define AF_E164		AF_ISDN		/* CCITT E.164 recommendation */
++#define AF_NATM		27		/* native ATM access */
++#define AF_ARP		28		/* (rev.) addr. res. prot. (RFC 826) */
++#define	AF_MAX		31
++
++/*
++ * Structure used by kernel to store most
++ * addresses.
++ */
++struct sockaddr {
++	uint8_t	sa_len;		/* total length */
++	sa_family_t	sa_family;	/* address family */
++	char		sa_data[14];	/* actually longer; address value */
++};
++
++/*
++ * Protocol families, same as address families for now.
++ */
++#define	PF_UNSPEC	AF_UNSPEC
++#define	PF_LOCAL	AF_LOCAL
++#define	PF_UNIX		PF_LOCAL	/* backward compatibility */
++#define	PF_INET		AF_INET
++#define	PF_IMPLINK	AF_IMPLINK
++#define	PF_PUP		AF_PUP
++#define	PF_CHAOS	AF_CHAOS
++#define	PF_NS		AF_NS
++#define	PF_ISO		AF_ISO
++#define	PF_OSI		AF_ISO
++#define	PF_ECMA		AF_ECMA
++#define	PF_DATAKIT	AF_DATAKIT
++#define	PF_CCITT	AF_CCITT
++#define	PF_SNA		AF_SNA
++#define PF_DECnet	AF_DECnet
++#define PF_DLI		AF_DLI
++#define PF_LAT		AF_LAT
++#define	PF_HYLINK	AF_HYLINK
++#define	PF_APPLETALK	AF_APPLETALK
++#define	PF_ROUTE	AF_ROUTE
++#define	PF_LINK		AF_LINK
++#if defined(_NETBSD_SOURCE)
++#define	PF_XTP		pseudo_AF_XTP	/* really just proto family, no AF */
++#endif
++#define	PF_COIP		AF_COIP
++#define	PF_CNT		AF_CNT
++#define	PF_INET6	AF_INET6
++#define	PF_IPX		AF_IPX		/* same format as AF_NS */
++#if defined(_NETBSD_SOURCE)
++#define PF_RTIP		pseudo_AF_RTIP	/* same format as AF_INET */
++#define PF_PIP		pseudo_AF_PIP
++#endif
++#define PF_ISDN		AF_ISDN		/* same as E164 */
++#define PF_E164		AF_E164
++#define PF_NATM		AF_NATM
++#define PF_ARP		AF_ARP
++#if defined(_NETBSD_SOURCE)
++#define PF_KEY 		pseudo_AF_KEY	/* like PF_ROUTE, only for key mgmt */
++#endif
++
++#define	PF_MAX		AF_MAX
++
++#define	MSG_OOB		0x1		/* process out-of-band data */
++#define	MSG_PEEK	0x2		/* peek at incoming message */
++#define	MSG_DONTROUTE	0x4		/* send without using routing tables */
++#define	MSG_EOR		0x8		/* data completes record */
++#define	MSG_TRUNC	0x10		/* data discarded before delivery */
++#define	MSG_CTRUNC	0x20		/* control data lost before delivery */
++#define	MSG_WAITALL	0x40		/* wait for full request or error */
++#define	MSG_DONTWAIT	0x80		/* this message should be nonblocking */
++#define	MSG_BCAST	0x100		/* this message was rcvd using link-level brdcst */
++#define	MSG_MCAST	0x200		/* this message was rcvd using link-level mcast */
++
++/*
++ * Types of socket shutdown(2).
++ */
++#define	SHUT_RD		0		/* Disallow further receives. */
++#define	SHUT_WR		1		/* Disallow further sends. */
++#define	SHUT_RDWR	2		/* Disallow further sends/receives. */
++
++struct iovec {
++	void	*iov_base;	/* Base address. */
++	size_t	 iov_len;	/* Length. */
++};
++
++struct msghdr {
++	void		*msg_name;	/* optional address */
++	socklen_t	msg_namelen;	/* size of address */
++	struct iovec	*msg_iov;	/* scatter/gather array */
++	int		msg_iovlen;	/* # elements in msg_iov */
++	void		*msg_control;	/* ancillary data, see below */
++	socklen_t	msg_controllen;	/* ancillary data buffer len */
++	int		msg_flags;	/* flags on received message */
++};
++
++/* BSD-compatible socket API. */
++int	accept(int, struct sockaddr * __restrict, socklen_t * __restrict);
++int	bind(int, const struct sockaddr *, socklen_t);
++int	connect(int, const struct sockaddr *, socklen_t);
++int	getpeername(int, struct sockaddr * __restrict, socklen_t * __restrict);
++int	getsockname(int, struct sockaddr * __restrict, socklen_t * __restrict);
++int	getsockopt(int, int, int, void * __restrict, socklen_t * __restrict);
++int	listen(int, int);
++ssize_t	recv(int, void *, size_t, int);
++ssize_t	recvfrom(int, void * __restrict, size_t, int,
++	    struct sockaddr * __restrict, socklen_t * __restrict);
++ssize_t recvmsg(int s, struct msghdr *msg, int flags);
++ssize_t	send(int, const void *, size_t, int);
++ssize_t	sendto(int, const void *,
++	    size_t, int, const struct sockaddr *, socklen_t);
++ssize_t sendmsg(int s, const struct msghdr *msg, int flags);
++int	setsockopt(int, int, int, const void *, socklen_t);
++int	shutdown(int, int);
++int	socket(int, int, int);
++
++#define SOCKET_FD_PAT      0x7F000000
++#define SOCKET_IS_VALID(x) (((x) & SOCKET_FD_PAT) == SOCKET_FD_PAT)
++#define SOCKET_GET_SOCK(x) ((x) & ~SOCKET_FD_PAT)
++
++/* sceNetInet socket API. */
++int	sceNetInetAccept(int s, struct sockaddr *addr, socklen_t *addrlen);
++int	sceNetInetBind(int s, const struct sockaddr *my_addr, socklen_t addrlen);
++int	sceNetInetConnect(int s, const struct sockaddr *serv_addr, socklen_t addrlen);
++int	sceNetInetGetsockopt(int s, int level, int optname, void *optval, socklen_t *optlen);
++int	sceNetInetListen(int s, int backlog);
++ssize_t	sceNetInetRecv(int s, void *buf, size_t len, int flags);
++ssize_t	sceNetInetRecvfrom(int s, void *buf, size_t flags, int, struct sockaddr *from, socklen_t *fromlen);
++ssize_t sceNetInetRecvmsg(int s, struct msghdr *msg, int flags);
++ssize_t	sceNetInetSend(int s, const void *buf, size_t len, int flags);
++ssize_t	sceNetInetSendto(int s, const void *buf, size_t len, int flags, const struct sockaddr *to, socklen_t tolen);
++ssize_t sceNetInetSendmsg(int s, const struct msghdr *msg, int flags);
++int	sceNetInetSetsockopt(int s, int level, int optname, const void *optval, socklen_t optlen);
++int	sceNetInetShutdown(int s, int how);
++int	sceNetInetSocket(int domain, int type, int protocol);
++int sceNetInetClose(int s);
++int sceNetInetGetErrno(void);
++int sceNetInetGetsockname(int s, struct sockaddr *name, socklen_t *namelen);
++int sceNetInetGetpeername(int s, struct sockaddr *name, socklen_t *namelen);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* !_SYS_SOCKET_H_ */
+diff -burN newlib-1.13.0/newlib/libc/sys/psp/xprintf.c newlib-psp/newlib/libc/sys/psp/xprintf.c
+--- newlib-1.13.0/newlib/libc/sys/psp/xprintf.c	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/sys/psp/xprintf.c	2005-12-31 00:12:26.000000000 +0000
 @@ -0,0 +1,984 @@
 +/*
 + * PSP Software Development Kit - http://www.pspdev.org
@@ -4687,7 +6778,7 @@
 + * Copyright (c) 2005 James Forshaw <tyranid@gmail.com>
 + * Copyright (c) 2005 John Kelley <ps2dev@kelley.ca>
 + *
-+ * $Id: newlib-1.13.0.patch,v 1.6 2005-11-15 12:49:48 wntrmute Exp $
++ * $Id: newlib-1.13.0.patch,v 1.7 2006-01-02 12:29:39 wntrmute Exp $
 + */
 +/* Code borrowed from mysql's xprintf.c, by Richard Hipp */
 +/* This xprintf.c file on which this one is based is in public domain. */
@@ -5660,8 +7751,9 @@
 +	return ret;
 +}
 +#endif
---- newlib-1.13.0.orig/newlib/libc/time/Makefile.am	2002-04-17 14:23:31.000000000 -0700
-+++ newlib-psp/newlib/libc/time/Makefile.am	2005-11-10 01:07:48.000000000 -0800
+diff -burN newlib-1.13.0/newlib/libc/time/Makefile.am newlib-psp/newlib/libc/time/Makefile.am
+--- newlib-1.13.0/newlib/libc/time/Makefile.am	2002-04-17 22:23:31.000000000 +0100
++++ newlib-psp/newlib/libc/time/Makefile.am	2005-12-31 00:12:26.000000000 +0000
 @@ -22,7 +22,8 @@
  	time.c		\
  	tzlock.c	\
@@ -5672,8 +7764,9 @@
  
  libtime_la_LDFLAGS = -Xcompiler -nostdlib
  
---- newlib-1.13.0.orig/newlib/libc/time/Makefile.in	2004-01-27 15:26:26.000000000 -0800
-+++ newlib-psp/newlib/libc/time/Makefile.in	2005-11-10 01:09:18.000000000 -0800
+diff -burN newlib-1.13.0/newlib/libc/time/Makefile.in newlib-psp/newlib/libc/time/Makefile.in
+--- newlib-1.13.0/newlib/libc/time/Makefile.in	2004-01-27 23:26:26.000000000 +0000
++++ newlib-psp/newlib/libc/time/Makefile.in	2005-12-31 00:12:26.000000000 +0000
 @@ -110,7 +110,7 @@
  
  INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
@@ -5701,8 +7794,9 @@
  CFLAGS = @CFLAGS@
  COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
  LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
---- newlib-1.13.0.orig/newlib/libc/time/tzset_r.c	2004-12-09 13:36:48.000000000 -0800
-+++ newlib-psp/newlib/libc/time/tzset_r.c	2005-11-10 01:06:04.000000000 -0800
+diff -burN newlib-1.13.0/newlib/libc/time/tzset_r.c newlib-psp/newlib/libc/time/tzset_r.c
+--- newlib-1.13.0/newlib/libc/time/tzset_r.c	2004-12-09 21:36:48.000000000 +0000
++++ newlib-psp/newlib/libc/time/tzset_r.c	2005-12-31 00:12:26.000000000 +0000
 @@ -11,18 +11,6 @@
  static char __tzname_dst[11];
  static char *prev_tzenv = NULL;
@@ -5722,8 +7816,9 @@
  _VOID
  _DEFUN (_tzset_r, (reent_ptr),
          struct _reent *reent_ptr)
---- newlib-1.13.0.orig/newlib/libc/time/tzvars.c	1969-12-31 16:00:00.000000000 -0800
-+++ newlib-psp/newlib/libc/time/tzvars.c	2005-11-10 01:05:54.000000000 -0800
+diff -burN newlib-1.13.0/newlib/libc/time/tzvars.c newlib-psp/newlib/libc/time/tzvars.c
+--- newlib-1.13.0/newlib/libc/time/tzvars.c	1970-01-01 01:00:00.000000000 +0100
++++ newlib-psp/newlib/libc/time/tzvars.c	2005-12-31 00:12:26.000000000 +0000
 @@ -0,0 +1,17 @@
 +/* Moved these variables from tzset_r.c to avoid including all of _tzset_r()
 +   and the functions it uses. -- MRB (PSPDEV LOCAL) */
@@ -5742,3 +7837,65 @@
 +
 +__tzrule_type __tzrule[2] = { {'J', 0, 0, 0, 0, (time_t)0, 0 }, 
 +			      {'J', 0, 0, 0, 0, (time_t)0, 0 } };
+diff -burN newlib-1.13.0/newlib/Makefile.am newlib-psp/newlib/Makefile.am
+--- newlib-1.13.0/newlib/Makefile.am	2004-12-03 23:46:28.000000000 +0000
++++ newlib-psp/newlib/Makefile.am	2005-12-31 00:12:26.000000000 +0000
+@@ -251,6 +251,18 @@
+ 	     $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/machine/`basename $$i`; \
+ 	    else true; fi ; \
+ 	  done; \
++	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/include/netinet; \
++	  for i in $(srcdir)/libc/sys/$(sys_dir)/netinet/*.h; do \
++	    if [ -f $$i ]; then \
++	     $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/netinet/`basename $$i`; \
++	    else true; fi ; \
++	  done ; \
++	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/include/arpa; \
++	  for i in $(srcdir)/libc/sys/$(sys_dir)/arpa/*.h; do \
++	    if [ -f $$i ]; then \
++	     $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/arpa/`basename $$i`; \
++	    else true; fi ; \
++	  done ; \
+ 	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/include/sys; \
+ 	  for i in $(srcdir)/libc/include/sys/*.h; do \
+ 	   $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/sys/`basename $$i`; \
+diff -burN newlib-1.13.0/newlib/Makefile.in newlib-psp/newlib/Makefile.in
+--- newlib-1.13.0/newlib/Makefile.in	2004-12-03 23:46:28.000000000 +0000
++++ newlib-psp/newlib/Makefile.in	2005-12-31 00:12:26.000000000 +0000
+@@ -214,7 +214,7 @@
+ 
+ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+ 
+-TAR = gtar
++TAR = tar
+ GZIP_ENV = --best
+ DIST_SUBDIRS =  libc libm doc . @EXTRA_DIRS@
+ EXPECT = `if test -f $(top_builddir)/../expect/expect; then echo $(top_builddir)/../expect/expect; else echo expect; fi`
+@@ -472,7 +472,7 @@
+ 	  awk '    { files[$$0] = 1; } \
+ 	       END { for (i in files) print i; }'`; \
+ 	test -z "$(ETAGS_ARGS)newlib.hin$$unique$(LISP)$$tags" \
+-	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags newlib.hin $$unique $(LISP) -o $$here/TAGS)
++	  || (cd $(srcdir) && etags -o $$here/TAGS $(ETAGS_ARGS) $$tags newlib.hin $$unique $(LISP))
+ 
+ mostlyclean-tags:
+ 
+@@ -756,6 +756,18 @@
+ 	     $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/machine/`basename $$i`; \
+ 	    else true; fi ; \
+ 	  done; \
++	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/include/netinet; \
++	  for i in $(srcdir)/libc/sys/$(sys_dir)/netinet/*.h; do \
++	    if [ -f $$i ]; then \
++	     $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/netinet/`basename $$i`; \
++	    else true; fi ; \
++	  done ; \
++	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/include/arpa; \
++	  for i in $(srcdir)/libc/sys/$(sys_dir)/arpa/*.h; do \
++	    if [ -f $$i ]; then \
++	     $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/arpa/`basename $$i`; \
++	    else true; fi ; \
++	  done ; \
+ 	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/include/sys; \
+ 	  for i in $(srcdir)/libc/include/sys/*.h; do \
+ 	   $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/sys/`basename $$i`; \
