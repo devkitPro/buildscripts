@@ -12,15 +12,15 @@
 /*         support added to allow labels end, _end, */
 /*         & __end__ to point to end of iwram or    */
 /*         the end of ewram.                        */
-/*	Additions by WinterMute							*/
-/* v1.4 -	.sbss section added for unitialised		*/
-/*		    data in ewram 							*/
-/* v1.5 -	padding section added to stop EZF 		*/
-/*		    stripping important data				*/
+/*	Additions by WinterMute				*/
+/* v1.4 -	.sbss section added for unitialised	*/
+/*		    data in ewram 			*/
+/* v1.5 -	padding section added to stop EZF 	*/
+/*		    stripping important data		*/
 
 /* This file is released into the public domain		*/
 /* for commercial or non-commercial use with no		*/
-/* restrictions placed upon it.						*/
+/* restrictions placed upon it.				*/
 
 /* NOTE!!!: This linker script defines the RAM &  */
 /*   ROM start addresses. In order for it to work */

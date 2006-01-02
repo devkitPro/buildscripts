@@ -162,13 +162,13 @@ SECTIONS
 		__bss_start__ = ABSOLUTE(.);
 		*(.dynbss)
 		*(.gnu.linkonce.b*)
+		*(.bss*)
 		*(COMMON)
 		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
-	__bss_end = ABSOLUTE(.) ;
-	__bss_end__ = ABSOLUTE(.) ;
 	} >ewram
 
-
+	__bss_end = . ;
+	__bss_end__ = . ;
 
 	_end = . ;
 	__end__ = . ;
