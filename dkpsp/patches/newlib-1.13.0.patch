@@ -1,6 +1,5 @@
-diff -burN newlib-1.13.0/config.sub newlib-psp/config.sub
---- newlib-1.13.0/config.sub	2004-11-16 01:18:39.000000000 +0000
-+++ newlib-psp/config.sub	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/config.sub	2004-11-15 20:18:39.000000000 -0500
++++ newlib-psp/config.sub	2005-11-09 14:01:47.000000000 -0500
 @@ -253,6 +253,7 @@
  	| mipsisa64sb1 | mipsisa64sb1el \
  	| mipsisa64sr71k | mipsisa64sr71kel \
@@ -28,9 +27,8 @@ diff -burN newlib-1.13.0/config.sub newlib-psp/config.sub
  	mips3*-*)
  		basic_machine=`echo $basic_machine | sed -e 's/mips3/mips64/'`
  		;;
-diff -burN newlib-1.13.0/configure newlib-psp/configure
---- newlib-1.13.0/configure	2004-12-16 19:51:28.000000000 +0000
-+++ newlib-psp/configure	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/configure	2004-12-16 14:51:28.000000000 -0500
++++ newlib-psp/configure	2005-11-09 14:01:47.000000000 -0500
 @@ -1507,6 +1507,9 @@
    mips*-*-linux*)
      noconfigdirs="$noconfigdirs target-newlib target-libgloss"
@@ -41,9 +39,8 @@ diff -burN newlib-1.13.0/configure newlib-psp/configure
    mips*-*-*)
      noconfigdirs="$noconfigdirs gprof ${libgcj}"
      ;;
-diff -burN newlib-1.13.0/configure.in newlib-psp/configure.in
---- newlib-1.13.0/configure.in	2004-12-16 19:51:28.000000000 +0000
-+++ newlib-psp/configure.in	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/configure.in	2004-12-16 14:51:28.000000000 -0500
++++ newlib-psp/configure.in	2005-11-09 14:01:47.000000000 -0500
 @@ -716,6 +716,9 @@
    mips*-*-linux*)
      noconfigdirs="$noconfigdirs target-newlib target-libgloss"
@@ -54,9 +51,68 @@ diff -burN newlib-1.13.0/configure.in newlib-psp/configure.in
    mips*-*-*)
      noconfigdirs="$noconfigdirs gprof ${libgcj}"
      ;;
-diff -burN newlib-1.13.0/newlib/configure.host newlib-psp/newlib/configure.host
---- newlib-1.13.0/newlib/configure.host	2004-10-05 20:44:24.000000000 +0100
-+++ newlib-psp/newlib/configure.host	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/Makefile.am	2004-12-03 18:46:28.000000000 -0500
++++ newlib-psp/newlib/Makefile.am	2005-12-12 20:18:46.000000000 -0500
+@@ -251,6 +251,18 @@
+ 	     $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/machine/`basename $$i`; \
+ 	    else true; fi ; \
+ 	  done; \
++	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/include/netinet; \
++	  for i in $(srcdir)/libc/sys/$(sys_dir)/netinet/*.h; do \
++	    if [ -f $$i ]; then \
++	     $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/netinet/`basename $$i`; \
++	    else true; fi ; \
++	  done ; \
++	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/include/arpa; \
++	  for i in $(srcdir)/libc/sys/$(sys_dir)/arpa/*.h; do \
++	    if [ -f $$i ]; then \
++	     $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/arpa/`basename $$i`; \
++	    else true; fi ; \
++	  done ; \
+ 	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/include/sys; \
+ 	  for i in $(srcdir)/libc/include/sys/*.h; do \
+ 	   $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/sys/`basename $$i`; \
+--- newlib-1.13.0/newlib/Makefile.in	2004-12-03 18:46:28.000000000 -0500
++++ newlib-psp/newlib/Makefile.in	2005-12-12 20:18:46.000000000 -0500
+@@ -214,7 +214,7 @@
+ 
+ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+ 
+-TAR = gtar
++TAR = tar
+ GZIP_ENV = --best
+ DIST_SUBDIRS =  libc libm doc . @EXTRA_DIRS@
+ EXPECT = `if test -f $(top_builddir)/../expect/expect; then echo $(top_builddir)/../expect/expect; else echo expect; fi`
+@@ -472,7 +472,7 @@
+ 	  awk '    { files[$$0] = 1; } \
+ 	       END { for (i in files) print i; }'`; \
+ 	test -z "$(ETAGS_ARGS)newlib.hin$$unique$(LISP)$$tags" \
+-	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags newlib.hin $$unique $(LISP) -o $$here/TAGS)
++	  || (cd $(srcdir) && etags -o $$here/TAGS $(ETAGS_ARGS) $$tags newlib.hin $$unique $(LISP))
+ 
+ mostlyclean-tags:
+ 
+@@ -756,6 +756,18 @@
+ 	     $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/machine/`basename $$i`; \
+ 	    else true; fi ; \
+ 	  done; \
++	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/include/netinet; \
++	  for i in $(srcdir)/libc/sys/$(sys_dir)/netinet/*.h; do \
++	    if [ -f $$i ]; then \
++	     $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/netinet/`basename $$i`; \
++	    else true; fi ; \
++	  done ; \
++	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/include/arpa; \
++	  for i in $(srcdir)/libc/sys/$(sys_dir)/arpa/*.h; do \
++	    if [ -f $$i ]; then \
++	     $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/arpa/`basename $$i`; \
++	    else true; fi ; \
++	  done ; \
+ 	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/include/sys; \
+ 	  for i in $(srcdir)/libc/include/sys/*.h; do \
+ 	   $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/sys/`basename $$i`; \
+--- newlib-1.13.0/newlib/configure.host	2004-10-05 15:44:24.000000000 -0400
++++ newlib-psp/newlib/configure.host	2006-01-03 14:25:56.000000000 -0500
 @@ -570,7 +570,14 @@
  	;;
    mips*-*-elf*)
@@ -66,16 +122,15 @@ diff -burN newlib-1.13.0/newlib/configure.host newlib-psp/newlib/configure.host
 +	  mipsallegrex*-psp-*)
 +		sys_dir=psp
 +		syscall_dir=syscalls
-+		newlib_cflags="${newlib_cflags} -G0 -DCOMPACT_CTYPE -DCLOCK_PROVIDED -I${prefix}/psp/sdk/include" ;;
++		newlib_cflags="${newlib_cflags} -G0 -DCOMPACT_CTYPE -DCLOCK_PROVIDED -DMALLOC_ALIGNMENT=16 -I${prefix}/psp/sdk/include" ;;
 +	  *)
 +		newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES" ;;
 +	esac
  	;;
    mmix-*)
  	syscall_dir=syscalls
-diff -burN newlib-1.13.0/newlib/libc/include/inttypes.h newlib-psp/newlib/libc/include/inttypes.h
---- newlib-1.13.0/newlib/libc/include/inttypes.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/include/inttypes.h	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/include/inttypes.h	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/include/inttypes.h	2005-11-29 14:43:47.000000000 -0500
 @@ -0,0 +1,290 @@
 +/*
 + * Copyright (c) 2004, 2005 by
@@ -367,9 +422,8 @@ diff -burN newlib-1.13.0/newlib/libc/include/inttypes.h newlib-psp/newlib/libc/i
 +#endif
 +
 +#endif
-diff -burN newlib-1.13.0/newlib/libc/include/machine/time.h newlib-psp/newlib/libc/include/machine/time.h
---- newlib-1.13.0/newlib/libc/include/machine/time.h	2000-12-04 19:06:37.000000000 +0000
-+++ newlib-psp/newlib/libc/include/machine/time.h	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/include/machine/time.h	2000-12-04 14:06:37.000000000 -0500
++++ newlib-psp/newlib/libc/include/machine/time.h	2005-11-09 14:01:45.000000000 -0500
 @@ -9,6 +9,10 @@
  #endif
  #endif /* !__rtems__ */
@@ -381,9 +435,8 @@ diff -burN newlib-1.13.0/newlib/libc/include/machine/time.h newlib-psp/newlib/li
  #endif	/* _MACHTIME_H_ */
  
  
-diff -burN newlib-1.13.0/newlib/libc/include/stdint.h newlib-psp/newlib/libc/include/stdint.h
---- newlib-1.13.0/newlib/libc/include/stdint.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/include/stdint.h	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/include/stdint.h	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/include/stdint.h	2005-11-29 14:43:47.000000000 -0500
 @@ -0,0 +1,401 @@
 +/*
 + * Copyright (c) 2004, 2005 by
@@ -786,9 +839,8 @@ diff -burN newlib-1.13.0/newlib/libc/include/stdint.h newlib-psp/newlib/libc/inc
 +#endif
 +
 +#endif /* _STDINT_H */
-diff -burN newlib-1.13.0/newlib/libc/include/sys/config.h newlib-psp/newlib/libc/include/sys/config.h
---- newlib-1.13.0/newlib/libc/include/sys/config.h	2004-06-22 22:54:51.000000000 +0100
-+++ newlib-psp/newlib/libc/include/sys/config.h	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/include/sys/config.h	2004-06-22 17:54:51.000000000 -0400
++++ newlib-psp/newlib/libc/include/sys/config.h	2005-11-09 14:01:45.000000000 -0500
 @@ -94,6 +94,12 @@
  #endif
  #endif
@@ -802,9 +854,8 @@ diff -burN newlib-1.13.0/newlib/libc/include/sys/config.h newlib-psp/newlib/libc
  #ifdef __xstormy16__
  #define __SMALL_BITFIELDS
  #undef INT_MAX
-diff -burN newlib-1.13.0/newlib/libc/include/sys/types.h newlib-psp/newlib/libc/include/sys/types.h
---- newlib-1.13.0/newlib/libc/include/sys/types.h	2003-07-02 21:32:07.000000000 +0100
-+++ newlib-psp/newlib/libc/include/sys/types.h	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/include/sys/types.h	2003-07-02 16:32:07.000000000 -0400
++++ newlib-psp/newlib/libc/include/sys/types.h	2005-12-12 20:18:46.000000000 -0500
 @@ -188,52 +188,6 @@
  
  typedef unsigned short nlink_t;
@@ -858,9 +909,433 @@ diff -burN newlib-1.13.0/newlib/libc/include/sys/types.h newlib-psp/newlib/libc/
  #undef __MS_types__
  #undef _ST_INT32
  
-diff -burN newlib-1.13.0/newlib/libc/sys/psp/aclocal.m4 newlib-psp/newlib/libc/sys/psp/aclocal.m4
---- newlib-1.13.0/newlib/libc/sys/psp/aclocal.m4	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/sys/psp/aclocal.m4	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/sys/psp/Makefile.am	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/sys/psp/Makefile.am	2006-01-03 14:25:23.000000000 -0500
+@@ -0,0 +1,39 @@
++## Process this file with automake to generate Makefile.in
++
++AUTOMAKE_OPTIONS = cygnus
++
++INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
++
++noinst_LIBRARIES = lib.a
++
++LIBCGLUE_MULT_OBJS = _close.o _exit.o _fork.o _fstat.o _getpid.o	\
++                     _gettimeofday.o _kill.o _lseek.o _open.o _read.o	\
++                     _sbrk.o _wait.o _write.o clock.o isatty.o time.o	\
++                     _link.o _unlink.o sleep.o opendir.o readdir.o	\
++                     closedir.o getcwd.o chdir.o mkdir.o rmdir.o	\
++                     realpath.o _stat.o truncate.o access.o tzset.o	\
++                     __psp_set_errno.o mlock.o
++
++SOCKET_MULT_OBJS = socket.o accept.o bind.o connect.o getsockopt.o \
++				   listen.o recv.o recvfrom.o send.o sendto.o \
++				   setsockopt.o shutdown.o __psp_socket_map.o \
++				   getsockname.o getpeername.o select.o inet_ntoa.o
++
++XPRINTF_MULT_OBJS = vxprintf.o _xprintf.o __sout.o vsnprintf.o snprintf.o vsprintf.o sprintf.o __mout.o mprintf.o vmprintf.o asprintf.o vasprintf.o __fout.o fprintf.o vfprintf.o printf.o vprintf.o _sprintf_r.o
++
++lib_a_SOURCES = libcglue.c socket.c pspcwd.c xprintf.c
++lib_a_LIBADD  = $(LIBCGLUE_MULT_OBJS) $(SOCKET_MULT_OBJS) $(XPRINTF_MULT_OBJS)
++
++all: crt0.o
++
++$(LIBCGLUE_MULT_OBJS): libcglue.c
++	$(COMPILE) -DF_$* $< -c -o $@
++
++$(SOCKET_MULT_OBJS): socket.c
++	$(COMPILE) -DF_$* $< -c -o $@
++
++$(XPRINTF_MULT_OBJS): xprintf.c
++	$(COMPILE) -DF_$* $< -c -o $@
++
++ACLOCAL_AMFLAGS = -I ../../..
++CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host
+--- newlib-1.13.0/newlib/libc/sys/psp/Makefile.in	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/sys/psp/Makefile.in	2006-01-03 14:25:23.000000000 -0500
+@@ -0,0 +1,361 @@
++# Makefile.in generated automatically by automake 1.4-p6 from Makefile.am
++
++# Copyright (C) 1994, 1995-8, 1999, 2001 Free Software Foundation, Inc.
++# This Makefile.in is free software; the Free Software Foundation
++# gives unlimited permission to copy and/or distribute it,
++# with or without modifications, as long as this notice is preserved.
++
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
++# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
++# PARTICULAR PURPOSE.
++
++
++SHELL = @SHELL@
++
++srcdir = @srcdir@
++top_srcdir = @top_srcdir@
++VPATH = @srcdir@
++prefix = @prefix@
++exec_prefix = @exec_prefix@
++
++bindir = @bindir@
++sbindir = @sbindir@
++libexecdir = @libexecdir@
++datadir = @datadir@
++sysconfdir = @sysconfdir@
++sharedstatedir = @sharedstatedir@
++localstatedir = @localstatedir@
++libdir = @libdir@
++infodir = @infodir@
++mandir = @mandir@
++includedir = @includedir@
++oldincludedir = /usr/include
++
++DESTDIR =
++
++pkgdatadir = $(datadir)/@PACKAGE@
++pkglibdir = $(libdir)/@PACKAGE@
++pkgincludedir = $(includedir)/@PACKAGE@
++
++top_builddir = .
++
++ACLOCAL = @ACLOCAL@
++AUTOCONF = @AUTOCONF@
++AUTOMAKE = @AUTOMAKE@
++AUTOHEADER = @AUTOHEADER@
++
++INSTALL = @INSTALL@
++INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
++INSTALL_DATA = @INSTALL_DATA@
++INSTALL_SCRIPT = @INSTALL_SCRIPT@
++transform = @program_transform_name@
++
++NORMAL_INSTALL = :
++PRE_INSTALL = :
++POST_INSTALL = :
++NORMAL_UNINSTALL = :
++PRE_UNINSTALL = :
++POST_UNINSTALL = :
++build_alias = @build_alias@
++build_triplet = @build@
++host_alias = @host_alias@
++host_triplet = @host@
++target_alias = @target_alias@
++target_triplet = @target@
++AR = @AR@
++AS = @AS@
++CC = @CC@
++CPP = @CPP@
++EXEEXT = @EXEEXT@
++HAVE_LIB = @HAVE_LIB@
++LDFLAGS = @LDFLAGS@
++LIB = @LIB@
++LTLIB = @LTLIB@
++MAINT = @MAINT@
++MAKEINFO = @MAKEINFO@
++NEWLIB_CFLAGS = @NEWLIB_CFLAGS@
++OBJEXT = @OBJEXT@
++PACKAGE = @PACKAGE@
++RANLIB = @RANLIB@
++VERSION = @VERSION@
++aext = @aext@
++libm_machine_dir = @libm_machine_dir@
++machine_dir = @machine_dir@
++newlib_basedir = @newlib_basedir@
++oext = @oext@
++sys_dir = @sys_dir@
++
++AUTOMAKE_OPTIONS = cygnus
++
++INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
++
++noinst_LIBRARIES = lib.a
++
++LIBCGLUE_MULT_OBJS = _close.o _exit.o _fork.o _fstat.o _getpid.o	                     _gettimeofday.o _kill.o _lseek.o _open.o _read.o	                     _sbrk.o _wait.o _write.o clock.o isatty.o time.o	                     _link.o _unlink.o sleep.o opendir.o readdir.o	                     closedir.o getcwd.o chdir.o mkdir.o rmdir.o	                     realpath.o _stat.o truncate.o access.o tzset.o	                     __psp_set_errno.o mlock.o
++
++
++SOCKET_MULT_OBJS = socket.o accept.o bind.o connect.o getsockopt.o 				   listen.o recv.o recvfrom.o send.o sendto.o 				   setsockopt.o shutdown.o __psp_socket_map.o 				   getsockname.o getpeername.o select.o inet_ntoa.o
++
++
++XPRINTF_MULT_OBJS = vxprintf.o _xprintf.o __sout.o vsnprintf.o snprintf.o vsprintf.o sprintf.o __mout.o mprintf.o vmprintf.o asprintf.o vasprintf.o __fout.o fprintf.o vfprintf.o printf.o vprintf.o _sprintf_r.o
++
++lib_a_SOURCES = libcglue.c socket.c pspcwd.c xprintf.c
++lib_a_LIBADD = $(LIBCGLUE_MULT_OBJS) $(SOCKET_MULT_OBJS) $(XPRINTF_MULT_OBJS)
++
++ACLOCAL_AMFLAGS = -I ../../..
++CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host
++ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
++mkinstalldirs = $(SHELL) $(top_srcdir)/../../../../mkinstalldirs
++CONFIG_CLEAN_FILES = 
++LIBRARIES =  $(noinst_LIBRARIES)
++
++
++DEFS = @DEFS@ -I. -I$(srcdir) 
++CPPFLAGS = @CPPFLAGS@
++LIBS = @LIBS@
++lib_a_DEPENDENCIES =  _close.o _exit.o _fork.o _fstat.o _getpid.o \
++_gettimeofday.o _kill.o _lseek.o _open.o _read.o _sbrk.o _wait.o \
++_write.o clock.o isatty.o time.o _link.o _unlink.o sleep.o opendir.o \
++readdir.o closedir.o getcwd.o chdir.o mkdir.o rmdir.o realpath.o \
++_stat.o truncate.o access.o tzset.o __psp_set_errno.o mlock.o socket.o accept.o \
++bind.o connect.o getsockopt.o listen.o recv.o recvfrom.o send.o \
++sendto.o setsockopt.o shutdown.o __psp_socket_map.o getsockname.o \
++getpeername.o select.o inet_ntoa.o vxprintf.o _xprintf.o __sout.o \
++vsnprintf.o snprintf.o vsprintf.o sprintf.o __mout.o mprintf.o \
++vmprintf.o asprintf.o vasprintf.o __fout.o fprintf.o vfprintf.o \
++printf.o vprintf.o _sprintf_r.o
++lib_a_OBJECTS =  libcglue.o socket.o pspcwd.o xprintf.o
++CFLAGS = @CFLAGS@
++COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
++CCLD = $(CC)
++LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
++DIST_COMMON =  README Makefile.am Makefile.in aclocal.m4 configure \
++configure.in
++
++
++DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
++
++TAR = tar
++GZIP_ENV = --best
++SOURCES = $(lib_a_SOURCES)
++OBJECTS = $(lib_a_OBJECTS)
++
++all: all-redirect
++.SUFFIXES:
++.SUFFIXES: .S .c .o .s
++$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
++	cd $(top_srcdir) && $(AUTOMAKE) --cygnus Makefile
++
++Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
++	cd $(top_builddir) \
++	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
++
++$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ configure.in  \
++		../../../acinclude.m4 ../../../aclocal.m4 \
++		../../../libtool.m4
++	cd $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
++
++config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
++	$(SHELL) ./config.status --recheck
++$(srcdir)/configure: @MAINTAINER_MODE_TRUE@$(srcdir)/configure.in $(ACLOCAL_M4) $(CONFIGURE_DEPENDENCIES)
++	cd $(srcdir) && $(AUTOCONF)
++
++mostlyclean-noinstLIBRARIES:
++
++clean-noinstLIBRARIES:
++	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
++
++distclean-noinstLIBRARIES:
++
++maintainer-clean-noinstLIBRARIES:
++
++.c.o:
++	$(COMPILE) -c $<
++
++.s.o:
++	$(COMPILE) -c $<
++
++.S.o:
++	$(COMPILE) -c $<
++
++mostlyclean-compile:
++	-rm -f *.o core *.core
++
++clean-compile:
++
++distclean-compile:
++	-rm -f *.tab.c
++
++maintainer-clean-compile:
++
++lib.a: $(lib_a_OBJECTS) $(lib_a_DEPENDENCIES)
++	-rm -f lib.a
++	$(AR) cru lib.a $(lib_a_OBJECTS) $(lib_a_LIBADD)
++	$(RANLIB) lib.a
++
++tags: TAGS
++
++ID: $(HEADERS) $(SOURCES) $(LISP)
++	list='$(SOURCES) $(HEADERS)'; \
++	unique=`for i in $$list; do echo $$i; done | \
++	  awk '    { files[$$0] = 1; } \
++	       END { for (i in files) print i; }'`; \
++	here=`pwd` && cd $(srcdir) \
++	  && mkid -f$$here/ID $$unique $(LISP)
++
++TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
++	tags=; \
++	here=`pwd`; \
++	list='$(SOURCES) $(HEADERS)'; \
++	unique=`for i in $$list; do echo $$i; done | \
++	  awk '    { files[$$0] = 1; } \
++	       END { for (i in files) print i; }'`; \
++	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
++	  || (cd $(srcdir) && etags -o $$here/TAGS $(ETAGS_ARGS) $$tags  $$unique $(LISP))
++
++mostlyclean-tags:
++
++clean-tags:
++
++distclean-tags:
++	-rm -f TAGS ID
++
++maintainer-clean-tags:
++
++distdir = $(PACKAGE)-$(VERSION)
++top_distdir = $(distdir)
++
++# This target untars the dist file and tries a VPATH configuration.  Then
++# it guarantees that the distribution is self-contained by making another
++# tarfile.
++distcheck: dist
++	-rm -rf $(distdir)
++	GZIP=$(GZIP_ENV) $(TAR) zxf $(distdir).tar.gz
++	mkdir $(distdir)/=build
++	mkdir $(distdir)/=inst
++	dc_install_base=`cd $(distdir)/=inst && pwd`; \
++	cd $(distdir)/=build \
++	  && ../configure --srcdir=.. --prefix=$$dc_install_base \
++	  && $(MAKE) $(AM_MAKEFLAGS) \
++	  && $(MAKE) $(AM_MAKEFLAGS) dvi \
++	  && $(MAKE) $(AM_MAKEFLAGS) check \
++	  && $(MAKE) $(AM_MAKEFLAGS) install \
++	  && $(MAKE) $(AM_MAKEFLAGS) installcheck \
++	  && $(MAKE) $(AM_MAKEFLAGS) dist
++	-rm -rf $(distdir)
++	@banner="$(distdir).tar.gz is ready for distribution"; \
++	dashes=`echo "$$banner" | sed s/./=/g`; \
++	echo "$$dashes"; \
++	echo "$$banner"; \
++	echo "$$dashes"
++dist: distdir
++	-chmod -R a+r $(distdir)
++	GZIP=$(GZIP_ENV) $(TAR) chozf $(distdir).tar.gz $(distdir)
++	-rm -rf $(distdir)
++dist-all: distdir
++	-chmod -R a+r $(distdir)
++	GZIP=$(GZIP_ENV) $(TAR) chozf $(distdir).tar.gz $(distdir)
++	-rm -rf $(distdir)
++distdir: $(DISTFILES)
++	-rm -rf $(distdir)
++	mkdir $(distdir)
++	-chmod 777 $(distdir)
++	@for file in $(DISTFILES); do \
++	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
++	  if test -d $$d/$$file; then \
++	    cp -pr $$d/$$file $(distdir)/$$file; \
++	  else \
++	    test -f $(distdir)/$$file \
++	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
++	    || cp -p $$d/$$file $(distdir)/$$file || :; \
++	  fi; \
++	done
++info-am:
++info: info-am
++dvi-am:
++dvi: dvi-am
++check-am:
++check: check-am
++installcheck-am:
++installcheck: installcheck-am
++install-info-am: 
++install-info: install-info-am
++install-exec-am:
++install-exec: install-exec-am
++
++install-data-am:
++install-data: install-data-am
++
++install-am: all-am
++	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
++install: install-am
++uninstall-am:
++uninstall: uninstall-am
++all-am: Makefile $(LIBRARIES)
++all-redirect: all-am
++install-strip:
++	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
++installdirs:
++
++
++mostlyclean-generic:
++
++clean-generic:
++
++distclean-generic:
++	-rm -f Makefile $(CONFIG_CLEAN_FILES)
++	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
++
++maintainer-clean-generic:
++mostlyclean-am:  mostlyclean-noinstLIBRARIES mostlyclean-compile \
++		mostlyclean-tags mostlyclean-generic
++
++mostlyclean: mostlyclean-am
++
++clean-am:  clean-noinstLIBRARIES clean-compile clean-tags clean-generic \
++		mostlyclean-am
++
++clean: clean-am
++
++distclean-am:  distclean-noinstLIBRARIES distclean-compile \
++		distclean-tags distclean-generic clean-am
++
++distclean: distclean-am
++	-rm -f config.status
++
++maintainer-clean-am:  maintainer-clean-noinstLIBRARIES \
++		maintainer-clean-compile maintainer-clean-tags \
++		maintainer-clean-generic distclean-am
++	@echo "This command is intended for maintainers to use;"
++	@echo "it deletes files that may require special tools to rebuild."
++
++maintainer-clean: maintainer-clean-am
++	-rm -f config.status
++
++.PHONY: mostlyclean-noinstLIBRARIES distclean-noinstLIBRARIES \
++clean-noinstLIBRARIES maintainer-clean-noinstLIBRARIES \
++mostlyclean-compile distclean-compile clean-compile \
++maintainer-clean-compile tags mostlyclean-tags distclean-tags \
++clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
++check-am installcheck-am installcheck install-info-am install-info \
++install-exec-am install-exec install-data-am install-data install-am \
++install uninstall-am uninstall all-redirect all-am all installdirs \
++mostlyclean-generic distclean-generic clean-generic \
++maintainer-clean-generic clean mostlyclean distclean maintainer-clean
++
++
++all: crt0.o
++
++$(LIBCGLUE_MULT_OBJS): libcglue.c
++	$(COMPILE) -DF_$* $< -c -o $@
++
++$(SOCKET_MULT_OBJS): socket.c
++	$(COMPILE) -DF_$* $< -c -o $@
++
++$(XPRINTF_MULT_OBJS): xprintf.c
++	$(COMPILE) -DF_$* $< -c -o $@
++
++# Tell versions [3.59,3.63) of GNU make to not export all variables.
++# Otherwise a system limit (for SysV at least) may be exceeded.
++.NOEXPORT:
+--- newlib-1.13.0/newlib/libc/sys/psp/README	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/sys/psp/README	2005-11-09 14:01:46.000000000 -0500
+@@ -0,0 +1,16 @@
++Newlib for PSP
++--
++
++This sys/psp directory depends on PSPSDK headers.  It expects them to live in
++${prefix}/psp/sdk/include (see newlib/configure.host).
++
++I used automake 1.4-p6 to generate aclocal.m4 and Makefile.in:
++
++	aclocal -I ../../..
++	automake --cygnus
++
++Autoconf refused to work for me, so I copied configure from sys/sh and modified
++$ac_unique_file to point libcglue.c.
++
++--
++Marcus R. Brown <mrbrown@ocgnet.org>
+--- newlib-1.13.0/newlib/libc/sys/psp/aclocal.m4	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/sys/psp/aclocal.m4	2005-11-09 14:01:46.000000000 -0500
 @@ -0,0 +1,1185 @@
 +dnl aclocal.m4 generated automatically by aclocal 1.4-p6
 +
@@ -2047,9 +2522,8 @@ diff -burN newlib-1.13.0/newlib/libc/sys/psp/aclocal.m4 newlib-psp/newlib/libc/s
 +]
 +)
 +
-diff -burN newlib-1.13.0/newlib/libc/sys/psp/arpa/inet.h newlib-psp/newlib/libc/sys/psp/arpa/inet.h
---- newlib-1.13.0/newlib/libc/sys/psp/arpa/inet.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/sys/psp/arpa/inet.h	2005-12-31 00:13:41.000000000 +0000
+--- newlib-1.13.0/newlib/libc/sys/psp/arpa/inet.h	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/sys/psp/arpa/inet.h	2006-01-03 14:25:23.000000000 -0500
 @@ -0,0 +1,26 @@
 +/* arpa/inet.h - Functions for converting IP addresses between strings and numbers */
 +
@@ -2077,9 +2551,8 @@ diff -burN newlib-1.13.0/newlib/libc/sys/psp/arpa/inet.h newlib-psp/newlib/libc/
 +}
 +#endif
 +#endif /* _ARPA_INET_H_ */
-diff -burN newlib-1.13.0/newlib/libc/sys/psp/configure newlib-psp/newlib/libc/sys/psp/configure
---- newlib-1.13.0/newlib/libc/sys/psp/configure	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/sys/psp/configure	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/sys/psp/configure	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/sys/psp/configure	2005-11-09 14:01:46.000000000 -0500
 @@ -0,0 +1,1880 @@
 +#! /bin/sh
 +
@@ -3961,9 +4434,8 @@ diff -burN newlib-1.13.0/newlib/libc/sys/psp/configure newlib-psp/newlib/libc/sy
 +rm -fr confdefs* $ac_clean_files
 +test "$no_create" = yes || ${CONFIG_SHELL-/bin/sh} $CONFIG_STATUS || exit 1
 +
-diff -burN newlib-1.13.0/newlib/libc/sys/psp/configure.in newlib-psp/newlib/libc/sys/psp/configure.in
---- newlib-1.13.0/newlib/libc/sys/psp/configure.in	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/sys/psp/configure.in	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/sys/psp/configure.in	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/sys/psp/configure.in	2005-11-09 14:01:46.000000000 -0500
 @@ -0,0 +1,12 @@
 +dnl This is the newlib/libc/sys/psp configure.in file.
 +dnl Process this file with autoconf to produce a configure script.
@@ -3977,16 +4449,14 @@ diff -burN newlib-1.13.0/newlib/libc/sys/psp/configure.in newlib-psp/newlib/libc
 +NEWLIB_CONFIGURE(../../..)
 +
 +AC_OUTPUT(Makefile)
-diff -burN newlib-1.13.0/newlib/libc/sys/psp/crt0.c newlib-psp/newlib/libc/sys/psp/crt0.c
---- newlib-1.13.0/newlib/libc/sys/psp/crt0.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/sys/psp/crt0.c	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/sys/psp/crt0.c	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/sys/psp/crt0.c	2005-11-09 14:01:46.000000000 -0500
 @@ -0,0 +1,3 @@
 +/* The real crt0.c lives in PSPSDK. */
 +
 +void _start() { }
-diff -burN newlib-1.13.0/newlib/libc/sys/psp/libcglue.c newlib-psp/newlib/libc/sys/psp/libcglue.c
---- newlib-1.13.0/newlib/libc/sys/psp/libcglue.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/sys/psp/libcglue.c	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/sys/psp/libcglue.c	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/sys/psp/libcglue.c	2006-01-03 14:25:23.000000000 -0500
 @@ -0,0 +1,744 @@
 +/*
 + * PSP Software Development Kit - http://www.pspdev.org
@@ -4732,417 +5202,8 @@ diff -burN newlib-1.13.0/newlib/libc/sys/psp/libcglue.c newlib-psp/newlib/libc/s
 +
 +#endif /* F__exit */
 +
-diff -burN newlib-1.13.0/newlib/libc/sys/psp/Makefile.am newlib-psp/newlib/libc/sys/psp/Makefile.am
---- newlib-1.13.0/newlib/libc/sys/psp/Makefile.am	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/sys/psp/Makefile.am	2005-12-31 00:12:26.000000000 +0000
-@@ -0,0 +1,39 @@
-+## Process this file with automake to generate Makefile.in
-+
-+AUTOMAKE_OPTIONS = cygnus
-+
-+INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
-+
-+noinst_LIBRARIES = lib.a
-+
-+LIBCGLUE_MULT_OBJS = _close.o _exit.o _fork.o _fstat.o _getpid.o	\
-+                     _gettimeofday.o _kill.o _lseek.o _open.o _read.o	\
-+                     _sbrk.o _wait.o _write.o clock.o isatty.o time.o	\
-+                     _link.o _unlink.o sleep.o opendir.o readdir.o	\
-+                     closedir.o getcwd.o chdir.o mkdir.o rmdir.o	\
-+                     realpath.o _stat.o truncate.o access.o tzset.o	\
-+                     __psp_set_errno.o mlock.o
-+
-+SOCKET_MULT_OBJS = socket.o accept.o bind.o connect.o getsockopt.o \
-+				   listen.o recv.o recvfrom.o send.o sendto.o \
-+				   setsockopt.o shutdown.o __psp_socket_map.o \
-+				   getsockname.o getpeername.o select.o inet_ntoa.o
-+
-+XPRINTF_MULT_OBJS = vxprintf.o _xprintf.o __sout.o vsnprintf.o snprintf.o vsprintf.o sprintf.o __mout.o mprintf.o vmprintf.o asprintf.o vasprintf.o __fout.o fprintf.o vfprintf.o printf.o vprintf.o _sprintf_r.o
-+
-+lib_a_SOURCES = libcglue.c socket.c pspcwd.c xprintf.c
-+lib_a_LIBADD  = $(LIBCGLUE_MULT_OBJS) $(SOCKET_MULT_OBJS) $(XPRINTF_MULT_OBJS)
-+
-+all: crt0.o
-+
-+$(LIBCGLUE_MULT_OBJS): libcglue.c
-+	$(COMPILE) -DF_$* $< -c -o $@
-+
-+$(SOCKET_MULT_OBJS): socket.c
-+	$(COMPILE) -DF_$* $< -c -o $@
-+
-+$(XPRINTF_MULT_OBJS): xprintf.c
-+	$(COMPILE) -DF_$* $< -c -o $@
-+
-+ACLOCAL_AMFLAGS = -I ../../..
-+CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host
-diff -burN newlib-1.13.0/newlib/libc/sys/psp/Makefile.in newlib-psp/newlib/libc/sys/psp/Makefile.in
---- newlib-1.13.0/newlib/libc/sys/psp/Makefile.in	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/sys/psp/Makefile.in	2005-12-31 00:12:26.000000000 +0000
-@@ -0,0 +1,361 @@
-+# Makefile.in generated automatically by automake 1.4-p6 from Makefile.am
-+
-+# Copyright (C) 1994, 1995-8, 1999, 2001 Free Software Foundation, Inc.
-+# This Makefile.in is free software; the Free Software Foundation
-+# gives unlimited permission to copy and/or distribute it,
-+# with or without modifications, as long as this notice is preserved.
-+
-+# This program is distributed in the hope that it will be useful,
-+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
-+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-+# PARTICULAR PURPOSE.
-+
-+
-+SHELL = @SHELL@
-+
-+srcdir = @srcdir@
-+top_srcdir = @top_srcdir@
-+VPATH = @srcdir@
-+prefix = @prefix@
-+exec_prefix = @exec_prefix@
-+
-+bindir = @bindir@
-+sbindir = @sbindir@
-+libexecdir = @libexecdir@
-+datadir = @datadir@
-+sysconfdir = @sysconfdir@
-+sharedstatedir = @sharedstatedir@
-+localstatedir = @localstatedir@
-+libdir = @libdir@
-+infodir = @infodir@
-+mandir = @mandir@
-+includedir = @includedir@
-+oldincludedir = /usr/include
-+
-+DESTDIR =
-+
-+pkgdatadir = $(datadir)/@PACKAGE@
-+pkglibdir = $(libdir)/@PACKAGE@
-+pkgincludedir = $(includedir)/@PACKAGE@
-+
-+top_builddir = .
-+
-+ACLOCAL = @ACLOCAL@
-+AUTOCONF = @AUTOCONF@
-+AUTOMAKE = @AUTOMAKE@
-+AUTOHEADER = @AUTOHEADER@
-+
-+INSTALL = @INSTALL@
-+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
-+INSTALL_DATA = @INSTALL_DATA@
-+INSTALL_SCRIPT = @INSTALL_SCRIPT@
-+transform = @program_transform_name@
-+
-+NORMAL_INSTALL = :
-+PRE_INSTALL = :
-+POST_INSTALL = :
-+NORMAL_UNINSTALL = :
-+PRE_UNINSTALL = :
-+POST_UNINSTALL = :
-+build_alias = @build_alias@
-+build_triplet = @build@
-+host_alias = @host_alias@
-+host_triplet = @host@
-+target_alias = @target_alias@
-+target_triplet = @target@
-+AR = @AR@
-+AS = @AS@
-+CC = @CC@
-+CPP = @CPP@
-+EXEEXT = @EXEEXT@
-+HAVE_LIB = @HAVE_LIB@
-+LDFLAGS = @LDFLAGS@
-+LIB = @LIB@
-+LTLIB = @LTLIB@
-+MAINT = @MAINT@
-+MAKEINFO = @MAKEINFO@
-+NEWLIB_CFLAGS = @NEWLIB_CFLAGS@
-+OBJEXT = @OBJEXT@
-+PACKAGE = @PACKAGE@
-+RANLIB = @RANLIB@
-+VERSION = @VERSION@
-+aext = @aext@
-+libm_machine_dir = @libm_machine_dir@
-+machine_dir = @machine_dir@
-+newlib_basedir = @newlib_basedir@
-+oext = @oext@
-+sys_dir = @sys_dir@
-+
-+AUTOMAKE_OPTIONS = cygnus
-+
-+INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
-+
-+noinst_LIBRARIES = lib.a
-+
-+LIBCGLUE_MULT_OBJS = _close.o _exit.o _fork.o _fstat.o _getpid.o	                     _gettimeofday.o _kill.o _lseek.o _open.o _read.o	                     _sbrk.o _wait.o _write.o clock.o isatty.o time.o	                     _link.o _unlink.o sleep.o opendir.o readdir.o	                     closedir.o getcwd.o chdir.o mkdir.o rmdir.o	                     realpath.o _stat.o truncate.o access.o tzset.o	                     __psp_set_errno.o mlock.o
-+
-+
-+SOCKET_MULT_OBJS = socket.o accept.o bind.o connect.o getsockopt.o 				   listen.o recv.o recvfrom.o send.o sendto.o 				   setsockopt.o shutdown.o __psp_socket_map.o 				   getsockname.o getpeername.o select.o inet_ntoa.o
-+
-+
-+XPRINTF_MULT_OBJS = vxprintf.o _xprintf.o __sout.o vsnprintf.o snprintf.o vsprintf.o sprintf.o __mout.o mprintf.o vmprintf.o asprintf.o vasprintf.o __fout.o fprintf.o vfprintf.o printf.o vprintf.o _sprintf_r.o
-+
-+lib_a_SOURCES = libcglue.c socket.c pspcwd.c xprintf.c
-+lib_a_LIBADD = $(LIBCGLUE_MULT_OBJS) $(SOCKET_MULT_OBJS) $(XPRINTF_MULT_OBJS)
-+
-+ACLOCAL_AMFLAGS = -I ../../..
-+CONFIG_STATUS_DEPENDENCIES = $(newlib_basedir)/configure.host
-+ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-+mkinstalldirs = $(SHELL) $(top_srcdir)/../../../../mkinstalldirs
-+CONFIG_CLEAN_FILES = 
-+LIBRARIES =  $(noinst_LIBRARIES)
-+
-+
-+DEFS = @DEFS@ -I. -I$(srcdir) 
-+CPPFLAGS = @CPPFLAGS@
-+LIBS = @LIBS@
-+lib_a_DEPENDENCIES =  _close.o _exit.o _fork.o _fstat.o _getpid.o \
-+_gettimeofday.o _kill.o _lseek.o _open.o _read.o _sbrk.o _wait.o \
-+_write.o clock.o isatty.o time.o _link.o _unlink.o sleep.o opendir.o \
-+readdir.o closedir.o getcwd.o chdir.o mkdir.o rmdir.o realpath.o \
-+_stat.o truncate.o access.o tzset.o __psp_set_errno.o mlock.o socket.o accept.o \
-+bind.o connect.o getsockopt.o listen.o recv.o recvfrom.o send.o \
-+sendto.o setsockopt.o shutdown.o __psp_socket_map.o getsockname.o \
-+getpeername.o select.o inet_ntoa.o vxprintf.o _xprintf.o __sout.o \
-+vsnprintf.o snprintf.o vsprintf.o sprintf.o __mout.o mprintf.o \
-+vmprintf.o asprintf.o vasprintf.o __fout.o fprintf.o vfprintf.o \
-+printf.o vprintf.o _sprintf_r.o
-+lib_a_OBJECTS =  libcglue.o socket.o pspcwd.o xprintf.o
-+CFLAGS = @CFLAGS@
-+COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-+CCLD = $(CC)
-+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
-+DIST_COMMON =  README Makefile.am Makefile.in aclocal.m4 configure \
-+configure.in
-+
-+
-+DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
-+
-+TAR = tar
-+GZIP_ENV = --best
-+SOURCES = $(lib_a_SOURCES)
-+OBJECTS = $(lib_a_OBJECTS)
-+
-+all: all-redirect
-+.SUFFIXES:
-+.SUFFIXES: .S .c .o .s
-+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-+	cd $(top_srcdir) && $(AUTOMAKE) --cygnus Makefile
-+
-+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
-+	cd $(top_builddir) \
-+	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
-+
-+$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ configure.in  \
-+		../../../acinclude.m4 ../../../aclocal.m4 \
-+		../../../libtool.m4
-+	cd $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
-+
-+config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
-+	$(SHELL) ./config.status --recheck
-+$(srcdir)/configure: @MAINTAINER_MODE_TRUE@$(srcdir)/configure.in $(ACLOCAL_M4) $(CONFIGURE_DEPENDENCIES)
-+	cd $(srcdir) && $(AUTOCONF)
-+
-+mostlyclean-noinstLIBRARIES:
-+
-+clean-noinstLIBRARIES:
-+	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-+
-+distclean-noinstLIBRARIES:
-+
-+maintainer-clean-noinstLIBRARIES:
-+
-+.c.o:
-+	$(COMPILE) -c $<
-+
-+.s.o:
-+	$(COMPILE) -c $<
-+
-+.S.o:
-+	$(COMPILE) -c $<
-+
-+mostlyclean-compile:
-+	-rm -f *.o core *.core
-+
-+clean-compile:
-+
-+distclean-compile:
-+	-rm -f *.tab.c
-+
-+maintainer-clean-compile:
-+
-+lib.a: $(lib_a_OBJECTS) $(lib_a_DEPENDENCIES)
-+	-rm -f lib.a
-+	$(AR) cru lib.a $(lib_a_OBJECTS) $(lib_a_LIBADD)
-+	$(RANLIB) lib.a
-+
-+tags: TAGS
-+
-+ID: $(HEADERS) $(SOURCES) $(LISP)
-+	list='$(SOURCES) $(HEADERS)'; \
-+	unique=`for i in $$list; do echo $$i; done | \
-+	  awk '    { files[$$0] = 1; } \
-+	       END { for (i in files) print i; }'`; \
-+	here=`pwd` && cd $(srcdir) \
-+	  && mkid -f$$here/ID $$unique $(LISP)
-+
-+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
-+	tags=; \
-+	here=`pwd`; \
-+	list='$(SOURCES) $(HEADERS)'; \
-+	unique=`for i in $$list; do echo $$i; done | \
-+	  awk '    { files[$$0] = 1; } \
-+	       END { for (i in files) print i; }'`; \
-+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
-+	  || (cd $(srcdir) && etags -o $$here/TAGS $(ETAGS_ARGS) $$tags  $$unique $(LISP))
-+
-+mostlyclean-tags:
-+
-+clean-tags:
-+
-+distclean-tags:
-+	-rm -f TAGS ID
-+
-+maintainer-clean-tags:
-+
-+distdir = $(PACKAGE)-$(VERSION)
-+top_distdir = $(distdir)
-+
-+# This target untars the dist file and tries a VPATH configuration.  Then
-+# it guarantees that the distribution is self-contained by making another
-+# tarfile.
-+distcheck: dist
-+	-rm -rf $(distdir)
-+	GZIP=$(GZIP_ENV) $(TAR) zxf $(distdir).tar.gz
-+	mkdir $(distdir)/=build
-+	mkdir $(distdir)/=inst
-+	dc_install_base=`cd $(distdir)/=inst && pwd`; \
-+	cd $(distdir)/=build \
-+	  && ../configure --srcdir=.. --prefix=$$dc_install_base \
-+	  && $(MAKE) $(AM_MAKEFLAGS) \
-+	  && $(MAKE) $(AM_MAKEFLAGS) dvi \
-+	  && $(MAKE) $(AM_MAKEFLAGS) check \
-+	  && $(MAKE) $(AM_MAKEFLAGS) install \
-+	  && $(MAKE) $(AM_MAKEFLAGS) installcheck \
-+	  && $(MAKE) $(AM_MAKEFLAGS) dist
-+	-rm -rf $(distdir)
-+	@banner="$(distdir).tar.gz is ready for distribution"; \
-+	dashes=`echo "$$banner" | sed s/./=/g`; \
-+	echo "$$dashes"; \
-+	echo "$$banner"; \
-+	echo "$$dashes"
-+dist: distdir
-+	-chmod -R a+r $(distdir)
-+	GZIP=$(GZIP_ENV) $(TAR) chozf $(distdir).tar.gz $(distdir)
-+	-rm -rf $(distdir)
-+dist-all: distdir
-+	-chmod -R a+r $(distdir)
-+	GZIP=$(GZIP_ENV) $(TAR) chozf $(distdir).tar.gz $(distdir)
-+	-rm -rf $(distdir)
-+distdir: $(DISTFILES)
-+	-rm -rf $(distdir)
-+	mkdir $(distdir)
-+	-chmod 777 $(distdir)
-+	@for file in $(DISTFILES); do \
-+	  if test -f $$file; then d=.; else d=$(srcdir); fi; \
-+	  if test -d $$d/$$file; then \
-+	    cp -pr $$d/$$file $(distdir)/$$file; \
-+	  else \
-+	    test -f $(distdir)/$$file \
-+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
-+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
-+	  fi; \
-+	done
-+info-am:
-+info: info-am
-+dvi-am:
-+dvi: dvi-am
-+check-am:
-+check: check-am
-+installcheck-am:
-+installcheck: installcheck-am
-+install-info-am: 
-+install-info: install-info-am
-+install-exec-am:
-+install-exec: install-exec-am
-+
-+install-data-am:
-+install-data: install-data-am
-+
-+install-am: all-am
-+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
-+install: install-am
-+uninstall-am:
-+uninstall: uninstall-am
-+all-am: Makefile $(LIBRARIES)
-+all-redirect: all-am
-+install-strip:
-+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
-+installdirs:
-+
-+
-+mostlyclean-generic:
-+
-+clean-generic:
-+
-+distclean-generic:
-+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
-+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
-+
-+maintainer-clean-generic:
-+mostlyclean-am:  mostlyclean-noinstLIBRARIES mostlyclean-compile \
-+		mostlyclean-tags mostlyclean-generic
-+
-+mostlyclean: mostlyclean-am
-+
-+clean-am:  clean-noinstLIBRARIES clean-compile clean-tags clean-generic \
-+		mostlyclean-am
-+
-+clean: clean-am
-+
-+distclean-am:  distclean-noinstLIBRARIES distclean-compile \
-+		distclean-tags distclean-generic clean-am
-+
-+distclean: distclean-am
-+	-rm -f config.status
-+
-+maintainer-clean-am:  maintainer-clean-noinstLIBRARIES \
-+		maintainer-clean-compile maintainer-clean-tags \
-+		maintainer-clean-generic distclean-am
-+	@echo "This command is intended for maintainers to use;"
-+	@echo "it deletes files that may require special tools to rebuild."
-+
-+maintainer-clean: maintainer-clean-am
-+	-rm -f config.status
-+
-+.PHONY: mostlyclean-noinstLIBRARIES distclean-noinstLIBRARIES \
-+clean-noinstLIBRARIES maintainer-clean-noinstLIBRARIES \
-+mostlyclean-compile distclean-compile clean-compile \
-+maintainer-clean-compile tags mostlyclean-tags distclean-tags \
-+clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
-+check-am installcheck-am installcheck install-info-am install-info \
-+install-exec-am install-exec install-data-am install-data install-am \
-+install uninstall-am uninstall all-redirect all-am all installdirs \
-+mostlyclean-generic distclean-generic clean-generic \
-+maintainer-clean-generic clean mostlyclean distclean maintainer-clean
-+
-+
-+all: crt0.o
-+
-+$(LIBCGLUE_MULT_OBJS): libcglue.c
-+	$(COMPILE) -DF_$* $< -c -o $@
-+
-+$(SOCKET_MULT_OBJS): socket.c
-+	$(COMPILE) -DF_$* $< -c -o $@
-+
-+$(XPRINTF_MULT_OBJS): xprintf.c
-+	$(COMPILE) -DF_$* $< -c -o $@
-+
-+# Tell versions [3.59,3.63) of GNU make to not export all variables.
-+# Otherwise a system limit (for SysV at least) may be exceeded.
-+.NOEXPORT:
-diff -burN newlib-1.13.0/newlib/libc/sys/psp/netinet/in.h newlib-psp/newlib/libc/sys/psp/netinet/in.h
---- newlib-1.13.0/newlib/libc/sys/psp/netinet/in.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/sys/psp/netinet/in.h	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/sys/psp/netinet/in.h	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/sys/psp/netinet/in.h	2005-12-12 20:18:46.000000000 -0500
 @@ -0,0 +1,271 @@
 +/*	$NetBSD: in.h,v 1.71 2005/08/05 09:21:25 elad Exp $	*/
 +
@@ -5415,9 +5476,8 @@ diff -burN newlib-1.13.0/newlib/libc/sys/psp/netinet/in.h newlib-psp/newlib/libc
 +#endif
 +
 +#endif /* !_NETINET_IN_H_ */
-diff -burN newlib-1.13.0/newlib/libc/sys/psp/pspcwd.c newlib-psp/newlib/libc/sys/psp/pspcwd.c
---- newlib-1.13.0/newlib/libc/sys/psp/pspcwd.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/sys/psp/pspcwd.c	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/sys/psp/pspcwd.c	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/sys/psp/pspcwd.c	2005-11-09 14:01:46.000000000 -0500
 @@ -0,0 +1,167 @@
 +/*
 + * PSP Software Development Kit - http://www.pspdev.org
@@ -5586,29 +5646,8 @@ diff -burN newlib-1.13.0/newlib/libc/sys/psp/pspcwd.c newlib-psp/newlib/libc/sys
 +	return __psp_path_normalize(out + dr, len - dr);
 +}
 +
-diff -burN newlib-1.13.0/newlib/libc/sys/psp/README newlib-psp/newlib/libc/sys/psp/README
---- newlib-1.13.0/newlib/libc/sys/psp/README	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/sys/psp/README	2005-12-31 00:12:26.000000000 +0000
-@@ -0,0 +1,16 @@
-+Newlib for PSP
-+--
-+
-+This sys/psp directory depends on PSPSDK headers.  It expects them to live in
-+${prefix}/psp/sdk/include (see newlib/configure.host).
-+
-+I used automake 1.4-p6 to generate aclocal.m4 and Makefile.in:
-+
-+	aclocal -I ../../..
-+	automake --cygnus
-+
-+Autoconf refused to work for me, so I copied configure from sys/sh and modified
-+$ac_unique_file to point libcglue.c.
-+
-+--
-+Marcus R. Brown <mrbrown@ocgnet.org>
-diff -burN newlib-1.13.0/newlib/libc/sys/psp/socket.c newlib-psp/newlib/libc/sys/psp/socket.c
---- newlib-1.13.0/newlib/libc/sys/psp/socket.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/sys/psp/socket.c	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/sys/psp/socket.c	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/sys/psp/socket.c	2006-01-03 14:25:23.000000000 -0500
 @@ -0,0 +1,527 @@
 +/*
 + * PSP Software Development Kit - http://www.pspdev.org
@@ -6137,9 +6176,8 @@ diff -burN newlib-1.13.0/newlib/libc/sys/psp/socket.c newlib-psp/newlib/libc/sys
 +	return ip_addr;
 +}
 +#endif
-diff -burN newlib-1.13.0/newlib/libc/sys/psp/sys/dirent.h newlib-psp/newlib/libc/sys/psp/sys/dirent.h
---- newlib-1.13.0/newlib/libc/sys/psp/sys/dirent.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/sys/psp/sys/dirent.h	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/sys/psp/sys/dirent.h	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/sys/psp/sys/dirent.h	2005-11-09 14:01:46.000000000 -0500
 @@ -0,0 +1,39 @@
 +#ifndef _SYS_DIRENT_H
 +#define _SYS_DIRENT_H
@@ -6180,9 +6218,8 @@ diff -burN newlib-1.13.0/newlib/libc/sys/psp/sys/dirent.h newlib-psp/newlib/libc
 +#endif
 +
 +#endif
-diff -burN newlib-1.13.0/newlib/libc/sys/psp/sys/errno.h newlib-psp/newlib/libc/sys/psp/sys/errno.h
---- newlib-1.13.0/newlib/libc/sys/psp/sys/errno.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/sys/psp/sys/errno.h	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/sys/psp/sys/errno.h	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/sys/psp/sys/errno.h	2005-11-09 14:01:46.000000000 -0500
 @@ -0,0 +1,158 @@
 +/* errno.h for PSP, based on newlib/libc/include/sys/errno.h. */
 +
@@ -6342,9 +6379,8 @@ diff -burN newlib-1.13.0/newlib/libc/sys/psp/sys/errno.h newlib-psp/newlib/libc/
 +}
 +#endif
 +#endif /* _SYS_ERRNO_H */
-diff -burN newlib-1.13.0/newlib/libc/sys/psp/sys/fd_set.h newlib-psp/newlib/libc/sys/psp/sys/fd_set.h
---- newlib-1.13.0/newlib/libc/sys/psp/sys/fd_set.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/sys/psp/sys/fd_set.h	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/sys/psp/sys/fd_set.h	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/sys/psp/sys/fd_set.h	2005-12-12 20:18:46.000000000 -0500
 @@ -0,0 +1,66 @@
 +/*	$NetBSD: fd_set.h,v 1.1 2005/05/22 12:44:24 kleink Exp $	*/
 +
@@ -6412,9 +6448,8 @@ diff -burN newlib-1.13.0/newlib/libc/sys/psp/sys/fd_set.h newlib-psp/newlib/libc
 +#define	FD_ZERO(p)	(void)__builtin_memset((p), 0, sizeof(*(p)))
 +
 +#endif /* _SYS_FD_SET_H_ */
-diff -burN newlib-1.13.0/newlib/libc/sys/psp/sys/select.h newlib-psp/newlib/libc/sys/psp/sys/select.h
---- newlib-1.13.0/newlib/libc/sys/psp/sys/select.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/sys/psp/sys/select.h	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/sys/psp/sys/select.h	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/sys/psp/sys/select.h	2005-12-12 20:18:46.000000000 -0500
 @@ -0,0 +1,46 @@
 +/*	$NetBSD: select.h,v 1.24 2005/05/22 12:44:24 kleink Exp $	*/
 +
@@ -6462,9 +6497,8 @@ diff -burN newlib-1.13.0/newlib/libc/sys/psp/sys/select.h newlib-psp/newlib/libc
 +	    fd_set *exceptfds, struct timeval *timeout);
 +
 +#endif /* !_SYS_SELECT_H_ */
-diff -burN newlib-1.13.0/newlib/libc/sys/psp/sys/socket.h newlib-psp/newlib/libc/sys/psp/sys/socket.h
---- newlib-1.13.0/newlib/libc/sys/psp/sys/socket.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/sys/psp/sys/socket.h	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/sys/psp/sys/socket.h	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/sys/psp/sys/socket.h	2005-12-12 20:18:46.000000000 -0500
 @@ -0,0 +1,297 @@
 +/*	$NetBSD: socket.h,v 1.77 2005/11/29 03:12:16 christos Exp $	*/
 +
@@ -6763,9 +6797,8 @@ diff -burN newlib-1.13.0/newlib/libc/sys/psp/sys/socket.h newlib-psp/newlib/libc
 +#endif
 +
 +#endif /* !_SYS_SOCKET_H_ */
-diff -burN newlib-1.13.0/newlib/libc/sys/psp/xprintf.c newlib-psp/newlib/libc/sys/psp/xprintf.c
---- newlib-1.13.0/newlib/libc/sys/psp/xprintf.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/sys/psp/xprintf.c	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/sys/psp/xprintf.c	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/sys/psp/xprintf.c	2005-11-09 14:01:46.000000000 -0500
 @@ -0,0 +1,984 @@
 +/*
 + * PSP Software Development Kit - http://www.pspdev.org
@@ -6778,7 +6811,7 @@ diff -burN newlib-1.13.0/newlib/libc/sys/psp/xprintf.c newlib-psp/newlib/libc/sy
 + * Copyright (c) 2005 James Forshaw <tyranid@gmail.com>
 + * Copyright (c) 2005 John Kelley <ps2dev@kelley.ca>
 + *
-+ * $Id: newlib-1.13.0.patch,v 1.7 2006-01-02 12:29:39 wntrmute Exp $
++ * $Id: newlib-1.13.0.patch,v 1.8 2006-01-14 15:36:12 wntrmute Exp $
 + */
 +/* Code borrowed from mysql's xprintf.c, by Richard Hipp */
 +/* This xprintf.c file on which this one is based is in public domain. */
@@ -7751,9 +7784,8 @@ diff -burN newlib-1.13.0/newlib/libc/sys/psp/xprintf.c newlib-psp/newlib/libc/sy
 +	return ret;
 +}
 +#endif
-diff -burN newlib-1.13.0/newlib/libc/time/Makefile.am newlib-psp/newlib/libc/time/Makefile.am
---- newlib-1.13.0/newlib/libc/time/Makefile.am	2002-04-17 22:23:31.000000000 +0100
-+++ newlib-psp/newlib/libc/time/Makefile.am	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/time/Makefile.am	2002-04-17 17:23:31.000000000 -0400
++++ newlib-psp/newlib/libc/time/Makefile.am	2005-11-29 14:43:47.000000000 -0500
 @@ -22,7 +22,8 @@
  	time.c		\
  	tzlock.c	\
@@ -7764,9 +7796,8 @@ diff -burN newlib-1.13.0/newlib/libc/time/Makefile.am newlib-psp/newlib/libc/tim
  
  libtime_la_LDFLAGS = -Xcompiler -nostdlib
  
-diff -burN newlib-1.13.0/newlib/libc/time/Makefile.in newlib-psp/newlib/libc/time/Makefile.in
---- newlib-1.13.0/newlib/libc/time/Makefile.in	2004-01-27 23:26:26.000000000 +0000
-+++ newlib-psp/newlib/libc/time/Makefile.in	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/time/Makefile.in	2004-01-27 18:26:26.000000000 -0500
++++ newlib-psp/newlib/libc/time/Makefile.in	2005-11-29 14:43:47.000000000 -0500
 @@ -110,7 +110,7 @@
  
  INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
@@ -7794,9 +7825,8 @@ diff -burN newlib-1.13.0/newlib/libc/time/Makefile.in newlib-psp/newlib/libc/tim
  CFLAGS = @CFLAGS@
  COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
  LTCOMPILE = $(LIBTOOL) --mode=compile $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-diff -burN newlib-1.13.0/newlib/libc/time/tzset_r.c newlib-psp/newlib/libc/time/tzset_r.c
---- newlib-1.13.0/newlib/libc/time/tzset_r.c	2004-12-09 21:36:48.000000000 +0000
-+++ newlib-psp/newlib/libc/time/tzset_r.c	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/time/tzset_r.c	2004-12-09 16:36:48.000000000 -0500
++++ newlib-psp/newlib/libc/time/tzset_r.c	2005-11-29 14:43:47.000000000 -0500
 @@ -11,18 +11,6 @@
  static char __tzname_dst[11];
  static char *prev_tzenv = NULL;
@@ -7816,9 +7846,8 @@ diff -burN newlib-1.13.0/newlib/libc/time/tzset_r.c newlib-psp/newlib/libc/time/
  _VOID
  _DEFUN (_tzset_r, (reent_ptr),
          struct _reent *reent_ptr)
-diff -burN newlib-1.13.0/newlib/libc/time/tzvars.c newlib-psp/newlib/libc/time/tzvars.c
---- newlib-1.13.0/newlib/libc/time/tzvars.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-psp/newlib/libc/time/tzvars.c	2005-12-31 00:12:26.000000000 +0000
+--- newlib-1.13.0/newlib/libc/time/tzvars.c	1969-12-31 19:00:00.000000000 -0500
++++ newlib-psp/newlib/libc/time/tzvars.c	2005-11-29 14:43:47.000000000 -0500
 @@ -0,0 +1,17 @@
 +/* Moved these variables from tzset_r.c to avoid including all of _tzset_r()
 +   and the functions it uses. -- MRB (PSPDEV LOCAL) */
@@ -7837,65 +7866,3 @@ diff -burN newlib-1.13.0/newlib/libc/time/tzvars.c newlib-psp/newlib/libc/time/t
 +
 +__tzrule_type __tzrule[2] = { {'J', 0, 0, 0, 0, (time_t)0, 0 }, 
 +			      {'J', 0, 0, 0, 0, (time_t)0, 0 } };
-diff -burN newlib-1.13.0/newlib/Makefile.am newlib-psp/newlib/Makefile.am
---- newlib-1.13.0/newlib/Makefile.am	2004-12-03 23:46:28.000000000 +0000
-+++ newlib-psp/newlib/Makefile.am	2005-12-31 00:12:26.000000000 +0000
-@@ -251,6 +251,18 @@
- 	     $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/machine/`basename $$i`; \
- 	    else true; fi ; \
- 	  done; \
-+	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/include/netinet; \
-+	  for i in $(srcdir)/libc/sys/$(sys_dir)/netinet/*.h; do \
-+	    if [ -f $$i ]; then \
-+	     $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/netinet/`basename $$i`; \
-+	    else true; fi ; \
-+	  done ; \
-+	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/include/arpa; \
-+	  for i in $(srcdir)/libc/sys/$(sys_dir)/arpa/*.h; do \
-+	    if [ -f $$i ]; then \
-+	     $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/arpa/`basename $$i`; \
-+	    else true; fi ; \
-+	  done ; \
- 	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/include/sys; \
- 	  for i in $(srcdir)/libc/include/sys/*.h; do \
- 	   $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/sys/`basename $$i`; \
-diff -burN newlib-1.13.0/newlib/Makefile.in newlib-psp/newlib/Makefile.in
---- newlib-1.13.0/newlib/Makefile.in	2004-12-03 23:46:28.000000000 +0000
-+++ newlib-psp/newlib/Makefile.in	2005-12-31 00:12:26.000000000 +0000
-@@ -214,7 +214,7 @@
- 
- DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
- 
--TAR = gtar
-+TAR = tar
- GZIP_ENV = --best
- DIST_SUBDIRS =  libc libm doc . @EXTRA_DIRS@
- EXPECT = `if test -f $(top_builddir)/../expect/expect; then echo $(top_builddir)/../expect/expect; else echo expect; fi`
-@@ -472,7 +472,7 @@
- 	  awk '    { files[$$0] = 1; } \
- 	       END { for (i in files) print i; }'`; \
- 	test -z "$(ETAGS_ARGS)newlib.hin$$unique$(LISP)$$tags" \
--	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags newlib.hin $$unique $(LISP) -o $$here/TAGS)
-+	  || (cd $(srcdir) && etags -o $$here/TAGS $(ETAGS_ARGS) $$tags newlib.hin $$unique $(LISP))
- 
- mostlyclean-tags:
- 
-@@ -756,6 +756,18 @@
- 	     $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/machine/`basename $$i`; \
- 	    else true; fi ; \
- 	  done; \
-+	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/include/netinet; \
-+	  for i in $(srcdir)/libc/sys/$(sys_dir)/netinet/*.h; do \
-+	    if [ -f $$i ]; then \
-+	     $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/netinet/`basename $$i`; \
-+	    else true; fi ; \
-+	  done ; \
-+	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/include/arpa; \
-+	  for i in $(srcdir)/libc/sys/$(sys_dir)/arpa/*.h; do \
-+	    if [ -f $$i ]; then \
-+	     $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/arpa/`basename $$i`; \
-+	    else true; fi ; \
-+	  done ; \
- 	  $(mkinstalldirs) $(DESTDIR)$(tooldir)/include/sys; \
- 	  for i in $(srcdir)/libc/include/sys/*.h; do \
- 	   $(INSTALL_DATA) $$i $(DESTDIR)$(tooldir)/include/sys/`basename $$i`; \
