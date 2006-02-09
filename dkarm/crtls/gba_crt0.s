@@ -49,8 +49,7 @@ __slave_number:
 start_vector:
 @---------------------------------------------------------------------------------
 	mov	r0, #0x4000000			@ REG_BASE
-	add	r0, r0, #0x208			@ REG_IME
-	strh	r0, [r0]
+	str	r0, [r0, #0x208]
 
 	mov	r0, #0x12			@ Switch to IRQ Mode
 	msr	cpsr, r0
