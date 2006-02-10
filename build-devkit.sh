@@ -8,10 +8,10 @@
 #---------------------------------------------------------------------------------
 BINUTILS_VER=2.16.1
 GCC_VER=4.0.2
-NEWLIB_VER=1.13.0
+NEWLIB_VER=1.14.0
 LIBOGC_VER=20050812
-LIBGBA_VER=20051018
-LIBNDS_VER=20051018
+LIBGBA_VER=20060209
+LIBNDS_VER=20060201
 
 BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
 GCC_CORE="gcc-core-$GCC_VER.tar.bz2"
@@ -122,7 +122,7 @@ fi
 echo
 echo "Please enter the directory where you would like '$package' to be installed:"
 echo "for mingw/msys you must use <drive>:/<install path> or you will have include path problems"
-echo "this is the top level directory for devkitpro"
+echo "this is the top level directory for devkitpro, i.e. e:/devkitPro"
 
 read INSTALLDIR
 echo
@@ -333,10 +333,19 @@ if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh || { echo "Err
 if [ -f $scriptdir/build-crtls.sh ]; then . $scriptdir/build-crtls.sh || { echo "Error building crtls"; exit; }; cd $BUILDSCRIPTDIR; fi
 if [ -f $scriptdir/build-tools.sh ]; then . $scriptdir/build-tools.sh || { echo "Error building tools"; exit; }; cd $BUILDSCRIPTDIR; fi
 
+#---------------------------------------------------------------------------------
+# strip binaries
+#---------------------------------------------------------------------------------
 strip $INSTALLDIR/$package/bin/*
 strip $INSTALLDIR/$package/$target/bin/*
 strip $INSTALLDIR/$package/libexec/gcc/$target/$GCC_VER/*
 rm -fr $INSTALLDIR/$package/include/c++/$GCC_VER/$target/bits/stdc++.h.gch
+
+#---------------------------------------------------------------------------------
+# strip debug info from libraries
+#---------------------------------------------------------------------------------
+find $INSTALLDIR/$package/lib/gcc -name *.a $target-strip -d {} \;
+find $INSTALLDIR/$package/$target -name *.a $target-strip -d {} \;
 
 #---------------------------------------------------------------------------------
 # Clean up temporary files and source directories
