@@ -8,10 +8,10 @@ export PATH		:=	$(DEVKITARM)/bin:$(PATH)
 #---------------------------------------------------------------------------------
 PREFIX		:=	arm-elf-
 
-export CC		:=	$(PREFIX)gcc
-export CXX		:=	$(PREFIX)g++
-export AS		:=	$(PREFIX)as
-export AR		:=	$(PREFIX)ar
+export CC	:=	$(PREFIX)gcc
+export CXX	:=	$(PREFIX)g++
+export AS	:=	$(PREFIX)as
+export AR	:=	$(PREFIX)ar
 export OBJCOPY	:=	$(PREFIX)objcopy
 
 #---------------------------------------------------------------------------------
@@ -19,17 +19,17 @@ export OBJCOPY	:=	$(PREFIX)objcopy
 #---------------------------------------------------------------------------------
 	@echo $(notdir $@)
 	@rm -f $@
-	@$(AR) -rc $@ $^
+	$(AR) -rc $@ $^
 
 #---------------------------------------------------------------------------------
 %.o: %.cpp
 	@echo $(notdir $<)
-	@$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.d $(CXXFLAGS) -c $< -o $@
+	$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.d $(CXXFLAGS) -c $< -o $@
 	
 #---------------------------------------------------------------------------------
 %.o: %.c
 	@echo $(notdir $<)
-	@$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d $(CFLAGS) -c $< -o $@
+	$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d $(CFLAGS) -c $< -o $@
 
 #---------------------------------------------------------------------------------
 %.o: %.s
@@ -39,7 +39,7 @@ export OBJCOPY	:=	$(PREFIX)objcopy
 #---------------------------------------------------------------------------------
 %.o: %.S
 	@echo $(notdir $<)
-	@$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d -x assembler-with-cpp $(ASFLAGS) -c $< -o $@
+	$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d -x assembler-with-cpp $(ASFLAGS) -c $< -o $@
 
 #---------------------------------------------------------------------------------
 # canned command sequence for binary data
