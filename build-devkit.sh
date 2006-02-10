@@ -345,8 +345,8 @@ rm -fr $INSTALLDIR/$package/include/c++/$GCC_VER/$target/bits/stdc++.h.gch
 #---------------------------------------------------------------------------------
 # strip debug info from libraries
 #---------------------------------------------------------------------------------
-find $INSTALLDIR/$package/lib/gcc -name *.a $target-strip -d {} \;
-find $INSTALLDIR/$package/$target -name *.a $target-strip -d {} \;
+find $INSTALLDIR/$package/lib/gcc -name *.a -exec $target-strip -d {} \;
+find $INSTALLDIR/$package/$target -name *.a -exec $target-strip -d {} \;
 
 #---------------------------------------------------------------------------------
 # Clean up temporary files and source directories
