@@ -41,6 +41,7 @@ cd $target/gcc
 	--enable-interwork --enable-multilib\
 	--with-gcc --with-gnu-ld --with-gnu-as --with-stabs \
 	--disable-shared --disable-threads --disable-win32-registry --disable-nls --disable-debug\
+	--disable-libmudflap --disable-libssp \
 	--target=$target \
 	--with-newlib \
 	--prefix=$prefix -v\

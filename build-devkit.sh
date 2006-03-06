@@ -7,7 +7,7 @@
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
 BINUTILS_VER=2.16.1
-GCC_VER=4.0.2
+GCC_VER=4.1.0
 NEWLIB_VER=1.14.0
 LIBOGC_VER=20050812
 LIBGBA_VER=20060209
