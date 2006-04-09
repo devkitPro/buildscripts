@@ -1,3 +1,16 @@
+diff -Nbaur newlib-1.14.0/config.sub newlib-1.14.0-test/config.sub
+--- newlib-1.14.0/config.sub	Mon Dec 12 11:24:58 2005
++++ newlib-1.14.0-test/config.sub	Sat Dec 17 14:31:15 2005
+@@ -228,6 +228,9 @@
+ 		basic_machine=m68k-atari
+ 		os=-mint
+ 		;;
++	-gekko)
++		basic_machine=powerpc-eabi
++		os=-elf-gekko
+ esac
+ 
+ # Decode aliases for certain CPU-COMPANY combinations.
 diff -Nbaur newlib-1.14.0/libgloss/configure newlib-1.14.0-test/libgloss/configure
 --- newlib-1.14.0/libgloss/configure	Mon Dec 12 11:25:07 2005
 +++ newlib-1.14.0-test/libgloss/configure	Sat Dec 17 14:31:15 2005
@@ -2443,7 +2456,7 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/read.c newlib-1.14.0-test/libgloss
 +
 diff -Nbaur newlib-1.14.0/libgloss/libsysbase/sbrk.c newlib-1.14.0-test/libgloss/libsysbase/sbrk.c
 --- newlib-1.14.0/libgloss/libsysbase/sbrk.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/sbrk.c	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-test/libgloss/libsysbase/sbrk.c	Sun Apr  9 12:31:50 2006
 @@ -0,0 +1,61 @@
 +#include <_ansi.h>
 +#include <sys/types.h>
@@ -2481,7 +2494,7 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/sbrk.c newlib-1.14.0-test/libgloss
 +	char *	prev_heap_start;
 +	char *	heap_end;
 +
-+	if (heap_end == NULL) {
++	if (heap_start == NULL) {
 +  		if (fake_heap_start == NULL) {
 +    			heap_start = &end;
 +    	} else {
@@ -2690,8 +2703,16 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/write.c newlib-1.14.0-test/libglos
 +}
 diff -Nbaur newlib-1.14.0/newlib/libc/include/stdio.h newlib-1.14.0-test/newlib/libc/include/stdio.h
 --- newlib-1.14.0/newlib/libc/include/stdio.h	Wed Oct 12 00:59:32 2005
-+++ newlib-1.14.0-test/newlib/libc/include/stdio.h	Sat Dec 17 14:31:15 2005
-@@ -247,6 +247,7 @@
++++ newlib-1.14.0-test/newlib/libc/include/stdio.h	Sun Apr  9 12:04:04 2006
+@@ -179,6 +179,7 @@
+ int	_EXFUN(printf, (const char *, ...));
+ int	_EXFUN(scanf, (const char *, ...));
+ int	_EXFUN(sscanf, (const char *, const char *, ...));
++int	_EXFUN(siscanf, (const char *, const char *, ...));
+ int	_EXFUN(vfprintf, (FILE *, const char *, __VALIST));
+ int	_EXFUN(vprintf, (const char *, __VALIST));
+ int	_EXFUN(vsprintf, (char *, const char *, __VALIST));
+@@ -247,6 +248,7 @@
  int	_EXFUN(vfscanf, (FILE *, const char *, __VALIST));
  int	_EXFUN(viprintf, (const char *, __VALIST));
  int	_EXFUN(viscanf, (const char *, __VALIST));
