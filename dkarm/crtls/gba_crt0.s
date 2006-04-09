@@ -78,11 +78,12 @@ start_vector:
 @ We were started in ROM, silly emulators. :P
 @ So we need to copy to ExWRAM.
 @---------------------------------------------------------------------------------
-	mov	r3, #0x40
-	lsl	r3, #12				@ r3 = 0x40000
-	lsl	r2, r3, #7			@ r2 = 0x2000000
-	mov	r6, r2				@ r6 = 0x2000000
-	lsl	r1, r2, #2			@ r1 = 0x8000000
+	mov	r2, #2
+	lsl	r2, r2, #24			@ r2= 0x02000000
+	ldr	r3, =__end__			@ last ewram address
+	sub	r3, r2				@ r3= actual binary size
+	mov	r6, r2				@ r6= 0x02000000
+	lsl	r1, r2, #2			@ r1= 0x08000000 
 
 	bl	CopyMem
 
