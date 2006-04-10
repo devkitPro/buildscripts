@@ -12,7 +12,7 @@ NEWLIB_VER=1.14.0
 LIBOGC_VER=20050812
 LIBGBA_VER=20060209
 LIBNDS_VER=20060201
-
+ELF2FLT_VER=20060410
 
 BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
 GCC_CORE="gcc-core-$GCC_VER.tar.bz2"
@@ -21,6 +21,7 @@ NEWLIB="newlib-$NEWLIB_VER.tar.gz"
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
 LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
+ELF2FLT="elf2flt-src-$ELF2FLT_VER.tar.bz2"
 
 BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/$BINUTILS"
 GCC_CORE_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_CORE"
@@ -28,6 +29,7 @@ GCC_GPP_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_GPP"
 LIBOGC_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBOGC"
 LIBGBA_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBGBA"
 LIBNDS_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBNDS"
+ELF2FLT_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$ELF2FLT"
 NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/$NEWLIB"
 
 #---------------------------------------------------------------------------------
@@ -187,6 +189,13 @@ then
       else
 	      FOUND=1
       fi
+      if [ ! -f $SRCDIR/$ELF2FLT ]
+      then
+        echo "Error: $ELF2FLT not found in $SRCDIR"
+	      exit
+      else
+	      FOUND=1
+      fi
     fi
 
     if [ $VERSION -eq 2 ]
@@ -223,6 +232,7 @@ else
 	then
 		$WGET -c $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit; }
 		$WGET -c $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit; }
+		$WGET -c $ELF2FLT_URL || { echo "Error: Failed to download "$ELF2FLT; exit; }
 	fi
 	SRCDIR=`pwd`
 fi
@@ -300,6 +310,8 @@ then
   echo "Extracting $LIBGBA"
   mkdir -p $LIBGBA_SRCDIR
   bzip2 -cd $SRCDIR/$LIBGBA | tar -xv -C $LIBGBA_SRCDIR || { echo "Error extracting "$LIBGBA; exit; }
+  echo "Extracting $NEWLIB"
+  tar -xjvf $SRCDIR/$ELF2FLT || { echo "Error extracting "$ELF2FLT; exit; }
 fi
 
 
@@ -336,10 +348,15 @@ if [ -f $scriptdir/build-tools.sh ]; then . $scriptdir/build-tools.sh || { echo 
 
 #---------------------------------------------------------------------------------
 # strip binaries
+# strip has trouble using wildcards so do it this way instead
 #---------------------------------------------------------------------------------
-strip $INSTALLDIR/$package/bin/*
-strip $INSTALLDIR/$package/$target/bin/*
-strip $INSTALLDIR/$package/libexec/gcc/$target/$GCC_VER/*
+for f in	$INSTALLDIR/$package/bin/* \
+		$INSTALLDIR/$package/$target/bin/* \
+		$INSTALLDIR/$package/libexec/gcc/$target/$GCC_VER/*
+do
+	strip $f
+done
+
 rm -fr $INSTALLDIR/$package/include/c++/$GCC_VER/$target/bits/stdc++.h.gch
 
 #---------------------------------------------------------------------------------
