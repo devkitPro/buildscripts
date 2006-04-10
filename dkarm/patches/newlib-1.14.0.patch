@@ -2703,7 +2703,7 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/write.c newlib-1.14.0-test/libglos
 +}
 diff -Nbaur newlib-1.14.0/newlib/libc/include/stdio.h newlib-1.14.0-test/newlib/libc/include/stdio.h
 --- newlib-1.14.0/newlib/libc/include/stdio.h	Wed Oct 12 00:59:32 2005
-+++ newlib-1.14.0-test/newlib/libc/include/stdio.h	Sun Apr  9 12:04:04 2006
++++ newlib-1.14.0-test/newlib/libc/include/stdio.h	Mon Apr 10 01:49:50 2006
 @@ -179,6 +179,7 @@
  int	_EXFUN(printf, (const char *, ...));
  int	_EXFUN(scanf, (const char *, ...));
@@ -2712,6 +2712,15 @@ diff -Nbaur newlib-1.14.0/newlib/libc/include/stdio.h newlib-1.14.0-test/newlib/
  int	_EXFUN(vfprintf, (FILE *, const char *, __VALIST));
  int	_EXFUN(vprintf, (const char *, __VALIST));
  int	_EXFUN(vsprintf, (char *, const char *, __VALIST));
+@@ -229,7 +230,7 @@
+ #ifndef _REENT_ONLY
+ int	_EXFUN(asiprintf, (char **, const char *, ...));
+ int	_EXFUN(asprintf, (char **, const char *, ...));
+-int	_EXFUN(dprintf, (int, const char *, ...));
++//int	_EXFUN(dprintf, (int, const char *, ...));
+ int	_EXFUN(fcloseall, (_VOID));
+ int	_EXFUN(fiprintf, (FILE *, const char *, ...));
+ int	_EXFUN(iprintf, (const char *, ...));
 @@ -247,6 +248,7 @@
  int	_EXFUN(vfscanf, (FILE *, const char *, __VALIST));
  int	_EXFUN(viprintf, (const char *, __VALIST));
