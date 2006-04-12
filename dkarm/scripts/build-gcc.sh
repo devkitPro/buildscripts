@@ -65,7 +65,7 @@ cd $target/gcc
 	--disable-libmudflap --disable-libssp \
 	--target=$target \
 	--with-newlib \
-	--prefix=$prefix -v\
+	--prefix=$prefix\
 	|| { echo "Error configuring gcc"; exit 1; }
 
 mkdir -p libiberty libcpp fixincludes

@@ -44,7 +44,7 @@ cd mn10200/binutils
 $MAKE || { echo "Error building mn10200 binutils"; exit 1; }
 $MAKE install || { echo "Error installing mn10200 binutils"; exit 1; }
 
-strip $INSTALLDIR/mn10200/bin/*
+strip $INSTALLDIR/devkitPPC/mn10200/bin/*
 
 cd $BUILDSCRIPTDIR
 
@@ -71,7 +71,7 @@ cd $target/gcc
 	--disable-win32-registry\
 	--target=$target \
 	--with-newlib \
-	--prefix=$prefix -v\
+	--prefix=$prefix\
 	2>&1 | tee gcc_configure.log
 
 mkdir -p libiberty libcpp fixincludes
