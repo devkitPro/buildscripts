@@ -32,6 +32,26 @@ export OBJCOPY	:=	$(PREFIX)objcopy
 	$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d $(CFLAGS) -c $< -o $@
 
 #---------------------------------------------------------------------------------
+%.iwram.o: %.iwram.cpp
+	@echo $(notdir $<)
+	$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.d $(CXXFLAGS) -marm-c $< -o $@
+	
+#---------------------------------------------------------------------------------
+%.iwram.o: %.iwram.c
+	@echo $(notdir $<)
+	$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d $(CFLAGS) -marm -c $< -o $@
+
+#---------------------------------------------------------------------------------
+%.itcm.o: %.itcm.cpp
+	@echo $(notdir $<)
+	$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.d $(CXXFLAGS) -marm-c $< -o $@
+	
+#---------------------------------------------------------------------------------
+%.itcm.o: %.itcm.c
+	@echo $(notdir $<)
+	$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d $(CFLAGS) -marm -c $< -o $@
+
+#---------------------------------------------------------------------------------
 %.o: %.s
 	@echo $(notdir $<)
 	$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d -x assembler-with-cpp $(ASFLAGS) -c $< -o $@
