@@ -4,19 +4,21 @@ ENTRY(_start)
 
 MEMORY {
 
-	rom		: ORIGIN = 0x08000000, LENGTH = 32M
+	rom	: ORIGIN = 0x08000000, LENGTH = 32M
 	ewram	: ORIGIN = 0x02000000, LENGTH = 4M - 4k
-	dtcm	: ORIGIN = 0x00800000, LENGTH = 16K
-	itcm	: ORIGIN = 0x00000000, LENGTH = 32K
+	dtcm	: ORIGIN = 0x0b000000, LENGTH = 16K
+	itcm	: ORIGIN = 0x01000000, LENGTH = 32K
 }
 
-__itcm_start	=	0x00000000;
-__ewram_end		=	0x02400000;
-__eheap_end		=	0x023ff000;
-__dtcm_start	=	0x00800000;
-__dtcm_end		=	0x00804000;
+__itcm_start	=	ORIGIN(itcm);
+__ewram_end	=	ORIGIN(ewram) + LENGTH(ewram);
+__eheap_end	=	ORIGIN(ewram) + LENGTH(ewram);
+__dtcm_start	=	ORIGIN(dtcm);
+__dtcm_top	=	ORIGIN(dtcm) + LENGTH(dtcm);
+__irq_flags	=	__dtcm_top - 0x08;
+__irq_vector	=	__dtcm_top - 0x04;
 
-__sp_svc	=	__dtcm_end - 0x100;
+__sp_svc	=	__dtcm_top - 0x100;
 __sp_irq	=	__sp_svc - 0x100;
 __sp_usr	=	__sp_irq - 0x100;
 
@@ -28,10 +30,12 @@ SECTIONS
 		KEEP (*(.init))
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
 		} >ewram = 0xff
+
 	.plt : { *(.plt) } >ewram = 0xff
 
 	.text :   /* ALIGN (4): */
 	{
+		*(EXCLUDE_FILE (*.itcm*) .text)
 
 		*(.text.*)
 		*(.stub)
@@ -124,7 +128,6 @@ SECTIONS
 
 	.dtcm __dtcm_start : AT (__dtcm_lma)
 	{
-		__dtcm_start = ABSOLUTE(.);
 		*(.dtcm)
 		*(.dtcm.*)
 		. = ALIGN(4);
@@ -136,9 +139,8 @@ SECTIONS
 
 	.itcm __itcm_start : AT (__itcm_lma)
 	{
-		__itcm_start = ABSOLUTE(.);
 		*(.itcm)
-		*(.itcm.*)
+		*itcm.*(.text)
 		. = ALIGN(4);
 	} >itcm = 0xff
 	__itcm_end = . ;

@@ -56,6 +56,8 @@ __iwram_end		= 0x3008000;
 __sp_irq		= __iwram_end - 0x100;
 __sp_usr		= __sp_irq - 0x100;
 
+__irq_flags		=	0x03007ff8;
+
 SECTIONS
 {
 	. = __text_start;

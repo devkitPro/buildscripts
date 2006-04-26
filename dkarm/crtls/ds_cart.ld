@@ -16,6 +16,8 @@ __sp_irq		=	0x03810000 - 0x60;
 __sp_svc		=	__sp_irq - 0x100;
 __sp_usr		=	__sp_svc - 0x100;
 
+__irq_flags		=	0x0380fff8;
+
 SECTIONS
 {
 	.init	:
