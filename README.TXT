@@ -32,9 +32,9 @@ Downloading the source packages
 When you run the build script it will ask you to choose from one of two options, one for if you have already downloaded the source packages and another for if you want it to download them for you (using wget).  If you choose option one and want to get the source packages for yourself then you can find them at the urls listed below;
 
 binutils 2.16.1  - http://ftp.gnu.org/gnu/binutils/binutils-2.16.1.tar.bz2
-gcc-core 4.0.1 - http://ftp.gnu.org/gnu/gcc/gcc-4.0.1/gcc-core-3.4.4.tar.bz2
-gcc-g++ 4.0.1 - http://ftp.gnu.org/gnu/gcc/gcc-4.0.1/gcc-g++-3.4.4.tar.bz2
-newlib 1.13.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.13.0.tar.gz
+gcc-core 4.1.0 - http://ftp.gnu.org/gnu/gcc/gcc-4.0.1/gcc-core-4.1.0.tar.bz2
+gcc-g++ 4.1.0 - http://ftp.gnu.org/gnu/gcc/gcc-4.0.1/gcc-g++-4.1.0.tar.bz2
+newlib 1.14.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.14.0.tar.gz
 
 libogc, libgba and libnds can be found in the sourceforge project.
 
@@ -98,15 +98,15 @@ to use the built in crt0 and linkscript use powerpc-elf-gcc to link your project
 Credits
 -------
 
-* Thanks to WinterMute for bringing us devkitARM, the website is http://www.devkit.tk
+* Thanks to WinterMute for bringing us devkitARM, the website is http://www.devkitpro.org
 * Build scripts written by WinterMute and tied together by GreenGianT
-* Thanks to Mr Spiv, Honkey Kong and JoostP for OS X testing
+* Thanks to Mr Spiv, Honkey Kong, Raleigh and JoostP for OS X testing
 * libogc written and supplied by Shagkur. Additional code by WinterMute
 * libgba by WinterMute
+* libnds by Joat, Dovoto and WinterMute with contributions from many others.
 * libmirko by Mr Mirko
 * b2fxec by Mr Spiv
 * scripts made BSD compatible by o2addict
-* Dovoto and Joat for DS libraries
 
   - efnet #gbadev forever!
 

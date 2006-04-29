@@ -8,14 +8,17 @@ MEMORY {
 	iwram	: ORIGIN = 0x03800000, LENGTH = 64K	
 	ewram	: ORIGIN = 0x02040000, LENGTH = 4M
 }
-__iwram_start	= 0x03800000;
-__iwram_end		= 0x03810000;
 
-__sp_irq			=	__iwram_end - 0x60;
-__sp_svc			=	__sp_irq - 0x100;
-__sp_usr			=	__sp_svc - 0x100;
+__ewram_start	=	ORIGIN(ewram);
+__eheap_end		=	ORIGIN(ewram)+ LENGTH(ewram);
+__iwram_start = ORIGIN(iwram);
+__iwram_top		=	ORIGIN(iwram)+ LENGTH(iwram);
+__sp_irq		=	__iwram_top - 0x60;
+__sp_svc		=	__sp_irq - 0x100;
+__sp_usr		=	__sp_svc - 0x100;
 
-__irq_flags		=	0x0380fff8;
+__irq_flags		=	__iwram_top - 8;
+__irq_vector	=	__iwram_top - 4;
 
 SECTIONS
 {
