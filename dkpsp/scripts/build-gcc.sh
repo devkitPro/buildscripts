@@ -57,6 +57,7 @@ cd pspsdk
 ./configure || { echo "ERROR RUNNING PSPSDK CONFIGURE"; exit 1; }
 $MAKE install-data || { echo "ERROR INSTALLING PSPSDK HEADERS"; exit 1; }
 
+cd $BUILDSCRIPTDIR
 
 #---------------------------------------------------------------------------------
 # build and install newlib
