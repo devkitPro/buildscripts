@@ -1,6 +1,6 @@
-diff -Nbaur newlib-1.14.0/config.sub newlib-1.14.0-test/config.sub
+diff -Nbaur newlib-1.14.0/config.sub newlib-1.14.0-arm/config.sub
 --- newlib-1.14.0/config.sub	Mon Dec 12 11:24:58 2005
-+++ newlib-1.14.0-test/config.sub	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/config.sub	Fri Apr 14 22:08:39 2006
 @@ -228,6 +228,9 @@
  		basic_machine=m68k-atari
  		os=-mint
@@ -11,9 +11,9 @@ diff -Nbaur newlib-1.14.0/config.sub newlib-1.14.0-test/config.sub
  esac
  
  # Decode aliases for certain CPU-COMPANY combinations.
-diff -Nbaur newlib-1.14.0/libgloss/configure newlib-1.14.0-test/libgloss/configure
+diff -Nbaur newlib-1.14.0/libgloss/configure newlib-1.14.0-arm/libgloss/configure
 --- newlib-1.14.0/libgloss/configure	Mon Dec 12 11:25:07 2005
-+++ newlib-1.14.0-test/libgloss/configure	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/configure	Fri Apr 14 22:08:39 2006
 @@ -711,9 +711,9 @@
  
  
@@ -26,9 +26,9 @@ diff -Nbaur newlib-1.14.0/libgloss/configure newlib-1.14.0-test/libgloss/configu
  fi
  
  case "${target}" in
-diff -Nbaur newlib-1.14.0/libgloss/configure.in newlib-1.14.0-test/libgloss/configure.in
+diff -Nbaur newlib-1.14.0/libgloss/configure.in newlib-1.14.0-arm/libgloss/configure.in
 --- newlib-1.14.0/libgloss/configure.in	Mon Dec 12 11:25:07 2005
-+++ newlib-1.14.0-test/libgloss/configure.in	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/configure.in	Fri Apr 14 22:08:39 2006
 @@ -22,9 +22,9 @@
  AC_CANONICAL_SYSTEM
  
@@ -41,9 +41,9 @@ diff -Nbaur newlib-1.14.0/libgloss/configure.in newlib-1.14.0-test/libgloss/conf
  fi
  
  case "${target}" in
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/Makefile.in newlib-1.14.0-test/libgloss/libsysbase/Makefile.in
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/Makefile.in newlib-1.14.0-arm/libgloss/libsysbase/Makefile.in
 --- newlib-1.14.0/libgloss/libsysbase/Makefile.in	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/Makefile.in	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/Makefile.in	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,145 @@
 +# Copyright (c) 1998 Cygnus Support
 +#
@@ -190,10 +190,10 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/Makefile.in newlib-1.14.0-test/lib
 +
 +config.status: configure
 +	$(SHELL) config.status --recheck
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/_exit.c newlib-1.14.0-test/libgloss/libsysbase/_exit.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/_exit.c newlib-1.14.0-arm/libgloss/libsysbase/_exit.c
 --- newlib-1.14.0/libgloss/libsysbase/_exit.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/_exit.c	Sat Dec 17 14:31:15 2005
-@@ -0,0 +1,15 @@
++++ newlib-1.14.0-arm/libgloss/libsysbase/_exit.c	Wed May 10 20:44:45 2006
+@@ -0,0 +1,14 @@
 +/* Stub version of _exit.  */
 +
 +#include <limits.h>
@@ -205,13 +205,12 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/_exit.c newlib-1.14.0-test/libglos
 +_DEFUN (_exit, (rc),
 +	int rc)
 +{
-+  /* Default stub just causes a divide by 0 exception.  */
-+  int x = rc / INT_MAX;
-+  x = 4 / x;
++
++	while(1);
 +}
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/abort.c newlib-1.14.0-test/libgloss/libsysbase/abort.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/abort.c newlib-1.14.0-arm/libgloss/libsysbase/abort.c
 --- newlib-1.14.0/libgloss/libsysbase/abort.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/abort.c	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/abort.c	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,8 @@
 +#include <stdlib.h>
 +#include <unistd.h>
@@ -221,9 +220,9 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/abort.c newlib-1.14.0-test/libglos
 +  exit (1);
 +}
 +
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/acconfig.h newlib-1.14.0-test/libgloss/libsysbase/acconfig.h
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/acconfig.h newlib-1.14.0-arm/libgloss/libsysbase/acconfig.h
 --- newlib-1.14.0/libgloss/libsysbase/acconfig.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/acconfig.h	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/acconfig.h	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,26 @@
 +/* Name of package.  */
 +#undef PACKAGE
@@ -251,10 +250,10 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/acconfig.h newlib-1.14.0-test/libg
 +
 +/* symbol prefix */
 +#undef __SYMBOL_PREFIX
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/close.c newlib-1.14.0-test/libgloss/libsysbase/close.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/close.c newlib-1.14.0-arm/libgloss/libsysbase/close.c
 --- newlib-1.14.0/libgloss/libsysbase/close.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/close.c	Sat Dec 17 14:31:15 2005
-@@ -0,0 +1,36 @@
++++ newlib-1.14.0-arm/libgloss/libsysbase/close.c	Wed May 10 20:19:42 2006
+@@ -0,0 +1,38 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
 +#include <stdio.h>
@@ -280,20 +279,22 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/close.c newlib-1.14.0-test/libglos
 +	unsigned int fd = -1;
 +
 +	if(fileDesc!=-1) {
-+		dev = fileDesc;
-+		if(fileDesc&0xf000) {
-+			dev = _SHIFTR(fileDesc,12,4);
-+			fd = fileDesc&0x0fff;
-+		}
-+
++		
++		__handle *handle = fileDesc;
++		
++		dev = handle->device;
++		fd = handle->fileStruct;
++		
 +		if(devoptab_list[dev]->close_r)
 +			ret = devoptab_list[dev]->close_r(ptr,fd);
++		
++		free(fileDesc);
 +	}
 +	return ret;
 +}
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/config.h.in newlib-1.14.0-test/libgloss/libsysbase/config.h.in
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/config.h.in newlib-1.14.0-arm/libgloss/libsysbase/config.h.in
 --- newlib-1.14.0/libgloss/libsysbase/config.h.in	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/config.h.in	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/config.h.in	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,22 @@
 +/* config.h.in.  Generated automatically from configure.in by autoheader.  */
 +
@@ -317,9 +318,9 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/config.h.in newlib-1.14.0-test/lib
 +
 +/* symbol prefix */
 +#undef __SYMBOL_PREFIX
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/configure newlib-1.14.0-test/libgloss/libsysbase/configure
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/configure newlib-1.14.0-arm/libgloss/libsysbase/configure
 --- newlib-1.14.0/libgloss/libsysbase/configure	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/configure	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/configure	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,1461 @@
 +#! /bin/sh
 +
@@ -1782,9 +1783,9 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/configure newlib-1.14.0-test/libgl
 +
 +
 +
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/configure.in newlib-1.14.0-test/libgloss/libsysbase/configure.in
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/configure.in newlib-1.14.0-arm/libgloss/libsysbase/configure.in
 --- newlib-1.14.0/libgloss/libsysbase/configure.in	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/configure.in	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/configure.in	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,219 @@
 +# Copyright (c) 1995, 1996 Cygnus Support
 +#
@@ -2005,9 +2006,9 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/configure.in newlib-1.14.0-test/li
 +)
 +
 +
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/environ.c newlib-1.14.0-test/libgloss/libsysbase/environ.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/environ.c newlib-1.14.0-arm/libgloss/libsysbase/environ.c
 --- newlib-1.14.0/libgloss/libsysbase/environ.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/environ.c	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/environ.c	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,6 @@
 +/*
 + * Version of environ for no OS.
@@ -2015,9 +2016,9 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/environ.c newlib-1.14.0-test/libgl
 +
 +char *__env[1] = { 0 }; 
 +char **environ = __env; 
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/execve.c newlib-1.14.0-test/libgloss/libsysbase/execve.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/execve.c newlib-1.14.0-arm/libgloss/libsysbase/execve.c
 --- newlib-1.14.0/libgloss/libsysbase/execve.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/execve.c	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/execve.c	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,21 @@
 +/*
 + * Stub version of execve.
@@ -2040,9 +2041,9 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/execve.c newlib-1.14.0-test/libglo
 +}
 +
 +stub_warning(_execve)
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/fork.c newlib-1.14.0-test/libgloss/libsysbase/fork.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/fork.c newlib-1.14.0-arm/libgloss/libsysbase/fork.c
 --- newlib-1.14.0/libgloss/libsysbase/fork.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/fork.c	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/fork.c	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,19 @@
 +/*
 + * Stub version of fork.
@@ -2063,10 +2064,10 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/fork.c newlib-1.14.0-test/libgloss
 +}
 +
 +stub_warning(_fork)
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/fstat.c newlib-1.14.0-test/libgloss/libsysbase/fstat.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/fstat.c newlib-1.14.0-arm/libgloss/libsysbase/fstat.c
 --- newlib-1.14.0/libgloss/libsysbase/fstat.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/fstat.c	Sat Dec 17 14:31:15 2005
-@@ -0,0 +1,39 @@
++++ newlib-1.14.0-arm/libgloss/libsysbase/fstat.c	Wed May 10 20:59:42 2006
+@@ -0,0 +1,42 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
 +#include <sys/types.h>
@@ -2094,21 +2095,24 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/fstat.c newlib-1.14.0-test/libglos
 +	unsigned int dev = 0;
 +	unsigned int fd = -1;
 +
-+	if(fileDesc!=-1) {
-+		dev = fileDesc;
-+		if(fileDesc&0xf000) {
-+			dev = _SHIFTR(fileDesc,12,4);
-+			fd = fileDesc&0x0fff;
-+		}
++	__handle * handle = NULL;
 +
++	if(fileDesc!=-1) {
++		if ( fileDesc < 3) {
++			dev = fileDesc;
++		} else {
++			handle = (__handle *)fileDesc;
++			dev = handle->device;
++			fd = (int)handle->fileStruct;
++		}
 +		if(devoptab_list[dev]->stat_r)
 +			ret = devoptab_list[dev]->stat_r(r,fd,st);
 +	}
 +	return ret;
 +}
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/getpid.c newlib-1.14.0-test/libgloss/libsysbase/getpid.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/getpid.c newlib-1.14.0-arm/libgloss/libsysbase/getpid.c
 --- newlib-1.14.0/libgloss/libsysbase/getpid.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/getpid.c	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/getpid.c	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,20 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -2130,9 +2134,9 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/getpid.c newlib-1.14.0-test/libglo
 +	return -1;
 +}
 +
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/gettod.c newlib-1.14.0-test/libgloss/libsysbase/gettod.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/gettod.c newlib-1.14.0-arm/libgloss/libsysbase/gettod.c
 --- newlib-1.14.0/libgloss/libsysbase/gettod.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/gettod.c	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/gettod.c	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,25 @@
 +/*
 + * Stub version of gettimeofday.
@@ -2159,16 +2163,16 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/gettod.c newlib-1.14.0-test/libglo
 +}
 +
 +stub_warning(_gettimeofday)
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/iosupport.c newlib-1.14.0-test/libgloss/libsysbase/iosupport.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/iosupport.c newlib-1.14.0-arm/libgloss/libsysbase/iosupport.c
 --- newlib-1.14.0/libgloss/libsysbase/iosupport.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/iosupport.c	Fri Jan 20 16:00:50 2006
-@@ -0,0 +1,96 @@
++++ newlib-1.14.0-arm/libgloss/libsysbase/iosupport.c	Thu May 11 18:52:08 2006
+@@ -0,0 +1,105 @@
 +#include <stdlib.h>
 +#include <string.h>
 +#include <sys/iosupport.h>
 +
 +//---------------------------------------------------------------------------------
-+int stdnull_open(struct _reent *r,const char *path,int flags,int mode) {
++int stdnull_open(struct _reent *r, void *fileStruct, const char *path,int flags,int mode) {
 +//---------------------------------------------------------------------------------
 +	return -1;
 +}
@@ -2191,13 +2195,21 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/iosupport.c newlib-1.14.0-test/lib
 +	return -1;
 +}
 +
++static int defaultDevice = -1;
 +
++//---------------------------------------------------------------------------------
++void setDefaultDevice( int device ) {
++//---------------------------------------------------------------------------------
 +
++	if ( device >2 && device <= STD_MAX)
++		defaultDevice = device;
++}
 +
 +//---------------------------------------------------------------------------------
 +const devoptab_t dotab_stdnull = {
 +//---------------------------------------------------------------------------------
 +	"stdnull",
++	0,
 +	stdnull_open,
 +	stdnull_close,
 +	stdnull_write,
@@ -2215,13 +2227,10 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/iosupport.c newlib-1.14.0-test/lib
 +	&dotab_stdnull, &dotab_stdnull, &dotab_stdnull, &dotab_stdnull
 +};
 +
-+
 +//---------------------------------------------------------------------------------
 +int FindDevice(char* name) {
 +//---------------------------------------------------------------------------------
-+	int i, namelen, dev = -1;
-+	
-+	i=0;
++	int i = 0, namelen, dev = -1;
 +
 +	while(i<STD_MAX) {
 +		if(devoptab_list[i]) {
@@ -2236,6 +2245,8 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/iosupport.c newlib-1.14.0-test/lib
 +		i++;
 +	}
 +
++	if ( dev == -1 && defaultDevice != -1 ) dev = defaultDevice;
++
 +	return dev;
 +}
 +
@@ -2247,8 +2258,10 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/iosupport.c newlib-1.14.0-test/lib
 +
 +	for ( devnum = 3;devnum <STD_MAX; devnum++ ) {
 +
-+		if ( strcmp(devoptab_list[devnum]->name, device->name) ||
-+			 strcmp(devoptab_list[devnum]->name, "stdnull") )
++		if ( (strcmp(devoptab_list[devnum]->name, device->name) &&
++					strlen(devoptab_list[devnum]->name) == strlen(device->name) ) ||
++			 		strcmp(devoptab_list[devnum]->name, "stdnull")
++			 )
 +			 break;
 +	}
 +
@@ -2259,9 +2272,9 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/iosupport.c newlib-1.14.0-test/lib
 +	}
 +	return devnum;
 +}
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/isatty.c newlib-1.14.0-test/libgloss/libsysbase/isatty.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/isatty.c newlib-1.14.0-arm/libgloss/libsysbase/isatty.c
 --- newlib-1.14.0/libgloss/libsysbase/isatty.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/isatty.c	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/isatty.c	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,10 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -2273,9 +2286,9 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/isatty.c newlib-1.14.0-test/libglo
 +//---------------------------------------------------------------------------------
 +	return 0;
 +}
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/kill.c newlib-1.14.0-test/libgloss/libsysbase/kill.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/kill.c newlib-1.14.0-arm/libgloss/libsysbase/kill.c
 --- newlib-1.14.0/libgloss/libsysbase/kill.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/kill.c	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/kill.c	Fri Apr 14 22:10:52 2006
 @@ -0,0 +1,24 @@
 +/*
 + * Stub version of kill.
@@ -2293,7 +2306,7 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/kill.c newlib-1.14.0-test/libgloss
 +           int			 pid  _AND
 +           int			 sig) {
 +#else
-+int _DEFUN(kill,(pid,sig),
++int _DEFUN(_kill,(pid,sig),
 +           int pid  _AND
 +           int sig)	{
 +	struct _reent *ptr = _REENT;
@@ -2301,9 +2314,9 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/kill.c newlib-1.14.0-test/libgloss
 +  ptr->_errno = ENOSYS;
 +  return -1;
 +}
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/link.c newlib-1.14.0-test/libgloss/libsysbase/link.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/link.c newlib-1.14.0-arm/libgloss/libsysbase/link.c
 --- newlib-1.14.0/libgloss/libsysbase/link.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/link.c	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/link.c	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,20 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -2325,10 +2338,10 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/link.c newlib-1.14.0-test/libgloss
 +	return -1;
 +}
 +
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/lseek.c newlib-1.14.0-test/libgloss/libsysbase/lseek.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/lseek.c newlib-1.14.0-arm/libgloss/libsysbase/lseek.c
 --- newlib-1.14.0/libgloss/libsysbase/lseek.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/lseek.c	Sat Dec 17 14:31:15 2005
-@@ -0,0 +1,29 @@
++++ newlib-1.14.0-arm/libgloss/libsysbase/lseek.c	Wed May 10 21:04:08 2006
+@@ -0,0 +1,32 @@
 +
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -2337,8 +2350,8 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/lseek.c newlib-1.14.0-test/libglos
 +#include <sys/iosupport.h>
 +
 +//---------------------------------------------------------------------------------
-+int _DEFUN(_lseek,(file, pos, dir),
-+           int   file  _AND
++int _DEFUN(_lseek,(fileDesc, pos, dir),
++           int   fileDesc  _AND
 +		   int   pos   _AND
 +           int   dir) {
 +//---------------------------------------------------------------------------------
@@ -2346,28 +2359,31 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/lseek.c newlib-1.14.0-test/libglos
 +	unsigned int dev = 0;
 +	unsigned int fd = -1;
 +
-+	if(file!=-1) {
-+		dev = file;
-+		if(file&0xf000) {
-+			dev = _SHIFTR(file,12,4);
-+			fd = file&0x0fff;
-+		}
++	__handle * handle;
++
++	if(fileDesc!=-1) {
++
++		handle = (__handle *)fileDesc;
++		dev = handle->device;
++		fd = (int)handle->fileStruct;
 +
 +		if(devoptab_list[dev]->seek_r)
 +			ret = devoptab_list[dev]->seek_r(0,fd,pos,dir);
++
 +	}
 +	return ret;
++
 +}
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/malloc_vars.c newlib-1.14.0-test/libgloss/libsysbase/malloc_vars.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/malloc_vars.c newlib-1.14.0-arm/libgloss/libsysbase/malloc_vars.c
 --- newlib-1.14.0/libgloss/libsysbase/malloc_vars.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/malloc_vars.c	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/malloc_vars.c	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,2 @@
 +char *fake_heap_end = (char*)0;
 +char *fake_heap_start = (char*)0;
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/open.c newlib-1.14.0-test/libgloss/libsysbase/open.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/open.c newlib-1.14.0-arm/libgloss/libsysbase/open.c
 --- newlib-1.14.0/libgloss/libsysbase/open.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/open.c	Sat Dec 17 14:31:15 2005
-@@ -0,0 +1,42 @@
++++ newlib-1.14.0-arm/libgloss/libsysbase/open.c	Wed May 10 17:42:14 2006
+@@ -0,0 +1,56 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
 +#include <string.h>
@@ -2395,7 +2411,7 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/open.c newlib-1.14.0-test/libgloss
 +//---------------------------------------------------------------------------------
 +	struct _reent *r = _REENT;
 +#endif
-+	int handle;
++	__handle *handle;
 +	int dev,fd;
 +
 +
@@ -2404,16 +2420,30 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/open.c newlib-1.14.0-test/libgloss
 +	fd = -1;
 +	handle = -1;
 +	if(dev!=-1 && devoptab_list[dev]->open_r) {
-+		fd = devoptab_list[dev]->open_r(r,file,flags,mode);
-+		if(fd!=-1) handle = _SHIFTL(dev,12,4)|(fd&0x0fff);
++		
++		handle = (__handle *)malloc( sizeof(__handle) + devoptab_list[dev]->structSize );
++		
++		if ( NULL != handle ) {
++			handle->device = dev;
++			handle->fileStruct = ((void *)handle) + sizeof(handle); 
++		
++			fd = devoptab_list[dev]->open_r(r,file, handle->fileStruct, flags,mode);
++		
++			if ( fd == -1 ) {
++				free(handle);
++				handle = -1;
++			}
++		} else {
++			handle = -1;
++		}
 +	}
 +
 +	return handle;
 +}
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/read.c newlib-1.14.0-test/libgloss/libsysbase/read.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/read.c newlib-1.14.0-arm/libgloss/libsysbase/read.c
 --- newlib-1.14.0/libgloss/libsysbase/read.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/read.c	Sat Dec 17 14:31:15 2005
-@@ -0,0 +1,40 @@
++++ newlib-1.14.0-arm/libgloss/libsysbase/read.c	Wed May 10 20:52:51 2006
+@@ -0,0 +1,44 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
 +#include <stdio.h>
@@ -2423,16 +2453,16 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/read.c newlib-1.14.0-test/libgloss
 +
 +#ifdef REENTRANT_SYSCALLS_PROVIDED
 +//---------------------------------------------------------------------------------
-+int _DEFUN(_read_r,(r, file, ptr, len),
++int _DEFUN(_read_r,(r, fileDesc, ptr, len),
 +			struct _reent * r _AND
-+			int   file  _AND
++			int   fileDesc  _AND
 +			char *ptr   _AND
 +			int   len) {
 +//---------------------------------------------------------------------------------
 +#else
 +//---------------------------------------------------------------------------------
-+int _DEFUN(_read,(file, ptr, len),
-+           int   file  _AND
++int _DEFUN(_read,(fileDesc, ptr, len),
++           int   fileDesc  _AND
 +           char *ptr   _AND
 +           int   len) {
 +//---------------------------------------------------------------------------------
@@ -2442,11 +2472,15 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/read.c newlib-1.14.0-test/libgloss
 +	unsigned int dev = 0;
 +	unsigned int fd = -1;
 +
-+	if(file!=-1) {
-+		dev = file;
-+		if(file&0xf000) {
-+			dev = _SHIFTR(file,12,4);
-+			fd = file&0x0fff;
++	__handle * handle = NULL;
++
++	if(fileDesc!=-1) {
++		if ( fileDesc < 3) {
++			dev = fileDesc;
++		} else {
++			handle = (__handle *)fileDesc;
++			dev = handle->device;
++			fd = (int)handle->fileStruct;
 +		}
 +		if(devoptab_list[dev]->read_r)
 +			ret = devoptab_list[dev]->read_r(r,fd,ptr,len);
@@ -2454,9 +2488,9 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/read.c newlib-1.14.0-test/libgloss
 +	return ret;
 +}
 +
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/sbrk.c newlib-1.14.0-test/libgloss/libsysbase/sbrk.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/sbrk.c newlib-1.14.0-arm/libgloss/libsysbase/sbrk.c
 --- newlib-1.14.0/libgloss/libsysbase/sbrk.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/sbrk.c	Sun Apr  9 12:31:50 2006
++++ newlib-1.14.0-arm/libgloss/libsysbase/sbrk.c	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,61 @@
 +#include <_ansi.h>
 +#include <sys/types.h>
@@ -2519,9 +2553,9 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/sbrk.c newlib-1.14.0-test/libgloss
 +
 +	return (caddr_t) prev_heap_start;
 +}
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/stat.c newlib-1.14.0-test/libgloss/libsysbase/stat.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/stat.c newlib-1.14.0-arm/libgloss/libsysbase/stat.c
 --- newlib-1.14.0/libgloss/libsysbase/stat.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/stat.c	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/stat.c	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,22 @@
 +/*
 + * Stub version of stat.
@@ -2545,9 +2579,9 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/stat.c newlib-1.14.0-test/libgloss
 +}
 +
 +stub_warning(_stat)
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/times.c newlib-1.14.0-test/libgloss/libsysbase/times.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/times.c newlib-1.14.0-arm/libgloss/libsysbase/times.c
 --- newlib-1.14.0/libgloss/libsysbase/times.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/times.c	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/times.c	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,13 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -2562,9 +2596,9 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/times.c newlib-1.14.0-test/libglos
 +  return -1;
 +}
 +
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/unlink.c newlib-1.14.0-test/libgloss/libsysbase/unlink.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/unlink.c newlib-1.14.0-arm/libgloss/libsysbase/unlink.c
 --- newlib-1.14.0/libgloss/libsysbase/unlink.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/unlink.c	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/unlink.c	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,22 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -2588,9 +2622,9 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/unlink.c newlib-1.14.0-test/libglo
 +  return -1;
 +}
 +
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/wait.c newlib-1.14.0-test/libgloss/libsysbase/wait.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/wait.c newlib-1.14.0-arm/libgloss/libsysbase/wait.c
 --- newlib-1.14.0/libgloss/libsysbase/wait.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/wait.c	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/wait.c	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,19 @@
 +/*
 + * Stub version of wait.
@@ -2611,9 +2645,9 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/wait.c newlib-1.14.0-test/libgloss
 +}
 +
 +stub_warning(_wait)
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/warning.h newlib-1.14.0-test/libgloss/libsysbase/warning.h
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/warning.h newlib-1.14.0-arm/libgloss/libsysbase/warning.h
 --- newlib-1.14.0/libgloss/libsysbase/warning.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/warning.h	Sat Dec 17 14:31:15 2005
++++ newlib-1.14.0-arm/libgloss/libsysbase/warning.h	Fri Apr 14 22:08:39 2006
 @@ -0,0 +1,43 @@
 +#ifndef __WARNING_H__
 +#define __WARNING_H__
@@ -2658,10 +2692,10 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/warning.h newlib-1.14.0-test/libgl
 +                "warning: " #name " is not implemented and will always fail")
 +
 +#endif /* __WARNING_H__ */
-diff -Nbaur newlib-1.14.0/libgloss/libsysbase/write.c newlib-1.14.0-test/libgloss/libsysbase/write.c
+diff -Nbaur newlib-1.14.0/libgloss/libsysbase/write.c newlib-1.14.0-arm/libgloss/libsysbase/write.c
 --- newlib-1.14.0/libgloss/libsysbase/write.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/libgloss/libsysbase/write.c	Sat Dec 17 14:31:15 2005
-@@ -0,0 +1,39 @@
++++ newlib-1.14.0-arm/libgloss/libsysbase/write.c	Wed May 10 22:09:00 2006
+@@ -0,0 +1,44 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
 +#include <stdio.h>
@@ -2671,16 +2705,16 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/write.c newlib-1.14.0-test/libglos
 +
 +#ifdef REENTRANT_SYSCALLS_PROVIDED
 +//---------------------------------------------------------------------------------
-+int _DEFUN(_write_r,(r, file, ptr, len),
++int _DEFUN(_write_r,(r, fileDesc, ptr, len),
 +			struct _reent * r _AND
-+			int   file  _AND
++			int   fileDesc  _AND
 +			char *ptr   _AND
 +			int   len) {
 +//---------------------------------------------------------------------------------
 +#else
 +//---------------------------------------------------------------------------------
-+int _DEFUN (_write, (file, ptr, len),
-+        int   file  _AND
++int _DEFUN (_write, (fileDesc, ptr, len),
++        int   fileDesc  _AND
 +        char *ptr   _AND
 +        int   len) {
 +//---------------------------------------------------------------------------------
@@ -2690,20 +2724,25 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/write.c newlib-1.14.0-test/libglos
 +	unsigned int dev = 0;
 +	unsigned int fd = -1;
 +
-+	if(file!=-1) {
-+		dev = file;
-+		if(file&0xf000) {
-+			dev = _SHIFTR(file,12,4);
-+			fd = file&0x0fff;
++	__handle * handle = NULL;
++
++
++	if(fileDesc!=-1) {
++		if ( fileDesc < 3) {
++			dev = fileDesc;
++		} else {
++			handle = (__handle *)fileDesc;
++			dev = handle->device;
++			fd = (int)handle->fileStruct;
 +		}
 +		if(devoptab_list[dev]->write_r)
 +			ret = devoptab_list[dev]->write_r(r,fd,ptr,len);
 +	}
 +	return ret;
 +}
-diff -Nbaur newlib-1.14.0/newlib/libc/include/stdio.h newlib-1.14.0-test/newlib/libc/include/stdio.h
+diff -Nbaur newlib-1.14.0/newlib/libc/include/stdio.h newlib-1.14.0-arm/newlib/libc/include/stdio.h
 --- newlib-1.14.0/newlib/libc/include/stdio.h	Wed Oct 12 00:59:32 2005
-+++ newlib-1.14.0-test/newlib/libc/include/stdio.h	Mon Apr 10 01:49:50 2006
++++ newlib-1.14.0-arm/newlib/libc/include/stdio.h	Fri Apr 14 22:08:39 2006
 @@ -179,6 +179,7 @@
  int	_EXFUN(printf, (const char *, ...));
  int	_EXFUN(scanf, (const char *, ...));
@@ -2729,12 +2768,14 @@ diff -Nbaur newlib-1.14.0/newlib/libc/include/stdio.h newlib-1.14.0-test/newlib/
  int	_EXFUN(vscanf, (const char *, __VALIST));
  int	_EXFUN(vsiscanf, (const char *, const char *, __VALIST));
  int	_EXFUN(vsscanf, (const char *, const char *, __VALIST));
-diff -Nbaur newlib-1.14.0/newlib/libc/include/sys/iosupport.h newlib-1.14.0-test/newlib/libc/include/sys/iosupport.h
+diff -Nbaur newlib-1.14.0/newlib/libc/include/sys/iosupport.h newlib-1.14.0-arm/newlib/libc/include/sys/iosupport.h
 --- newlib-1.14.0/newlib/libc/include/sys/iosupport.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-test/newlib/libc/include/sys/iosupport.h	Sat Dec 17 14:31:15 2005
-@@ -0,0 +1,33 @@
++++ newlib-1.14.0-arm/newlib/libc/include/sys/iosupport.h	Thu May 11 21:55:34 2006
+@@ -0,0 +1,40 @@
++//---------------------------------------------------------------------------------
 +#ifndef __iosupp_h__
 +#define __iosupp_h__
++//---------------------------------------------------------------------------------
 +
 +#include <reent.h>
 +
@@ -2745,14 +2786,16 @@ diff -Nbaur newlib-1.14.0/newlib/libc/include/sys/iosupport.h newlib-1.14.0-test
 +	STD_MAX = 16
 +};
 +
-+#define _SHIFTL(v, s, w)	\
-+    ((unsigned int) (((unsigned int)(v) & ((0x01 << (w)) - 1)) << (s)))
-+#define _SHIFTR(v, s, w)	\
-+    ((unsigned int)(((unsigned int)(v) >> (s)) & ((0x01 << (w)) - 1)))
++
++typedef struct {
++	int device;
++	void *fileStruct;
++} __handle;
 +
 +typedef struct {
 +	const char *name;
-+	int (*open_r)(struct _reent *r,const char *path,int flags,int mode);
++	int	structSize;
++	int (*open_r)(struct _reent *r, void *fileStruct, const char *path,int flags,int mode);
 +	int (*close_r)(struct _reent *r,int fd);
 +	int (*write_r)(struct _reent *r,int fd,const char *ptr,int len);
 +	int (*read_r)(struct _reent *r,int fd,char *ptr,int len);
@@ -2764,5 +2807,38 @@ diff -Nbaur newlib-1.14.0/newlib/libc/include/sys/iosupport.h newlib-1.14.0-test
 +
 +int AddDevice( const devoptab_t* device);
 +int FindDevice(char* name);
++void setDefaultDevice( int device );
 +
++//---------------------------------------------------------------------------------
 +#endif
++//---------------------------------------------------------------------------------
+diff -Nbaur newlib-1.14.0/newlib/libc/include/sys/reent.h newlib-1.14.0-arm/newlib/libc/include/sys/reent.h
+--- newlib-1.14.0/newlib/libc/include/sys/reent.h	Tue Feb  8 01:33:16 2005
++++ newlib-1.14.0-arm/newlib/libc/include/sys/reent.h	Wed May 10 15:36:06 2006
+@@ -151,7 +151,7 @@
+   int	_r;		/* read space left for getc() */
+   int	_w;		/* write space left for putc() */
+   short	_flags;		/* flags, below; this FILE is free if 0 */
+-  short	_file;		/* fileno, if Unix descriptor, else -1 */
++  int	_file;		/* fileno, if Unix descriptor, else -1 */
+   struct __sbuf _bf;	/* the buffer (at least 1 byte, if !NULL) */
+   int	_lbfsize;	/* 0 or -_bf._size, for inline putc */
+ 
+@@ -168,7 +168,7 @@
+   int	_r;		/* read space left for getc() */
+   int	_w;		/* write space left for putc() */
+   short	_flags;		/* flags, below; this FILE is free if 0 */
+-  short	_file;		/* fileno, if Unix descriptor, else -1 */
++  int	_file;		/* fileno, if Unix descriptor, else -1 */
+   struct __sbuf _bf;	/* the buffer (at least 1 byte, if !NULL) */
+   int	_lbfsize;	/* 0 or -_bf._size, for inline putc */
+ 
+@@ -216,7 +216,7 @@
+   int	_r;		/* read space left for getc() */
+   int	_w;		/* write space left for putc() */
+   short	_flags;		/* flags, below; this FILE is free if 0 */
+-  short	_file;		/* fileno, if Unix descriptor, else -1 */
++  int	_file;		/* fileno, if Unix descriptor, else -1 */
+   struct __sbuf _bf;	/* the buffer (at least 1 byte, if !NULL) */
+   int	_lbfsize;	/* 0 or -_bf._size, for inline putc */
+ 
