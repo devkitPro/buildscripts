@@ -1,16 +1,3 @@
-diff -Nbaur newlib-1.14.0/config.sub newlib-1.14.0-arm/config.sub
---- newlib-1.14.0/config.sub	Mon Dec 12 11:24:58 2005
-+++ newlib-1.14.0-arm/config.sub	Fri Apr 14 22:08:39 2006
-@@ -228,6 +228,9 @@
- 		basic_machine=m68k-atari
- 		os=-mint
- 		;;
-+	-gekko)
-+		basic_machine=powerpc-eabi
-+		os=-elf-gekko
- esac
- 
- # Decode aliases for certain CPU-COMPANY combinations.
 diff -Nbaur newlib-1.14.0/libgloss/configure newlib-1.14.0-arm/libgloss/configure
 --- newlib-1.14.0/libgloss/configure	Mon Dec 12 11:25:07 2005
 +++ newlib-1.14.0-arm/libgloss/configure	Fri Apr 14 22:08:39 2006
@@ -2066,8 +2053,8 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/fork.c newlib-1.14.0-arm/libgloss/
 +stub_warning(_fork)
 diff -Nbaur newlib-1.14.0/libgloss/libsysbase/fstat.c newlib-1.14.0-arm/libgloss/libsysbase/fstat.c
 --- newlib-1.14.0/libgloss/libsysbase/fstat.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-arm/libgloss/libsysbase/fstat.c	Wed May 10 20:59:42 2006
-@@ -0,0 +1,42 @@
++++ newlib-1.14.0-arm/libgloss/libsysbase/fstat.c	Fri May 19 11:48:22 2006
+@@ -0,0 +1,45 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
 +#include <sys/types.h>
@@ -2105,8 +2092,11 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/fstat.c newlib-1.14.0-arm/libgloss
 +			dev = handle->device;
 +			fd = (int)handle->fileStruct;
 +		}
-+		if(devoptab_list[dev]->stat_r)
-+			ret = devoptab_list[dev]->stat_r(r,fd,st);
++		if(devoptab_list[dev]->fstat_r) {
++			ret = devoptab_list[dev]->fstat_r(r,fd,st);
++		} else {
++			r->_errno = ENOSYS;
++		}
 +	}
 +	return ret;
 +}
@@ -2165,35 +2155,11 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/gettod.c newlib-1.14.0-arm/libglos
 +stub_warning(_gettimeofday)
 diff -Nbaur newlib-1.14.0/libgloss/libsysbase/iosupport.c newlib-1.14.0-arm/libgloss/libsysbase/iosupport.c
 --- newlib-1.14.0/libgloss/libsysbase/iosupport.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-arm/libgloss/libsysbase/iosupport.c	Thu May 11 18:52:08 2006
-@@ -0,0 +1,105 @@
++++ newlib-1.14.0-arm/libgloss/libsysbase/iosupport.c	Sat May 20 19:49:43 2006
+@@ -0,0 +1,98 @@
 +#include <stdlib.h>
 +#include <string.h>
 +#include <sys/iosupport.h>
-+
-+//---------------------------------------------------------------------------------
-+int stdnull_open(struct _reent *r, void *fileStruct, const char *path,int flags,int mode) {
-+//---------------------------------------------------------------------------------
-+	return -1;
-+}
-+
-+//---------------------------------------------------------------------------------
-+int stdnull_close(struct _reent *r,int fd) {
-+//---------------------------------------------------------------------------------
-+	return -1;
-+}
-+
-+//---------------------------------------------------------------------------------
-+int stdnull_write(struct _reent *r,int fd,const char *ptr,int len) {
-+//---------------------------------------------------------------------------------
-+	return -1;
-+}
-+
-+//---------------------------------------------------------------------------------
-+int stdnull_read(struct _reent *r,int fd,char *ptr,int len) {
-+//---------------------------------------------------------------------------------
-+	return -1;
-+}
 +
 +static int defaultDevice = -1;
 +
@@ -2208,14 +2174,18 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/iosupport.c newlib-1.14.0-arm/libg
 +//---------------------------------------------------------------------------------
 +const devoptab_t dotab_stdnull = {
 +//---------------------------------------------------------------------------------
-+	"stdnull",
-+	0,
-+	stdnull_open,
-+	stdnull_close,
-+	stdnull_write,
-+	stdnull_read,
-+	NULL,
-+	NULL
++	"stdnull",	// device name
++	0,			// size of file structure
++	NULL,		// device open
++	NULL,		// device close
++	NULL,		// device write
++	NULL,		// device read
++	NULL,		// device seek
++	NULL,		// device fstat
++	NULL,		// device stat
++	NULL,		// device link
++	NULL,		// device unlink
++	NULL		// device chdir
 +};
 +
 +//---------------------------------------------------------------------------------
@@ -2228,7 +2198,7 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/iosupport.c newlib-1.14.0-arm/libg
 +};
 +
 +//---------------------------------------------------------------------------------
-+int FindDevice(char* name) {
++int FindDevice(const char* name) {
 +//---------------------------------------------------------------------------------
 +	int i = 0, namelen, dev = -1;
 +
@@ -2251,6 +2221,19 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/iosupport.c newlib-1.14.0-arm/libg
 +}
 +
 +//---------------------------------------------------------------------------------
++int RemoveDevice( const char* name) {
++//---------------------------------------------------------------------------------
++	int dev = FindDevice(name);
++	
++	if ( -1 != dev ) {
++		devoptab_list[dev] = &dotab_stdnull;
++		return 0;
++	}
++	
++	return -1;
++		
++}
++//---------------------------------------------------------------------------------
 +int AddDevice( const devoptab_t* device) {
 +//---------------------------------------------------------------------------------
 +
@@ -2260,7 +2243,7 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/iosupport.c newlib-1.14.0-arm/libg
 +
 +		if ( (strcmp(devoptab_list[devnum]->name, device->name) &&
 +					strlen(devoptab_list[devnum]->name) == strlen(device->name) ) ||
-+			 		strcmp(devoptab_list[devnum]->name, "stdnull")
++			 		!strcmp(devoptab_list[devnum]->name, "stdnull")
 +			 )
 +			 break;
 +	}
@@ -2316,12 +2299,13 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/kill.c newlib-1.14.0-arm/libgloss/
 +}
 diff -Nbaur newlib-1.14.0/libgloss/libsysbase/link.c newlib-1.14.0-arm/libgloss/libsysbase/link.c
 --- newlib-1.14.0/libgloss/libsysbase/link.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-arm/libgloss/libsysbase/link.c	Fri Apr 14 22:08:39 2006
-@@ -0,0 +1,20 @@
++++ newlib-1.14.0-arm/libgloss/libsysbase/link.c	Fri May 19 11:50:37 2006
+@@ -0,0 +1,36 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
 +#include <reent.h>
 +#include <errno.h>
++#include <sys/iosupport.h>
 +
 +#ifdef REENTRANT_SYSCALLS_PROVIDED
 +int _DEFUN (_link_r, (r, existing, new),
@@ -2334,14 +2318,29 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/link.c newlib-1.14.0-arm/libgloss/
 +					char *new) {
 +	struct _reent *r = _REENT;
 +#endif
-+	r->_errno = ENOSYS;
-+	return -1;
++	int ret;
++	int sourceDev = findDevice(existing);
++	int destDev = findDevice(new);
++	
++	ret = -1;
++
++	if ( sourceDev == destDev) {
++		if (devoptab_list[destDev]->link_r) {
++			ret = devoptab_list[destDev]->link_r( r, existing, new);
++		} else {
++			r->_errno = ENOSYS;
++		}			
++	} else {
++		r->_errno = EXDEV;
++	}
++
++	return ret;
 +}
 +
 diff -Nbaur newlib-1.14.0/libgloss/libsysbase/lseek.c newlib-1.14.0-arm/libgloss/libsysbase/lseek.c
 --- newlib-1.14.0/libgloss/libsysbase/lseek.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-arm/libgloss/libsysbase/lseek.c	Wed May 10 21:04:08 2006
-@@ -0,0 +1,32 @@
++++ newlib-1.14.0-arm/libgloss/libsysbase/lseek.c	Sat May 20 19:58:52 2006
+@@ -0,0 +1,46 @@
 +
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -2350,10 +2349,24 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/lseek.c newlib-1.14.0-arm/libgloss
 +#include <sys/iosupport.h>
 +
 +//---------------------------------------------------------------------------------
++#ifdef REENTRANT_SYSCALLS_PROVIDED
++//---------------------------------------------------------------------------------
++int _DEFUN(_lseek_r,(r, fileDesc, pos, dir),
++           struct _reent * r _AND
++           int   fileDesc  _AND
++		   int   pos   _AND
++           int   dir)
++//---------------------------------------------------------------------------------
++#else
++//---------------------------------------------------------------------------------
 +int _DEFUN(_lseek,(fileDesc, pos, dir),
 +           int   fileDesc  _AND
 +		   int   pos   _AND
 +           int   dir) {
++//---------------------------------------------------------------------------------
++	struct _reent *r = _REENT;
++//---------------------------------------------------------------------------------
++#endif
 +//---------------------------------------------------------------------------------
 +	int ret = -1;
 +	unsigned int dev = 0;
@@ -2382,8 +2395,8 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/malloc_vars.c newlib-1.14.0-arm/li
 +char *fake_heap_start = (char*)0;
 diff -Nbaur newlib-1.14.0/libgloss/libsysbase/open.c newlib-1.14.0-arm/libgloss/libsysbase/open.c
 --- newlib-1.14.0/libgloss/libsysbase/open.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-arm/libgloss/libsysbase/open.c	Wed May 10 17:42:14 2006
-@@ -0,0 +1,56 @@
++++ newlib-1.14.0-arm/libgloss/libsysbase/open.c	Fri May 19 11:49:07 2006
+@@ -0,0 +1,57 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
 +#include <string.h>
@@ -2414,11 +2427,11 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/open.c newlib-1.14.0-arm/libgloss/
 +	__handle *handle;
 +	int dev,fd;
 +
-+
++	r->_errno = ENOSYS;
 +	dev = FindDevice(file);
 +
 +	fd = -1;
-+	handle = -1;
++	handle = (__handle *)-1;
 +	if(dev!=-1 && devoptab_list[dev]->open_r) {
 +		
 +		handle = (__handle *)malloc( sizeof(__handle) + devoptab_list[dev]->structSize );
@@ -2427,18 +2440,19 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/open.c newlib-1.14.0-arm/libgloss/
 +			handle->device = dev;
 +			handle->fileStruct = ((void *)handle) + sizeof(handle); 
 +		
-+			fd = devoptab_list[dev]->open_r(r,file, handle->fileStruct, flags,mode);
++			fd = devoptab_list[dev]->open_r(r, handle->fileStruct, file, flags, mode);
 +		
 +			if ( fd == -1 ) {
 +				free(handle);
-+				handle = -1;
++				handle = (__handle *)-1;
 +			}
 +		} else {
-+			handle = -1;
++			r->_errno = ENOSR;
++			handle = (__handle *)-1;
 +		}
 +	}
 +
-+	return handle;
++	return (int)handle;
 +}
 diff -Nbaur newlib-1.14.0/libgloss/libsysbase/read.c newlib-1.14.0-arm/libgloss/libsysbase/read.c
 --- newlib-1.14.0/libgloss/libsysbase/read.c	Thu Jan  1 00:00:00 1970
@@ -2555,30 +2569,47 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/sbrk.c newlib-1.14.0-arm/libgloss/
 +}
 diff -Nbaur newlib-1.14.0/libgloss/libsysbase/stat.c newlib-1.14.0-arm/libgloss/libsysbase/stat.c
 --- newlib-1.14.0/libgloss/libsysbase/stat.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-arm/libgloss/libsysbase/stat.c	Fri Apr 14 22:08:39 2006
-@@ -0,0 +1,22 @@
-+/*
-+ * Stub version of stat.
-+ */
-+
++++ newlib-1.14.0-arm/libgloss/libsysbase/stat.c	Fri May 19 11:36:58 2006
+@@ -0,0 +1,39 @@
 +#include "config.h"
 +#include <_ansi.h>
 +#include <_syslist.h>
 +#include <sys/types.h>
 +#include <sys/stat.h>
++#include <sys/iosupport.h>
 +#include <errno.h>
-+#include "warning.h"
 +
++
++#ifdef REENTRANT_SYSCALLS_PROVIDED
++//---------------------------------------------------------------------------------
++int _DEFUN (_stat_r,(r,file, st),
++			struct _reent * r _AND
++			const char *file _AND
++			struct stat *st) {
++//---------------------------------------------------------------------------------
++#else
++//---------------------------------------------------------------------------------
 +int
 +_DEFUN (_stat, (file, st),
 +        const char  *file _AND
 +        struct stat *st)
 +{
-+  errno = ENOSYS;
-+  return -1;
++//---------------------------------------------------------------------------------
++	struct _reent *r = _REENT;
++#endif
++	int dev,ret;
++
++	dev = FindDevice(file);
++
++	if(dev!=-1 && devoptab_list[dev]->stat_r) {
++		ret = devoptab_list[dev]->stat_r(r,file,st);
++	} else {
++		ret = -1;
++		r->_errno = ENODEV;
++	}
++	return ret;
 +}
 +
-+stub_warning(_stat)
 diff -Nbaur newlib-1.14.0/libgloss/libsysbase/times.c newlib-1.14.0-arm/libgloss/libsysbase/times.c
 --- newlib-1.14.0/libgloss/libsysbase/times.c	Thu Jan  1 00:00:00 1970
 +++ newlib-1.14.0-arm/libgloss/libsysbase/times.c	Fri Apr 14 22:08:39 2006
@@ -2598,12 +2629,13 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/times.c newlib-1.14.0-arm/libgloss
 +
 diff -Nbaur newlib-1.14.0/libgloss/libsysbase/unlink.c newlib-1.14.0-arm/libgloss/libsysbase/unlink.c
 --- newlib-1.14.0/libgloss/libsysbase/unlink.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-arm/libgloss/libsysbase/unlink.c	Fri Apr 14 22:08:39 2006
-@@ -0,0 +1,22 @@
++++ newlib-1.14.0-arm/libgloss/libsysbase/unlink.c	Fri May 19 11:23:45 2006
+@@ -0,0 +1,32 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
 +#include <reent.h>
 +#include <errno.h>
++#include <sys/iosupport.h>
 +
 +#ifdef REENTRANT_SYSCALLS_PROVIDED
 +//---------------------------------------------------------------------------------
@@ -2618,8 +2650,17 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/unlink.c newlib-1.14.0-arm/libglos
 +//---------------------------------------------------------------------------------
 +	struct _reent *r = _REENT;
 +#endif
-+	r->_errno = ENOSYS;
-+  return -1;
++	int dev,ret;
++
++	dev = FindDevice(name);
++	if(dev!=-1 && devoptab_list[dev]->unlink_r) {
++		ret = devoptab_list[dev]->unlink_r(r,name);
++	} else {
++		ret = -1;
++		r->_errno = ENODEV;
++	}
++
++	return ret;
 +}
 +
 diff -Nbaur newlib-1.14.0/libgloss/libsysbase/wait.c newlib-1.14.0-arm/libgloss/libsysbase/wait.c
@@ -2770,8 +2811,8 @@ diff -Nbaur newlib-1.14.0/newlib/libc/include/stdio.h newlib-1.14.0-arm/newlib/l
  int	_EXFUN(vsscanf, (const char *, const char *, __VALIST));
 diff -Nbaur newlib-1.14.0/newlib/libc/include/sys/iosupport.h newlib-1.14.0-arm/newlib/libc/include/sys/iosupport.h
 --- newlib-1.14.0/newlib/libc/include/sys/iosupport.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.14.0-arm/newlib/libc/include/sys/iosupport.h	Thu May 11 21:55:34 2006
-@@ -0,0 +1,40 @@
++++ newlib-1.14.0-arm/newlib/libc/include/sys/iosupport.h	Sat May 20 13:07:58 2006
+@@ -0,0 +1,45 @@
 +//---------------------------------------------------------------------------------
 +#ifndef __iosupp_h__
 +#define __iosupp_h__
@@ -2800,13 +2841,18 @@ diff -Nbaur newlib-1.14.0/newlib/libc/include/sys/iosupport.h newlib-1.14.0-arm/
 +	int (*write_r)(struct _reent *r,int fd,const char *ptr,int len);
 +	int (*read_r)(struct _reent *r,int fd,char *ptr,int len);
 +	int (*seek_r)(struct _reent *r,int fd,int pos,int dir);
-+	int (*stat_r)(struct _reent *r,int fd,struct stat *st);
++	int (*fstat_r)(struct _reent *r,int fd,struct stat *st);
++	int (*stat_r)(struct _reent *r,const char *file,struct stat *st);
++	int (*link_r)(struct _reent *r,char *existing, char  *new);
++	int (*unlink_r)(struct _reent *r,char *name);
++	int (*chdir_r)(struct _reent *r,char *name);
 +} devoptab_t;
 +
 +extern const devoptab_t *devoptab_list[];
 +
 +int AddDevice( const devoptab_t* device);
-+int FindDevice(char* name);
++int FindDevice(const char* name);
++int RemoveDevice(const char* name);
 +void setDefaultDevice( int device );
 +
 +//---------------------------------------------------------------------------------
