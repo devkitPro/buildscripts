@@ -1,44 +1,6 @@
-/* GP32 Linker Script v1.2 by Jeff F              */
-/*  v1.0 - Original release                       */
-/*  v1.1 - Cleaned up and added MEMORY command    */
-/*	v1.2 - DJWillis - Added propper .init and     */
-/*         .fini for GCC 3.3.2 and above          */
-/*                                                */
-/* This file is released into the public domain   */
-/* for commercial or non-commercial use with no   */
-/* restrictions placed upon it.                   */
-/*                                                */
-/* NOTE!!!: This linker script defines the RAM    */
-/*   start addresses. In order for it to work     */
-/*   properly, remove -Ttext and -Tbss linker     */
-/*   options from your makefile if they are       */
-/*   present.                                     */
-/*                                                */
-/* You can use the following to view section      */
-/* addresses in your .elf file:                   */
-/*   objdump -h file.elf                          */
-/*                                                */
-/* Please note that empty sections may incorrectly*/
-/* list the lma address as the vma address for    */
-/* some versions of objdump.                      */
-
 OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 OUTPUT_ARCH(arm)
 ENTRY(_start)
-/* SEARCH_DIR(/bin/arm); */
-
-/* Then use it like this: IWRAMHEAP                        */
-/* The linker script function "var1 += var2;" sometimes    */
-/* reports incorrect values in the *.map file but the      */
-/* actual value it calculates is usually, if not always,   */
-/* correct. If you leave out the ". = ALIGN(4);" at the    */
-/* end of each section then the return value of SIZEOF()   */
-/* is sometimes incorrect and "var1 += var2;" appears to   */
-/* not work as well. "var1 += var2" style functions are    */
-/* avoided below as a result.                              */
-
-/* The linker script MEMORY directive is not used here due    */
-/* to the fact that __text_start is not always a fixed value. */
 
 MEMORY
   {
@@ -47,9 +9,16 @@ MEMORY
 
 SECTIONS
 {
-  .text :   /* ALIGN (4): */
+  .init           :
   {
     __text_start = . ;
+    KEEP (*(.init))
+    . = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
+  } >ram = 0xff
+  .plt            : { *(.plt) } >ram = 0xff
+
+  .text :   /* ALIGN (4): */
+  {
 
     *(EXCLUDE_FILE (*text.iwram*) .text)
     *(.text.*)
@@ -61,24 +30,12 @@ SECTIONS
     *(.glue_7t)
     . = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
   } >ram = 0xff
+  .fini           :
+  {
+    KEEP (*(.fini))
+  } >ram =0xff
 
   __text_end = . ;
-
-
-  .init :
-  { 
-    *(.init) 
-  } > ram = 0xff
-
-  .jcr : 
-  { 
-    *(.jcr) 
-  } > ram = 0xff
-
-  .fini : 
-  { 
-    *(.fini) 
-  } > ram = 0xff
 
   .rodata :
   {
@@ -91,6 +48,20 @@ SECTIONS
     . = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
   } >ram = 0xff
 
+  /* Ensure the __preinit_array_start label is properly aligned.  We
+     could instead move the label definition inside the section, but
+     the linker would then create the section even if it turns out to
+     be empty, which isn't pretty.  */
+  . = ALIGN(32 / 8);
+  PROVIDE (__preinit_array_start = .);
+  .preinit_array     : { KEEP (*(.preinit_array)) } >ram = 0xff
+  PROVIDE (__preinit_array_end = .);
+  PROVIDE (__init_array_start = .);
+  .init_array     : { KEEP (*(.init_array)) } >ram = 0xff
+  PROVIDE (__init_array_end = .);
+  PROVIDE (__fini_array_start = .);
+  .fini_array     : { KEEP (*(.fini_array)) } >ram = 0xff
+  PROVIDE (__fini_array_end = .);
   .ctors :
   {
     /* gcc uses crtbegin.o to find the start of the constructors, so
@@ -126,6 +97,8 @@ SECTIONS
     *(.gcc_except_table)
     . = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
   } >ram = 0
+  .jcr            : { KEEP (*(.jcr)) } >ram = 0
+  .got            : { *(.got.plt) *(.got) } >ram = 0
   __ro_end = . ;
 
   .data ALIGN(4) :
@@ -146,19 +119,15 @@ SECTIONS
    /* __bss_start__ = ABSOLUTE(.); */
    *(.dynbss)
    *(.gnu.linkonce.b*)
-   *(COMMON)
    *(.bss*)
+   *(COMMON)
    . = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
   } > ram
   __bss_end = . ;
 
- __eheap_start = . ; /* Needed by DevKitAdvance. Start of malloc() heap for DKA. */
-
   _end = . ;
   __end__ = . ;
   PROVIDE (end = _end);
-
-  __eheap_end = . ;
 
   /* Stabs debugging sections.  */
   .stab 0 : { *(.stab) }

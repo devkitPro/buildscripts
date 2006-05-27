@@ -6,8 +6,8 @@
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-BINUTILS_VER=2.16.1
-GCC_VER=4.1.0
+BINUTILS_VER=2.16.93
+GCC_VER=4.1.1
 NEWLIB_VER=1.14.0
 LIBOGC_VER=20050812
 LIBGBA_VER=20060518
@@ -23,13 +23,14 @@ LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
 LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
 ELF2FLT="elf2flt-src-$ELF2FLT_VER.tar.bz2"
 
+SFMIRROR="jaist"
 BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/$BINUTILS"
 GCC_CORE_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_CORE"
 GCC_GPP_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_GPP"
-LIBOGC_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBOGC"
-LIBGBA_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBGBA"
-LIBNDS_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$LIBNDS"
-ELF2FLT_URL="http://osdn.dl.sourceforge.net/sourceforge/devkitpro/$ELF2FLT"
+LIBOGC_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBOGC"
+LIBGBA_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBGBA"
+LIBNDS_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBNDS"
+ELF2FLT_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$ELF2FLT"
 NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/$NEWLIB"
 
 #---------------------------------------------------------------------------------
@@ -46,9 +47,10 @@ do
   echo "1: build devkitARM (gba gp32 ds)"
   echo "2: build devkitPPC (gamecube)"
   echo "3: build devkitPSP (PSP)"
+  echo "4: build devkitARM eabi (gba gp32 ds)"
   read VERSION
 
-  if [ "$VERSION" -ne 1 -a "$VERSION" -ne 2 -a "$VERSION" -ne 3 ]
+  if [ "$VERSION" -ne 1 -a "$VERSION" -ne 2 -a "$VERSION" -ne 3 -a "$VERSION" -ne 4 ]
   then
       VERSION=0
   fi
@@ -89,6 +91,14 @@ then
   fi
 fi
 
+if [ $VERSION -eq 4 ]
+then
+  basedir='dkarm-eabi'
+  package=devkitARM
+  builddir=arm-eabi
+  target=arm-eabi
+  toolchain=DEVKITARM
+fi
 
 DOWNLOAD=0
 
@@ -173,7 +183,7 @@ then
 	  FOUND=1
       fi
 
-    if [ $VERSION -eq 1 ]
+    if [ $VERSION -eq 1 -o $VERSION -eq 4 ]
     then
       if [ ! -f $SRCDIR/$LIBGBA ]
       then
@@ -228,7 +238,7 @@ else
 	fi
 
 
-	if [ $VERSION -eq 1 ]
+	if [ $VERSION -eq 1 -o $VERSION -eq 4 ]
 	then
 		$WGET -c $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit; }
 		$WGET -c $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit; }
@@ -283,7 +293,7 @@ scriptdir=$(pwd)/$basedir/scripts
 BUILDSCRIPTDIR=$(pwd)
 
 echo "Extracting $BINUTILS"
-tar -xjvf $SRCDIR/$BINUTILS || { echo "Error extracting "$BINUTILS; exit; }
+#tar -xjvf $SRCDIR/$BINUTILS || { echo "Error extracting "$BINUTILS; exit; }
 
 echo "Extracting $GCC_CORE"
 tar -xjvf $SRCDIR/$GCC_CORE || { echo "Error extracting "$GCC_CORE; exit; }
@@ -302,7 +312,7 @@ then
 fi
 
 
-if [ $VERSION -eq 1 ]
+if [ $VERSION -eq 1 -o $VERSION -eq 4 ]
 then
   echo "Extracting $LIBNDS"
   mkdir -p $LIBNDS_SRCDIR
@@ -310,7 +320,7 @@ then
   echo "Extracting $LIBGBA"
   mkdir -p $LIBGBA_SRCDIR
   bzip2 -cd $SRCDIR/$LIBGBA | tar -xv -C $LIBGBA_SRCDIR || { echo "Error extracting "$LIBGBA; exit; }
-  echo "Extracting $NEWLIB"
+  echo "Extracting $ELF2FLT"
   tar -xjvf $SRCDIR/$ELF2FLT || { echo "Error extracting "$ELF2FLT; exit; }
 fi
 

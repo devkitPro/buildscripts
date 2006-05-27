@@ -1,0 +1,12 @@
+%rename link                old_link
+%rename link_gcc_c_sequence old_gcc_c_sequence
+
+*link_gcc_c_sequence:
+%(old_gcc_c_sequence) --start-group -lsysbase -lc --end-group
+
+*link:
+-T gba_mb.ld%s %(old_link)
+
+*startfile:
+gba_crt0%O%s crti%O%s crtbegin%O%s
+
