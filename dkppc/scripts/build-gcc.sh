@@ -14,7 +14,7 @@ cd $target/binutils
 
 ../../$BINUTILS_SRCDIR/configure \
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
-	--with-gcc --with-gnu-as --with-gnu-ld --with-stabs \
+	--with-gcc --with-gnu-as --with-gnu-ld \
 	|| { echo "Error configuing ppc binutils"; exit 1; }
 
 
@@ -37,14 +37,17 @@ cd mn10200/binutils
 
 ../../$BINUTILS_SRCDIR/configure \
 	--prefix=$prefix --target=mn10200 --disable-nls --disable-shared --disable-debug \
-	--with-gcc --with-gnu-as --with-gnu-ld --with-stabs \
+	--with-gcc --with-gnu-as --with-gnu-ld \
 	|| { echo "Error configuing mn10200 binutils"; exit 1; }
 
 
 $MAKE || { echo "Error building mn10200 binutils"; exit 1; }
 $MAKE install || { echo "Error installing mn10200 binutils"; exit 1; }
 
-strip $INSTALLDIR/devkitPPC/mn10200/bin/*
+for f in	$INSTALLDIR/devkitPPC/mn10200/bin/*
+do
+	strip $f
+done
 
 cd $BUILDSCRIPTDIR
 
@@ -87,10 +90,11 @@ mkdir -p $target/newlib
 cd $target/newlib
 mkdir -p etc
 
-$BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure	--target=$target \
-						--prefix=$prefix \
-						--disable-debug \
-						|| { echo "Error configuring newlib"; exit 1; }
+$BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure \
+	--target=$target \
+	--prefix=$prefix \
+	--disable-debug \
+	|| { echo "Error configuring newlib"; exit 1; }
 
 $MAKE || { echo "Error building newlib"; exit 1; }
 $MAKE install || { echo "Error installing newlib"; exit 1; }

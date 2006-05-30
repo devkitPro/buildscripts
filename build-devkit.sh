@@ -12,6 +12,7 @@ NEWLIB_VER=1.14.0
 LIBOGC_VER=20050812
 LIBGBA_VER=20060518
 LIBNDS_VER=20060518
+LIBMIRKO_VER=0.9.6
 ELF2FLT_VER=20060506
 
 BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
@@ -21,6 +22,7 @@ NEWLIB="newlib-$NEWLIB_VER.tar.gz"
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
 LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
+LIBNDS="libmirko-src-$LIBMIRKO_VER.tar.bz2"
 ELF2FLT="elf2flt-src-$ELF2FLT_VER.tar.bz2"
 
 SFMIRROR="jaist"
@@ -30,6 +32,7 @@ GCC_GPP_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_GPP"
 LIBOGC_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBOGC"
 LIBGBA_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBGBA"
 LIBNDS_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBNDS"
+LIBMIRKO_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBMIRKO"
 ELF2FLT_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$ELF2FLT"
 NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/$NEWLIB"
 
@@ -199,6 +202,13 @@ then
       else
 	      FOUND=1
       fi
+      if [ ! -f $SRCDIR/$LIBMIRKO ]
+      then
+        echo "Error: $LIBMIRKO not found in $SRCDIR"
+	      exit
+      else
+	      FOUND=1
+      fi
       if [ ! -f $SRCDIR/$ELF2FLT ]
       then
         echo "Error: $ELF2FLT not found in $SRCDIR"
@@ -242,6 +252,7 @@ else
 	then
 		$WGET -c $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit; }
 		$WGET -c $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit; }
+		$WGET -c $LIBMIRKO_URL || { echo "Error: Failed to download "$LIBMIRKO; exit; }
 		$WGET -c $ELF2FLT_URL || { echo "Error: Failed to download "$ELF2FLT; exit; }
 	fi
 	SRCDIR=`pwd`
@@ -253,6 +264,7 @@ NEWLIB_SRCDIR="newlib-$NEWLIB_VER"
 LIBOGC_SRCDIR="libogc-$LIBOGC_VER"
 LIBGBA_SRCDIR="libgba-$LIBGBA_VER"
 LIBNDS_SRCDIR="libnds-$LIBNDS_VER"
+LIBMIRKO_SRCDIR="libmirko-$LIBMIRKO_VER"
 
 #---------------------------------------------------------------------------------
 # Add installed devkit to the path, adjusting path on minsys
@@ -293,7 +305,7 @@ scriptdir=$(pwd)/$basedir/scripts
 BUILDSCRIPTDIR=$(pwd)
 
 echo "Extracting $BINUTILS"
-#tar -xjvf $SRCDIR/$BINUTILS || { echo "Error extracting "$BINUTILS; exit; }
+tar -xjvf $SRCDIR/$BINUTILS || { echo "Error extracting "$BINUTILS; exit; }
 
 echo "Extracting $GCC_CORE"
 tar -xjvf $SRCDIR/$GCC_CORE || { echo "Error extracting "$GCC_CORE; exit; }
@@ -320,8 +332,11 @@ then
   echo "Extracting $LIBGBA"
   mkdir -p $LIBGBA_SRCDIR
   bzip2 -cd $SRCDIR/$LIBGBA | tar -xv -C $LIBGBA_SRCDIR || { echo "Error extracting "$LIBGBA; exit; }
+  echo "Extracting $LIBMIRKO"
+  mkdir -p $LIBMIRKO_SRCDIR
+  bzip2 -cd $SRCDIR/$LIBMIRKO | tar -xv -C $LIBMIRKO_SRCDIR || { echo "Error extracting "$LIBMIRKO; exit; }
   echo "Extracting $ELF2FLT"
-  tar -xjvf $SRCDIR/$ELF2FLT || { echo "Error extracting "$ELF2FLT; exit; }
+#  tar -xjvf $SRCDIR/$ELF2FLT || { echo "Error extracting "$ELF2FLT; exit; }
 fi
 
 

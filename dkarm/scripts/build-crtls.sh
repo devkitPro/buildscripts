@@ -35,3 +35,9 @@ echo "building libgba ..."
 cd $BUILDSCRIPTDIR
 cd $LIBGBA_SRCDIR
 $MAKE install INSTALLDIR=$TOOLPATH
+cd $BUILDSCRIPTDIR
+
+echo "building libmirko ..."
+cd $LIBMIRKO_SRCDIR
+$MAKE install INSTALLDIR=$TOOLPATH
+cd $BUILDSCRIPTDIR
