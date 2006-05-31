@@ -6,27 +6,24 @@
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-BINUTILS_VER=2.16.93
 GCC_VER=4.1.1
 NEWLIB_VER=1.14.0
 LIBOGC_VER=20050812
-LIBGBA_VER=20060518
-LIBNDS_VER=20060518
+LIBGBA_VER=20060531
+LIBNDS_VER=20060531
 LIBMIRKO_VER=0.9.6
 ELF2FLT_VER=20060506
 
-BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
 GCC_CORE="gcc-core-$GCC_VER.tar.bz2"
 GCC_GPP="gcc-g++-$GCC_VER.tar.bz2"
 NEWLIB="newlib-$NEWLIB_VER.tar.gz"
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
 LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
-LIBNDS="libmirko-src-$LIBMIRKO_VER.tar.bz2"
+LIBMIRKO="libmirko-src-$LIBMIRKO_VER.tar.bz2"
 ELF2FLT="elf2flt-src-$ELF2FLT_VER.tar.bz2"
 
 SFMIRROR="jaist"
-BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/$BINUTILS"
 GCC_CORE_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_CORE"
 GCC_GPP_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_GPP"
 LIBOGC_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBOGC"
@@ -58,6 +55,18 @@ do
       VERSION=0
   fi
 done
+
+if [ $VERSION -eq 4 ]
+then
+  BINUTILS_VER=2.16.93
+  BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
+  BINUTILS_URL="ftp://sourceware.org/pub/binutils/snapshots/$BINUTILS"
+else
+  BINUTILS_VER=2.16.1
+  BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
+  BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/$BINUTILS"
+fi
+
 
 if [ $VERSION -eq 1 ]
 then
@@ -234,7 +243,7 @@ then
 
 else
 
-    $WGET -c $BINUTILS_URL || { echo "Error: Failed to download "$BINUTILS; exit; }
+    $WGET --passive-ftp -c $BINUTILS_URL || { echo "Error: Failed to download "$BINUTILS; exit; }
 
     $WGET -c $GCC_CORE_URL || { echo "Error: Failed to download "$GCC_CORE; exit; }
 
@@ -336,7 +345,7 @@ then
   mkdir -p $LIBMIRKO_SRCDIR
   bzip2 -cd $SRCDIR/$LIBMIRKO | tar -xv -C $LIBMIRKO_SRCDIR || { echo "Error extracting "$LIBMIRKO; exit; }
   echo "Extracting $ELF2FLT"
-#  tar -xjvf $SRCDIR/$ELF2FLT || { echo "Error extracting "$ELF2FLT; exit; }
+  tar -xjvf $SRCDIR/$ELF2FLT || { echo "Error extracting "$ELF2FLT; exit; }
 fi
 
 
@@ -346,22 +355,6 @@ fi
 patch -p1 -d $BINUTILS_SRCDIR -i $patchdir/binutils-$BINUTILS_VER.patch || { echo "Error patching binutils"; exit; }
 patch -p1 -d $GCC_SRCDIR -i $patchdir/gcc-$GCC_VER.patch || { echo "Error patching gcc"; exit; }
 patch -p1 -d $NEWLIB_SRCDIR -i $patchdir/newlib-$NEWLIB_VER.patch || { echo "Error patching newlib"; exit; }
-
-
-#---------------------------------------------------------------------------------
-# only necessary when Darwin gcc is 3.1 or earlier, to add a check for this here
-#---------------------------------------------------------------------------------
-#if test $(uname -s | grep Darwin)
-#then
-#  export CFLAGS = "-O2 -pipe -no-cpp-precomp -DHAVE_DESIGNATED_INITIALIZERS=0"
-#  export LDFLAGS=''
-#
-#else
-
-  export LDFLAGS='-s'
-  export DEBUG_FLAGS=''
-
-#fi
 
 
 #---------------------------------------------------------------------------------
@@ -400,7 +393,11 @@ rm -fr $target
 rm -fr $BINUTILS_SRCDIR
 rm -fr $NEWLIB_SRCDIR
 rm -fr $GCC_SRCDIR
-rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR
+
+if [ $VERSION -eq 1 -o $VERSION -eq 4 ]
+then
+  rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $LIBMIRKO_SRCDIR
+fi
 
 echo
 echo "Would you like to delete the downloaded source packages? [y/N]"
@@ -410,9 +407,9 @@ if [ "$answer" = "y" -o "$answer" = "Y" ]
 then
     echo "removing archives"
     rm -f $SRCDIR/$BINUTILS $SRCDIR/$GCC_CORE $SRCDIR/$GCC_GPP $SRCDIR/$NEWLIB
-    if [ $VERSION -eq 1 ]
+    if [ $VERSION -eq 1 -o $VERSION -eq 4 ]
     then
-      rm -f  $SRCDIR/$LIBGBA $SRCDIR/$LIBNDS
+      rm -f  $SRCDIR/$LIBGBA $SRCDIR/$LIBNDS $SRCDIR/$LIBMIRKO
     fi
     if [ $VERSION -eq 2 ]
     then
