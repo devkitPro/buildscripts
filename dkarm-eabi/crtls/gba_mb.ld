@@ -12,7 +12,7 @@
 /*         support added to allow labels end, _end, */
 /*         & __end__ to point to end of iwram or    */
 /*         the end of ewram.                        */
-/*	Additions by WinterMute							*/
+/*	Additions by WinterMute	               	*/
 /* v1.4 -	.sbss section added for unitialised		*/
 /*		    data in ewram 							*/
 /* v1.5 -	padding section added to stop EZF 		*/
@@ -42,21 +42,20 @@ ENTRY(_start)
 
 MEMORY {
 
-	rom		: ORIGIN = 0x08000000, LENGTH = 32M
+	rom	: ORIGIN = 0x08000000, LENGTH = 32M
 	iwram	: ORIGIN = 0x03000000, LENGTH = 32K
 	ewram	: ORIGIN = 0x02000000, LENGTH = 256K
 }
 
 
 
-__text_start	= 0x2000000 ;
-__eheap_end		= 0x2040000;
-__iwram_start	= 0x3000000;
-__iwram_end		= 0x3008000;
-__sp_irq		= __iwram_end - 0x100;
-__sp_usr		= __sp_irq - 0x100;
-
-__irq_flags		=	0x03007ff8;
+__text_start	=	ORIGIN(ewram);
+__eheap_end	=	ORIGIN(ewram) + LENGTH(iwram);
+__iwram_start	=	ORIGIN(iwram);
+__iwram_top	=	ORIGIN(iwram) + LENGTH(iwram);;
+__sp_irq	=	__iwram_top - 0x100;
+__sp_usr	=	__sp_irq - 0x100;
+__irq_flags	=	0x03007ff8;
 
 SECTIONS
 {
@@ -163,10 +162,10 @@ SECTIONS
 		*(.iwram)
 		*iwram.*(.text)
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
+		__iwram_end = ABSOLUTE(.) ;
 	} >iwram = 0xff
 		
 	__data_lma = __iwram_lma + SIZEOF(.iwram) ;
-	__iwram_end = . ;
 		
 	.bss ALIGN(4) :
 	{
@@ -177,10 +176,10 @@ SECTIONS
 		*(.bss*)
 		*(COMMON)
 		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
+		__bss_end = ABSOLUTE(.) ;
 	}
 		
-	__bss_end = . ;
-	__bss_end__ = . ;
+	__bss_end__ = __bss_end ;
 		
 	.data ALIGN(4) : AT (__data_lma)
 	{
@@ -190,11 +189,11 @@ SECTIONS
 		*(.gnu.linkonce.d*)
 		CONSTRUCTORS
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
+		__data_end  =  ABSOLUTE(.);
 	} >iwram = 0xff
 		
 	__iwram_overlay_lma = __data_lma + SIZEOF(.data);
 		
-	__data_end  =  .;
 	PROVIDE (edata = .);
 	__iwram_overlay_start = . ;
 		
@@ -214,8 +213,7 @@ SECTIONS
 
 	__ewram_lma = LOADADDR(.iwram0) + SIZEOF(.iwram0)+SIZEOF(.iwram1)+SIZEOF(.iwram2)+SIZEOF(.iwram3)+SIZEOF(.iwram4)+SIZEOF(.iwram5)+SIZEOF(.iwram6)+SIZEOF(.iwram7)+SIZEOF(.iwram8)+SIZEOF(.iwram9);
 		
-	__iwram_overlay_end = . ;
-	__iheap_start = . ;
+	__iwram_overlay_end = __ewram_lma ;
 		
 	/* v1.3 */
 	__ewram_start =  __ewram_lma ;
@@ -233,12 +231,12 @@ SECTIONS
 		__sbss_start = ABSOLUTE(.);
 		*(.sbss)
 		. = ALIGN(4);
+		__sbss_end  = ABSOLUTE(.);
 	}
+	__ewram_end = __sbss_end ;
+	__ewram_overlay_start = __sbss_end ;
 
-	__sbss_end  = .;
 
-	__ewram_end = . ;
-	__ewram_overlay_start = . ;
 
 	OVERLAY ALIGN(4): NOCROSSREFS AT (__ewram_overlay_lma)
 	{
@@ -254,13 +252,13 @@ SECTIONS
 		.ewram9 { *(.ewram9) . = ALIGN(4);}
 	} >ewram = 0xff
 
-	__ewram_overlay_end = . ;
+	__ewram_overlay_end = __load_stop_ewram9 ;
 
-	__eheap_start = . ;
+	__eheap_start = __load_stop_ewram1 ;
 
-	_end = .;
-	__end__ = _end ; /* v1.3 */
-	PROVIDE (end = _end); /* v1.3 */
+	_end = __load_stop_ewram1;
+	__end__ = __load_stop_ewram1 ; /* v1.3 */
+	end = __load_stop_ewram1;
 
 
 	/* Stabs debugging sections.  */

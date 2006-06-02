@@ -51,20 +51,18 @@ ENTRY(_start)
 
 MEMORY {
 
-	rom		: ORIGIN = 0x08000000, LENGTH = 32M
+	rom	: ORIGIN = 0x08000000, LENGTH = 32M
 	iwram	: ORIGIN = 0x03000000, LENGTH = 32K
 	ewram	: ORIGIN = 0x02000000, LENGTH = 256K
 }
 
-__text_start 		=	0x8000000;
-__eheap_end			=	0x2040000;
-__iwram_start		=	0x3000000;
-__iwram_end			=	0x3008000;
-
-__sp_irq			=	__iwram_end - 0x100;
-__sp_usr			=	__sp_irq - 0x100;
-
-__irq_flags		=	0x03007ff8;
+__text_start	=	ORIGIN(rom);
+__eheap_end	=	ORIGIN(ewram) + LENGTH(iwram);
+__iwram_start	=	ORIGIN(iwram);
+__iwram_top	=	ORIGIN(iwram) + LENGTH(iwram);;
+__sp_irq	=	__iwram_top - 0x100;
+__sp_usr	=	__sp_irq - 0x100;
+__irq_flags	=	0x03007ff8;
 
 SECTIONS
 {
@@ -139,7 +137,7 @@ SECTIONS
 		KEEP (*(SORT(.ctors.*)))
 		KEEP (*(.ctors))
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-  } >rom = 0
+	} >rom = 0
 
 	.dtors :
 	{
@@ -172,10 +170,10 @@ SECTIONS
 		*(.iwram)
 		*iwram.*(.text)
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
+		__iwram_end = ABSOLUTE(.) ;
 	} >iwram = 0xff
 
 	__data_lma = __iwram_lma + SIZEOF(.iwram) ;
-	__iwram_end = . ;
 
 	.bss ALIGN(4) :
 	{
@@ -186,10 +184,11 @@ SECTIONS
 		*(.bss*)
 		*(COMMON)
 		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
+		__bss_end = ABSOLUTE(.) ;
+
 	} >iwram
 
-	__bss_end = . ;
-	__bss_end__ = . ;
+	__bss_end__ = __bss_end ;
 
 	.data ALIGN(4) : AT (__data_lma)
 	{
@@ -199,11 +198,11 @@ SECTIONS
 		*(.gnu.linkonce.d*)
 		CONSTRUCTORS
 		. = ALIGN(4);
+		__data_end  =  ABSOLUTE(.);
 	} >iwram = 0xff
 
 	__iwram_overlay_lma = __data_lma + SIZEOF(.data);
 
-	__data_end  =  .;
 	__iwram_overlay_start = . ;
 
 	OVERLAY ALIGN(4) : NOCROSSREFS AT (__iwram_overlay_lma)
@@ -239,11 +238,11 @@ SECTIONS
 		__sbss_start = ABSOLUTE(.);
  		*(.sbss)
  		. = ALIGN(4);
+		__sbss_end  = ABSOLUTE(.);
  	} >ewram
 	
-	__sbss_end  = .;
 
-	__ewram_end = . ;
+	__ewram_end = __sbss_end ;
 	__ewram_overlay_start = . ;
 
 	OVERLAY ALIGN(4): NOCROSSREFS AT (__ewram_overlay_lma)
@@ -260,7 +259,8 @@ SECTIONS
 		.ewram9 { *(.ewram9) . = ALIGN(4);}
 	}>ewram = 0xff
 
-	__pad_lma = LOADADDR(.ewram0) + SIZEOF(.ewram0)+SIZEOF(.ewram1)+SIZEOF(.ewram2)+SIZEOF(.ewram3)+SIZEOF(.ewram4)+SIZEOF(.ewram5)+SIZEOF(.ewram6)+SIZEOF(.ewram7)+SIZEOF(.ewram8)+SIZEOF(.ewram9);
+	__ewram_overlay_end = __load_stop_ewram9 ;
+	__pad_lma = __load_stop_ewram9;
 
 	/* EZF Advance strips trailing 0xff bytes, add a pad section so nothing important is removed */
 	.pad ALIGN(4) : AT (__pad_lma)
@@ -270,12 +270,12 @@ SECTIONS
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
 	} = 0xff
 
-	__ewram_overlay_end = . ;
-	__eheap_start = . ;
+	__eheap_start = __load_stop_ewram9 ;
 
-	_end = .;
-	__end__ = _end ; /* v1.3 */
-	PROVIDE (end = _end); /* v1.3 */
+	_end = __load_stop_ewram9;
+	__end__ = __load_stop_ewram9 ; /* v1.3 */
+	end = __load_stop_ewram9;
+	PROVIDE (end = end); /* v1.3 */
 
 	/* Stabs debugging sections.  */
 	.stab 0 : { *(.stab) }
