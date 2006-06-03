@@ -4,6 +4,11 @@ export DEVKITARM=$TOOLPATH/devkitARM
 export DEVKITPRO=$TOOLPATH
 
 #---------------------------------------------------------------------------------
+# copy base rulesets
+#---------------------------------------------------------------------------------
+cp -v dkarm-eabi/rules/* $DEVKITARM
+
+#---------------------------------------------------------------------------------
 # Install and build the gba crt
 #---------------------------------------------------------------------------------
 
@@ -22,10 +27,6 @@ cd $BUILDSCRIPTDIR
 $MAKE -C tools/general
 $MAKE -C tools/general install PREFIX=$DEVKITARM/bin
 
-#---------------------------------------------------------------------------------
-# copy base rulesets
-#---------------------------------------------------------------------------------
-cp -v dkarm-eabi/rules/* $DEVKITARM
 
 cd $LIBNDS_SRCDIR
 echo "building libnds ..."
