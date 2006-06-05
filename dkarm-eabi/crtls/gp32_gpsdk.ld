@@ -91,6 +91,25 @@ SECTIONS
     . = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
   } >ram = 0xff
 
+  .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >ram
+   __exidx_start = .;
+  .ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) } >ram
+   __exidx_end = .;
+  /* Ensure the __preinit_array_start label is properly aligned.  We
+     could instead move the label definition inside the section, but
+     the linker would then create the section even if it turns out to
+     be empty, which isn't pretty.  */
+  . = ALIGN(32 / 8);
+  PROVIDE (__preinit_array_start = .);
+  .preinit_array     : { KEEP (*(.preinit_array)) } >ram = 0xff
+  PROVIDE (__preinit_array_end = .);
+  PROVIDE (__init_array_start = .);
+  .init_array     : { KEEP (*(.init_array)) } >ram = 0xff
+  PROVIDE (__init_array_end = .);
+  PROVIDE (__fini_array_start = .);
+  .fini_array     : { KEEP (*(.fini_array)) } >ram = 0xff
+  PROVIDE (__fini_array_end = .);
+
   .ctors :
   {
     /* gcc uses crtbegin.o to find the start of the constructors, so
@@ -149,14 +168,12 @@ SECTIONS
    *(COMMON)
    *(.bss*)
    . = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
+    __bss_end = ABSOLUTE(.);
   } > ram
-  __bss_end = . ;
 
- __eheap_start = . ; /* Needed by DevKitAdvance. Start of malloc() heap for DKA. */
+  end = __bss_end;
 
-  _end = . ;
-  __end__ = . ;
-  PROVIDE (end = _end);
+  PROVIDE (end = end);
 
   __eheap_end = . ;
 

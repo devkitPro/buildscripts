@@ -48,6 +48,10 @@ SECTIONS
     . = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
   } >ram = 0xff
 
+  .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >ram
+   __exidx_start = .;
+  .ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) } >ram
+   __exidx_end = .;
   /* Ensure the __preinit_array_start label is properly aligned.  We
      could instead move the label definition inside the section, but
      the linker would then create the section even if it turns out to
@@ -122,12 +126,12 @@ SECTIONS
    *(.bss*)
    *(COMMON)
    . = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
+  __bss_end = ABSOLUTE(.) ;
   } > ram
-  __bss_end = . ;
 
-  _end = . ;
-  __end__ = . ;
-  PROVIDE (end = _end);
+  end = __bss_end;
+ 
+  PROVIDE (end = end);
 
   /* Stabs debugging sections.  */
   .stab 0 : { *(.stab) }
