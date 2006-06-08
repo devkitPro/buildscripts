@@ -114,13 +114,13 @@ diff -Nbaur gcc-4.1.1/gcc/toplev.c gcc-4.1.1-arm/gcc/toplev.c
  
 diff -Nbaur gcc-4.1.1/gcc/version.c gcc-4.1.1-arm/gcc/version.c
 --- gcc-4.1.1/gcc/version.c	Wed Mar 16 06:04:10 2005
-+++ gcc-4.1.1-arm/gcc/version.c	Mon Jun  5 06:58:56 2006
++++ gcc-4.1.1-arm/gcc/version.c	Wed Jun  7 16:14:31 2006
 @@ -8,7 +8,7 @@
     in parentheses.  You may also wish to include a number indicating
     the revision of your modified compiler.  */
  
 -#define VERSUFFIX ""
-+#define VERSUFFIX " (devkitARM release 19)"
++#define VERSUFFIX " (devkitARM release 19a)"
  
  /* This is the location of the online document giving instructions for
     reporting bugs.  If you distribute a modified version of GCC,
