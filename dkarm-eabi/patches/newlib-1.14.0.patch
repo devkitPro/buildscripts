@@ -2319,8 +2319,8 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/link.c newlib-1.14.0-arm/libgloss/
 +	struct _reent *r = _REENT;
 +#endif
 +	int ret;
-+	int sourceDev = findDevice(existing);
-+	int destDev = findDevice(new);
++	int sourceDev = FindDevice(existing);
++	int destDev = FindDevice(new);
 +	
 +	ret = -1;
 +
