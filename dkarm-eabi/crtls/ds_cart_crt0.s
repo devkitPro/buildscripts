@@ -92,7 +92,7 @@ start_vector:
 	ldr	r0, =__eheap_end
 	str	r0, [r1]
 	
-	ldr	r3, =_init		@ global constructors
+	ldr	r3, =__libc_init_array	@ global constructors
 	bl	_call_via_r3
 
 	mov	r0, #0			@ int argc

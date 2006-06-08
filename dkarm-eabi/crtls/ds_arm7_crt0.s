@@ -27,7 +27,7 @@ _start:
 	sub	r1, r1, r0
 	bl	ClearMem
 
-	ldr	r3, =_init		@ global constructors
+	ldr	r3, =__libc_init_array	@ global constructors
 	bl	_call_via_r3
 
 	mov	r0, #0			@ int argc
