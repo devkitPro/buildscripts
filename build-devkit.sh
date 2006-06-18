@@ -6,7 +6,6 @@
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-GCC_VER=4.1.1
 NEWLIB_VER=1.14.0
 LIBOGC_VER=20050812
 LIBGBA_VER=20060601
@@ -14,8 +13,6 @@ LIBNDS_VER=20060601
 LIBMIRKO_VER=0.9.6
 ELF2FLT_VER=20060506
 
-GCC_CORE="gcc-core-$GCC_VER.tar.bz2"
-GCC_GPP="gcc-g++-$GCC_VER.tar.bz2"
 NEWLIB="newlib-$NEWLIB_VER.tar.gz"
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
@@ -24,8 +21,6 @@ LIBMIRKO="libmirko-src-$LIBMIRKO_VER.tar.bz2"
 ELF2FLT="elf2flt-src-$ELF2FLT_VER.tar.bz2"
 
 SFMIRROR="jaist"
-GCC_CORE_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_CORE"
-GCC_GPP_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_GPP"
 LIBOGC_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBOGC"
 LIBGBA_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBGBA"
 LIBNDS_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBNDS"
@@ -55,6 +50,18 @@ do
       VERSION=0
   fi
 done
+
+if [ $VERSION -eq 2 ]
+then
+  GCC_VER=3.4.6
+else
+  GCC_VER=4.1.1
+fi
+
+GCC_CORE="gcc-core-$GCC_VER.tar.bz2"
+GCC_GPP="gcc-g++-$GCC_VER.tar.bz2"
+GCC_CORE_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_CORE"
+GCC_GPP_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_GPP"
 
 if [ $VERSION -eq 4 ]
 then
