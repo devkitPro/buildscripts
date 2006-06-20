@@ -72,7 +72,7 @@ SECTIONS
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >ewram
 
-	.text  ALIGN (4): 
+	.text  ALIGN (4):
 	{
 		*(EXCLUDE_FILE (*.iwram*) .text)
 		*(.text.*)
@@ -103,6 +103,10 @@ SECTIONS
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >ewram = 0xff
 
+  .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >ewram
+   __exidx_start = .;
+  .ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) } >ewram
+   __exidx_end = .;
   /* Ensure the __preinit_array_start label is properly aligned.  We
      could instead move the label definition inside the section, but
      the linker would then create the section even if it turns out to
@@ -131,7 +135,7 @@ SECTIONS
 		KEEP (*(.ctors))
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >ewram = 0
-		
+
 	.dtors :
 	{
 		KEEP (*crtbegin.o(.dtors))
@@ -147,7 +151,7 @@ SECTIONS
 		KEEP (*(.eh_frame))
 	. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >ewram = 0
-		
+
 	.gcc_except_table :
 	{
 		*(.gcc_except_table)
@@ -155,7 +159,7 @@ SECTIONS
 	} >ewram = 0
 
 	__iwram_lma = .;
-		
+
 	.iwram __iwram_start : AT (__iwram_lma)
 	{
 		__iwram_start = ABSOLUTE(.) ;
@@ -164,9 +168,9 @@ SECTIONS
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 		__iwram_end = ABSOLUTE(.) ;
 	} >iwram = 0xff
-		
+
 	__data_lma = __iwram_lma + SIZEOF(.iwram) ;
-		
+
 	.bss ALIGN(4) :
 	{
 		__bss_start = ABSOLUTE(.);
@@ -178,9 +182,9 @@ SECTIONS
 		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
 		__bss_end = ABSOLUTE(.) ;
 	}
-		
+
 	__bss_end__ = __bss_end ;
-		
+
 	.data ALIGN(4) : AT (__data_lma)
 	{
 		__data_start = ABSOLUTE(.);
@@ -191,12 +195,12 @@ SECTIONS
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
 		__data_end  =  ABSOLUTE(.);
 	} >iwram = 0xff
-		
+
 	__iwram_overlay_lma = __data_lma + SIZEOF(.data);
-		
+
 	PROVIDE (edata = .);
 	__iwram_overlay_start = . ;
-		
+
 	OVERLAY ALIGN(4) : NOCROSSREFS AT (__iwram_overlay_lma)
 	{
 	   .iwram0 { *(.iwram0) . = ALIGN(4);}
@@ -212,9 +216,9 @@ SECTIONS
 	} >iwram = 0xff
 
 	__ewram_lma = LOADADDR(.iwram0) + SIZEOF(.iwram0)+SIZEOF(.iwram1)+SIZEOF(.iwram2)+SIZEOF(.iwram3)+SIZEOF(.iwram4)+SIZEOF(.iwram5)+SIZEOF(.iwram6)+SIZEOF(.iwram7)+SIZEOF(.iwram8)+SIZEOF(.iwram9);
-		
+
 	__iwram_overlay_end = __ewram_lma ;
-		
+
 	/* v1.3 */
 	__ewram_start =  __ewram_lma ;
 
@@ -223,9 +227,9 @@ SECTIONS
 		*(.ewram)
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
 	} >ewram = 0xff
-		
+
 	__ewram_overlay_lma = __ewram_lma + SIZEOF(.ewram);
-		
+
 	.sbss ALIGN(4):
  	{
 		__sbss_start = ABSOLUTE(.);

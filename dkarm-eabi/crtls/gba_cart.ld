@@ -109,6 +109,10 @@ SECTIONS
 		SORT(CONSTRUCTORS)
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >rom = 0xff
+  .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >rom
+   __exidx_start = .;
+  .ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) } >rom
+   __exidx_end = .;
   /* Ensure the __preinit_array_start label is properly aligned.  We
      could instead move the label definition inside the section, but
      the linker would then create the section even if it turns out to
@@ -148,7 +152,7 @@ SECTIONS
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >rom = 0
 
-	.jcr            : { KEEP (*(.jcr)) } >rom 
+	.jcr            : { KEEP (*(.jcr)) } >rom
 
 	.eh_frame :
 	{
@@ -240,7 +244,7 @@ SECTIONS
  		. = ALIGN(4);
 		__sbss_end  = ABSOLUTE(.);
  	} >ewram
-	
+
 
 	__ewram_end = __sbss_end ;
 	__ewram_overlay_start = . ;
