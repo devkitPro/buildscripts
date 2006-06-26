@@ -57,7 +57,7 @@ MEMORY {
 }
 
 __text_start	=	ORIGIN(rom);
-__eheap_end	=	ORIGIN(ewram) + LENGTH(iwram);
+__eheap_end	=	ORIGIN(ewram) + LENGTH(ewram);
 __iwram_start	=	ORIGIN(iwram);
 __iwram_top	=	ORIGIN(iwram) + LENGTH(iwram);;
 __sp_irq	=	__iwram_top - 0x100;
