@@ -6,14 +6,12 @@
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-NEWLIB_VER=1.14.0
 LIBOGC_VER=20050812
 LIBGBA_VER=20060601
 LIBNDS_VER=20060601
 LIBMIRKO_VER=0.9.6
 ELF2FLT_VER=20060506
 
-NEWLIB="newlib-$NEWLIB_VER.tar.gz"
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
 LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
@@ -26,7 +24,16 @@ LIBGBA_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBGBA"
 LIBNDS_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBNDS"
 LIBMIRKO_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBMIRKO"
 ELF2FLT_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$ELF2FLT"
+
+
+NEWLIB_VER=1.14.0
+NEWLIB="newlib-$NEWLIB_VER.tar.gz"
 NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/$NEWLIB"
+
+BINUTILS_VER=2.17
+BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
+BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/$BINUTILS"
+
 
 #---------------------------------------------------------------------------------
 # Ask whether to download the source packages or not
@@ -42,10 +49,9 @@ do
   echo "1: build devkitARM (gba gp32 ds)"
   echo "2: build devkitPPC (gamecube)"
   echo "3: build devkitPSP (PSP)"
-  echo "4: build devkitARM eabi (gba gp32 ds)"
   read VERSION
 
-  if [ "$VERSION" -ne 1 -a "$VERSION" -ne 2 -a "$VERSION" -ne 3 -a "$VERSION" -ne 4 ]
+  if [ "$VERSION" -ne 1 -a "$VERSION" -ne 2 -a "$VERSION" -ne 3 ]
   then
       VERSION=0
   fi
@@ -63,24 +69,14 @@ GCC_GPP="gcc-g++-$GCC_VER.tar.bz2"
 GCC_CORE_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_CORE"
 GCC_GPP_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_GPP"
 
-if [ $VERSION -eq 4 ]
-then
-  BINUTILS_VER=2.16.93
-  BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
-  BINUTILS_URL="ftp://sourceware.org/pub/binutils/snapshots/$BINUTILS"
-else
-  BINUTILS_VER=2.16.1
-  BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
-  BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/$BINUTILS"
-fi
 
 
 if [ $VERSION -eq 1 ]
 then
-  basedir='dkarm'
+  basedir='dkarm-eabi'
   package=devkitARM
-  builddir=arm-elf
-  target=arm-elf
+  builddir=arm-eabi
+  target=arm-eabi
   toolchain=DEVKITARM
 fi
 
@@ -108,15 +104,6 @@ then
      echo "ERROR: Please make sure you have 'subversion (svn)' installed."
      exit
   fi
-fi
-
-if [ $VERSION -eq 4 ]
-then
-  basedir='dkarm-eabi'
-  package=devkitARM
-  builddir=arm-eabi
-  target=arm-eabi
-  toolchain=DEVKITARM
 fi
 
 DOWNLOAD=0
@@ -202,7 +189,7 @@ then
 	  FOUND=1
       fi
 
-    if [ $VERSION -eq 1 -o $VERSION -eq 4 ]
+    if [ $VERSION -eq 1 ]
     then
       if [ ! -f $SRCDIR/$LIBGBA ]
       then
@@ -264,7 +251,7 @@ else
 	fi
 
 
-	if [ $VERSION -eq 1 -o $VERSION -eq 4 ]
+	if [ $VERSION -eq 1 ]
 	then
 		$WGET -c $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit; }
 		$WGET -c $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit; }
@@ -340,7 +327,7 @@ then
 fi
 
 
-if [ $VERSION -eq 1 -o $VERSION -eq 4 ]
+if [ $VERSION -eq 1 ]
 then
   echo "Extracting $LIBNDS"
   mkdir -p $LIBNDS_SRCDIR
@@ -401,7 +388,7 @@ rm -fr $BINUTILS_SRCDIR
 rm -fr $NEWLIB_SRCDIR
 rm -fr $GCC_SRCDIR
 
-if [ $VERSION -eq 1 -o $VERSION -eq 4 ]
+if [ $VERSION -eq 1 ]
 then
   rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $LIBMIRKO_SRCDIR
 fi
