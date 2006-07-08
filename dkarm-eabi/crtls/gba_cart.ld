@@ -113,20 +113,6 @@ SECTIONS
    __exidx_start = .;
   .ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) } >rom
    __exidx_end = .;
-  /* Ensure the __preinit_array_start label is properly aligned.  We
-     could instead move the label definition inside the section, but
-     the linker would then create the section even if it turns out to
-     be empty, which isn't pretty.  */
-  . = ALIGN(32 / 8);
-  PROVIDE (__preinit_array_start = .);
-  .preinit_array     : { KEEP (*(.preinit_array)) } >rom = 0xff
-  PROVIDE (__preinit_array_end = .);
-  PROVIDE (__init_array_start = .);
-  .init_array     : { KEEP (*(.init_array)) } >rom = 0xff
-  PROVIDE (__init_array_end = .);
-  PROVIDE (__fini_array_start = .);
-  .fini_array     : { KEEP (*(.fini_array)) } >rom = 0xff
-  PROVIDE (__fini_array_end = .);
 
 	.ctors :
 	{
@@ -152,7 +138,6 @@ SECTIONS
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >rom = 0
 
-	.jcr            : { KEEP (*(.jcr)) } >rom
 
 	.eh_frame :
 	{
@@ -202,10 +187,31 @@ SECTIONS
 		*(.gnu.linkonce.d*)
 		CONSTRUCTORS
 		. = ALIGN(4);
-		__data_end  =  ABSOLUTE(.);
 	} >iwram = 0xff
 
-	__iwram_overlay_lma = __data_lma + SIZEOF(.data);
+	__preinit_lma = __data_lma + SIZEOF(.data);
+
+	PROVIDE (__preinit_array_start = .);
+	.preinit_array     : AT (__preinit_lma) { KEEP (*(.preinit_array)) } >iwram
+	PROVIDE (__preinit_array_end = .);
+
+	__init_lma = __preinit_lma + SIZEOF(.preinit_array);
+
+	PROVIDE (__init_array_start = .);
+	.init_array     : AT (__init_lma) { KEEP (*(.init_array)) } >iwram
+	PROVIDE (__init_array_end = .);
+	PROVIDE (__fini_array_start = .);
+
+	__fini_lma = __init_lma + SIZEOF(.init_array);
+
+	.fini_array     : AT (__fini_lma) { KEEP (*(.fini_array)) } >iwram
+  	PROVIDE (__fini_array_end = .);
+
+	__jcr_lma = __fini_lma + SIZEOF(.fini_array);
+	.jcr            : AT (__jcr_lma) { KEEP (*(.jcr)) } >iwram
+
+	__data_end  =  ABSOLUTE(.);
+	__iwram_overlay_lma = __jcr_lma + SIZEOF(.jcr);
 
 	__iwram_overlay_start = . ;
 
@@ -223,19 +229,19 @@ SECTIONS
 		.iwram9 { *(.iwram9) . = ALIGN(4);}
 	}>iwram = 0xff
 
-	__ewram_lma = LOADADDR(.iwram0) + SIZEOF(.iwram0)+SIZEOF(.iwram1)+SIZEOF(.iwram2)+SIZEOF(.iwram3)+SIZEOF(.iwram4)+SIZEOF(.iwram5)+SIZEOF(.iwram6)+SIZEOF(.iwram7)+SIZEOF(.iwram8)+SIZEOF(.iwram9);
+	__ewram_lma = __load_stop_iwram9;
 
 	__iwram_overlay_end = . ;
 	__iheap_start = . ;
 
-	__ewram_start = 0x2000000;
+	__ewram_start = ORIGIN(ewram);
 	.ewram __ewram_start : AT (__ewram_lma)
 	{
 		*(.ewram)
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
 	}>ewram = 0xff
 
-	__ewram_overlay_lma = __ewram_lma + SIZEOF(.ewram);
+	__pad_lma = __ewram_lma + SIZEOF(.ewram);
 
 	.sbss ALIGN(4):
  	{
@@ -247,24 +253,9 @@ SECTIONS
 
 
 	__ewram_end = __sbss_end ;
-	__ewram_overlay_start = . ;
-
-	OVERLAY ALIGN(4): NOCROSSREFS AT (__ewram_overlay_lma)
-	{
-		.ewram0 { *(.ewram0) . = ALIGN(4);}
-		.ewram1 { *(.ewram1) . = ALIGN(4);}
-		.ewram2 { *(.ewram2) . = ALIGN(4);}
-		.ewram3 { *(.ewram3) . = ALIGN(4);}
-		.ewram4 { *(.ewram4) . = ALIGN(4);}
-		.ewram5 { *(.ewram5) . = ALIGN(4);}
-		.ewram6 { *(.ewram6) . = ALIGN(4);}
-		.ewram7 { *(.ewram7) . = ALIGN(4);}
-		.ewram8 { *(.ewram8) . = ALIGN(4);}
-		.ewram9 { *(.ewram9) . = ALIGN(4);}
-	}>ewram = 0xff
-
-	__ewram_overlay_end = __load_stop_ewram9 ;
-	__pad_lma = __load_stop_ewram9;
+	__eheap_start = __sbss_end;
+	__end__ = __sbss_end;
+	end = __sbss_end;
 
 	/* EZF Advance strips trailing 0xff bytes, add a pad section so nothing important is removed */
 	.pad ALIGN(4) : AT (__pad_lma)
@@ -274,12 +265,6 @@ SECTIONS
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
 	} = 0xff
 
-	__eheap_start = __load_stop_ewram9 ;
-
-	_end = __load_stop_ewram9;
-	__end__ = __load_stop_ewram9 ; /* v1.3 */
-	end = __load_stop_ewram9;
-	PROVIDE (end = end); /* v1.3 */
 
 	/* Stabs debugging sections.  */
 	.stab 0 : { *(.stab) }
@@ -316,4 +301,7 @@ SECTIONS
 	.debug_varnames  0 : { *(.debug_varnames) }
 	.stack 0x80000 : { _stack = .; *(.stack) }
 	/* These must appear regardless of  .  */
+  .note.gnu.arm.ident 0 : { KEEP (*(.note.gnu.arm.ident)) }
+  .ARM.attributes 0 : { KEEP (*(.ARM.attributes)) }
+  /DISCARD/ : { *(.note.GNU-stack) }
 }

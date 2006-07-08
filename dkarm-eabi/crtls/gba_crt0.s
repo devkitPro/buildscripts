@@ -83,7 +83,7 @@ start_vector:
 	ldr	r3, =__end__			@ last ewram address
 	sub	r3, r2				@ r3= actual binary size
 	mov	r6, r2				@ r6= 0x02000000
-	lsl	r1, r2, #2			@ r1= 0x08000000 
+	lsl	r1, r2, #2			@ r1= 0x08000000
 
 	bl	CopyMem
 
@@ -153,16 +153,6 @@ CIW0Skip:
 	ldr	r4, =__ewram_end
 	bl	CopyMemChk
 
-@---------------------------------------------------------------------------------
-@ Copy external work ram overlay 0 (ewram0 section) from LMA to VMA (ROM to RAM)
-@---------------------------------------------------------------------------------
-	ldr	r2, =__load_stop_ewram0
-	ldr	r1, =__load_start_ewram0
-	sub	r3, r2, r1			@ Is there any data to copy?
-	beq	CEW0Skip			@ no
-
-	ldr	r2, =__ewram_overlay_start
-	bl	CopyMem
 @---------------------------------------------------------------------------------
 CEW0Skip:
 @---------------------------------------------------------------------------------
