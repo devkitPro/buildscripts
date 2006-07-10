@@ -2,8 +2,8 @@ diff -Nbaur newlib-1.14.0/libgloss/configure newlib-1.14.0-arm/libgloss/configur
 --- newlib-1.14.0/libgloss/configure	Mon Dec 12 11:25:07 2005
 +++ newlib-1.14.0-arm/libgloss/configure	Sat Jul  8 23:42:58 2006
 @@ -711,9 +711,9 @@
- 
- 
+
+
  if test -z "${with_multisubdir}" ; then
 -  configdirs="doc libnosys"
 +  configdirs="doc libnosys libsysbase"
@@ -11,14 +11,14 @@ diff -Nbaur newlib-1.14.0/libgloss/configure newlib-1.14.0-arm/libgloss/configur
 -  configdirs="libnosys"
 +  configdirs="libnosys libsysbase"
  fi
- 
+
  case "${target}" in
 diff -Nbaur newlib-1.14.0/libgloss/configure.in newlib-1.14.0-arm/libgloss/configure.in
 --- newlib-1.14.0/libgloss/configure.in	Mon Dec 12 11:25:07 2005
 +++ newlib-1.14.0-arm/libgloss/configure.in	Sat Jul  8 23:42:58 2006
 @@ -22,9 +22,9 @@
  AC_CANONICAL_SYSTEM
- 
+
  if test -z "${with_multisubdir}" ; then
 -  configdirs="doc libnosys"
 +  configdirs="doc libnosys libsysbase"
@@ -26,7 +26,7 @@ diff -Nbaur newlib-1.14.0/libgloss/configure.in newlib-1.14.0-arm/libgloss/confi
 -  configdirs="libnosys"
 +  configdirs="libnosys libsysbase"
  fi
- 
+
  case "${target}" in
 diff -Nbaur newlib-1.14.0/libgloss/libsysbase/Makefile.in newlib-1.14.0-arm/libgloss/libsysbase/Makefile.in
 --- newlib-1.14.0/libgloss/libsysbase/Makefile.in	Thu Jan  1 00:00:00 1970
@@ -266,15 +266,15 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/close.c newlib-1.14.0-arm/libgloss
 +	unsigned int fd = -1;
 +
 +	if(fileDesc!=-1) {
-+		
++
 +		__handle *handle = fileDesc;
-+		
++
 +		dev = handle->device;
 +		fd = handle->fileStruct;
-+		
++
 +		if(devoptab_list[dev]->close_r)
 +			ret = devoptab_list[dev]->close_r(ptr,fd);
-+		
++
 +		free(fileDesc);
 +	}
 +	return ret;
@@ -312,7 +312,7 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/configure newlib-1.14.0-arm/libglo
 +#! /bin/sh
 +
 +# Guess values for system-dependent variables and create Makefiles.
-+# Generated automatically using autoconf version 2.13 
++# Generated automatically using autoconf version 2.13
 +# Copyright (C) 1992, 93, 94, 95, 96 Free Software Foundation, Inc.
 +#
 +# This configure script is free software; the Free Software Foundation
@@ -1043,7 +1043,7 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/configure newlib-1.14.0-arm/libglo
 +
 +# FIXME: We temporarily define our own version of AC_PROG_CC.  This is
 +# copied from autoconf 2.12, but does not call AC_PROG_CC_WORKS.  We
-+# are building a library that must be included in all links, so we 
++# are building a library that must be included in all links, so we
 +# can't link an executable until this lib is built.
 +# autoconf should provide a way to do this.
 +
@@ -1069,9 +1069,9 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/configure newlib-1.14.0-arm/libglo
 +  d10v*)
 +	;;
 +  h8300*-*-*)
-+	;;	
++	;;
 +  h8500-*-*)
-+	;;	
++	;;
 +  i345686-*-sco*)
 +	;;
 +  m32r-*-*)
@@ -1097,7 +1097,7 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/configure newlib-1.14.0-arm/libglo
 +  v850ea-*-*)
 +	;;
 +  w65-*-*)
-+	;;	
++	;;
 +  xstormy16-*-*)
 +	;;
 +  z8k-*-*)
@@ -1193,7 +1193,7 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/configure newlib-1.14.0-arm/libglo
 +else
 +  libc_dollar_prefix=no
 +fi
-+rm -f conftest* 
++rm -f conftest*
 +fi
 +
 +echo "$ac_t""$libc_dollar_prefix" 1>&6
@@ -1814,7 +1814,7 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/configure.in newlib-1.14.0-arm/lib
 +
 +# FIXME: We temporarily define our own version of AC_PROG_CC.  This is
 +# copied from autoconf 2.12, but does not call AC_PROG_CC_WORKS.  We
-+# are building a library that must be included in all links, so we 
++# are building a library that must be included in all links, so we
 +# can't link an executable until this lib is built.
 +# autoconf should provide a way to do this.
 +
@@ -1868,9 +1868,9 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/configure.in newlib-1.14.0-arm/lib
 +  d10v*)
 +	;;
 +  h8300*-*-*)
-+	;;	
++	;;
 +  h8500-*-*)
-+	;;	
++	;;
 +  i[3456]86-*-sco*)
 +	;;
 +  m32r-*-*)
@@ -1896,7 +1896,7 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/configure.in newlib-1.14.0-arm/lib
 +  v850ea-*-*)
 +	;;
 +  w65-*-*)
-+	;;	
++	;;
 +  xstormy16-*-*)
 +	;;
 +  z8k-*-*)
@@ -2001,8 +2001,8 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/environ.c newlib-1.14.0-arm/libglo
 + * Version of environ for no OS.
 + */
 +
-+char *__env[1] = { 0 }; 
-+char **environ = __env; 
++char *__env[1] = { 0 };
++char **environ = __env;
 diff -Nbaur newlib-1.14.0/libgloss/libsysbase/execve.c newlib-1.14.0-arm/libgloss/libsysbase/execve.c
 --- newlib-1.14.0/libgloss/libsysbase/execve.c	Thu Jan  1 00:00:00 1970
 +++ newlib-1.14.0-arm/libgloss/libsysbase/execve.c	Wed Jun 14 09:01:35 2006
@@ -2224,14 +2224,14 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/iosupport.c newlib-1.14.0-arm/libg
 +int RemoveDevice( const char* name) {
 +//---------------------------------------------------------------------------------
 +	int dev = FindDevice(name);
-+	
++
 +	if ( -1 != dev ) {
 +		devoptab_list[dev] = &dotab_stdnull;
 +		return 0;
 +	}
-+	
++
 +	return -1;
-+		
++
 +}
 +//---------------------------------------------------------------------------------
 +int AddDevice( const devoptab_t* device) {
@@ -2321,7 +2321,7 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/link.c newlib-1.14.0-arm/libgloss/
 +	int ret;
 +	int sourceDev = FindDevice(existing);
 +	int destDev = FindDevice(new);
-+	
++
 +	ret = -1;
 +
 +	if ( sourceDev == destDev) {
@@ -2329,7 +2329,7 @@ diff -Nbaur newlib-1.14.0/libgloss/libsysbase/link.c newlib-1.14.0-arm/libgloss/
 +			ret = devoptab_list[destDev]->link_r( r, existing, new);
 +		} else {
 +			r->_errno = ENOSYS;
-+		}			
++		}
 +	} else {
 +		r->_errno = EXDEV;
 +	}
@@ -2870,7 +2870,7 @@ diff -Nbaur newlib-1.14.0/newlib/libc/include/sys/reent.h newlib-1.14.0-arm/newl
 +  int	_file;		/* fileno, if Unix descriptor, else -1 */
    struct __sbuf _bf;	/* the buffer (at least 1 byte, if !NULL) */
    int	_lbfsize;	/* 0 or -_bf._size, for inline putc */
- 
+
 @@ -168,7 +168,7 @@
    int	_r;		/* read space left for getc() */
    int	_w;		/* write space left for putc() */
@@ -2879,7 +2879,7 @@ diff -Nbaur newlib-1.14.0/newlib/libc/include/sys/reent.h newlib-1.14.0-arm/newl
 +  int	_file;		/* fileno, if Unix descriptor, else -1 */
    struct __sbuf _bf;	/* the buffer (at least 1 byte, if !NULL) */
    int	_lbfsize;	/* 0 or -_bf._size, for inline putc */
- 
+
 @@ -216,7 +216,7 @@
    int	_r;		/* read space left for getc() */
    int	_w;		/* write space left for putc() */
@@ -2888,4 +2888,4 @@ diff -Nbaur newlib-1.14.0/newlib/libc/include/sys/reent.h newlib-1.14.0-arm/newl
 +  int	_file;		/* fileno, if Unix descriptor, else -1 */
    struct __sbuf _bf;	/* the buffer (at least 1 byte, if !NULL) */
    int	_lbfsize;	/* 0 or -_bf._size, for inline putc */
- 
+
