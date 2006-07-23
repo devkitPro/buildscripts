@@ -23,31 +23,10 @@ $MAKE install || { echo "Error installing binutils"; exit 1; }
 cd $BUILDSCRIPTDIR
 
 #---------------------------------------------------------------------------------
-# build and install elf2flt
-#---------------------------------------------------------------------------------
-mkdir -p $target/elf2flt
-cd $target/elf2flt
-
-../../elf2flt/configure \
-		--prefix=$prefix --target=$target \
-		--with-libbfd=../binutils/bfd/libbfd.a \
-		--with-libiberty=../binutils/libiberty/libiberty.a \
-		--with-bfd-include-dir=../binutils/bfd/ \
-		--with-binutils-include-dir=../../$BINUTILS_SRCDIR/include/ \
-		|| { echo "Error configuring elf2flt"; exit 1; }
-	$MAKE || { echo "Error building elf2flt"; exit 1; }
-	$MAKE install || { echo "Error installing elf2flt"; exit 1; }
-
-
-cd $BUILDSCRIPTDIR
-
-#---------------------------------------------------------------------------------
 # remove temp stuff to conserve disc space
 #---------------------------------------------------------------------------------
 rm -fr $target/binutils
 rm -fr $BINUTILS_SRCDIR
-rm -fr $target/elf2flt
-rm -fr elf2flt
 
 #---------------------------------------------------------------------------------
 # build and install just the c compiler

@@ -10,20 +10,17 @@ LIBOGC_VER=20050812
 LIBGBA_VER=20060720
 LIBNDS_VER=20060719
 LIBMIRKO_VER=0.9.6
-ELF2FLT_VER=20060506
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
 LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
 LIBMIRKO="libmirko-src-$LIBMIRKO_VER.tar.bz2"
-ELF2FLT="elf2flt-src-$ELF2FLT_VER.tar.bz2"
 
 SFMIRROR="jaist"
 LIBOGC_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBOGC"
 LIBGBA_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBGBA"
 LIBNDS_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBNDS"
 LIBMIRKO_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBMIRKO"
-ELF2FLT_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$ELF2FLT"
 
 
 NEWLIB_VER=1.14.0
@@ -212,13 +209,6 @@ then
       else
 	      FOUND=1
       fi
-      if [ ! -f $SRCDIR/$ELF2FLT ]
-      then
-        echo "Error: $ELF2FLT not found in $SRCDIR"
-	      exit
-      else
-	      FOUND=1
-      fi
     fi
 
     if [ $VERSION -eq 2 ]
@@ -256,7 +246,6 @@ else
 		$WGET -c $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit; }
 		$WGET -c $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit; }
 		$WGET -c $LIBMIRKO_URL || { echo "Error: Failed to download "$LIBMIRKO; exit; }
-		$WGET -c $ELF2FLT_URL || { echo "Error: Failed to download "$ELF2FLT; exit; }
 	fi
 	SRCDIR=`pwd`
 fi
@@ -338,8 +327,6 @@ then
   echo "Extracting $LIBMIRKO"
   mkdir -p $LIBMIRKO_SRCDIR
   bzip2 -cd $SRCDIR/$LIBMIRKO | tar -xv -C $LIBMIRKO_SRCDIR || { echo "Error extracting "$LIBMIRKO; exit; }
-  echo "Extracting $ELF2FLT"
-  tar -xjvf $SRCDIR/$ELF2FLT || { echo "Error extracting "$ELF2FLT; exit; }
 fi
 
 
