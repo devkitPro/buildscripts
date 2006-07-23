@@ -7,8 +7,8 @@
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
 LIBOGC_VER=20050812
-LIBGBA_VER=20060601
-LIBNDS_VER=20060601
+LIBGBA_VER=20060720
+LIBNDS_VER=20060719
 LIBMIRKO_VER=0.9.6
 ELF2FLT_VER=20060506
 
