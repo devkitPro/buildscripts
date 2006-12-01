@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=20050812
+LIBOGC_VER=20061201
 LIBGBA_VER=20060720
 LIBNDS_VER=20060719
 LIBMIRKO_VER=0.9.6
@@ -27,9 +27,6 @@ NEWLIB_VER=1.14.0
 NEWLIB="newlib-$NEWLIB_VER.tar.gz"
 NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/$NEWLIB"
 
-BINUTILS_VER=2.17
-BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
-BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/$BINUTILS"
 
 
 #---------------------------------------------------------------------------------
@@ -57,14 +54,18 @@ done
 if [ $VERSION -eq 2 ]
 then
   GCC_VER=3.4.6
+	BINUTILS_VER=2.16.1
 else
   GCC_VER=4.1.1
+	BINUTILS_VER=2.17
 fi
 
 GCC_CORE="gcc-core-$GCC_VER.tar.bz2"
 GCC_GPP="gcc-g++-$GCC_VER.tar.bz2"
 GCC_CORE_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_CORE"
 GCC_GPP_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_GPP"
+BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
+BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/$BINUTILS"
 
 
 
