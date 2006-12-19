@@ -22,14 +22,14 @@ export OBJCOPY	:=	$(PREFIX)objcopy
 	$(AR) -rc $@ $^
 
 #---------------------------------------------------------------------------------
-%.o: %.cpp
+%.arm.o: %.arm.cpp
 	@echo $(notdir $<)
-	$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.d $(CXXFLAGS) -c $< -o $@
+	$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.d $(CXXFLAGS) -marm-c $< -o $@
 	
 #---------------------------------------------------------------------------------
-%.o: %.c
+%.arm.o: %.arm.c
 	@echo $(notdir $<)
-	$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d $(CFLAGS) -c $< -o $@
+	$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d $(CFLAGS) -marm -c $< -o $@
 
 #---------------------------------------------------------------------------------
 %.iwram.o: %.iwram.cpp
@@ -50,6 +50,17 @@ export OBJCOPY	:=	$(PREFIX)objcopy
 %.itcm.o: %.itcm.c
 	@echo $(notdir $<)
 	$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d $(CFLAGS) -marm -c $< -o $@
+
+#---------------------------------------------------------------------------------
+%.o: %.cpp
+	@echo $(notdir $<)
+	$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.d $(CXXFLAGS) -c $< -o $@
+	
+#---------------------------------------------------------------------------------
+%.o: %.c
+	@echo $(notdir $<)
+	$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d $(CFLAGS) -c $< -o $@
+
 
 #---------------------------------------------------------------------------------
 %.o: %.s
