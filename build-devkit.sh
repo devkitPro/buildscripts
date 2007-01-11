@@ -16,17 +16,10 @@ LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
 LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
 LIBMIRKO="libmirko-src-$LIBMIRKO_VER.tar.bz2"
 
-SFMIRROR="jaist"
-LIBOGC_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBOGC"
-LIBGBA_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBGBA"
-LIBNDS_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBNDS"
-LIBMIRKO_URL="http://$SFMIRROR.dl.sourceforge.net/sourceforge/devkitpro/$LIBMIRKO"
-
-
-NEWLIB_VER=1.14.0
-NEWLIB="newlib-$NEWLIB_VER.tar.gz"
-NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/$NEWLIB"
-
+LIBOGC_URL="http://downloads.sourceforge.net/devkitpro/$LIBOGC"
+LIBGBA_URL="http://downloads.sourceforge.net/devkitpro/$LIBGBA"
+LIBNDS_URL="http://downloads.sourceforge.net/devkitpro/$LIBNDS"
+LIBMIRKO_URL="http://downloads.sourceforge.net/devkitpro/$LIBMIRKO"
 
 
 #---------------------------------------------------------------------------------
@@ -51,14 +44,23 @@ do
   fi
 done
 
-if [ $VERSION -eq 2 ]
-then
-  GCC_VER=3.4.6
-	BINUTILS_VER=2.16.1
-else
-  GCC_VER=4.1.1
-	BINUTILS_VER=2.17
-fi
+case "$VERSION" in
+  "1" )
+    GCC_VER=4.1.1
+    BINUTILS_VER=2.17
+    NEWLIB_VER=1.15.0
+  ;;
+  "2" )
+    GCC_VER=3.4.6
+    BINUTILS_VER=2.16.1
+    NEWLIB_VER=1.14.0
+  ;;
+  "3" )
+    GCC_VER=4.1.0
+    BINUTILS_VER=2.16.1
+    NEWLIB_VER=1.14.0
+  ;;
+esac
 
 GCC_CORE="gcc-core-$GCC_VER.tar.bz2"
 GCC_GPP="gcc-g++-$GCC_VER.tar.bz2"
@@ -66,6 +68,8 @@ GCC_CORE_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_CORE"
 GCC_GPP_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_GPP"
 BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
 BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/$BINUTILS"
+NEWLIB="newlib-$NEWLIB_VER.tar.gz"
+NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/$NEWLIB"
 
 
 

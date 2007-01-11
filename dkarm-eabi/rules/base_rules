@@ -34,22 +34,22 @@ export OBJCOPY	:=	$(PREFIX)objcopy
 #---------------------------------------------------------------------------------
 %.iwram.o: %.iwram.cpp
 	@echo $(notdir $<)
-	$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.d $(CXXFLAGS) -marm-c $< -o $@
+	$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.d $(CXXFLAGS) -marm -mlong-calls -c $< -o $@
 	
 #---------------------------------------------------------------------------------
 %.iwram.o: %.iwram.c
 	@echo $(notdir $<)
-	$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d $(CFLAGS) -marm -c $< -o $@
+	$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d $(CFLAGS) -marm -mlong-calls -c $< -o $@
 
 #---------------------------------------------------------------------------------
 %.itcm.o: %.itcm.cpp
 	@echo $(notdir $<)
-	$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.d $(CXXFLAGS) -marm-c $< -o $@
+	$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.d $(CXXFLAGS) -marm -mlong-calls -c $< -o $@
 	
 #---------------------------------------------------------------------------------
 %.itcm.o: %.itcm.c
 	@echo $(notdir $<)
-	$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d $(CFLAGS) -marm -c $< -o $@
+	$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d $(CFLAGS) -marm -mlong-calls -c $< -o $@
 
 #---------------------------------------------------------------------------------
 %.o: %.cpp
