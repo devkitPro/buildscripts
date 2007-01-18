@@ -1,4 +1,8 @@
--include $(DEVKITPPC)/base_rules
+ifeq ($(strip $(DEVKITPPC)),)
+$(error "Please set DEVKITPPC in your environment. export DEVKITPPC=<path to>devkitPro/devkitPPC)
+endif
+
+include $(DEVKITPPC)/base_rules
 
 %.dol: %.elf
 	@echo output ... $(notdir $@)
