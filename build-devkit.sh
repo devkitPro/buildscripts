@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=20061201
+LIBOGC_VER=20070118
 LIBGBA_VER=20060720
 LIBNDS_VER=20060719
 LIBMIRKO_VER=0.9.6
@@ -380,10 +380,7 @@ rm -fr $BINUTILS_SRCDIR
 rm -fr $NEWLIB_SRCDIR
 rm -fr $GCC_SRCDIR
 
-if [ $VERSION -eq 1 ]
-then
-  rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $LIBMIRKO_SRCDIR
-fi
+rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $LIBMIRKO_SRCDIR
 
 echo
 echo "Would you like to delete the downloaded source packages? [y/N]"
