@@ -4869,7 +4869,7 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/gettod.c newlib-1.15.0-new/libglos
 +stub_warning(_gettimeofday)
 diff -Nbaur newlib-1.15.0/libgloss/libsysbase/iosupport.c newlib-1.15.0-new/libgloss/libsysbase/iosupport.c
 --- newlib-1.15.0/libgloss/libsysbase/iosupport.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-new/libgloss/libsysbase/iosupport.c	Sat Dec 30 15:38:58 2006
++++ newlib-1.15.0-new/libgloss/libsysbase/iosupport.c	Sat Jan 13 17:56:30 2007
 @@ -0,0 +1,98 @@
 +#include <stdlib.h>
 +#include <string.h>
@@ -4955,7 +4955,7 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/iosupport.c newlib-1.15.0-new/libg
 +
 +	for ( devnum = 3;devnum <STD_MAX; devnum++ ) {
 +
-+		if ( (strcmp(devoptab_list[devnum]->name, device->name) &&
++		if ( (!strcmp(devoptab_list[devnum]->name, device->name) &&
 +					strlen(devoptab_list[devnum]->name) == strlen(device->name) ) ||
 +			 		!strcmp(devoptab_list[devnum]->name, "stdnull")
 +			 )
@@ -5270,7 +5270,7 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/rename.c newlib-1.15.0-new/libglos
 +}
 diff -Nbaur newlib-1.15.0/libgloss/libsysbase/sbrk.c newlib-1.15.0-new/libgloss/libsysbase/sbrk.c
 --- newlib-1.15.0/libgloss/libsysbase/sbrk.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-new/libgloss/libsysbase/sbrk.c	Sat Dec 30 15:38:58 2006
++++ newlib-1.15.0-new/libgloss/libsysbase/sbrk.c	Mon Jan 15 14:29:56 2007
 @@ -0,0 +1,61 @@
 +#include <_ansi.h>
 +#include <sys/types.h>
@@ -5301,7 +5301,7 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/sbrk.c newlib-1.15.0-new/libgloss/
 +//---------------------------------------------------------------------------------
 +	struct _reent *ptr = _REENT;
 +#endif
-+	extern char   end asm ("end");	/* Defined by the linker.  */
++	extern char   end asm ("__end__");	/* Defined by the linker.  */
 +	static char * heap_start;
 +
 +
