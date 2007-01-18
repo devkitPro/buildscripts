@@ -117,7 +117,7 @@ SECTIONS
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >iwram = 0xff
 	.jcr            : { KEEP (*(.jcr)) } >iwram = 0
-	.got            : { *(.got.plt) *(.got) } >iwram = 0
+	.got            : { *(.got.plt) *(.got) *(.rel.got) } >iwram = 0
 
 	
 	.iwram ALIGN(4) :

@@ -120,7 +120,7 @@ SECTIONS
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >ewram = 0xff
 	.jcr            : { KEEP (*(.jcr)) } >ewram = 0
-	.got            : { *(.got.plt) *(.got) } >ewram = 0
+	.got            : { *(.got.plt) *(.got) *(.rel.got) } >ewram = 0
 
 	.ewram ALIGN(4) : 
 	{
