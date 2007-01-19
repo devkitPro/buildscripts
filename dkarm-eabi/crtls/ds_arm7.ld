@@ -5,12 +5,9 @@ ENTRY(_start)
 MEMORY {
 
 	rom	: ORIGIN = 0x08000000, LENGTH = 32M
-	iwram	: ORIGIN = 0x03800000, LENGTH = 64K	
-	ewram	: ORIGIN = 0x02040000, LENGTH = 4M
+	iwram	: ORIGIN = 0x037f8000, LENGTH = 96K	
 }
 
-__ewram_start	=	ORIGIN(ewram);
-__eheap_end	=	ORIGIN(ewram)+ LENGTH(ewram);
 __iwram_start	=	ORIGIN(iwram);
 __iwram_top	=	ORIGIN(iwram)+ LENGTH(iwram);
 __sp_irq	=	__iwram_top - 0x60;
@@ -117,7 +114,7 @@ SECTIONS
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >iwram = 0xff
 	.jcr            : { KEEP (*(.jcr)) } >iwram = 0
-	.got            : { *(.got.plt) *(.got) *(.rel.got) } >iwram = 0
+	.got            : { *(.got.plt) *(.got) } >iwram = 0
 
 	
 	.iwram ALIGN(4) :
