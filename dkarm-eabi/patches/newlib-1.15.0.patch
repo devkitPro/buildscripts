@@ -5568,8 +5568,8 @@ diff -Nbaur newlib-1.15.0/newlib/libc/include/stdio.h newlib-1.15.0-new/newlib/l
  int	_EXFUN(vsscanf, (const char *, const char *, __VALIST));
 diff -Nbaur newlib-1.15.0/newlib/libc/include/sys/dir.h newlib-1.15.0-new/newlib/libc/include/sys/dir.h
 --- newlib-1.15.0/newlib/libc/include/sys/dir.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-new/newlib/libc/include/sys/dir.h	Sun Jan  7 03:42:57 2007
-@@ -0,0 +1,30 @@
++++ newlib-1.15.0-new/newlib/libc/include/sys/dir.h	Thu Jan 25 18:26:24 2007
+@@ -0,0 +1,32 @@
 +/* <dir.h>
 +
 +	provides prototypes for custom directory functions in libsysbase
@@ -5581,6 +5581,8 @@ diff -Nbaur newlib-1.15.0/newlib/libc/include/sys/dir.h newlib-1.15.0-new/newlib
 +#ifdef __cplusplus
 +extern "C" {
 +#endif
++
++#include <sys/stat.h>
 +
 +/* Directory iterator for mantaining state between dir* calls */
 +typedef struct {
