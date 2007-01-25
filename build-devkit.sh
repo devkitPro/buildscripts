@@ -263,6 +263,33 @@ LIBGBA_SRCDIR="libgba-$LIBGBA_VER"
 LIBNDS_SRCDIR="libnds-$LIBNDS_VER"
 LIBMIRKO_SRCDIR="libmirko-$LIBMIRKO_VER"
 
+
+#---------------------------------------------------------------------------------
+# find proper make
+#---------------------------------------------------------------------------------
+if [ -z "$MAKE" -a -x "$(which gnumake)" ]; then MAKE=$(which gnumake); fi
+if [ -z "$MAKE" -a -x "$(which gmake)" ]; then MAKE=$(which gmake); fi
+if [ -z "$MAKE" -a -x "$(which make)" ]; then MAKE=$(which make); fi
+if [ -z "$MAKE" ]; then
+  echo no make found
+  exit 1
+fi
+echo use $MAKE as make
+export MAKE
+
+  
+#---------------------------------------------------------------------------------
+# find proper gawk
+#---------------------------------------------------------------------------------
+if [ -z "$GAWK" -a -x "$(which gawk)" ]; then GAWK=$(which gawk); fi
+if [ -z "$GAWK" -a -x "$(which awk)" ]; then GAWK=$(which awk); fi
+if [ -z "$GAWK" ]; then
+  echo no awk found
+  exit 1
+fi
+echo use $GAWK as gawk
+export GAWK
+
 #---------------------------------------------------------------------------------
 # Add installed devkit to the path, adjusting path on minsys
 #---------------------------------------------------------------------------------
@@ -275,22 +302,6 @@ echo
 echo 'press return to continue'
 
 read dummy
-
-
-
-#---------------------------------------------------------------------------------
-# find proper make
-#---------------------------------------------------------------------------------
-
-if [ -z "$MAKE" -a -x "$(which gnumake)" ]; then MAKE=$(which gnumake); fi
-if [ -z "$MAKE" -a -x "$(which gmake)" ]; then MAKE=$(which gmake); fi
-if [ -z "$MAKE" -a -x "$(which make)" ]; then MAKE=$(which make); fi
-if [ -z "$MAKE" ]; then
-  echo no make found
-  exit 1
-fi
-echo use $MAKE as make
-export MAKE
 
 patchdir=$(pwd)/$basedir/patches
 scriptdir=$(pwd)/$basedir/scripts
