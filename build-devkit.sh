@@ -8,7 +8,7 @@
 #---------------------------------------------------------------------------------
 LIBOGC_VER=20070118
 LIBGBA_VER=20060720
-LIBNDS_VER=20060719
+LIBNDS_VER=20070127
 LIBMIRKO_VER=0.9.6
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"

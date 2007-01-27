@@ -5115,7 +5115,7 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/mkdir.c newlib-1.15.0-new/libgloss
 +#include <sys/iosupport.h>
 +#include <errno.h>
 +
-+int mkdir (const char *path, int mode) {
++int mkdir (const char *path, mode_t mode) {
 +	struct _reent *r = _REENT;
 +	int ret;
 +	int dev = FindDevice(path);
