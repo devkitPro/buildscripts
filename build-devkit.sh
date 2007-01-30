@@ -9,16 +9,22 @@
 LIBOGC_VER=20070118
 LIBGBA_VER=20060720
 LIBNDS_VER=20070127
+LIBFAT_VER=20070127
+DSWIFI_VER=0.3d
 LIBMIRKO_VER=0.9.6
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
 LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
+LIBFAT="libnds-src-$LIBFAT_VER.tar.bz2"
+DSWIFI="dswifi-src-$DSWIFI_VER.tar.bz2"
 LIBMIRKO="libmirko-src-$LIBMIRKO_VER.tar.bz2"
 
 LIBOGC_URL="http://downloads.sourceforge.net/devkitpro/$LIBOGC"
 LIBGBA_URL="http://downloads.sourceforge.net/devkitpro/$LIBGBA"
 LIBNDS_URL="http://downloads.sourceforge.net/devkitpro/$LIBNDS"
+DSWIFI_URL="http://downloads.sourceforge.net/devkitpro/$DSWIFI"
+LIBFAT_URL="http://downloads.sourceforge.net/devkitpro/$LIBFAT"
 LIBMIRKO_URL="http://downloads.sourceforge.net/devkitpro/$LIBMIRKO"
 
 
@@ -207,6 +213,20 @@ then
       else
 	      FOUND=1
       fi
+      if [ ! -f $SRCDIR/$LIBFAT ]
+      then
+        echo "Error: $LIBFAT not found in $SRCDIR"
+	      exit
+      else
+	      FOUND=1
+      fi
+      if [ ! -f $SRCDIR/$DSWIFI ]
+      then
+        echo "Error: $DSWIFI not found in $SRCDIR"
+	      exit
+      else
+	      FOUND=1
+      fi
       if [ ! -f $SRCDIR/$LIBMIRKO ]
       then
         echo "Error: $LIBMIRKO not found in $SRCDIR"
@@ -260,6 +280,8 @@ GCC_SRCDIR="gcc-$GCC_VER"
 NEWLIB_SRCDIR="newlib-$NEWLIB_VER"
 LIBOGC_SRCDIR="libogc-$LIBOGC_VER"
 LIBGBA_SRCDIR="libgba-$LIBGBA_VER"
+LIBFAT_SRCDIR="libfat-$LIBFAT_VER"
+DSWIFI_SRCDIR="dswifi-$DSWIFI_VER"
 LIBNDS_SRCDIR="libnds-$LIBNDS_VER"
 LIBMIRKO_SRCDIR="libmirko-$LIBMIRKO_VER"
 
@@ -337,9 +359,20 @@ then
   echo "Extracting $LIBNDS"
   mkdir -p $LIBNDS_SRCDIR
   bzip2 -cd $SRCDIR/$LIBNDS | tar -xv -C $LIBNDS_SRCDIR  || { echo "Error extracting "$LIBNDS; exit; }
+
   echo "Extracting $LIBGBA"
   mkdir -p $LIBGBA_SRCDIR
   bzip2 -cd $SRCDIR/$LIBGBA | tar -xv -C $LIBGBA_SRCDIR || { echo "Error extracting "$LIBGBA; exit; }
+
+
+  echo "Extracting $LIBFAT"
+  mkdir -p $LIBFAT_SRCDIR
+  bzip2 -cd $SRCDIR/$LIBFAT | tar -xv -C $LIBFAT_SRCDIR || { echo "Error extracting "$LIBFAT; exit; }
+
+  echo "Extracting $DSWIFI"
+  mkdir -p $DSWIFI_SRCDIR
+  bzip2 -cd $SRCDIR/$DSWIFI | tar -xv -C $DSWIFI_SRCDIR || { echo "Error extracting "$DSWIFI; exit; }
+
   echo "Extracting $LIBMIRKO"
   mkdir -p $LIBMIRKO_SRCDIR
   bzip2 -cd $SRCDIR/$LIBMIRKO | tar -xv -C $LIBMIRKO_SRCDIR || { echo "Error extracting "$LIBMIRKO; exit; }
@@ -391,7 +424,7 @@ rm -fr $BINUTILS_SRCDIR
 rm -fr $NEWLIB_SRCDIR
 rm -fr $GCC_SRCDIR
 
-rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $LIBMIRKO_SRCDIR
+rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $LIBMIRKO_SRCDIR $DSWIFI_SRCDIR $LIBFAT_SRCDIR
 
 echo
 echo "Would you like to delete the downloaded source packages? [y/N]"

@@ -24,12 +24,22 @@ $MAKE CRT=ds_cart
 
 cd $BUILDSCRIPTDIR
 
-$MAKE -C tools/general
-$MAKE -C tools/general install PREFIX=$DEVKITARM/bin
+#$MAKE -C tools/general
+#$MAKE -C tools/general install PREFIX=$DEVKITARM/bin
 
 
-cd $LIBNDS_SRCDIR
 echo "building libnds ..."
+cd $LIBNDS_SRCDIR
+$MAKE install INSTALLDIR=$TOOLPATH 
+cd $BUILDSCRIPTDIR
+
+echo "building libfat ..."
+cd $LIBFAT_SRCDIR
+$MAKE install INSTALLDIR=$TOOLPATH 
+cd $BUILDSCRIPTDIR
+
+echo "building dswifi ..."
+cd $DSWIFI_SRCDIR
 $MAKE install INSTALLDIR=$TOOLPATH 
 cd $BUILDSCRIPTDIR
 
