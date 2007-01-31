@@ -270,6 +270,8 @@ else
 	then
 		$WGET -c $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit; }
 		$WGET -c $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit; }
+		$WGET -c $DSWIFI_URL || { echo "Error: Failed to download "$DSWIFI; exit; }
+		$WGET -c $LIBFAT_URL || { echo "Error: Failed to download "$LIBFAT; exit; }
 		$WGET -c $LIBMIRKO_URL || { echo "Error: Failed to download "$LIBMIRKO; exit; }
 	fi
 	SRCDIR=`pwd`
