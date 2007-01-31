@@ -28,11 +28,11 @@ Downloading the source packages
 When you run the build script it will ask you to choose from one of two options, one for if you have already downloaded the source packages and another for if you want it to download them for you (using wget).  If you choose option one and want to get the source packages for yourself then you can find them at the urls listed below;
 
 binutils 2.17  - http://ftp.gnu.org/gnu/binutils/binutils-2.17.tar.bz2
-gcc-core 4.1.1 - http://ftp.gnu.org/gnu/gcc/gcc-4.0.1/gcc-core-4.1.1.tar.bz2
-gcc-g++ 4.1.1 - http://ftp.gnu.org/gnu/gcc/gcc-4.0.1/gcc-g++-4.1.1.tar.bz2
+gcc-core 4.1.1 - http://ftp.gnu.org/gnu/gcc/gcc-4.1.1/gcc-core-4.1.1.tar.bz2
+gcc-g++ 4.1.1 - http://ftp.gnu.org/gnu/gcc/gcc-4.1.1/gcc-g++-4.1.1.tar.bz2
 newlib 1.14.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.14.0.tar.gz
 
-libogc, libgba and libnds can be found in the sourceforge project.
+libogc, libgba, libnds, libmirko, dswifi and libfat can be found in the sourceforge project.
 
 http://sourceforge.net/projects/devkitpro
 
@@ -100,9 +100,11 @@ Credits
 * libogc written and supplied by Shagkur. Additional code by WinterMute
 * libgba by WinterMute
 * libnds by Joat, Dovoto and WinterMute with contributions from many others.
+* dswifi by Sgstair
+* libfat by Chishm
 * libmirko by Mr Mirko
 * b2fxec by Mr Spiv
 * scripts made BSD compatible by o2addict
 
-  - efnet #gbadev forever!
+  - blitzed #gbadev, #dsdev, #wiidev forever!
 
