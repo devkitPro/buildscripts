@@ -24,8 +24,8 @@ $MAKE CRT=ds_cart
 
 cd $BUILDSCRIPTDIR
 
-#$MAKE -C tools/general
-#$MAKE -C tools/general install PREFIX=$DEVKITARM/bin
+$MAKE -C tools/general
+$MAKE -C tools/general install PREFIX=$DEVKITARM/bin
 
 
 echo "building libnds ..."
