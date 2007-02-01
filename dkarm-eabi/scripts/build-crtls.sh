@@ -33,6 +33,11 @@ cd $LIBNDS_SRCDIR
 $MAKE install INSTALLDIR=$TOOLPATH 
 cd $BUILDSCRIPTDIR
 
+echo "building libgba ..."
+cd $LIBGBA_SRCDIR
+$MAKE install INSTALLDIR=$TOOLPATH
+cd $BUILDSCRIPTDIR
+
 echo "building libfat ..."
 cd $LIBFAT_SRCDIR
 $MAKE install INSTALLDIR=$TOOLPATH 
@@ -41,11 +46,6 @@ cd $BUILDSCRIPTDIR
 echo "building dswifi ..."
 cd $DSWIFI_SRCDIR
 $MAKE install INSTALLDIR=$TOOLPATH 
-cd $BUILDSCRIPTDIR
-
-echo "building libgba ..."
-cd $LIBGBA_SRCDIR
-$MAKE install INSTALLDIR=$TOOLPATH
 cd $BUILDSCRIPTDIR
 
 echo "building libmirko ..."
