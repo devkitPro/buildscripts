@@ -16,7 +16,7 @@ LIBMIRKO_VER=0.9.6
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
 LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
-LIBFAT="libnds-src-$LIBFAT_VER.tar.bz2"
+LIBFAT="libfat-src-$LIBFAT_VER.tar.bz2"
 DSWIFI="dswifi-src-$DSWIFI_VER.tar.bz2"
 LIBMIRKO="libmirko-src-$LIBMIRKO_VER.tar.bz2"
 
