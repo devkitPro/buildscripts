@@ -352,32 +352,31 @@ if [ $VERSION -eq 2 ]
 then
   echo "Extracting $LIBOGC"
   mkdir -p $LIBOGC_SRCDIR
-  bzip2 -cd $SRCDIR/$LIBOGC | tar -xv -C $LIBOGC_SRCDIR  || { echo "Error extracting "$LIBOGC; exit; }
-fi
+  bzip2 -cd $SRCDIR/$LIBOGC | tar -xvf - -C $LIBOGC_SRCDIR  || { echo "Error extracting "$LIBOGC; exit; }
 
 
 if [ $VERSION -eq 1 ]
 then
   echo "Extracting $LIBNDS"
   mkdir -p $LIBNDS_SRCDIR
-  bzip2 -cd $SRCDIR/$LIBNDS | tar -xv -C $LIBNDS_SRCDIR  || { echo "Error extracting "$LIBNDS; exit; }
+  bzip2 -cd $SRCDIR/$LIBNDS | tar -xvf - -C $LIBNDS_SRCDIR  || { echo "Error extracting "$LIBNDS; exit; }
 
   echo "Extracting $LIBGBA"
   mkdir -p $LIBGBA_SRCDIR
-  bzip2 -cd $SRCDIR/$LIBGBA | tar -xv -C $LIBGBA_SRCDIR || { echo "Error extracting "$LIBGBA; exit; }
+  bzip2 -cd $SRCDIR/$LIBGBA | tar -xvf - -C $LIBGBA_SRCDIR || { echo "Error extracting "$LIBGBA; exit; }
 
 
   echo "Extracting $LIBFAT"
   mkdir -p $LIBFAT_SRCDIR
-  bzip2 -cd $SRCDIR/$LIBFAT | tar -xv -C $LIBFAT_SRCDIR || { echo "Error extracting "$LIBFAT; exit; }
+  bzip2 -cd $SRCDIR/$LIBFAT | tar -xvf - -C $LIBFAT_SRCDIR || { echo "Error extracting "$LIBFAT; exit; }
 
   echo "Extracting $DSWIFI"
   mkdir -p $DSWIFI_SRCDIR
-  bzip2 -cd $SRCDIR/$DSWIFI | tar -xv -C $DSWIFI_SRCDIR || { echo "Error extracting "$DSWIFI; exit; }
+  bzip2 -cd $SRCDIR/$DSWIFI | tar -xvf - -C $DSWIFI_SRCDIR || { echo "Error extracting "$DSWIFI; exit; }
 
   echo "Extracting $LIBMIRKO"
   mkdir -p $LIBMIRKO_SRCDIR
-  bzip2 -cd $SRCDIR/$LIBMIRKO | tar -xv -C $LIBMIRKO_SRCDIR || { echo "Error extracting "$LIBMIRKO; exit; }
+  bzip2 -cd $SRCDIR/$LIBMIRKO | tar -xvf - -C $LIBMIRKO_SRCDIR || { echo "Error extracting "$LIBMIRKO; exit; }
 fi
 
 
