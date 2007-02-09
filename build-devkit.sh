@@ -337,16 +337,16 @@ scriptdir=$(pwd)/$basedir/scripts
 BUILDSCRIPTDIR=$(pwd)
 
 echo "Extracting $BINUTILS"
-#tar -xjvf $SRCDIR/$BINUTILS || { echo "Error extracting "$BINUTILS; exit; }
+tar -xjvf $SRCDIR/$BINUTILS || { echo "Error extracting "$BINUTILS; exit; }
 
 echo "Extracting $GCC_CORE"
-#tar -xjvf $SRCDIR/$GCC_CORE || { echo "Error extracting "$GCC_CORE; exit; }
+tar -xjvf $SRCDIR/$GCC_CORE || { echo "Error extracting "$GCC_CORE; exit; }
 
 echo "Extracting $GCC_GPP"
-#tar -xjvf $SRCDIR/$GCC_GPP || { echo "Error extracting "$GCC_GPP; exit; }
+tar -xjvf $SRCDIR/$GCC_GPP || { echo "Error extracting "$GCC_GPP; exit; }
 
 echo "Extracting $NEWLIB"
-#tar -xzvf $SRCDIR/$NEWLIB || { echo "Error extracting "$NEWLIB; exit; }
+tar -xzvf $SRCDIR/$NEWLIB || { echo "Error extracting "$NEWLIB; exit; }
 
 if [ $VERSION -eq 2 ]
 then
