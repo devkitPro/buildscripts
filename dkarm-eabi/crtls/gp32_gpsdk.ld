@@ -171,9 +171,7 @@ SECTIONS
     __bss_end = ABSOLUTE(.);
   } > ram
 
-  end = __bss_end;
-
-  PROVIDE (end = end);
+  __end__ = __bss_end;
 
   __eheap_end = . ;
 
