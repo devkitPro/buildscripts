@@ -35,7 +35,7 @@ mkdir -p $target/gcc
 cd $target/gcc
 
 
-../../$GCC_SRCDIR/configure \
+CFLAGS=-D__USE_MINGW_ACCESS ../../$GCC_SRCDIR/configure \
 	--enable-languages=c,c++ \
 	--with-cpu=arm7tdmi\
 	--enable-interwork --enable-multilib\
@@ -61,7 +61,7 @@ mkdir -p $target/newlib
 cd $target/newlib
 mkdir -p etc
 
-$BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure \
+CFLAGS=-DREENTRANT_SYSCALLS_PROVIDED ../../$NEWLIB_SRCDIR/configure \
 	--disable-newlib-supplied-syscalls \
 	--disable-debug \
 	--target=$target \

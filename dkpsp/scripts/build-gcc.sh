@@ -33,7 +33,7 @@ mkdir -p $target/gcc
 cd $target/gcc
 
 
-../../$GCC_SRCDIR/configure \
+CFLAGS=-D__USE_MINGW_ACCESS ../../$GCC_SRCDIR/configure \
 	--enable-languages=c,c++ \
 	--disable-multilib\
 	--with-gcc --with-gnu-ld --with-gnu-as\

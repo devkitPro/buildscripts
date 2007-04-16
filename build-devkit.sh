@@ -52,7 +52,7 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=4.1.1
+    GCC_VER=4.1.2
     BINUTILS_VER=2.17
     NEWLIB_VER=1.15.0
   ;;
@@ -62,7 +62,7 @@ case "$VERSION" in
     NEWLIB_VER=1.14.0
   ;;
   "3" )
-    GCC_VER=4.1.0
+    GCC_VER=4.1.2
     BINUTILS_VER=2.16.1
     NEWLIB_VER=1.14.0
   ;;
