@@ -63,7 +63,6 @@ mkdir -p etc
 
 CFLAGS=-DREENTRANT_SYSCALLS_PROVIDED ../../$NEWLIB_SRCDIR/configure \
 	--disable-newlib-supplied-syscalls \
-	--disable-debug \
 	--target=$target \
 	--prefix=$prefix \
 	|| { echo "Error configuring newlib"; exit 1; }
