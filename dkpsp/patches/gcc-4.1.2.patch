@@ -909,7 +909,7 @@ diff -Nbaur gcc-4.1.0/gcc/version.c gcc-4.1.0-psp/gcc/version.c
     the revision of your modified compiler.  */
  
 -#define VERSUFFIX ""
-+#define VERSUFFIX " devkitPSP release 11 (PSPDEV 20060507)"
++#define VERSUFFIX " devkitPSP release 12 (PSPDEV 20060507)"
  
  /* This is the location of the online document giving instructions for
     reporting bugs.  If you distribute a modified version of GCC,
