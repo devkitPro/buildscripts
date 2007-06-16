@@ -5379,8 +5379,8 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/stat.c newlib-1.15.0-new/libgloss/
 +
 diff -Nbaur newlib-1.15.0/libgloss/libsysbase/times.c newlib-1.15.0-new/libgloss/libsysbase/times.c
 --- newlib-1.15.0/libgloss/libsysbase/times.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-new/libgloss/libsysbase/times.c	Fri Feb 16 09:13:45 2007
-@@ -0,0 +1,13 @@
++++ newlib-1.15.0-new/libgloss/libsysbase/times.c	Fri Jun 15 00:08:04 2007
+@@ -0,0 +1,39 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
 +#include <sys/times.h>
@@ -5394,6 +5394,32 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/times.c newlib-1.15.0-new/libgloss
 +  return -1;
 +}
 +
++#include <reent.h>
++#include <time.h>
++#include <sys/time.h>
++#include <sys/times.h>
++#include <_syslist.h>
++
++time_t *punixTime;
++
++int
++_DEFUN (_gettimeofday_r, (ptr, ptimeval, ptimezone),
++     struct _reent *ptr _AND
++     struct timeval *ptimeval _AND
++     struct timezone *ptimezone)
++{
++
++	time_t ret = -1;
++	if ( ptimeval && punixTime ) {
++		ret = *punixTime;
++		ptimeval->tv_sec = ret;
++		ptr->_errno = 0;
++	} else {
++		ptr->_errno = -1;
++	}
++
++	return ret;
++}
 diff -Nbaur newlib-1.15.0/libgloss/libsysbase/unlink.c newlib-1.15.0-new/libgloss/libsysbase/unlink.c
 --- newlib-1.15.0/libgloss/libsysbase/unlink.c	Thu Jan  1 00:00:00 1970
 +++ newlib-1.15.0-new/libgloss/libsysbase/unlink.c	Fri Feb 16 09:13:45 2007
