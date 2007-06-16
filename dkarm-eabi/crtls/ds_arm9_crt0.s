@@ -198,6 +198,9 @@ _start:
 	ldr	r3, =__libc_init_array	@ global constructors
 	bl	_call_via_r3
 
+	ldr	r3, =initSystem
+	bl	_call_via_r3		@ jump to user code
+
 	mov	r0, #0			@ int argc
 	mov	r1, #0			@ char *argv[]
 	ldr	r3, =main

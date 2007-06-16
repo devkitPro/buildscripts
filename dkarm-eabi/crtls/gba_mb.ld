@@ -53,8 +53,9 @@ __text_start	=	ORIGIN(ewram);
 __eheap_end	=	ORIGIN(ewram) + LENGTH(ewram);
 __iwram_start	=	ORIGIN(iwram);
 __iwram_top	=	ORIGIN(iwram) + LENGTH(iwram);;
-__sp_irq	=	__iwram_top - 0x100;
-__sp_usr	=	__sp_irq - 0x100;
+
+__sp_irq	=	__iwram_top - 0x060;
+__sp_usr	=	__sp_irq - 0x0a0;
 __irq_flags	=	0x03007ff8;
 
 SECTIONS
@@ -254,16 +255,14 @@ SECTIONS
 		.ewram7 { *(.ewram7) . = ALIGN(4);}
 		.ewram8 { *(.ewram8) . = ALIGN(4);}
 		.ewram9 { *(.ewram9) . = ALIGN(4);}
+		__ewram_overlay_end  = ABSOLUTE(.);
 	} >ewram = 0xff
 
-	__ewram_overlay_end = __load_stop_ewram9 ;
+	__eheap_start = __ewram_overlay_end ;
 
-	__eheap_start = __load_stop_ewram1 ;
-
-	_end = __load_stop_ewram1;
-	__end__ = __load_stop_ewram1 ; /* v1.3 */
-	end = __load_stop_ewram1;
-
+	_end = __ewram_overlay_end;
+	__end__ = __ewram_overlay_end;
+	__rom_end__ = __ewram_overlay_end;
 
 	/* Stabs debugging sections.  */
 	.stab 0 : { *(.stab) }
