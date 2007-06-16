@@ -93,3 +93,22 @@ cd $BUILDSCRIPTDIR
 #---------------------------------------------------------------------------------
 rm -fr $target/gcc
 rm -fr $GCC_SRCDIR
+
+#---------------------------------------------------------------------------------
+# build and install the debugger
+#---------------------------------------------------------------------------------
+mkdir -p $target/gdb
+cd $target/gdb
+
+../../$GDB_SRCDIR/configure \
+	--prefix=$prefix --target=$target --disable-nls \
+	|| { echo "Error configuring gdb"; exit 1; }
+
+$MAKE || { echo "Error building gdb"; exit 1; }
+$MAKE install || { echo "Error installing gdb"; exit 1; }
+
+#---------------------------------------------------------------------------------
+# remove temp stuff to conserve disc space
+#---------------------------------------------------------------------------------
+rm -fr $target/gdb
+rm -fr $GDB_SRCDIR

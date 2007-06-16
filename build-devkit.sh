@@ -12,6 +12,7 @@ LIBNDS_VER=20070327
 LIBFAT_VER=20070127
 DSWIFI_VER=0.3d
 LIBMIRKO_VER=0.9.7
+GDB_VER=6.6
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
@@ -19,6 +20,7 @@ LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
 LIBFAT="libfat-src-$LIBFAT_VER.tar.bz2"
 DSWIFI="dswifi-src-$DSWIFI_VER.tar.bz2"
 LIBMIRKO="libmirko-src-$LIBMIRKO_VER.tar.bz2"
+GDB="gdb-$GDB_VER.tar.bz2"
 
 LIBOGC_URL="http://downloads.sourceforge.net/devkitpro/$LIBOGC"
 LIBGBA_URL="http://downloads.sourceforge.net/devkitpro/$LIBGBA"
@@ -26,7 +28,7 @@ LIBNDS_URL="http://downloads.sourceforge.net/devkitpro/$LIBNDS"
 DSWIFI_URL="http://downloads.sourceforge.net/devkitpro/$DSWIFI"
 LIBFAT_URL="http://downloads.sourceforge.net/devkitpro/$LIBFAT"
 LIBMIRKO_URL="http://downloads.sourceforge.net/devkitpro/$LIBMIRKO"
-
+GDB_URL="http://ftp.gnu.org/gnu/gdb/$GDB"
 
 #---------------------------------------------------------------------------------
 # Ask whether to download the source packages or not
@@ -197,12 +199,20 @@ then
 	  FOUND=1
       fi
 
-    if [ $VERSION -eq 1 ]
-    then
-      if [ ! -f $SRCDIR/$LIBGBA ]
+      if [ ! -f $SRCDIR/$GDB ]
       then
-        echo "Error: $LIBGBA not found in $SRCDIR"
-	      exit
+	  echo "Error: $GDB not found in $SRCDIR"
+	  exit
+      else
+	  FOUND=1
+      fi
+
+      if [ $VERSION -eq 1 ]
+      then
+        if [ ! -f $SRCDIR/$LIBGBA ]
+        then
+          echo "Error: $LIBGBA not found in $SRCDIR"
+          exit
       else
 	      FOUND=1
       fi
@@ -258,6 +268,8 @@ else
 
     $WGET -c $GCC_GPP_URL || { echo "Error: Failed to download "$GCC_GPP; exit; }
 
+    $WGET -c $GDB_URL || { echo "Error: Failed to download "$GDB; exit; }
+
     $WGET --passive-ftp -c $NEWLIB_URL || { echo "Error: Failed to download "$NEWLIB; exit; }
 
 	if [ $VERSION -eq 2 ]
@@ -279,6 +291,7 @@ fi
 
 BINUTILS_SRCDIR="binutils-$BINUTILS_VER"
 GCC_SRCDIR="gcc-$GCC_VER"
+GDB_SRCDIR="gdb-$GDB_VER"
 NEWLIB_SRCDIR="newlib-$NEWLIB_VER"
 LIBOGC_SRCDIR="libogc-$LIBOGC_VER"
 LIBGBA_SRCDIR="libgba-$LIBGBA_VER"
@@ -348,6 +361,9 @@ tar -xjvf $SRCDIR/$GCC_GPP || { echo "Error extracting "$GCC_GPP; exit; }
 echo "Extracting $NEWLIB"
 tar -xzvf $SRCDIR/$NEWLIB || { echo "Error extracting "$NEWLIB; exit; }
 
+echo "Extracting $GDB"
+tar -xjvf $SRCDIR/$GDB || { echo "Error extracting "$GCC_GPP; exit; }
+
 if [ $VERSION -eq 2 ]
 then
   echo "Extracting $LIBOGC"
@@ -386,7 +402,10 @@ fi
 patch -p1 -d $BINUTILS_SRCDIR -i $patchdir/binutils-$BINUTILS_VER.patch || { echo "Error patching binutils"; exit; }
 patch -p1 -d $GCC_SRCDIR -i $patchdir/gcc-$GCC_VER.patch || { echo "Error patching gcc"; exit; }
 patch -p1 -d $NEWLIB_SRCDIR -i $patchdir/newlib-$NEWLIB_VER.patch || { echo "Error patching newlib"; exit; }
-
+if [ -f $patchdir/gdb-$GDB_VER.patch ]
+then
+  patch -p1 -d $GDB_SRCDIR -i $patchdir/gdb-$GDB_VER.patch || { echo "Error patching gdb"; exit; }
+fi
 
 #---------------------------------------------------------------------------------
 # Build and install devkit components
