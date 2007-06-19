@@ -255,8 +255,8 @@ SECTIONS
 		.ewram7 { *(.ewram7) . = ALIGN(4);}
 		.ewram8 { *(.ewram8) . = ALIGN(4);}
 		.ewram9 { *(.ewram9) . = ALIGN(4);}
-		__ewram_overlay_end  = ABSOLUTE(.);
 	} >ewram = 0xff
+	__ewram_overlay_end  = ABSOLUTE(.);
 
 	__eheap_start = __ewram_overlay_end ;
 

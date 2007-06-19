@@ -262,8 +262,8 @@ SECTIONS
 		LONG(0x52416b64)
 		LONG(0x4d)
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
-		__rom_end__ = ABSOLUTE(.);
 	} = 0xff
+	__rom_end__ = __pad_lma + SIZEOF(.pad);
 
 
 	/* Stabs debugging sections.  */
