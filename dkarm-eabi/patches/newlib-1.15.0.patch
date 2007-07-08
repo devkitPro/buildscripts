@@ -5242,13 +5242,13 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/read.c newlib-1.15.0-new/libgloss/
 +
 diff -Nbaur newlib-1.15.0/libgloss/libsysbase/rename.c newlib-1.15.0-new/libgloss/libsysbase/rename.c
 --- newlib-1.15.0/libgloss/libsysbase/rename.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-new/libgloss/libsysbase/rename.c	Fri Feb 16 09:13:45 2007
++++ newlib-1.15.0-new/libgloss/libsysbase/rename.c	Tue Jul  3 01:25:38 2007
 @@ -0,0 +1,25 @@
 +#include <reent.h>
 +#include <sys/iosupport.h>
 +#include <errno.h>
 +
-+int rename (const char *existing, const char *newName) {
++int _rename (const char *existing, const char *newName) {
 +	struct _reent *r = _REENT;
 +
 +	int ret;
