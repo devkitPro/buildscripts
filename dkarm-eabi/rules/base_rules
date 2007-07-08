@@ -24,7 +24,7 @@ export OBJCOPY	:=	$(PREFIX)objcopy
 #---------------------------------------------------------------------------------
 %.arm.o: %.arm.cpp
 	@echo $(notdir $<)
-	$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.d $(CXXFLAGS) -marm-c $< -o $@
+	$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.d $(CXXFLAGS) -marm -c $< -o $@
 	
 #---------------------------------------------------------------------------------
 %.arm.o: %.arm.c
