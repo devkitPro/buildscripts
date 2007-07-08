@@ -38,6 +38,7 @@ SECTIONS
 	.fini           :
 	{
 		KEEP (*(.fini))
+		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >ddmem =0xff
 
 	__text_end = . ;
