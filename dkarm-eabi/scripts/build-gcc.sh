@@ -12,21 +12,27 @@ prefix=$INSTALLDIR/devkitARM
 mkdir -p $target/binutils
 cd $target/binutils
 
-../../$BINUTILS_SRCDIR/configure \
-	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
-	--disable-threads --with-gcc --with-gnu-as --with-gnu-ld \
-	|| { echo "Error configuring binutils"; exit 1; }
+if [ ! -f configured-binutils ]
+then
+  ../../$BINUTILS_SRCDIR/configure \
+        --prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
+        --disable-threads --with-gcc --with-gnu-as --with-gnu-ld \
+        || { echo "Error configuring binutils"; exit 1; }
+  touch configured-binutils
+fi
 
-$MAKE || { echo "Error building binutils"; exit 1; }
-$MAKE install || { echo "Error installing binutils"; exit 1; }
+if [ ! -f built-binutils ]
+then
+  $MAKE || { echo "Error building binutils"; exit 1; }
+  touch built-binutils
+fi
 
+if [ ! -f installed-binutils ]
+then
+  $MAKE install || { echo "Error installing binutils"; exit 1; }
+  touch installed-binutils
+fi
 cd $BUILDSCRIPTDIR
-
-#---------------------------------------------------------------------------------
-# remove temp stuff to conserve disc space
-#---------------------------------------------------------------------------------
-rm -fr $target/binutils
-rm -fr $BINUTILS_SRCDIR
 
 #---------------------------------------------------------------------------------
 # build and install just the c compiler
@@ -35,22 +41,38 @@ mkdir -p $target/gcc
 cd $target/gcc
 
 
-CFLAGS=-D__USE_MINGW_ACCESS ../../$GCC_SRCDIR/configure \
-	--enable-languages=c,c++ \
-	--with-cpu=arm7tdmi\
-	--enable-interwork --enable-multilib\
-	--with-gcc --with-gnu-ld --with-gnu-as \
-	--disable-shared --disable-threads --disable-win32-registry --disable-nls --disable-debug\
-	--disable-libmudflap --disable-libssp \
-	--target=$target \
-	--with-newlib \
-	--prefix=$prefix\
-	|| { echo "Error configuring gcc"; exit 1; }
+if [ ! -f configured-gcc ]
+then
+  CFLAGS=-D__USE_MINGW_ACCESS ../../$GCC_SRCDIR/configure \
+        --enable-languages=c,c++ \
+        --with-cpu=arm7tdmi\
+        --enable-interwork --enable-multilib\
+        --with-gcc --with-gnu-ld --with-gnu-as \
+        --disable-shared --disable-threads --disable-win32-registry --disable-nls --disable-debug\
+        --disable-libmudflap --disable-libssp \
+        --target=$target \
+        --with-newlib \
+        --prefix=$prefix\
+        || { echo "Error configuring gcc"; exit 1; }
+  touch configured-gcc
+fi
+
+
+# hack to get around msys/mingw build problem
 
 mkdir -p libiberty libcpp fixincludes
 
-$MAKE all-gcc || { echo "Error building gcc"; exit 1; }
-$MAKE install-gcc || { echo "Error installing gcc"; exit 1; }
+if [ ! -f built-gcc ]
+then
+  $MAKE all-gcc || { echo "Error building gcc"; exit 1; }
+  touch built-gcc
+fi
+
+if [ ! -f installed-gcc ]
+then
+  $MAKE install-gcc || { echo "Error installing gcc"; exit 1; }
+  touch installed-gcc
+fi
 
 cd $BUILDSCRIPTDIR
 
@@ -61,20 +83,28 @@ mkdir -p $target/newlib
 cd $target/newlib
 mkdir -p etc
 
-CFLAGS=-DREENTRANT_SYSCALLS_PROVIDED ../../$NEWLIB_SRCDIR/configure \
-	--disable-newlib-supplied-syscalls \
-	--target=$target \
-	--prefix=$prefix \
-	|| { echo "Error configuring newlib"; exit 1; }
+if [ ! -f configured-newlib ]
+then
+  CFLAGS=-DREENTRANT_SYSCALLS_PROVIDED ../../$NEWLIB_SRCDIR/configure \
+        --disable-newlib-supplied-syscalls \
+        --target=$target \
+        --prefix=$prefix \
+        || { echo "Error configuring newlib"; exit 1; }
+  touch configured-newlib
+fi
 
-$MAKE || { echo "Error building newlib"; exit 1; }
-$MAKE install || { echo "Error installing newlib"; exit 1; }
+if [ ! -f built-newlib ]
+then
+  $MAKE || { echo "Error building newlib"; exit 1; }
+  touch built-newlib
+fi
 
-#---------------------------------------------------------------------------------
-# remove temp stuff to conserve disc space
-#---------------------------------------------------------------------------------
-rm -fr $target/newlib
-rm -fr $NEWLIB_SRCDIR
+
+if [ ! -f installed-newlib ]
+then
+  $MAKE install || { echo "Error installing newlib"; exit 1; }
+  touch installed-newlib
+fi
 
 #---------------------------------------------------------------------------------
 # build and install the final compiler
@@ -83,16 +113,19 @@ rm -fr $NEWLIB_SRCDIR
 cd $BUILDSCRIPTDIR
 cd $target/gcc
 
-$MAKE || { echo "Error building g++"; exit 1; }
-$MAKE install || { echo "Error installing g++"; exit 1; }
+if [ ! -f built-g++ ]
+then
+  $MAKE || { echo "Error building g++"; exit 1; }
+  touch built-g++
+fi
+
+if [ ! -f installed-g++ ]
+then
+  $MAKE install || { echo "Error installing g++"; exit 1; }
+  touch built-g++
+fi
 
 cd $BUILDSCRIPTDIR
-
-#---------------------------------------------------------------------------------
-# remove temp stuff to conserve disc space
-#---------------------------------------------------------------------------------
-rm -fr $target/gcc
-rm -fr $GCC_SRCDIR
 
 #---------------------------------------------------------------------------------
 # build and install the debugger
@@ -100,15 +133,22 @@ rm -fr $GCC_SRCDIR
 mkdir -p $target/gdb
 cd $target/gdb
 
-../../$GDB_SRCDIR/configure \
-	--prefix=$prefix --target=$target --disable-nls \
-	|| { echo "Error configuring gdb"; exit 1; }
+if [ ! -f configured-gdb ]
+then
+  ../../$GDB_SRCDIR/configure \
+        --prefix=$prefix --target=$target --disable-nls \
+        || { echo "Error configuring gdb"; exit 1; }
+  touch configured-gdb
+fi
 
-$MAKE || { echo "Error building gdb"; exit 1; }
-$MAKE install || { echo "Error installing gdb"; exit 1; }
+if [ ! -f built-gdb ]
+then
+  $MAKE || { echo "Error building gdb"; exit 1; }
+  touch built-gdb
+fi
 
-#---------------------------------------------------------------------------------
-# remove temp stuff to conserve disc space
-#---------------------------------------------------------------------------------
-rm -fr $target/gdb
-rm -fr $GDB_SRCDIR
+if [ ! -f installed-gdb ]
+then
+  $MAKE install || { echo "Error installing gdb"; exit 1; }
+  touch installed-gdb
+fi

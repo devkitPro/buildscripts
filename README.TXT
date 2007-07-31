@@ -13,13 +13,6 @@ Bison, Flex and Wget from the gnuwin32 project
 
 http://sourceforge.net/projects/gnuwin32/
 
-
-Two other packages are required on all platforms, these should be built and installed before building the toolchain(s). It appears there is no UPX version for OS X, the scripts will report an error but this is non fatal.
-
-upx
-
-http://upx.sourceforge.net/
-
 For devkitPSP a command line subversion client is required to get the PSP SDK http://www.tigris.org  
 
 Downloading the source packages
@@ -28,13 +21,22 @@ Downloading the source packages
 When you run the build script it will ask you to choose from one of two options, one for if you have already downloaded the source packages and another for if you want it to download them for you (using wget).  If you choose option one and want to get the source packages for yourself then you can find them at the urls listed below;
 
 binutils 2.17  - http://ftp.gnu.org/gnu/binutils/binutils-2.17.tar.bz2
-gcc-core 4.1.1 - http://ftp.gnu.org/gnu/gcc/gcc-4.1.1/gcc-core-4.1.1.tar.bz2
-gcc-g++ 4.1.1 - http://ftp.gnu.org/gnu/gcc/gcc-4.1.1/gcc-g++-4.1.1.tar.bz2
+gcc-core 4.1.2 - http://ftp.gnu.org/gnu/gcc/gcc-4.1.1/gcc-core-4.1.2.tar.bz2
+gcc-g++ 4.1.2 - http://ftp.gnu.org/gnu/gcc/gcc-4.1.1/gcc-g++-4.1.2.tar.bz2
+newlib 1.15.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.15.0.tar.gz
+
+
+Currently devkitPPC is still using earlier versions of the tools.
+
+binutils 2.16.1  - http://ftp.gnu.org/gnu/binutils/binutils-2.16.1.tar.bz2
+gcc-core 3.4.6 - http://ftp.gnu.org/gnu/gcc/gcc-3.4.6/gcc-core-3.4.6.tar.bz2
+gcc-g++ 3.4.6 - http://ftp.gnu.org/gnu/gcc/gcc-3.4.6/gcc-g++-3.4.6.tar.bz2
 newlib 1.14.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.14.0.tar.gz
 
 libogc, libgba, libnds, libmirko, dswifi and libfat can be found in the sourceforge project.
 
 http://sourceforge.net/projects/devkitpro
+
 
 
 The top level shell script has now been unified and offers the option of devkitARM, devkitPPC or devkitPSP.

@@ -8,10 +8,10 @@
 #---------------------------------------------------------------------------------
 LIBOGC_VER=20070118
 LIBGBA_VER=20060720
-LIBNDS_VER=20070327
+LIBNDS_VER=20070616
 LIBFAT_VER=20070127
-DSWIFI_VER=0.3d
-LIBMIRKO_VER=0.9.7
+DSWIFI_VER=0.3.2
+LIBMIRKO_VER=0.9.8
 GDB_VER=6.6
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
@@ -54,19 +54,42 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=4.1.2
+    GCC_VER=4.2.1
     BINUTILS_VER=2.17
     NEWLIB_VER=1.15.0
+    basedir='dkarm-eabi'
+    package=devkitARM
+    builddir=arm-eabi
+    target=arm-eabi
+    toolchain=DEVKITARM
   ;;
   "2" )
     GCC_VER=3.4.6
     BINUTILS_VER=2.16.1
     NEWLIB_VER=1.14.0
+    basedir='dkppc'
+    package=devkitPPC
+    builddir=powerpc-gekko
+    target=powerpc-gekko
+    toolchain=DEVKITPPC
   ;;
   "3" )
     GCC_VER=4.1.2
     BINUTILS_VER=2.16.1
-    NEWLIB_VER=1.14.0
+    NEWLIB_VER=1.15.0
+    basedir='dkpsp'
+    package=devkitPSP
+    builddir=psp
+    target=psp
+    toolchain=DEVKITPSP
+
+    if test "`svn help`"
+    then
+      SVN="svn"
+    else
+     echo "ERROR: Please make sure you have 'subversion (svn)' installed."
+     exit
+    fi
   ;;
 esac
 
@@ -78,43 +101,6 @@ BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
 BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/$BINUTILS"
 NEWLIB="newlib-$NEWLIB_VER.tar.gz"
 NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/$NEWLIB"
-
-
-
-if [ $VERSION -eq 1 ]
-then
-  basedir='dkarm-eabi'
-  package=devkitARM
-  builddir=arm-eabi
-  target=arm-eabi
-  toolchain=DEVKITARM
-fi
-
-if [ $VERSION -eq 2 ]
-then
-  basedir='dkppc'
-  package=devkitPPC
-  builddir=powerpc-gekko
-  target=powerpc-gekko
-  toolchain=DEVKITPPC
-fi
-
-if [ $VERSION -eq 3 ]
-then
-  basedir='dkpsp'
-  package=devkitPSP
-  builddir=psp
-  target=psp
-  toolchain=DEVKITPSP
-
-  if test "`svn help`"
-  then
-    SVN="svn"
-  else
-     echo "ERROR: Please make sure you have 'subversion (svn)' installed."
-     exit
-  fi
-fi
 
 DOWNLOAD=0
 
@@ -262,31 +248,35 @@ then
 
 else
 
-    $WGET --passive-ftp -c $BINUTILS_URL || { echo "Error: Failed to download "$BINUTILS; exit; }
+    if [ ! -f downloaded_sources ]
+    then
+      $WGET --passive-ftp -c $BINUTILS_URL || { echo "Error: Failed to download "$BINUTILS; exit; }
 
-    $WGET -c $GCC_CORE_URL || { echo "Error: Failed to download "$GCC_CORE; exit; }
+      $WGET -c $GCC_CORE_URL || { echo "Error: Failed to download "$GCC_CORE; exit; }
 
-    $WGET -c $GCC_GPP_URL || { echo "Error: Failed to download "$GCC_GPP; exit; }
+      $WGET -c $GCC_GPP_URL || { echo "Error: Failed to download "$GCC_GPP; exit; }
 
-    $WGET -c $GDB_URL || { echo "Error: Failed to download "$GDB; exit; }
+      $WGET -c $GDB_URL || { echo "Error: Failed to download "$GDB; exit; }
 
-    $WGET --passive-ftp -c $NEWLIB_URL || { echo "Error: Failed to download "$NEWLIB; exit; }
+      $WGET --passive-ftp -c $NEWLIB_URL || { echo "Error: Failed to download "$NEWLIB; exit; }
 
-	if [ $VERSION -eq 2 ]
-	then
-		$WGET -c $LIBOGC_URL || { echo "Error: Failed to download "$LIBOGC; exit; }
-	fi
+      if [ $VERSION -eq 2 ]
+      then
+       $WGET -c $LIBOGC_URL || { echo "Error: Failed to download "$LIBOGC; exit; }
+      fi
 
 
-	if [ $VERSION -eq 1 ]
-	then
-		$WGET -c $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit; }
-		$WGET -c $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit; }
-		$WGET -c $DSWIFI_URL || { echo "Error: Failed to download "$DSWIFI; exit; }
-		$WGET -c $LIBFAT_URL || { echo "Error: Failed to download "$LIBFAT; exit; }
-		$WGET -c $LIBMIRKO_URL || { echo "Error: Failed to download "$LIBMIRKO; exit; }
-	fi
-	SRCDIR=`pwd`
+      if [ $VERSION -eq 1 ]
+      then
+        $WGET -c $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit; }
+        $WGET -c $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit; }
+        $WGET -c $DSWIFI_URL || { echo "Error: Failed to download "$DSWIFI; exit; }
+        $WGET -c $LIBFAT_URL || { echo "Error: Failed to download "$LIBFAT; exit; }
+        $WGET -c $LIBMIRKO_URL || { echo "Error: Failed to download "$LIBMIRKO; exit; }
+      fi
+      SRCDIR=`pwd`
+      touch downloaded_sources
+    fi
 fi
 
 BINUTILS_SRCDIR="binutils-$BINUTILS_VER"
@@ -349,62 +339,85 @@ scriptdir=$(pwd)/$basedir/scripts
 
 BUILDSCRIPTDIR=$(pwd)
 
-echo "Extracting $BINUTILS"
-tar -xjvf $SRCDIR/$BINUTILS || { echo "Error extracting "$BINUTILS; exit; }
-
-echo "Extracting $GCC_CORE"
-tar -xjvf $SRCDIR/$GCC_CORE || { echo "Error extracting "$GCC_CORE; exit; }
-
-echo "Extracting $GCC_GPP"
-tar -xjvf $SRCDIR/$GCC_GPP || { echo "Error extracting "$GCC_GPP; exit; }
-
-echo "Extracting $NEWLIB"
-tar -xzvf $SRCDIR/$NEWLIB || { echo "Error extracting "$NEWLIB; exit; }
-
-echo "Extracting $GDB"
-tar -xjvf $SRCDIR/$GDB || { echo "Error extracting "$GCC_GPP; exit; }
-
-if [ $VERSION -eq 2 ]
+if [ ! -f extracted_archives ]
 then
-  echo "Extracting $LIBOGC"
-  mkdir -p $LIBOGC_SRCDIR
-  bzip2 -cd $SRCDIR/$LIBOGC | tar -xvf - -C $LIBOGC_SRCDIR  || { echo "Error extracting "$LIBOGC; exit; }
+  echo "Extracting $BINUTILS"
+  tar -xjvf $SRCDIR/$BINUTILS || { echo "Error extracting "$BINUTILS; exit; }
+
+  echo "Extracting $GCC_CORE"
+  tar -xjvf $SRCDIR/$GCC_CORE || { echo "Error extracting "$GCC_CORE; exit; }
+
+  echo "Extracting $GCC_GPP"
+  tar -xjvf $SRCDIR/$GCC_GPP || { echo "Error extracting "$GCC_GPP; exit; }
+
+  echo "Extracting $NEWLIB"
+  tar -xzvf $SRCDIR/$NEWLIB || { echo "Error extracting "$NEWLIB; exit; }
+
+  echo "Extracting $GDB"
+  tar -xjvf $SRCDIR/$GDB || { echo "Error extracting "$GCC_GPP; exit; }
+
+  if [ $VERSION -eq 2 ]
+  then
+    echo "Extracting $LIBOGC"
+    mkdir -p $LIBOGC_SRCDIR
+    bzip2 -cd $SRCDIR/$LIBOGC | tar -xvf - -C $LIBOGC_SRCDIR  || { echo "Error extracting "$LIBOGC; exit; }
+  fi
+
+  if [ $VERSION -eq 1 ]
+  then
+    echo "Extracting $LIBNDS"
+    mkdir -p $LIBNDS_SRCDIR
+    bzip2 -cd $SRCDIR/$LIBNDS | tar -xvf - -C $LIBNDS_SRCDIR  || { echo "Error extracting "$LIBNDS; exit; }
+
+    echo "Extracting $LIBGBA"
+    mkdir -p $LIBGBA_SRCDIR
+    bzip2 -cd $SRCDIR/$LIBGBA | tar -xvf - -C $LIBGBA_SRCDIR || { echo "Error extracting "$LIBGBA; exit; }
+
+
+    echo "Extracting $LIBFAT"
+    mkdir -p $LIBFAT_SRCDIR
+    bzip2 -cd $SRCDIR/$LIBFAT | tar -xvf - -C $LIBFAT_SRCDIR || { echo "Error extracting "$LIBFAT; exit; }
+
+    echo "Extracting $DSWIFI"
+    mkdir -p $DSWIFI_SRCDIR
+    bzip2 -cd $SRCDIR/$DSWIFI | tar -xvf - -C $DSWIFI_SRCDIR || { echo "Error extracting "$DSWIFI; exit; }
+
+    echo "Extracting $LIBMIRKO"
+    mkdir -p $LIBMIRKO_SRCDIR
+    bzip2 -cd $SRCDIR/$LIBMIRKO | tar -xvf - -C $LIBMIRKO_SRCDIR || { echo "Error extracting "$LIBMIRKO; exit; }
+  fi
+
+  touch extracted_archives
+
 fi
-
-if [ $VERSION -eq 1 ]
-then
-  echo "Extracting $LIBNDS"
-  mkdir -p $LIBNDS_SRCDIR
-  bzip2 -cd $SRCDIR/$LIBNDS | tar -xvf - -C $LIBNDS_SRCDIR  || { echo "Error extracting "$LIBNDS; exit; }
-
-  echo "Extracting $LIBGBA"
-  mkdir -p $LIBGBA_SRCDIR
-  bzip2 -cd $SRCDIR/$LIBGBA | tar -xvf - -C $LIBGBA_SRCDIR || { echo "Error extracting "$LIBGBA; exit; }
-
-
-  echo "Extracting $LIBFAT"
-  mkdir -p $LIBFAT_SRCDIR
-  bzip2 -cd $SRCDIR/$LIBFAT | tar -xvf - -C $LIBFAT_SRCDIR || { echo "Error extracting "$LIBFAT; exit; }
-
-  echo "Extracting $DSWIFI"
-  mkdir -p $DSWIFI_SRCDIR
-  bzip2 -cd $SRCDIR/$DSWIFI | tar -xvf - -C $DSWIFI_SRCDIR || { echo "Error extracting "$DSWIFI; exit; }
-
-  echo "Extracting $LIBMIRKO"
-  mkdir -p $LIBMIRKO_SRCDIR
-  bzip2 -cd $SRCDIR/$LIBMIRKO | tar -xvf - -C $LIBMIRKO_SRCDIR || { echo "Error extracting "$LIBMIRKO; exit; }
-fi
-
 
 #---------------------------------------------------------------------------------
 # apply patches
 #---------------------------------------------------------------------------------
-patch -p1 -d $BINUTILS_SRCDIR -i $patchdir/binutils-$BINUTILS_VER.patch || { echo "Error patching binutils"; exit; }
-patch -p1 -d $GCC_SRCDIR -i $patchdir/gcc-$GCC_VER.patch || { echo "Error patching gcc"; exit; }
-patch -p1 -d $NEWLIB_SRCDIR -i $patchdir/newlib-$NEWLIB_VER.patch || { echo "Error patching newlib"; exit; }
-if [ -f $patchdir/gdb-$GDB_VER.patch ]
+if [ ! -f patch_sources ]
 then
-  patch -p1 -d $GDB_SRCDIR -i $patchdir/gdb-$GDB_VER.patch || { echo "Error patching gdb"; exit; }
+
+  if [ -f $patchdir/binutils-$BINUTILS_VER.patch ]
+  then
+    patch -p1 -d $BINUTILS_SRCDIR -i $patchdir/binutils-$BINUTILS_VER.patch || { echo "Error patching binutils"; exit; }
+  fi
+
+  if [ -f $patchdir/gcc-$GCC_VER.patch ]
+  then
+    patch -p1 -d $GCC_SRCDIR -i $patchdir/gcc-$GCC_VER.patch || { echo "Error patching gcc"; exit; }
+  fi
+
+  if [ -f $patchdir/newlib-$NEWLIB_VER.patch ]
+  then
+    patch -p1 -d $NEWLIB_SRCDIR -i $patchdir/newlib-$NEWLIB_VER.patch || { echo "Error patching newlib"; exit; }
+  fi
+
+  if [ -f $patchdir/gdb-$GDB_VER.patch ]
+  then
+    patch -p1 -d $GDB_SRCDIR -i $patchdir/gdb-$GDB_VER.patch || { echo "Error patching gdb"; exit; }
+  fi
+
+  touch patch_sources
 fi
 
 #---------------------------------------------------------------------------------
@@ -418,13 +431,16 @@ if [ -f $scriptdir/build-tools.sh ]; then . $scriptdir/build-tools.sh || { echo 
 # strip binaries
 # strip has trouble using wildcards so do it this way instead
 #---------------------------------------------------------------------------------
-for f in	$INSTALLDIR/$package/bin/* \
-		$INSTALLDIR/$package/$target/bin/* \
-		$INSTALLDIR/$package/libexec/gcc/$target/$GCC_VER/*
+for f in $INSTALLDIR/$package/bin/* \
+         $INSTALLDIR/$package/$target/bin/* \
+         $INSTALLDIR/$package/libexec/gcc/$target/$GCC_VER/*
 do
-	strip $f
+  strip $f
 done
 
+#---------------------------------------------------------------------------------
+# remove rather large pre-compiled headers
+#---------------------------------------------------------------------------------
 rm -fr $INSTALLDIR/$package/include/c++/$GCC_VER/$target/bits/stdc++.h.gch
 
 #---------------------------------------------------------------------------------
