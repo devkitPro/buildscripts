@@ -54,7 +54,7 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=4.2.1
+    GCC_VER=4.1.2
     BINUTILS_VER=2.17
     NEWLIB_VER=1.15.0
     basedir='dkarm-eabi'
@@ -394,7 +394,7 @@ fi
 #---------------------------------------------------------------------------------
 # apply patches
 #---------------------------------------------------------------------------------
-if [ ! -f patch_sources ]
+if [ ! -f patched_sources ]
 then
 
   if [ -f $patchdir/binutils-$BINUTILS_VER.patch ]
@@ -417,7 +417,7 @@ then
     patch -p1 -d $GDB_SRCDIR -i $patchdir/gdb-$GDB_VER.patch || { echo "Error patching gdb"; exit; }
   fi
 
-  touch patch_sources
+  touch patched_sources
 fi
 
 #---------------------------------------------------------------------------------
@@ -453,14 +453,23 @@ find $INSTALLDIR/$package/$target -name *.a -exec $target-strip -d {} \;
 # Clean up temporary files and source directories
 #---------------------------------------------------------------------------------
 
-echo "Removing patched sources and build directories"
+echo
+echo "Would you like to delete the build folders and patched sources? [Y/n]"
+read answer
 
-rm -fr $target
-rm -fr $BINUTILS_SRCDIR
-rm -fr $NEWLIB_SRCDIR
-rm -fr $GCC_SRCDIR
+if [ "$answer" != "n" -a "$answer" != "N" ]
+then
+  echo "Removing patched sources and build directories"
 
-rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $LIBMIRKO_SRCDIR $DSWIFI_SRCDIR $LIBFAT_SRCDIR
+  rm -fr $target
+  rm -fr $BINUTILS_SRCDIR
+  rm -fr $NEWLIB_SRCDIR
+  rm -fr $GCC_SRCDIR
+
+  rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $LIBMIRKO_SRCDIR $DSWIFI_SRCDIR $LIBFAT_SRCDIR $GDB_SRCDIR
+  rm extracted_archives patched_sources
+
+fi
 
 echo
 echo "Would you like to delete the downloaded source packages? [y/N]"
