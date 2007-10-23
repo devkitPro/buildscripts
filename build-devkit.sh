@@ -8,9 +8,9 @@
 #---------------------------------------------------------------------------------
 LIBOGC_VER=20070118
 LIBGBA_VER=20060720
-LIBNDS_VER=20070616
+LIBNDS_VER=20071023
 LIBFAT_VER=20070127
-DSWIFI_VER=0.3.2
+DSWIFI_VER=0.3.3
 LIBMIRKO_VER=0.9.8
 GDB_VER=6.6
 
@@ -435,7 +435,7 @@ for f in $INSTALLDIR/$package/bin/* \
          $INSTALLDIR/$package/$target/bin/* \
          $INSTALLDIR/$package/libexec/gcc/$target/$GCC_VER/*
 do
-  strip $f
+  strip -d $f
 done
 
 #---------------------------------------------------------------------------------
