@@ -5656,18 +5656,6 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/write.c newlib-1.15.0-new/libgloss
 +	}
 +	return ret;
 +}
-diff -Nbaur newlib-1.15.0/newlib/Makefile.in newlib-1.15.0-new/newlib/Makefile.in
---- newlib-1.15.0/newlib/Makefile.in	Mon Dec 18 20:32:41 2006
-+++ newlib-1.15.0-new/newlib/Makefile.in	Tue Jul 31 12:55:20 2007
-@@ -891,6 +891,8 @@
- 	      cp $$i targ-include/machine/`basename $$i`; \
- 	    else true; fi ; \
- 	  done
-+	mkdir -p $(TARG_INCLUDE_DIR)/targ-include
-+	cp -a targ-include $(TARG_INCLUDE_DIR)/targ-include
- 	touch $@
- 
- install-data-local:	install-toollibLIBRARIES
 diff -Nbaur newlib-1.15.0/newlib/libc/include/reent.h newlib-1.15.0-new/newlib/libc/include/reent.h
 --- newlib-1.15.0/newlib/libc/include/reent.h	Wed Aug 27 17:24:57 2003
 +++ newlib-1.15.0-new/newlib/libc/include/reent.h	Fri Apr 13 02:55:00 2007
