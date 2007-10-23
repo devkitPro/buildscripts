@@ -5836,10 +5836,14 @@ diff -Nbaur newlib-1.15.0/newlib/libc/include/sys/reent.h newlib-1.15.0-new/newl
  
 diff -Nbaur newlib-1.15.0/newlib/libc/include/sys/statvfs.h newlib-1.15.0-new/newlib/libc/include/sys/statvfs.h
 --- newlib-1.15.0/newlib/libc/include/sys/statvfs.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-new/newlib/libc/include/sys/statvfs.h	Mon Aug 27 10:46:10 2007
-@@ -0,0 +1,22 @@
++++ newlib-1.15.0-new/newlib/libc/include/sys/statvfs.h	Tue Oct 23 00:21:27 2007
+@@ -0,0 +1,31 @@
 +#ifndef _SYS_STATVFS_H
 +#define _SYS_STATVFS_H
++
++#ifdef __cplusplus
++extern "C" {
++#endif
 +
 +#include <sys/types.h>
 +
@@ -5858,6 +5862,11 @@ diff -Nbaur newlib-1.15.0/newlib/libc/include/sys/statvfs.h newlib-1.15.0-new/ne
 +}; 
 +
 +int statvfs(const char *path, struct statvfs *buf);
++
++#ifdef __cplusplus
++}
++#endif
++
 +
 +#endif // _SYS_STATVFS_H
 \ No newline at end of file
