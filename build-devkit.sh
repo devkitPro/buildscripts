@@ -435,7 +435,7 @@ for f in $INSTALLDIR/$package/bin/* \
          $INSTALLDIR/$package/$target/bin/* \
          $INSTALLDIR/$package/libexec/gcc/$target/$GCC_VER/*
 do
-  strip -d $f
+  strip $f
 done
 
 #---------------------------------------------------------------------------------
