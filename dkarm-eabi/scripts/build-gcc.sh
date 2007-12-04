@@ -15,8 +15,7 @@ cd $target/binutils
 if [ ! -f configured-binutils ]
 then
   ../../$BINUTILS_SRCDIR/configure \
-        --prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
-        --disable-threads --with-gcc --with-gnu-as --with-gnu-ld \
+        --prefix=$prefix --target=$target --disable-nls \
         || { echo "Error configuring binutils"; exit 1; }
   touch configured-binutils
 fi
@@ -81,12 +80,12 @@ cd $BUILDSCRIPTDIR
 #---------------------------------------------------------------------------------
 mkdir -p $target/newlib
 cd $target/newlib
-mkdir -p etc
 
 if [ ! -f configured-newlib ]
 then
   CFLAGS=-DREENTRANT_SYSCALLS_PROVIDED ../../$NEWLIB_SRCDIR/configure \
         --disable-newlib-supplied-syscalls \
+        --enable-newlib-mb \
         --target=$target \
         --prefix=$prefix \
         || { echo "Error configuring newlib"; exit 1; }

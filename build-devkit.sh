@@ -10,9 +10,9 @@ LIBOGC_VER=20070118
 LIBGBA_VER=20060720
 LIBNDS_VER=20071023
 LIBFAT_VER=20070127
-DSWIFI_VER=0.3.3
+DSWIFI_VER=0.3.4
 LIBMIRKO_VER=0.9.7
-GDB_VER=6.6
+GDB_VER=6.7.1
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
@@ -21,13 +21,14 @@ LIBFAT="libfat-src-$LIBFAT_VER.tar.bz2"
 DSWIFI="dswifi-src-$DSWIFI_VER.tar.bz2"
 LIBMIRKO="libmirko-src-$LIBMIRKO_VER.tar.bz2"
 GDB="gdb-$GDB_VER.tar.bz2"
+DEVKITPRO_URL="http://downloads.sourceforge.net/devkitpro"
 
-LIBOGC_URL="http://downloads.sourceforge.net/devkitpro/$LIBOGC"
-LIBGBA_URL="http://downloads.sourceforge.net/devkitpro/$LIBGBA"
-LIBNDS_URL="http://downloads.sourceforge.net/devkitpro/$LIBNDS"
-DSWIFI_URL="http://downloads.sourceforge.net/devkitpro/$DSWIFI"
-LIBFAT_URL="http://downloads.sourceforge.net/devkitpro/$LIBFAT"
-LIBMIRKO_URL="http://downloads.sourceforge.net/devkitpro/$LIBMIRKO"
+LIBOGC_URL="$DEVKITPRO_URL/$LIBOGC"
+LIBGBA_URL="$DEVKITPRO_URL/$LIBGBA"
+LIBNDS_URL="$DEVKITPRO_URL/$LIBNDS"
+DSWIFI_URL="$DEVKITPRO_URL/$DSWIFI"
+LIBFAT_URL="$DEVKITPRO_URL/$LIBFAT"
+LIBMIRKO_URL="$DEVKITPRO_URL/$LIBMIRKO"
 GDB_URL="http://ftp.gnu.org/gnu/gdb/$GDB"
 
 #---------------------------------------------------------------------------------
@@ -55,7 +56,7 @@ done
 case "$VERSION" in
   "1" )
     GCC_VER=4.1.2
-    BINUTILS_VER=2.17
+    BINUTILS_VER=2.18.50
     NEWLIB_VER=1.15.0
     basedir='dkarm-eabi'
     package=devkitARM
