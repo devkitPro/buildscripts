@@ -9221,7 +9221,7 @@ diff -burN newlib-1.15.0/newlib/libc/sys/psp/xprintf.c newlib-psp/newlib/libc/sy
 + * Copyright (c) 2005 James Forshaw <tyranid@gmail.com>
 + * Copyright (c) 2005 John Kelley <ps2dev@kelley.ca>
 + *
-+ * $Id: newlib-1.15.0.patch,v 1.1 2007-10-23 20:03:16 wntrmute Exp $
++ * $Id: newlib-1.15.0.patch,v 1.2 2007-12-10 23:56:02 wntrmute Exp $
 + */
 +/* Code borrowed from mysql's xprintf.c, by Richard Hipp */
 +/* This xprintf.c file on which this one is based is in public domain. */
