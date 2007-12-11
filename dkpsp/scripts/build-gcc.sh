@@ -146,7 +146,25 @@ fi
 
 cd $BUILDSCRIPTDIR
 
+#---------------------------------------------------------------------------------
+# build and install the psp sdk
+#---------------------------------------------------------------------------------
+echo "building pspsdk ..."
+cd pspsdk
 
+if [ ! -f built-sdk ]
+then
+  $MAKE || { echo "ERROR BUILDING PSPSDK"; exit 1; }
+  touch built-sdk
+fi
+
+if [ ! -f installed-sdk ]
+then
+  $MAKE install || { echo "ERROR INSTALLING PSPSDK"; exit 1; }
+  touch built-sdk
+fi
+
+cd $BUILDSCRIPTDIR
 
 #---------------------------------------------------------------------------------
 # build and install the debugger

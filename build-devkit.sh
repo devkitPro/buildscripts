@@ -468,7 +468,9 @@ then
   rm -fr $GCC_SRCDIR
 
   rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $LIBMIRKO_SRCDIR $DSWIFI_SRCDIR $LIBFAT_SRCDIR $GDB_SRCDIR
-  rm extracted_archives patched_sources
+  rm -fr mn10200
+  rm -fr pspsdk
+  rm -fr extracted_archives patched_sources checkout-psp-sdk
 
 fi
 
