@@ -84,7 +84,7 @@ fi
 
 if [ ! -f configure-sdk ]
 then
-  ./configure || { echo "ERROR RUNNING PSPSDK CONFIGURE"; exit 1; }
+  ./configure --with-pspdev="$prefix" || { echo "ERROR RUNNING PSPSDK CONFIGURE"; exit 1; }
   touch configure-sdk
 fi
 
