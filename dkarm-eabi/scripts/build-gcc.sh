@@ -121,7 +121,7 @@ fi
 if [ ! -f installed-g++ ]
 then
   $MAKE install || { echo "Error installing g++"; exit 1; }
-  touch built-g++
+  touch installed-g++
 fi
 
 cd $BUILDSCRIPTDIR

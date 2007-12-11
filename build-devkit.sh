@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=20070118
+LIBOGC_VER=20071206
 LIBGBA_VER=20060720
 LIBNDS_VER=20071023
 LIBFAT_VER=20070127
@@ -65,8 +65,8 @@ case "$VERSION" in
     toolchain=DEVKITARM
   ;;
   "2" )
-    GCC_VER=3.4.6
-    BINUTILS_VER=2.16.1
+    GCC_VER=4.1.2
+    BINUTILS_VER=2.18.50
     NEWLIB_VER=1.14.0
     basedir='dkppc'
     package=devkitPPC
@@ -343,49 +343,49 @@ BUILDSCRIPTDIR=$(pwd)
 if [ ! -f extracted_archives ]
 then
   echo "Extracting $BINUTILS"
-  tar -xjvf $SRCDIR/$BINUTILS || { echo "Error extracting "$BINUTILS; exit; }
+  tar -xjf $SRCDIR/$BINUTILS || { echo "Error extracting "$BINUTILS; exit; }
 
   echo "Extracting $GCC_CORE"
-  tar -xjvf $SRCDIR/$GCC_CORE || { echo "Error extracting "$GCC_CORE; exit; }
+  tar -xjf $SRCDIR/$GCC_CORE || { echo "Error extracting "$GCC_CORE; exit; }
 
   echo "Extracting $GCC_GPP"
-  tar -xjvf $SRCDIR/$GCC_GPP || { echo "Error extracting "$GCC_GPP; exit; }
+  tar -xjf $SRCDIR/$GCC_GPP || { echo "Error extracting "$GCC_GPP; exit; }
 
   echo "Extracting $NEWLIB"
   tar -xzvf $SRCDIR/$NEWLIB || { echo "Error extracting "$NEWLIB; exit; }
 
   echo "Extracting $GDB"
-  tar -xjvf $SRCDIR/$GDB || { echo "Error extracting "$GCC_GPP; exit; }
+  tar -xjf $SRCDIR/$GDB || { echo "Error extracting "$GCC_GPP; exit; }
 
   if [ $VERSION -eq 2 ]
   then
     echo "Extracting $LIBOGC"
     mkdir -p $LIBOGC_SRCDIR
-    bzip2 -cd $SRCDIR/$LIBOGC | tar -xvf - -C $LIBOGC_SRCDIR  || { echo "Error extracting "$LIBOGC; exit; }
+    bzip2 -cd $SRCDIR/$LIBOGC | tar -xf - -C $LIBOGC_SRCDIR  || { echo "Error extracting "$LIBOGC; exit; }
   fi
 
   if [ $VERSION -eq 1 ]
   then
     echo "Extracting $LIBNDS"
     mkdir -p $LIBNDS_SRCDIR
-    bzip2 -cd $SRCDIR/$LIBNDS | tar -xvf - -C $LIBNDS_SRCDIR  || { echo "Error extracting "$LIBNDS; exit; }
+    bzip2 -cd $SRCDIR/$LIBNDS | tar -xf - -C $LIBNDS_SRCDIR  || { echo "Error extracting "$LIBNDS; exit; }
 
     echo "Extracting $LIBGBA"
     mkdir -p $LIBGBA_SRCDIR
-    bzip2 -cd $SRCDIR/$LIBGBA | tar -xvf - -C $LIBGBA_SRCDIR || { echo "Error extracting "$LIBGBA; exit; }
+    bzip2 -cd $SRCDIR/$LIBGBA | tar -xf - -C $LIBGBA_SRCDIR || { echo "Error extracting "$LIBGBA; exit; }
 
 
     echo "Extracting $LIBFAT"
     mkdir -p $LIBFAT_SRCDIR
-    bzip2 -cd $SRCDIR/$LIBFAT | tar -xvf - -C $LIBFAT_SRCDIR || { echo "Error extracting "$LIBFAT; exit; }
+    bzip2 -cd $SRCDIR/$LIBFAT | tar -xf - -C $LIBFAT_SRCDIR || { echo "Error extracting "$LIBFAT; exit; }
 
     echo "Extracting $DSWIFI"
     mkdir -p $DSWIFI_SRCDIR
-    bzip2 -cd $SRCDIR/$DSWIFI | tar -xvf - -C $DSWIFI_SRCDIR || { echo "Error extracting "$DSWIFI; exit; }
+    bzip2 -cd $SRCDIR/$DSWIFI | tar -xf - -C $DSWIFI_SRCDIR || { echo "Error extracting "$DSWIFI; exit; }
 
     echo "Extracting $LIBMIRKO"
     mkdir -p $LIBMIRKO_SRCDIR
-    bzip2 -cd $SRCDIR/$LIBMIRKO | tar -xvf - -C $LIBMIRKO_SRCDIR || { echo "Error extracting "$LIBMIRKO; exit; }
+    bzip2 -cd $SRCDIR/$LIBMIRKO | tar -xf - -C $LIBMIRKO_SRCDIR || { echo "Error extracting "$LIBMIRKO; exit; }
   fi
 
   touch extracted_archives

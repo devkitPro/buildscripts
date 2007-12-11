@@ -7,9 +7,7 @@ DEVKITPPC=$TOOLPATH/devkitPPC
 #---------------------------------------------------------------------------------
 
 echo "installing specs ..."
-powerpc-gekko-gcc -dumpspecs $DEVKITPPC/lib/gcc/$target/$GCC_VER/specs
 cp `pwd`/dkppc/crtls/gcn* $DEVKITPPC/$target/lib/
-cp `pwd`/dkppc/crtls/specs $DEVKITPPC/lib/gcc/$target/$GCC_VER/specs
 #---------------------------------------------------------------------------------
 # copy base rulesets
 #---------------------------------------------------------------------------------
