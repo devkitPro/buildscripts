@@ -9,22 +9,28 @@ prefix=$INSTALLDIR/devkitPSP
 mkdir -p $target/binutils
 cd $target/binutils
 
-../../$BINUTILS_SRCDIR/configure \
+if [ ! -f configured-binutils ]
+then
+  ../../$BINUTILS_SRCDIR/configure \
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
 	--disable-threads --with-gcc --with-gnu-as --with-gnu-ld --with-stabs \
 	|| { echo "Error configuring binutils"; exit 1; }
+  touch configured-binutils
+fi
+
+if [ ! -f built-binutils ]
+then
+  $MAKE || { echo "Error building binutils"; exit 1; }
+  touch built-binutils
+fi
 
 
-$MAKE || { echo "Error building binutils"; exit 1; }
-$MAKE install || { echo "Error installing binutils"; exit 1; }
-
+if [ ! -f installed-binutils ]
+then
+  $MAKE install || { echo "Error installing binutils"; exit 1; }
+  touch installed-binutils
+fi
 cd $BUILDSCRIPTDIR
-
-#---------------------------------------------------------------------------------
-# remove temp stuff to conserve disc space
-#---------------------------------------------------------------------------------
-rm -fr $target/binutils
-rm -fr $BINUTILS_SRCDIR
 
 #---------------------------------------------------------------------------------
 # build and install just the c compiler
@@ -33,7 +39,9 @@ mkdir -p $target/gcc
 cd $target/gcc
 
 
-CFLAGS=-D__USE_MINGW_ACCESS ../../$GCC_SRCDIR/configure \
+if [ ! -f configured-gcc ]
+then
+  CFLAGS=-D__USE_MINGW_ACCESS ../../$GCC_SRCDIR/configure \
 	--enable-languages=c,c++ \
 	--disable-multilib\
 	--with-gcc --with-gnu-ld --with-gnu-as\
@@ -43,19 +51,48 @@ CFLAGS=-D__USE_MINGW_ACCESS ../../$GCC_SRCDIR/configure \
 	--with-newlib \
 	--prefix=$prefix \
 	|| { echo "Error configuring gcc"; exit 1; }
+  touch configured-gcc
+fi
 
-mkdir -p libiberty libcpp fixincludes
 
-$MAKE all-gcc || { echo "Error building gcc"; exit 1; }
-$MAKE install-gcc || { echo "Error installing gcc"; exit 1; }
+if [ ! -f built-gcc ]
+then
+  $MAKE all-gcc || { echo "Error building gcc"; exit 1; }
+  touch built-gcc
+fi
 
+
+if [ ! -f installed-gcc ]
+then
+  $MAKE install-gcc || { echo "Error installing gcc"; exit 1; }
+  touch installed-gcc
+fi
 cd $BUILDSCRIPTDIR
 
-svn checkout svn://svn.pspdev.org/psp/trunk/pspsdk || { echo "ERROR GETTING PSPSDK"; exit 1; }
+if [ ! -f checkout-psp-sdk ]
+then
+  svn checkout svn://svn.pspdev.org/psp/trunk/pspsdk || { echo "ERROR GETTING PSPSDK"; exit 1; }
+  touch checkout-psp-sdk
+fi
+
 cd pspsdk
-./bootstrap || { echo "ERROR RUNNING PSPSDK BOOTSTRAP"; exit 1; }
-./configure || { echo "ERROR RUNNING PSPSDK CONFIGURE"; exit 1; }
-$MAKE install-data || { echo "ERROR INSTALLING PSPSDK HEADERS"; exit 1; }
+if [ ! -f bootstrap-sdk ]
+then
+  ./bootstrap || { echo "ERROR RUNNING PSPSDK BOOTSTRAP"; exit 1; }
+  touch bootstrap-sdk
+fi
+
+if [ ! -f configure-sdk ]
+then
+  ./configure || { echo "ERROR RUNNING PSPSDK CONFIGURE"; exit 1; }
+  touch configure-sdk
+fi
+
+if [ ! -f install-sdk-data ]
+then
+  $MAKE install-data || { echo "ERROR INSTALLING PSPSDK HEADERS"; exit 1; }
+  touch install-sdk-data
+fi
 
 cd $BUILDSCRIPTDIR
 
@@ -64,23 +101,30 @@ cd $BUILDSCRIPTDIR
 #---------------------------------------------------------------------------------
 mkdir -p $target/newlib
 cd $target/newlib
-mkdir etc
 
-$BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure \
+if [ ! -f configured-newlib ]
+then
+  $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure \
 	--target=$target \
 	--prefix=$prefix \
 	|| { echo "Error configuring newlib"; exit 1; }
+  touch configured-newlib
+fi
 
-$MAKE || { echo "Error building newlib"; exit 1; }
-$MAKE install || { echo "Error installing newlib"; exit 1; }
+if [ ! -f built-newlib ]
+then
+  $MAKE || { echo "Error building newlib"; exit 1; }
+  touch built-newlib
+fi
+
+if [ ! -f installed-newlib ]
+then
+  $MAKE install || { echo "Error installing newlib"; exit 1; }
+  touch installed-newlib
+fi
 
 cd $BUILDSCRIPTDIR
 
-#---------------------------------------------------------------------------------
-# remove temp stuff to conserve disc space
-#---------------------------------------------------------------------------------
-rm -fr $target/newlib
-rm -fr $NEWLIB_SRCDIR
 
 #---------------------------------------------------------------------------------
 # build and install the final compiler
@@ -88,18 +132,21 @@ rm -fr $NEWLIB_SRCDIR
 
 cd $target/gcc
 
-$MAKE || { echo "Error building g++"; exit 1; }
-$MAKE install || { echo "Error installing g++"; exit 1; }
+if [ ! -f built-g++ ]
+then
+  $MAKE || { echo "Error building g++"; exit 1; }
+  touch built-g++
+fi
 
+if [ ! -f installed-g++ ]
+then
+  $MAKE install || { echo "Error installing g++"; exit 1; }
+  touch installed-g++
+fi
 
 cd $BUILDSCRIPTDIR
 
 
-#---------------------------------------------------------------------------------
-# remove temp stuff to conserve disc space
-#---------------------------------------------------------------------------------
-rm -fr $target/gcc
-rm -fr $GCC_SRCDIR
 
 #---------------------------------------------------------------------------------
 # build and install the debugger
@@ -107,15 +154,22 @@ rm -fr $GCC_SRCDIR
 mkdir -p $target/gdb
 cd $target/gdb
 
-../../$GDB_SRCDIR/configure \
+if [ ! -f configured-gdb ]
+then
+  ../../$GDB_SRCDIR/configure \
 	--prefix=$prefix --target=$target --disable-nls \
 	|| { echo "Error configuring gdb"; exit 1; }
+  touch configured-gdb
+fi
 
-$MAKE || { echo "Error building gdb"; exit 1; }
-$MAKE install || { echo "Error installing gdb"; exit 1; }
+if [ ! -f built-gdb ]
+then
+  $MAKE || { echo "Error building gdb"; exit 1; }
+  touch built-gdb
+fi
 
-#---------------------------------------------------------------------------------
-# remove temp stuff to conserve disc space
-#---------------------------------------------------------------------------------
-rm -fr $target/gdb
-rm -fr $GDB_SRCDIR
+if [ ! -f installed-gdb ]
+then
+  $MAKE install || { echo "Error installing gdb"; exit 1; }
+  touch installed-gdb
+fi
