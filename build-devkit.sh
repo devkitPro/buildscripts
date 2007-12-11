@@ -352,7 +352,7 @@ then
   tar -xjf $SRCDIR/$GCC_GPP || { echo "Error extracting "$GCC_GPP; exit; }
 
   echo "Extracting $NEWLIB"
-  tar -xzvf $SRCDIR/$NEWLIB || { echo "Error extracting "$NEWLIB; exit; }
+  tar -xzf $SRCDIR/$NEWLIB || { echo "Error extracting "$NEWLIB; exit; }
 
   echo "Extracting $GDB"
   tar -xjf $SRCDIR/$GDB || { echo "Error extracting "$GCC_GPP; exit; }
