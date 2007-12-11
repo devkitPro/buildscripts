@@ -1,0 +1,14 @@
+diff -Nbaur gdb-6.7.1/config.sub gdb-6.7.1-ppc/config.sub
+--- gdb-6.7.1/config.sub	Wed Aug 29 16:23:21 2007
++++ gdb-6.7.1-ppc/config.sub	Mon Dec 10 22:21:17 2007
+@@ -230,6 +230,10 @@
+ 		basic_machine=m68k-atari
+ 		os=-mint
+ 		;;
++	-gekko)
++		basic_machine=powerpc-eabi
++		os=-elf
++		;;
+ esac
+ 
+ # Decode aliases for certain CPU-COMPANY combinations.

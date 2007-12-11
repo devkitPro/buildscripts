@@ -1,0 +1,14 @@
+diff -Nbaur binutils-2.18.50/config.sub binutils-2.18.50-ppc/config.sub
+--- binutils-2.18.50/config.sub	Wed Aug 29 16:23:21 2007
++++ binutils-2.18.50-ppc/config.sub	Sun Dec  9 22:30:07 2007
+@@ -230,6 +230,10 @@
+ 		basic_machine=m68k-atari
+ 		os=-mint
+ 		;;
++	-gekko)
++		basic_machine=powerpc-eabi
++		os=-elf
++		;;
+ esac
+ 
+ # Decode aliases for certain CPU-COMPANY combinations.
