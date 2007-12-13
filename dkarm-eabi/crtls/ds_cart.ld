@@ -32,15 +32,12 @@ SECTIONS
 
 	.text :   /* ALIGN (4): */
 	{
-
-		*(EXCLUDE_FILE (*text.iwram*) .text)
-		*(.text.*)
-		*(.stub)
+		*(EXCLUDE_FILE (*.iwram*) .text)
+		*(.text .stub .text.* .gnu.linkonce.t.*)
+		KEEP (*(.text.*personality*))
 		/* .gnu.warning sections are handled specially by elf32.em.  */
 		*(.gnu.warning)
-		*(.gnu.linkonce.t*)
-		*(.glue_7)
-		*(.glue_7t)
+		*(.glue_7t) *(.glue_7) *(.vfp11_veneer)
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
 	} >rom = 0xff
 

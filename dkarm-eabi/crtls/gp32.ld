@@ -17,18 +17,15 @@ SECTIONS
   } >ram = 0xff
   .plt            : { *(.plt) } >ram = 0xff
 
-  .text :   /* ALIGN (4): */
-  {
-
-    *(EXCLUDE_FILE (*text.iwram*) .text)
-    *(.text.*)
-    *(.stub)
-    /* .gnu.warning sections are handled specially by elf32.em.  */
-    *(.gnu.warning)
-    *(.gnu.linkonce.t*)
-    *(.glue_7)
-    *(.glue_7t)
-    . = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
+ 
+ 	.text :   /* ALIGN (4): */
+	{
+		*(.text .stub .text.* .gnu.linkonce.t.*)
+		KEEP (*(.text.*personality*))
+		/* .gnu.warning sections are handled specially by elf32.em.  */
+		*(.gnu.warning)
+		*(.glue_7t) *(.glue_7) *(.vfp11_veneer)
+		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
   } >ram = 0xff
   .fini           :
   {
