@@ -1,6 +1,6 @@
 diff -Nbaur gcc-4.1.2/gcc/c-incpath.c gcc-4.1.2-arm/gcc/c-incpath.c
 --- gcc-4.1.2/gcc/c-incpath.c	Sat Jun 25 03:02:01 2005
-+++ gcc-4.1.2-arm/gcc/c-incpath.c	Fri Feb 16 10:41:26 2007
++++ gcc-4.1.2-arm/gcc/c-incpath.c	Thu Dec 13 07:34:39 2007
 @@ -331,13 +331,18 @@
    cpp_dir *p;
  
@@ -29,7 +29,7 @@ diff -Nbaur gcc-4.1.2/gcc/c-incpath.c gcc-4.1.2-arm/gcc/c-incpath.c
    p = xmalloc (sizeof (cpp_dir));
 diff -Nbaur gcc-4.1.2/gcc/config/arm/t-arm-elf gcc-4.1.2-arm/gcc/config/arm/t-arm-elf
 --- gcc-4.1.2/gcc/config/arm/t-arm-elf	Wed Sep  1 12:14:21 2004
-+++ gcc-4.1.2-arm/gcc/config/arm/t-arm-elf	Wed Apr 11 12:43:29 2007
++++ gcc-4.1.2-arm/gcc/config/arm/t-arm-elf	Thu Dec 13 07:34:39 2007
 @@ -15,9 +15,9 @@
  # MULTILIB_DIRNAMES   += ep9312
  # MULTILIB_EXCEPTIONS += *mthumb/*mcpu=ep9312*
@@ -43,10 +43,46 @@ diff -Nbaur gcc-4.1.2/gcc/config/arm/t-arm-elf gcc-4.1.2-arm/gcc/config/arm/t-ar
  # 
  # MULTILIB_OPTIONS    += mhard-float/msoft-float
  # MULTILIB_DIRNAMES   += fpu soft
+diff -Nbaur gcc-4.1.2/gcc/config/arm/unknown-elf.h gcc-4.1.2-arm/gcc/config/arm/unknown-elf.h
+--- gcc-4.1.2/gcc/config/arm/unknown-elf.h	Sun Oct  2 04:24:07 2005
++++ gcc-4.1.2-arm/gcc/config/arm/unknown-elf.h	Thu Dec 13 07:36:41 2007
+@@ -94,4 +94,4 @@
+    udivmoddi4, which will depend on the exception unwind routines,
+    which will depend on abort, which is defined in libc.  */ 
+ #undef LINK_GCC_C_SEQUENCE_SPEC
+-#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L --end-group"
++#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
 diff -Nbaur gcc-4.1.2/gcc/gcc.c gcc-4.1.2-arm/gcc/gcc.c
 --- gcc-4.1.2/gcc/gcc.c	Tue Nov  7 14:26:21 2006
-+++ gcc-4.1.2-arm/gcc/gcc.c	Fri Feb 16 10:41:26 2007
-@@ -3250,8 +3250,6 @@
++++ gcc-4.1.2-arm/gcc/gcc.c	Thu Dec 13 07:46:06 2007
+@@ -618,6 +618,10 @@
+ #endif
+ #endif
+ 
++#ifndef LIBGLOSS_SPEC
++# define LIBGLOSS_SPEC "-lsysbase"
++#endif
++
+ /* config.h can define STARTFILE_SPEC to override the default crt0 files.  */
+ #ifndef STARTFILE_SPEC
+ #define STARTFILE_SPEC  \
+@@ -737,6 +741,7 @@
+ static const char *mfwrap_spec = MFWRAP_SPEC;
+ static const char *mflib_spec = MFLIB_SPEC;
+ static const char *libgcc_spec = LIBGCC_SPEC;
++static const char *libgloss_spec = LIBGLOSS_SPEC;
+ static const char *endfile_spec = ENDFILE_SPEC;
+ static const char *startfile_spec = STARTFILE_SPEC;
+ static const char *switches_need_spaces = SWITCHES_NEED_SPACES;
+@@ -1534,6 +1539,7 @@
+   INIT_STATIC_SPEC ("mfwrap",			&mfwrap_spec),
+   INIT_STATIC_SPEC ("mflib",			&mflib_spec),
+   INIT_STATIC_SPEC ("libgcc",			&libgcc_spec),
++  INIT_STATIC_SPEC ("libgloss",			&libgloss_spec),
+   INIT_STATIC_SPEC ("startfile",		&startfile_spec),
+   INIT_STATIC_SPEC ("switches_need_spaces",	&switches_need_spaces),
+   INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
+@@ -3250,8 +3256,6 @@
        gcc_libexec_prefix = make_relative_prefix (argv[0],
  						 standard_bindir_prefix,
  						 standard_libexec_prefix);
@@ -55,7 +91,7 @@ diff -Nbaur gcc-4.1.2/gcc/gcc.c gcc-4.1.2-arm/gcc/gcc.c
      }
    else
      gcc_libexec_prefix = make_relative_prefix (gcc_exec_prefix,
-@@ -6151,10 +6149,21 @@
+@@ -6151,10 +6155,21 @@
  
    /* We need to check standard_exec_prefix/just_machine_suffix/specs
       for any override of as, ld and libraries.  */
@@ -79,7 +115,7 @@ diff -Nbaur gcc-4.1.2/gcc/gcc.c gcc-4.1.2-arm/gcc/gcc.c
    if (access (specs_file, R_OK) == 0)
 diff -Nbaur gcc-4.1.2/gcc/prefix.c gcc-4.1.2-arm/gcc/prefix.c
 --- gcc-4.1.2/gcc/prefix.c	Sat Jun 25 03:02:01 2005
-+++ gcc-4.1.2-arm/gcc/prefix.c	Fri Feb 16 10:41:27 2007
++++ gcc-4.1.2-arm/gcc/prefix.c	Thu Dec 13 07:34:40 2007
 @@ -246,13 +246,16 @@
     The returned string is always malloc-ed, and the caller is
     responsible for freeing it.  */
@@ -108,7 +144,7 @@ diff -Nbaur gcc-4.1.2/gcc/prefix.c gcc-4.1.2-arm/gcc/prefix.c
  }
 diff -Nbaur gcc-4.1.2/gcc/stor-layout.c gcc-4.1.2-arm/gcc/stor-layout.c
 --- gcc-4.1.2/gcc/stor-layout.c	Wed Oct  4 08:01:27 2006
-+++ gcc-4.1.2-arm/gcc/stor-layout.c	Fri Feb 16 10:45:00 2007
++++ gcc-4.1.2-arm/gcc/stor-layout.c	Thu Dec 13 07:34:40 2007
 @@ -526,7 +526,15 @@
  #ifdef STRUCTURE_SIZE_BOUNDARY
    /* Packed structures don't need to have minimum size.  */
@@ -128,7 +164,7 @@ diff -Nbaur gcc-4.1.2/gcc/stor-layout.c gcc-4.1.2-arm/gcc/stor-layout.c
    rli->offset = size_zero_node;
 diff -Nbaur gcc-4.1.2/gcc/toplev.c gcc-4.1.2-arm/gcc/toplev.c
 --- gcc-4.1.2/gcc/toplev.c	Thu Aug  3 12:33:49 2006
-+++ gcc-4.1.2-arm/gcc/toplev.c	Fri Feb 16 10:41:27 2007
++++ gcc-4.1.2-arm/gcc/toplev.c	Thu Dec 13 07:34:40 2007
 @@ -82,6 +82,7 @@
  #include "value-prof.h"
  #include "alloc-pool.h"
@@ -150,7 +186,7 @@ diff -Nbaur gcc-4.1.2/gcc/toplev.c gcc-4.1.2-arm/gcc/toplev.c
  
 diff -Nbaur gcc-4.1.2/gcc/version.c gcc-4.1.2-arm/gcc/version.c
 --- gcc-4.1.2/gcc/version.c	Wed Mar 16 06:04:10 2005
-+++ gcc-4.1.2-arm/gcc/version.c	Fri Feb 16 10:41:27 2007
++++ gcc-4.1.2-arm/gcc/version.c	Thu Dec 13 07:34:40 2007
 @@ -8,7 +8,7 @@
     in parentheses.  You may also wish to include a number indicating
     the revision of your modified compiler.  */
@@ -171,7 +207,7 @@ diff -Nbaur gcc-4.1.2/gcc/version.c gcc-4.1.2-arm/gcc/version.c
     BASEVER, DATESTAMP, and DEVPHASE are defined by the Makefile.  */
 diff -Nbaur gcc-4.1.2/libiberty/pex-win32.c gcc-4.1.2-arm/libiberty/pex-win32.c
 --- gcc-4.1.2/libiberty/pex-win32.c	Mon Aug 28 01:00:30 2006
-+++ gcc-4.1.2-arm/libiberty/pex-win32.c	Fri Feb 16 10:41:27 2007
++++ gcc-4.1.2-arm/libiberty/pex-win32.c	Thu Dec 13 07:34:40 2007
 @@ -41,6 +41,7 @@
  #include <fcntl.h>
  #include <signal.h>
