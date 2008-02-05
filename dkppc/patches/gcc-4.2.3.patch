@@ -1,0 +1,195 @@
+diff -NBaur gcc-4.2.3/config.sub gcc-4.2.3-ppc/config.sub
+--- gcc-4.2.3/config.sub	Mon Oct 16 04:27:17 2006
++++ gcc-4.2.3-ppc/config.sub	Tue Feb  5 06:33:18 2008
+@@ -230,6 +230,10 @@
+ 		basic_machine=m68k-atari
+ 		os=-mint
+ 		;;
++	-gekko)
++		basic_machine=powerpc-eabi
++		os=-elf
++		;;
+ esac
+ 
+ # Decode aliases for certain CPU-COMPANY combinations.
+diff -NBaur gcc-4.2.3/gcc/c-incpath.c gcc-4.2.3-ppc/gcc/c-incpath.c
+--- gcc-4.2.3/gcc/c-incpath.c	Sat Sep  1 16:28:30 2007
++++ gcc-4.2.3-ppc/gcc/c-incpath.c	Tue Feb  5 06:33:18 2008
+@@ -340,13 +340,18 @@
+   cpp_dir *p;
+ 
+ #if defined (HAVE_DOS_BASED_FILE_SYSTEM)
+-  /* Convert all backslashes to slashes.  The native CRT stat()
+-     function does not recognize a directory that ends in a backslash
+-     (unless it is a drive root dir, such "c:\").  Forward slashes,
+-     trailing or otherwise, cause no problems for stat().  */
+-  char* c;
+-  for (c = path; *c; c++)
+-    if (*c == '\\') *c = '/';
++  /* Remove unnecessary trailing slashes.  On some versions of MS
++     Windows, trailing  _forward_ slashes cause no problems for stat().
++     On newer versions, stat() does not recognise a directory that ends
++     in a '\\' or '/', unless it is a drive root dir, such as "c:/",
++     where it is obligatory.  */
++  int pathlen = strlen (path);
++  char* end = path + pathlen - 1;
++  /* Preserve the lead '/' or lead "c:/".  */
++  char* start = path + (pathlen > 2 && path[1] == ':' ? 3 : 1);
++
++  for (; end > start && IS_DIR_SEPARATOR (*end); end--)
++    *end = 0;
+ #endif
+ 
+   p = XNEW (cpp_dir);
+diff -NBaur gcc-4.2.3/gcc/gcc.c gcc-4.2.3-ppc/gcc/gcc.c
+--- gcc-4.2.3/gcc/gcc.c	Sat Sep  1 16:28:30 2007
++++ gcc-4.2.3-ppc/gcc/gcc.c	Tue Feb  5 06:33:18 2008
+@@ -3369,8 +3369,6 @@
+       gcc_libexec_prefix = make_relative_prefix (argv[0],
+ 						 standard_bindir_prefix,
+ 						 standard_libexec_prefix);
+-      if (gcc_exec_prefix)
+-	putenv (concat ("GCC_EXEC_PREFIX=", gcc_exec_prefix, NULL));
+     }
+   else
+     {
+@@ -6213,10 +6211,21 @@
+ 
+   /* We need to check standard_exec_prefix/just_machine_suffix/specs
+      for any override of as, ld and libraries.  */
++  if ( gcc_exec_prefix )
++  {
++    specs_file = alloca (strlen (gcc_exec_prefix)
++		         + strlen (just_machine_suffix) + sizeof ("specs"));
++
++    strcpy (specs_file, gcc_exec_prefix);
++  } else {
++
+   specs_file = alloca (strlen (standard_exec_prefix)
+ 		       + strlen (just_machine_suffix) + sizeof ("specs"));
+ 
+   strcpy (specs_file, standard_exec_prefix);
++
++  }
++
+   strcat (specs_file, just_machine_suffix);
+   strcat (specs_file, "specs");
+   if (access (specs_file, R_OK) == 0)
+diff -NBaur gcc-4.2.3/gcc/prefix.c gcc-4.2.3-ppc/gcc/prefix.c
+--- gcc-4.2.3/gcc/prefix.c	Sat Sep  1 16:28:30 2007
++++ gcc-4.2.3-ppc/gcc/prefix.c	Tue Feb  5 06:33:18 2008
+@@ -245,13 +245,16 @@
+    The returned string is always malloc-ed, and the caller is
+    responsible for freeing it.  */
+ 
++
++static const char *old_prefix = PREFIX;
++
+ char *
+ update_path (const char *path, const char *key)
+ {
+   char *result, *p;
+-  const int len = strlen (std_prefix);
++  const int len = strlen (old_prefix);
+ 
+-  if (! strncmp (path, std_prefix, len)
++  if (! strncmp (path, old_prefix, len)
+       && (IS_DIR_SEPARATOR(path[len])
+           || path[len] == '\0')
+       && key != 0)
+@@ -353,4 +356,6 @@
+ set_std_prefix (const char *prefix, int len)
+ {
+   std_prefix = save_string (prefix, len);
++
++	putenv (concat ("GCC_EXEC_PREFIX=", std_prefix, NULL));
+ }
+diff -NBaur gcc-4.2.3/gcc/stor-layout.c gcc-4.2.3-ppc/gcc/stor-layout.c
+--- gcc-4.2.3/gcc/stor-layout.c	Sat Sep  1 16:28:30 2007
++++ gcc-4.2.3-ppc/gcc/stor-layout.c	Tue Feb  5 06:33:18 2008
+@@ -530,7 +530,15 @@
+ #ifdef STRUCTURE_SIZE_BOUNDARY
+   /* Packed structures don't need to have minimum size.  */
+   if (! TYPE_PACKED (t))
+-    rli->record_align = MAX (rli->record_align, (unsigned) STRUCTURE_SIZE_BOUNDARY);
++    {
++      unsigned tmp;
++
++      /* #pragma pack overrides STRUCTURE_SIZE_BOUNDARY.  */
++      tmp = (unsigned) STRUCTURE_SIZE_BOUNDARY;
++      if (maximum_field_alignment != 0)
++	tmp = MIN (tmp, maximum_field_alignment);
++      rli->record_align = MAX (rli->record_align, tmp);
++    }
+ #endif
+ 
+   rli->offset = size_zero_node;
+diff -NBaur gcc-4.2.3/gcc/toplev.c gcc-4.2.3-ppc/gcc/toplev.c
+--- gcc-4.2.3/gcc/toplev.c	Sat Sep  1 16:28:30 2007
++++ gcc-4.2.3-ppc/gcc/toplev.c	Tue Feb  5 06:33:18 2008
+@@ -81,6 +81,7 @@
+ #include "value-prof.h"
+ #include "alloc-pool.h"
+ #include "tree-mudflap.h"
++#include "prefix.h"
+ 
+ #if defined (DWARF2_UNWIND_INFO) || defined (DWARF2_DEBUGGING_INFO)
+ #include "dwarf2out.h"
+@@ -1478,6 +1479,10 @@
+   progname = p;
+ 
+   xmalloc_set_program_name (progname);
++
++  p = getenv("GCC_EXEC_PREFIX");
++  if (p && strlen(p)) set_std_prefix (p, strlen(p));
++
+ 
+   hex_init ();
+ 
+diff -NBaur gcc-4.2.3/gcc/version.c gcc-4.2.3-ppc/gcc/version.c
+--- gcc-4.2.3/gcc/version.c	Wed Mar 16 06:04:10 2005
++++ gcc-4.2.3-ppc/gcc/version.c	Tue Feb  5 06:33:19 2008
+@@ -8,7 +8,7 @@
+    in parentheses.  You may also wish to include a number indicating
+    the revision of your modified compiler.  */
+ 
+-#define VERSUFFIX ""
++#define VERSUFFIX " (devkitPPC release 14)"
+ 
+ /* This is the location of the online document giving instructions for
+    reporting bugs.  If you distribute a modified version of GCC,
+@@ -17,7 +17,7 @@
+    forward us bugs reported to you, if you determine that they are
+    not bugs in your modifications.)  */
+ 
+-const char bug_report_url[] = "<URL:http://gcc.gnu.org/bugs.html>";
++const char bug_report_url[] = "<URL:http://devkitpro.sourceforge.net/bugs.shtml>";
+ 
+ /* The complete version string, assembled from several pieces.
+    BASEVER, DATESTAMP, and DEVPHASE are defined by the Makefile.  */
+diff -NBaur gcc-4.2.3/libcpp/files.c gcc-4.2.3-ppc/libcpp/files.c
+--- gcc-4.2.3/libcpp/files.c	Sat Feb 18 09:25:31 2006
++++ gcc-4.2.3-ppc/libcpp/files.c	Tue Feb  5 06:33:19 2008
+@@ -226,6 +226,22 @@
+       close (file->fd);
+       file->fd = -1;
+     }
++#if defined(_WIN32) && !defined(__CYGWIN__)
++  else if (errno == EACCES)
++    {
++      /* On most UNIX systems, open succeeds on a directory.  Above,
++         we check if we have opened a directory and if so, set errno
++         to ENOENT.  However, on Windows, opening a directory
++         fails with EACCESS.  We want to return ENOENT in that
++         case too.  */
++      if (stat (file->path, &file->st) == 0
++          && S_ISDIR (file->st.st_mode))
++        errno = ENOENT;
++      else
++      /* The call to stat may have reset errno.  */
++      errno = EACCES;
++     }
++#endif
+   else if (errno == ENOTDIR)
+     errno = ENOENT;
+ 
