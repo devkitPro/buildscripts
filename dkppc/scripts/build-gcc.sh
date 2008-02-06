@@ -85,6 +85,7 @@ then
 	--with-included-gettext --without-headers\
 	--disable-nls --disable-shared --enable-threads --disable-multilib --disable-debug\
 	--disable-win32-registry\
+    --disable-libstdcxx-pch \
 	--target=$target \
 	--with-newlib \
 	--prefix=$prefix\

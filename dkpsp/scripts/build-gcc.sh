@@ -47,6 +47,7 @@ then
 	--with-gcc --with-gnu-ld --with-gnu-as\
 	--disable-shared --disable-win32-registry --disable-nls\
 	--enable-cxx-flags="-G0" \
+    --disable-libstdcxx-pch \
 	--target=$target \
 	--with-newlib \
 	--prefix=$prefix \

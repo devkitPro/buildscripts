@@ -49,6 +49,7 @@ then
         --with-gcc --with-gnu-ld --with-gnu-as \
         --disable-shared --disable-threads --disable-win32-registry --disable-nls --disable-debug\
         --disable-libmudflap --disable-libssp \
+        --disable-libstdcxx-pch \
         --target=$target \
         --with-newlib \
         --prefix=$prefix\
