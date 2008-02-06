@@ -156,7 +156,7 @@ diff -Nbaur gcc-4.2.1/gcc/version.c gcc-4.2.1-arm/gcc/version.c
     the revision of your modified compiler.  */
  
 -#define VERSUFFIX ""
-+#define VERSUFFIX " (devkitARM release 21)"
++#define VERSUFFIX " (devkitARM release 22)"
  
  /* This is the location of the online document giving instructions for
     reporting bugs.  If you distribute a modified version of GCC,
