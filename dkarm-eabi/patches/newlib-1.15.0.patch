@@ -621,7 +621,7 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/aclocal.m4 newlib-1.15.0-new/libgl
 +m4_include([../acinclude.m4])
 diff -Nbaur newlib-1.15.0/libgloss/libsysbase/build_argv.c newlib-1.15.0-new/libgloss/libsysbase/build_argv.c
 --- newlib-1.15.0/libgloss/libsysbase/build_argv.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-new/libgloss/libsysbase/build_argv.c	Fri Jul 13 07:57:46 2007
++++ newlib-1.15.0-new/libgloss/libsysbase/build_argv.c	Sat Dec 29 12:08:54 2007
 @@ -0,0 +1,31 @@
 +struct __argv {
 +	int argvMagic;
@@ -638,7 +638,7 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/build_argv.c newlib-1.15.0-new/lib
 +	char *data = argstruct->commandLine;
 +	int len = argstruct->length;
 +
-+	char** argv = (char**)(((int)data + len + sizeof(char **)) & ~sizeof(char **));
++	char** argv = (char**)(((int)data + len + sizeof(char **)) & ~(sizeof(char **)-1));
 +	char* end = data + len - 1;
 +	int argCount = 0;
 +	
@@ -5452,7 +5452,7 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/statvfs.c newlib-1.15.0-new/libglo
 +}
 diff -Nbaur newlib-1.15.0/libgloss/libsysbase/times.c newlib-1.15.0-new/libgloss/libsysbase/times.c
 --- newlib-1.15.0/libgloss/libsysbase/times.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-new/libgloss/libsysbase/times.c	Sun Jul 15 00:46:18 2007
++++ newlib-1.15.0-new/libgloss/libsysbase/times.c	Sat Nov  3 18:17:36 2007
 @@ -0,0 +1,48 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -5493,7 +5493,7 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/times.c newlib-1.15.0-new/libgloss
 +
 +	time_t ret = -1;
 +	if ( ptimeval && punixTime ) {
-+		ret = *punixTime;
++		ret = 0;
 +		ptimeval->tv_sec = ret;
 +		ptr->_errno = 0;
 +	} else {
@@ -5656,6 +5656,18 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/write.c newlib-1.15.0-new/libgloss
 +	}
 +	return ret;
 +}
+diff -Nbaur newlib-1.15.0/newlib/Makefile.in newlib-1.15.0-new/newlib/Makefile.in
+--- newlib-1.15.0/newlib/Makefile.in	Mon Dec 18 20:32:41 2006
++++ newlib-1.15.0-new/newlib/Makefile.in	Tue Jul 31 12:55:20 2007
+@@ -891,6 +891,8 @@
+ 	      cp $$i targ-include/machine/`basename $$i`; \
+ 	    else true; fi ; \
+ 	  done
++	mkdir -p $(TARG_INCLUDE_DIR)/targ-include
++	cp -a targ-include $(TARG_INCLUDE_DIR)/targ-include
+ 	touch $@
+ 
+ install-data-local:	install-toollibLIBRARIES
 diff -Nbaur newlib-1.15.0/newlib/libc/include/reent.h newlib-1.15.0-new/newlib/libc/include/reent.h
 --- newlib-1.15.0/newlib/libc/include/reent.h	Wed Aug 27 17:24:57 2003
 +++ newlib-1.15.0-new/newlib/libc/include/reent.h	Fri Apr 13 02:55:00 2007
@@ -5668,6 +5680,28 @@ diff -Nbaur newlib-1.15.0/newlib/libc/include/reent.h newlib-1.15.0-new/newlib/l
  
  /* This one is not guaranteed to be available on all targets.  */
  extern int _gettimeofday_r _PARAMS ((struct _reent *, struct timeval *tp, struct timezone *tzp));
+diff -Nbaur newlib-1.15.0/newlib/libc/include/stdint.h newlib-1.15.0-new/newlib/libc/include/stdint.h
+--- newlib-1.15.0/newlib/libc/include/stdint.h	Wed Aug 16 22:39:43 2006
++++ newlib-1.15.0-new/newlib/libc/include/stdint.h	Tue Jan  8 04:11:30 2008
+@@ -79,13 +79,13 @@
+ #endif
+ #endif
+ 
+-#if __have_long32
+-typedef signed long int32_t;
+-typedef unsigned long uint32_t;
+-#define __int32_t_defined 1
+-#elif __STDINT_EXP(INT_MAX) == 0x7fffffffL
++#if __STDINT_EXP(INT_MAX) == 0x7fffffffL
+ typedef signed int int32_t;
+ typedef unsigned int uint32_t;
++#define __int32_t_defined 1
++#elif __have_long32
++typedef signed long int32_t;
++typedef unsigned long uint32_t;
+ #define __int32_t_defined 1
+ #elif __STDINT_EXP(SHRT_MAX) == 0x7fffffffL
+ typedef signed short int32_t;
 diff -Nbaur newlib-1.15.0/newlib/libc/include/stdio.h newlib-1.15.0-new/newlib/libc/include/stdio.h
 --- newlib-1.15.0/newlib/libc/include/stdio.h	Tue Sep 26 22:22:19 2006
 +++ newlib-1.15.0-new/newlib/libc/include/stdio.h	Fri Feb 16 09:13:45 2007
@@ -5824,10 +5858,14 @@ diff -Nbaur newlib-1.15.0/newlib/libc/include/sys/reent.h newlib-1.15.0-new/newl
  
 diff -Nbaur newlib-1.15.0/newlib/libc/include/sys/statvfs.h newlib-1.15.0-new/newlib/libc/include/sys/statvfs.h
 --- newlib-1.15.0/newlib/libc/include/sys/statvfs.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-new/newlib/libc/include/sys/statvfs.h	Tue Oct 23 00:21:27 2007
-@@ -0,0 +1,31 @@
++++ newlib-1.15.0-new/newlib/libc/include/sys/statvfs.h	Fri Oct 26 03:44:59 2007
+@@ -0,0 +1,35 @@
 +#ifndef _SYS_STATVFS_H
 +#define _SYS_STATVFS_H
++
++
++#define ST_RDONLY 0x0001
++#define ST_NOSUID 0x0002
 +
 +#ifdef __cplusplus
 +extern "C" {
@@ -5889,6 +5927,51 @@ diff -Nbaur newlib-1.15.0/newlib/libc/include/sys/types.h newlib-1.15.0-new/newl
  
  #include <sys/features.h>
  
+diff -Nbaur newlib-1.15.0/newlib/libc/locale/locale.c newlib-1.15.0-new/newlib/libc/locale/locale.c
+--- newlib-1.15.0/newlib/libc/locale/locale.c	Fri Apr 23 22:44:21 2004
++++ newlib-1.15.0-new/newlib/libc/locale/locale.c	Sat Nov  3 18:13:01 2007
+@@ -95,7 +95,7 @@
+ #ifdef __CYGWIN__
+ int __declspec(dllexport) __mb_cur_max = 1;
+ #else
+-int __mb_cur_max = 1;
++int __mb_cur_max = 6;
+ #endif
+ 
+ int __nlocale_changed = 0;
+@@ -112,8 +112,8 @@
+ 
+ char * _EXFUN(__locale_charset,(_VOID));
+ 
+-static char *charset = "ISO-8859-1";
+-char __lc_ctype[12] = "C";
++static char *charset = "UTF-8";
++char __lc_ctype[12] = "C-UTF-8";
+ 
+ char *
+ _DEFUN(_setlocale_r, (p, category, locale),
+@@ -131,9 +131,9 @@
+     }
+   return "C";
+ #else
+-  static char last_lc_ctype[12] = "C";
+-  static char lc_messages[12] = "C";
+-  static char last_lc_messages[12] = "C";
++  static char last_lc_ctype[12] = "C-UTF-8";
++  static char lc_messages[12] = "C-UTF-8";
++  static char last_lc_messages[12] = "C-UTF-8";
+ 
+   if (locale)
+     {
+@@ -185,7 +185,7 @@
+             {
+               if (strcmp (locale, "C") && strcmp (locale, ""))
+                 return 0;
+-              locale_name = "C"; /* C is always the default locale */
++              locale_name = "C-UTF-8"; /* C is always the default locale */
+             }
+ 
+           if (category == LC_CTYPE)
 diff -Nbaur newlib-1.15.0/newlib/libc/misc/init.c newlib-1.15.0-new/newlib/libc/misc/init.c
 --- newlib-1.15.0/newlib/libc/misc/init.c	Fri Jan  7 18:04:39 2005
 +++ newlib-1.15.0-new/newlib/libc/misc/init.c	Mon Jul 30 19:49:28 2007
