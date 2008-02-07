@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DEVKITPPC=$TOOLPATH/devkitPPC
+export DEVKITPPC=$TOOLPATH/devkitPPC
 
 #---------------------------------------------------------------------------------
 # Install and build the gamecube crt and libogc

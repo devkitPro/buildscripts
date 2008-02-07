@@ -328,6 +328,14 @@ echo use $GAWK as gawk
 export GAWK
 
 #---------------------------------------------------------------------------------
+# find makeinfo, needed for newlib
+#---------------------------------------------------------------------------------
+if [ ! -x $(which makeinfo) ]; then
+  echo makeinfo not found
+  exit 1
+fi
+
+#---------------------------------------------------------------------------------
 # Add installed devkit to the path, adjusting path on minsys
 #---------------------------------------------------------------------------------
 TOOLPATH=$(echo $INSTALLDIR | sed -e 's/^\([a-zA-Z]\):/\/\1/')
