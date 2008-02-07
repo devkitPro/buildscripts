@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=20071211
+LIBOGC_VER=20080207
 LIBGBA_VER=20060720
 LIBNDS_VER=20071023
 LIBFAT_VER=20070127
@@ -55,7 +55,7 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=4.1.2
+    GCC_VER=4.2.3
     BINUTILS_VER=2.18.50
     NEWLIB_VER=1.15.0
     basedir='dkarm-eabi'
@@ -65,7 +65,7 @@ case "$VERSION" in
     toolchain=DEVKITARM
   ;;
   "2" )
-    GCC_VER=4.1.2
+    GCC_VER=4.2.3
     BINUTILS_VER=2.18.50
     NEWLIB_VER=1.14.0
     basedir='dkppc'
@@ -99,7 +99,16 @@ GCC_GPP="gcc-g++-$GCC_VER.tar.bz2"
 GCC_CORE_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_CORE"
 GCC_GPP_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_GPP"
 BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
-BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/$BINUTILS"
+
+case "$BINUTILS_VER" in
+ "2.18.50" )
+   BINUTILS_URL="ftp://sourceware.org/pub/binutils/snapshots/$BINUTILS"
+ ;;
+ * )  
+   BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/$BINUTILS"
+ ;;
+esac
+
 NEWLIB="newlib-$NEWLIB_VER.tar.gz"
 NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/$NEWLIB"
 
@@ -108,7 +117,7 @@ DOWNLOAD=0
 while [ $DOWNLOAD -eq 0 ]
 do
   echo
-  echo "The installation requires binutils-$BINUTILS_VER, gcc$GCC_VER and newlib-$NEWLIB_VER.  Please select an option:"
+  echo "The installation requires binutils-$BINUTILS_VER, gcc-$GCC_VER and newlib-$NEWLIB_VER.  Please select an option:"
   echo
   echo "1: I have already downloaded the source packages"
   echo "2: Download the packages for me (requires wget)"
@@ -438,11 +447,6 @@ for f in $INSTALLDIR/$package/bin/* \
 do
   strip $f
 done
-
-#---------------------------------------------------------------------------------
-# remove rather large pre-compiled headers
-#---------------------------------------------------------------------------------
-rm -fr $INSTALLDIR/$package/include/c++/$GCC_VER/$target/bits/stdc++.h.gch
 
 #---------------------------------------------------------------------------------
 # strip debug info from libraries
