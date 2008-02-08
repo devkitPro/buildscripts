@@ -10,6 +10,7 @@ PREFIX	:=	powerpc-gekko-
 
 export CC		:=	$(PREFIX)gcc
 export CXX		:=	$(PREFIX)g++
+export AS		:=	$(PREFIX)as
 export AR		:=	$(PREFIX)ar
 export OBJCOPY	:=	$(PREFIX)objcopy
 
