@@ -3,7 +3,7 @@ $(error "Please set DEVKITPPC in your environment. export DEVKITPPC=<path to>dev
 endif
 
 export	LIBOGC_INC	:=	$(DEVKITPRO)/libogc/include
-export	LIBOGC_LIB	:=	$(DEVKITPRO)/libogc/lib/cube
+export	LIBOGC_LIB	:=	$(DEVKITPRO)/libogc/lib/wii
 
 include $(DEVKITPPC)/base_rules
 

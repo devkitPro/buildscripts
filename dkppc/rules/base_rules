@@ -8,9 +8,9 @@ export PATH		:=	$(DEVKITPPC)/bin:$(PATH)
 #---------------------------------------------------------------------------------
 PREFIX	:=	powerpc-gekko-
 
+export AS		:=	$(PREFIX)as
 export CC		:=	$(PREFIX)gcc
 export CXX		:=	$(PREFIX)g++
-export AS		:=	$(PREFIX)as
 export AR		:=	$(PREFIX)ar
 export OBJCOPY	:=	$(PREFIX)objcopy
 
