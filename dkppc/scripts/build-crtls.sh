@@ -1,6 +1,7 @@
 #!/bin/sh
 
 export DEVKITPPC=$TOOLPATH/devkitPPC
+export DEVKITPRO=$TOOLPATH
 
 #---------------------------------------------------------------------------------
 # Install and build the gamecube crt and libogc
@@ -13,11 +14,20 @@ cp `pwd`/dkppc/crtls/*.ld $DEVKITPPC/$target/lib/
 #---------------------------------------------------------------------------------
 cp `pwd`/dkppc/rules/gamecube_rules dkppc/rules/base_rules $DEVKITPPC
 
-echo "building libogc ..."
 cd $LIBOGC_SRCDIR
-$MAKE
-echo "installing libogc ..."
-$MAKE install
+if [ ! -f built-libogc ]
+then
+  echo "building libogc ..."
+  $MAKE
+  touch built-libogc
+fi
 
+echo "installing libogc ..."
+if [ ! -f installed-libogc ]
+then
+  echo "building libogc ..."
+  $MAKE install
+  touch installed-libogc
+fi
 
 
