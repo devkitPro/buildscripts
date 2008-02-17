@@ -21,7 +21,7 @@ SECTIONS
 
 	/* DOL header (from TITANIK's GC docs) */
 	/* default base address */
-	. = 0x80003000;
+	. = 0x80003f00;
 	.header	:
 	{
 		file_start = .;
@@ -358,7 +358,9 @@ __intrstack_addr = (__stack_addr + 0x4000);
 __intrstack_end = (__stack_addr);
 __ArenaLo = (__intrstack_addr + 31) & (-32);
 __ArenaHi = (0x81700000);
-__gxregs = (__ArenaHi + 31) & (-32);
+__ipcbufferLo = (__ArenaHi + 31) & (-32);
+__ipcbufferHi = (__ipcbufferLo + 0x20000 + 31) & (-32);
+__gxregs = (__ipcbufferHi + 31) & (-32);
 
 /* for backward compatibility with old crt0 */
 PROVIDE (__stack = (0x81700000));
@@ -376,4 +378,6 @@ PROVIDE(__intrstack_addr = __intrstack_addr);
 PROVIDE(__intrstack_end = __intrstack_end);
 PROVIDE(__ArenaLo = __ArenaLo);
 PROVIDE(__ArenaHi = __ArenaHi);
+PROVIDE(__ipcbufferLo = __ipcbufferLo);
+PROVIDE(__ipcbufferHi = __ipcbufferHi);
 PROVIDE(__gxregs = __gxregs);
