@@ -12,7 +12,7 @@ cp `pwd`/dkppc/crtls/*.ld $DEVKITPPC/$target/lib/
 #---------------------------------------------------------------------------------
 # copy base rulesets
 #---------------------------------------------------------------------------------
-cp `pwd`/dkppc/rules/gamecube_rules dkppc/rules/base_rules $DEVKITPPC
+cp `pwd`/dkppc/rules/* $DEVKITPPC
 
 cd $LIBOGC_SRCDIR
 if [ ! -f built-libogc ]
