@@ -81,9 +81,8 @@ then
   CFLAGS=-D__USE_MINGW_ACCESS ../../$GCC_SRCDIR/configure \
 	--enable-languages=c,c++ \
 	--with-cpu=750\
-	--with-gcc --with-gnu-ld --with-gnu-as --with-stabs \
-	--with-included-gettext --without-headers\
-	--disable-nls --disable-shared --enable-threads --disable-multilib --disable-debug\
+	--without-headers\
+	--disable-nls --disable-shared --enable-threads --disable-multilib \
 	--disable-win32-registry\
     --disable-libstdcxx-pch \
 	--target=$target \
@@ -118,7 +117,6 @@ then
 	--target=$target \
 	--prefix=$prefix \
 	--enable-newlib-mb \
-	--disable-debug \
 	|| { echo "Error configuring newlib"; exit 1; }
   touch configured-newlib
 fi

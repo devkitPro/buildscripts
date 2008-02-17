@@ -6,8 +6,8 @@ export DEVKITPPC=$TOOLPATH/devkitPPC
 # Install and build the gamecube crt and libogc
 #---------------------------------------------------------------------------------
 
-echo "installing specs ..."
-cp `pwd`/dkppc/crtls/gcn* $DEVKITPPC/$target/lib/
+echo "installing linkscripts ..."
+cp `pwd`/dkppc/crtls/*.ld $DEVKITPPC/$target/lib/
 #---------------------------------------------------------------------------------
 # copy base rulesets
 #---------------------------------------------------------------------------------
