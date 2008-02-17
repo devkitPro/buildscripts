@@ -22,10 +22,9 @@ then
   touch built-libogc
 fi
 
-echo "installing libogc ..."
 if [ ! -f installed-libogc ]
 then
-  echo "building libogc ..."
+  echo "installing libogc ..."
   $MAKE install
   touch installed-libogc
 fi
