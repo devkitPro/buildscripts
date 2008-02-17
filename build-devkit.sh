@@ -6,7 +6,7 @@
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=20080207
+LIBOGC_VER=20080217
 LIBGBA_VER=20060720
 LIBNDS_VER=20071023
 LIBFAT_VER=20070127
@@ -67,7 +67,7 @@ case "$VERSION" in
   "2" )
     GCC_VER=4.2.3
     BINUTILS_VER=2.18.50
-    NEWLIB_VER=1.14.0
+    NEWLIB_VER=1.15.0
     basedir='dkppc'
     package=devkitPPC
     builddir=powerpc-gekko
