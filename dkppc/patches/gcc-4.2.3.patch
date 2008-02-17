@@ -1,6 +1,6 @@
-diff -NBaur gcc-4.2.3/config.sub gcc-4.2.3-ppc/config.sub
+diff -Nbaur gcc-4.2.3/config.sub gcc-4.2.3-ppc/config.sub
 --- gcc-4.2.3/config.sub	Mon Oct 16 04:27:17 2006
-+++ gcc-4.2.3-ppc/config.sub	Tue Feb  5 06:33:18 2008
++++ gcc-4.2.3-ppc/config.sub	Sat Feb 16 23:12:58 2008
 @@ -230,6 +230,10 @@
  		basic_machine=m68k-atari
  		os=-mint
@@ -12,9 +12,9 @@ diff -NBaur gcc-4.2.3/config.sub gcc-4.2.3-ppc/config.sub
  esac
  
  # Decode aliases for certain CPU-COMPANY combinations.
-diff -NBaur gcc-4.2.3/gcc/c-incpath.c gcc-4.2.3-ppc/gcc/c-incpath.c
+diff -Nbaur gcc-4.2.3/gcc/c-incpath.c gcc-4.2.3-ppc/gcc/c-incpath.c
 --- gcc-4.2.3/gcc/c-incpath.c	Sat Sep  1 16:28:30 2007
-+++ gcc-4.2.3-ppc/gcc/c-incpath.c	Tue Feb  5 06:33:18 2008
++++ gcc-4.2.3-ppc/gcc/c-incpath.c	Sat Feb 16 23:12:58 2008
 @@ -340,13 +340,18 @@
    cpp_dir *p;
  
@@ -41,9 +41,197 @@ diff -NBaur gcc-4.2.3/gcc/c-incpath.c gcc-4.2.3-ppc/gcc/c-incpath.c
  #endif
  
    p = XNEW (cpp_dir);
-diff -NBaur gcc-4.2.3/gcc/gcc.c gcc-4.2.3-ppc/gcc/gcc.c
+diff -Nbaur gcc-4.2.3/gcc/config/rs6000/sysv4.h gcc-4.2.3-ppc/gcc/config/rs6000/sysv4.h
+--- gcc-4.2.3/gcc/config/rs6000/sysv4.h	Sat Sep  1 16:28:30 2007
++++ gcc-4.2.3-ppc/gcc/config/rs6000/sysv4.h	Sun Feb 17 06:39:15 2008
+@@ -651,7 +651,11 @@
+ 
+ /* Default starting address if specified.  */
+ #define LINK_START_SPEC "\
+-%{mads         : %(link_start_ads)         ; \
++%{mgcn|mogc         : %(link_start_ogc)         ; \
++  mvgc         : %(link_start_vgc)         ; \
++  mgcbios         : %(link_start_gcb)         ; \
++  mrvl         : %(link_start_rvl)         ; \
++  mads         : %(link_start_ads)         ; \
+   myellowknife : %(link_start_yellowknife) ; \
+   mmvme        : %(link_start_mvme)        ; \
+   msim         : %(link_start_sim)         ; \
+@@ -709,7 +713,8 @@
+ 
+ /* Any specific OS flags.  */
+ #define LINK_OS_SPEC "\
+-%{mads         : %(link_os_ads)         ; \
++%{mgcn|mogc|mvgc|mgcbios|mrvl         : %(link_os_ogc)         ; \
++  mads         : %(link_os_ads)         ; \
+   myellowknife : %(link_os_yellowknife) ; \
+   mmvme        : %(link_os_mvme)        ; \
+   msim         : %(link_os_sim)         ; \
+@@ -726,7 +731,10 @@
+ /* Override rs6000.h definition.  */
+ #undef	CPP_SPEC
+ #define	CPP_SPEC "%{posix: -D_POSIX_SOURCE} \
+-%{mads         : %(cpp_os_ads)         ; \
++%{mgcn         : %(cpp_os_gcn)         ; \
++  mogc|mvgc|mgcbios         : %(cpp_os_ogc)         ; \
++  mrvl         : %(cpp_os_rvl)         ; \
++  mads         : %(cpp_os_ads)         ; \
+   myellowknife : %(cpp_os_yellowknife) ; \
+   mmvme        : %(cpp_os_mvme)        ; \
+   msim         : %(cpp_os_sim)         ; \
+@@ -743,7 +751,10 @@
+ /* Override svr4.h definition.  */
+ #undef	STARTFILE_SPEC
+ #define	STARTFILE_SPEC "\
+-%{mads         : %(startfile_ads)         ; \
++%{mgcn         : %(startfile_gcn)         ; \
++  mogc|mvgc|mgcbios         : %(startfile_ogc)         ; \
++  mrvl         : %(startfile_ogc)         ; \
++  mads         : %(startfile_ads)         ; \
+   myellowknife : %(startfile_yellowknife) ; \
+   mmvme        : %(startfile_mvme)        ; \
+   msim         : %(startfile_sim)         ; \
+@@ -760,7 +771,8 @@
+ /* Override svr4.h definition.  */
+ #undef	LIB_SPEC
+ #define	LIB_SPEC "\
+-%{mads         : %(lib_ads)         ; \
++%{mgcn|mogc|mvgc|mgcbios|mrvl        : %(lib_ogc)         ; \
++  mads         : %(lib_ads)         ; \
+   myellowknife : %(lib_yellowknife) ; \
+   mmvme        : %(lib_mvme)        ; \
+   msim         : %(lib_sim)         ; \
+@@ -772,12 +784,13 @@
+   mcall-openbsd: %(lib_openbsd)     ; \
+                : %(lib_default)     }"
+ 
+-#define LIB_DEFAULT_SPEC ""
++#define LIB_DEFAULT_SPEC "--start-group -lsysbase -lc --end-group"
+ 
+ /* Override svr4.h definition.  */
+ #undef	ENDFILE_SPEC
+ #define	ENDFILE_SPEC "\
+-%{mads         : crtsavres.o%s        %(endfile_ads)         ; \
++%{mgcn|mogc|mvgc|mgcbios|mrvl         : crtsavres.o%s        %(endfile_ogc)         ; \
++  mads         : crtsavres.o%s        %(endfile_ads)         ; \
+   myellowknife : crtsavres.o%s        %(endfile_yellowknife) ; \
+   mmvme        : crtsavres.o%s        %(endfile_mvme)        ; \
+   msim         : crtsavres.o%s        %(endfile_sim)         ; \
+@@ -795,16 +808,27 @@
+ 
+ /* Motorola ADS support.  */
+ #define LIB_ADS_SPEC "--start-group -lads -lc --end-group"
++#define LIB_OGC_SPEC "--start-group -lsysbase -lc --end-group"
+ 
+ #define	STARTFILE_ADS_SPEC "ecrti.o%s crt0.o%s crtbegin.o%s"
++#define	STARTFILE_OGC_SPEC "ecrti.o%s crtbegin.o%s"
+ 
+ #define	ENDFILE_ADS_SPEC "crtend.o%s ecrtn.o%s"
++#define	ENDFILE_OGC_SPEC "crtend.o%s ecrtn.o%s"
+ 
+ #define LINK_START_ADS_SPEC "-T ads.ld%s"
++#define LINK_START_OGC_SPEC "-T ogc.ld%s"
++#define LINK_START_RVL_SPEC "-T rvl.ld%s"
++#define LINK_START_VGC_SPEC "-T vgcogc.ld%s"
++#define LINK_START_GCB_SPEC "-T gcbogc.ld%s"
+ 
+ #define LINK_OS_ADS_SPEC ""
++#define LINK_OS_OGC_SPEC "--gc-sections"
+ 
+ #define CPP_OS_ADS_SPEC ""
++#define CPP_OS_GCN_SPEC "-D__gamecube__ -ffunction-sections -fdata-sections"
++#define CPP_OS_OGC_SPEC "-D__gamecube__ -DHW_DOL -ffunction-sections -fdata-sections"
++#define CPP_OS_RVL_SPEC "-D__wii__ -DHW_RVL -ffunction-sections -fdata-sections"
+ 
+ /* Motorola Yellowknife support.  */
+ #define LIB_YELLOWKNIFE_SPEC "--start-group -lyk -lc --end-group"
+@@ -1016,6 +1040,7 @@
+ #undef	SUBTARGET_EXTRA_SPECS
+ #define	SUBTARGET_EXTRA_SPECS						\
+   { "crtsavres_default",	CRTSAVRES_DEFAULT_SPEC },		\
++  { "lib_ogc",			LIB_OGC_SPEC },				\
+   { "lib_ads",			LIB_ADS_SPEC },				\
+   { "lib_yellowknife",		LIB_YELLOWKNIFE_SPEC },			\
+   { "lib_mvme",			LIB_MVME_SPEC },			\
+@@ -1027,6 +1052,7 @@
+   { "lib_openbsd",		LIB_OPENBSD_SPEC },			\
+   { "lib_windiss",		LIB_WINDISS_SPEC },			\
+   { "lib_default",		LIB_DEFAULT_SPEC },			\
++  { "startfile_ogc",		STARTFILE_OGC_SPEC },			\
+   { "startfile_ads",		STARTFILE_ADS_SPEC },			\
+   { "startfile_yellowknife",	STARTFILE_YELLOWKNIFE_SPEC },		\
+   { "startfile_mvme",		STARTFILE_MVME_SPEC },			\
+@@ -1038,6 +1064,7 @@
+   { "startfile_openbsd",	STARTFILE_OPENBSD_SPEC },		\
+   { "startfile_windiss",	STARTFILE_WINDISS_SPEC },		\
+   { "startfile_default",	STARTFILE_DEFAULT_SPEC },		\
++  { "endfile_ogc",		ENDFILE_OGC_SPEC },			\
+   { "endfile_ads",		ENDFILE_ADS_SPEC },			\
+   { "endfile_yellowknife",	ENDFILE_YELLOWKNIFE_SPEC },		\
+   { "endfile_mvme",		ENDFILE_MVME_SPEC },			\
+@@ -1053,7 +1080,11 @@
+   { "link_shlib",		LINK_SHLIB_SPEC },			\
+   { "link_target",		LINK_TARGET_SPEC },			\
+   { "link_start",		LINK_START_SPEC },			\
++  { "link_start_vgc",		LINK_START_VGC_SPEC },			\
++  { "link_start_gcb",		LINK_START_GCB_SPEC },			\
++  { "link_start_rvl",		LINK_START_RVL_SPEC },			\
+   { "link_start_ads",		LINK_START_ADS_SPEC },			\
++  { "link_start_ogc",		LINK_START_OGC_SPEC },			\
+   { "link_start_yellowknife",	LINK_START_YELLOWKNIFE_SPEC },		\
+   { "link_start_mvme",		LINK_START_MVME_SPEC },			\
+   { "link_start_sim",		LINK_START_SIM_SPEC },			\
+@@ -1065,6 +1096,7 @@
+   { "link_start_windiss",	LINK_START_WINDISS_SPEC },		\
+   { "link_start_default",	LINK_START_DEFAULT_SPEC },		\
+   { "link_os",			LINK_OS_SPEC },				\
++  { "link_os_ogc",		LINK_OS_OGC_SPEC },			\
+   { "link_os_ads",		LINK_OS_ADS_SPEC },			\
+   { "link_os_yellowknife",	LINK_OS_YELLOWKNIFE_SPEC },		\
+   { "link_os_mvme",		LINK_OS_MVME_SPEC },			\
+@@ -1080,6 +1112,9 @@
+   { "cc1_endian_little",	CC1_ENDIAN_LITTLE_SPEC },		\
+   { "cc1_endian_default",	CC1_ENDIAN_DEFAULT_SPEC },		\
+   { "cc1_secure_plt_default",	CC1_SECURE_PLT_DEFAULT_SPEC },		\
++  { "cpp_os_gcn",		CPP_OS_GCN_SPEC },			\
++  { "cpp_os_ogc",		CPP_OS_OGC_SPEC },			\
++  { "cpp_os_rvl",		CPP_OS_RVL_SPEC },			\
+   { "cpp_os_ads",		CPP_OS_ADS_SPEC },			\
+   { "cpp_os_yellowknife",	CPP_OS_YELLOWKNIFE_SPEC },		\
+   { "cpp_os_mvme",		CPP_OS_MVME_SPEC },			\
+diff -Nbaur gcc-4.2.3/gcc/config/rs6000/sysv4.opt gcc-4.2.3-ppc/gcc/config/rs6000/sysv4.opt
+--- gcc-4.2.3/gcc/config/rs6000/sysv4.opt	Sat Sep  1 16:28:30 2007
++++ gcc-4.2.3-ppc/gcc/config/rs6000/sysv4.opt	Sun Feb 17 04:05:39 2008
+@@ -107,6 +107,26 @@
+ Target RejectNegative
+ Link with libads.a, libc.a and crt0.o
+ 
++mgcn
++Target RejectNegative
++Link with libsysbase.a and libc.a, use ogc linker script 
++
++mogc
++Target RejectNegative
++Link with libsysbase.a and libc.a, use ogc linker script 
++
++mgcbios
++Target RejectNegative
++Link with libsysbase.a and libc.a, use gcbogc linker script 
++
++mvgc
++Target RejectNegative
++Link with libsysbase.a and libc.a, use gcbogc linker script 
++
++mrvl
++Target RejectNegative
++Link with libsysbase.a and libc.a, use rvl linker script 
++
+ myellowknife
+ Target RejectNegative
+ Link with libyk.a, libc.a and crt0.o
+diff -Nbaur gcc-4.2.3/gcc/gcc.c gcc-4.2.3-ppc/gcc/gcc.c
 --- gcc-4.2.3/gcc/gcc.c	Sat Sep  1 16:28:30 2007
-+++ gcc-4.2.3-ppc/gcc/gcc.c	Tue Feb  5 06:33:18 2008
++++ gcc-4.2.3-ppc/gcc/gcc.c	Sat Feb 16 23:12:58 2008
 @@ -3369,8 +3369,6 @@
        gcc_libexec_prefix = make_relative_prefix (argv[0],
  						 standard_bindir_prefix,
@@ -75,9 +263,9 @@ diff -NBaur gcc-4.2.3/gcc/gcc.c gcc-4.2.3-ppc/gcc/gcc.c
    strcat (specs_file, just_machine_suffix);
    strcat (specs_file, "specs");
    if (access (specs_file, R_OK) == 0)
-diff -NBaur gcc-4.2.3/gcc/prefix.c gcc-4.2.3-ppc/gcc/prefix.c
+diff -Nbaur gcc-4.2.3/gcc/prefix.c gcc-4.2.3-ppc/gcc/prefix.c
 --- gcc-4.2.3/gcc/prefix.c	Sat Sep  1 16:28:30 2007
-+++ gcc-4.2.3-ppc/gcc/prefix.c	Tue Feb  5 06:33:18 2008
++++ gcc-4.2.3-ppc/gcc/prefix.c	Sat Feb 16 23:12:58 2008
 @@ -245,13 +245,16 @@
     The returned string is always malloc-ed, and the caller is
     responsible for freeing it.  */
@@ -104,9 +292,9 @@ diff -NBaur gcc-4.2.3/gcc/prefix.c gcc-4.2.3-ppc/gcc/prefix.c
 +
 +	putenv (concat ("GCC_EXEC_PREFIX=", std_prefix, NULL));
  }
-diff -NBaur gcc-4.2.3/gcc/stor-layout.c gcc-4.2.3-ppc/gcc/stor-layout.c
+diff -Nbaur gcc-4.2.3/gcc/stor-layout.c gcc-4.2.3-ppc/gcc/stor-layout.c
 --- gcc-4.2.3/gcc/stor-layout.c	Sat Sep  1 16:28:30 2007
-+++ gcc-4.2.3-ppc/gcc/stor-layout.c	Tue Feb  5 06:33:18 2008
++++ gcc-4.2.3-ppc/gcc/stor-layout.c	Sat Feb 16 23:12:58 2008
 @@ -530,7 +530,15 @@
  #ifdef STRUCTURE_SIZE_BOUNDARY
    /* Packed structures don't need to have minimum size.  */
@@ -124,9 +312,9 @@ diff -NBaur gcc-4.2.3/gcc/stor-layout.c gcc-4.2.3-ppc/gcc/stor-layout.c
  #endif
  
    rli->offset = size_zero_node;
-diff -NBaur gcc-4.2.3/gcc/toplev.c gcc-4.2.3-ppc/gcc/toplev.c
+diff -Nbaur gcc-4.2.3/gcc/toplev.c gcc-4.2.3-ppc/gcc/toplev.c
 --- gcc-4.2.3/gcc/toplev.c	Sat Sep  1 16:28:30 2007
-+++ gcc-4.2.3-ppc/gcc/toplev.c	Tue Feb  5 06:33:18 2008
++++ gcc-4.2.3-ppc/gcc/toplev.c	Sat Feb 16 23:12:58 2008
 @@ -81,6 +81,7 @@
  #include "value-prof.h"
  #include "alloc-pool.h"
@@ -146,9 +334,9 @@ diff -NBaur gcc-4.2.3/gcc/toplev.c gcc-4.2.3-ppc/gcc/toplev.c
  
    hex_init ();
  
-diff -NBaur gcc-4.2.3/gcc/version.c gcc-4.2.3-ppc/gcc/version.c
+diff -Nbaur gcc-4.2.3/gcc/version.c gcc-4.2.3-ppc/gcc/version.c
 --- gcc-4.2.3/gcc/version.c	Wed Mar 16 06:04:10 2005
-+++ gcc-4.2.3-ppc/gcc/version.c	Tue Feb  5 06:33:19 2008
++++ gcc-4.2.3-ppc/gcc/version.c	Sat Feb 16 23:12:58 2008
 @@ -8,7 +8,7 @@
     in parentheses.  You may also wish to include a number indicating
     the revision of your modified compiler.  */
@@ -167,9 +355,9 @@ diff -NBaur gcc-4.2.3/gcc/version.c gcc-4.2.3-ppc/gcc/version.c
  
  /* The complete version string, assembled from several pieces.
     BASEVER, DATESTAMP, and DEVPHASE are defined by the Makefile.  */
-diff -NBaur gcc-4.2.3/libcpp/files.c gcc-4.2.3-ppc/libcpp/files.c
+diff -Nbaur gcc-4.2.3/libcpp/files.c gcc-4.2.3-ppc/libcpp/files.c
 --- gcc-4.2.3/libcpp/files.c	Sat Feb 18 09:25:31 2006
-+++ gcc-4.2.3-ppc/libcpp/files.c	Tue Feb  5 06:33:19 2008
++++ gcc-4.2.3-ppc/libcpp/files.c	Sat Feb 16 23:12:58 2008
 @@ -226,6 +226,22 @@
        close (file->fd);
        file->fd = -1;
