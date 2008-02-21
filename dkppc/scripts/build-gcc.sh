@@ -117,6 +117,7 @@ then
 	--target=$target \
 	--prefix=$prefix \
 	--enable-newlib-mb \
+	--enable-newlib-hw-fp \
 	|| { echo "Error configuring newlib"; exit 1; }
   touch configured-newlib
 fi
