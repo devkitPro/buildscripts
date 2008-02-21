@@ -7,6 +7,8 @@ export	LIBOGC_LIB	:=	$(DEVKITPRO)/libogc/lib/cube
 
 include $(DEVKITPPC)/base_rules
 
+MACHDEP =  -DGEKKO -mogc -mcpu=750 -meabi -mhard-float
+
 %.dol: %.elf
 	@echo output ... $(notdir $@)
 	@$(OBJCOPY)  -O binary $< $@

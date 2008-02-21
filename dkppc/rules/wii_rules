@@ -5,6 +5,8 @@ endif
 export	LIBOGC_INC	:=	$(DEVKITPRO)/libogc/include
 export	LIBOGC_LIB	:=	$(DEVKITPRO)/libogc/lib/wii
 
+MACHDEP =  -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float
+
 include $(DEVKITPPC)/base_rules
 
 %.dol: %.elf
