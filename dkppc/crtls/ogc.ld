@@ -356,12 +356,12 @@ __stack_addr = (__bss_start + SIZEOF(.bss) + 0x20000 + 7) & (-8);
 __stack_end = (__bss_start + SIZEOF(.bss));
 __intrstack_addr = (__stack_addr + 0x4000);
 __intrstack_end = (__stack_addr);
-__ArenaLo = (__intrstack_addr + 31) & (-32);
-__ArenaHi = (0x81700000);
-__gxregs = (__ArenaHi + 31) & (-32);
+__Arena1Lo = (__intrstack_addr + 31) & (-32);
+__Arena1Hi = (0x816ffff0);
+__gxregs = (__Arena1Hi + 31) & (-32);
 
 /* for backward compatibility with old crt0 */
-PROVIDE (__stack = (0x81700000));
+PROVIDE (__stack = (0x816ffff0));
 
 PROVIDE(__isIPL = __isIPL);
 PROVIDE(__text_start = text_mem_start);
@@ -374,6 +374,6 @@ PROVIDE(__stack_addr = __stack_addr);
 PROVIDE(__stack_end = __stack_end);
 PROVIDE(__intrstack_addr = __intrstack_addr);
 PROVIDE(__intrstack_end = __intrstack_end);
-PROVIDE(__ArenaLo = __ArenaLo);
-PROVIDE(__ArenaHi = __ArenaHi);
+PROVIDE(__Arena1Lo = __Arena1Lo);
+PROVIDE(__Arena1Hi = __Arena1Hi);
 PROVIDE(__gxregs = __gxregs);
