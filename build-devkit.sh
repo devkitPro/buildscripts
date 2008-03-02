@@ -34,6 +34,20 @@ LIBFAT_URL="$DEVKITPRO_URL/$LIBFAT"
 LIBMIRKO_URL="$DEVKITPRO_URL/$LIBMIRKO"
 GDB_URL="http://ftp.gnu.org/gnu/gdb/$GDB"
 
+
+#---------------------------------------------------------------------------------
+# Look for automated configuration file to bypass prompts
+#---------------------------------------------------------------------------------
+ 
+echo -n "Looking for configuration file... "
+if [ -f config.sh ]; then
+  echo "Found."
+  . config.sh
+else
+  echo "Not found"
+fi
+
+
 #---------------------------------------------------------------------------------
 # Ask whether to download the source packages or not
 #---------------------------------------------------------------------------------
