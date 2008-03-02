@@ -1,12 +1,15 @@
 #!/bin/sh
 #---------------------------------------------------------------------------------
-# Build scripts for devkitARM/devkitPPC/devkitPSP
+# Build scripts for
+#	devkitARM release 21
+#	devkitPPC release 14
+#	devkitPSP release 12
 #---------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=20080217
+LIBOGC_VER=20080228
 LIBGBA_VER=20060720
 LIBNDS_VER=20071023
 LIBFAT_VER=20070127
@@ -37,13 +40,17 @@ GDB_URL="http://ftp.gnu.org/gnu/gdb/$GDB"
 
 VERSION=0
 
+if [ ! -z "$BUILD_DKPRO_PACKAGE" ] ; then
+	VERSION="$BUILD_DKPRO_PACKAGE"
+fi
+
 while [ $VERSION -eq 0 ]
 do
   echo
   echo "This script will build and install your devkit. Please select the one you require"
   echo
   echo "1: build devkitARM (gba gp32 ds)"
-  echo "2: build devkitPPC (gamecube)"
+  echo "2: build devkitPPC (gamecube wii)"
   echo "3: build devkitPSP (PSP)"
   read VERSION
 
@@ -55,8 +62,8 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=4.2.3
-    BINUTILS_VER=2.18.50
+    GCC_VER=4.1.2
+    BINUTILS_VER=2.17
     NEWLIB_VER=1.15.0
     basedir='dkarm-eabi'
     package=devkitARM
@@ -89,7 +96,7 @@ case "$VERSION" in
       SVN="svn"
     else
      echo "ERROR: Please make sure you have 'subversion (svn)' installed."
-     exit
+     exit 1
     fi
   ;;
 esac
@@ -114,6 +121,10 @@ NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/$NEWLIB"
 
 DOWNLOAD=0
 
+if [ ! -z "$BUILD_DKPRO_DOWNLOAD" ] ; then
+	DOWNLOAD="$BUILD_DKPRO_DOWNLOAD"
+fi
+
 while [ $DOWNLOAD -eq 0 ]
 do
   echo
@@ -136,7 +147,7 @@ then
     WGET=wget
   else
     echo "ERROR: Please make sure you have 'wget' installed."
-    exit
+    exit 1
   fi
 fi
 
@@ -144,13 +155,18 @@ fi
 #---------------------------------------------------------------------------------
 # Get preferred installation directory and set paths to the sources
 #---------------------------------------------------------------------------------
-echo
-echo "Please enter the directory where you would like '$package' to be installed:"
-echo "for mingw/msys you must use <drive>:/<install path> or you will have include path problems"
-echo "this is the top level directory for devkitpro, i.e. e:/devkitPro"
 
-read INSTALLDIR
-echo
+if [ ! -z "$BUILD_DKPRO_INSTALLDIR" ] ; then
+	INSTALLDIR="$BUILD_DKPRO_INSTALLDIR"
+else
+	echo
+	echo "Please enter the directory where you would like '$package' to be installed:"
+	echo "for mingw/msys you must use <drive>:/<install path> or you will have include path problems"
+	echo "this is the top level directory for devkitpro, i.e. e:/devkitPro"
+	
+	read INSTALLDIR
+	echo
+fi
 
 [ ! -z "$INSTALLDIR" ] && mkdir -p $INSTALLDIR && touch $INSTALLDIR/nonexistantfile && rm $INSTALLDIR/nonexistantfile || exit 1;
 
@@ -158,15 +174,19 @@ if [ $DOWNLOAD -eq 1 ]
 then
     FOUND=0
     while [ $FOUND -eq 0 ]
-    do
-      echo
-      echo "Please enter the path to the directory that contains the source packages:"
-      read SRCDIR
+	  do
+	  if [ ! -z "$BUILD_DKPRO_SRCDIR" ] ; then
+		  SRCDIR="$BUILD_DKPRO_SRCDIR"
+	  else
+		  echo
+		  echo "Please enter the path to the directory that contains the source packages:"
+		  read SRCDIR
+	  fi
 
       if [ ! -f $SRCDIR/$BINUTILS ]
       then
 	  echo "Error: $BINUTILS not found in $SRCDIR"
-	  exit
+	  exit 1
       else
 	  FOUND=1
       fi
@@ -174,7 +194,7 @@ then
       if [ ! -f $SRCDIR/$GCC_GPP ]
       then
     	  echo "Error: $GCC_GPP not found in $SRCDIR"
-	      exit
+	      exit 1
       else
 	      FOUND=1
       fi
@@ -182,7 +202,7 @@ then
       if [ ! -f $SRCDIR/$GCC_CORE ]
       then
     	  echo "Error: $GCC_CORE not found in $SRCDIR"
-	      exit
+	      exit 1
       else
 	      FOUND=1
       fi
@@ -190,7 +210,7 @@ then
       if [ ! -f $SRCDIR/$NEWLIB ]
       then
 	  echo "Error: $NEWLIB not found in $SRCDIR"
-	  exit
+	  exit 1
       else
 	  FOUND=1
       fi
@@ -198,7 +218,7 @@ then
       if [ ! -f $SRCDIR/$GDB ]
       then
 	  echo "Error: $GDB not found in $SRCDIR"
-	  exit
+	  exit 1
       else
 	  FOUND=1
       fi
@@ -208,35 +228,35 @@ then
         if [ ! -f $SRCDIR/$LIBGBA ]
         then
           echo "Error: $LIBGBA not found in $SRCDIR"
-          exit
+          exit 1
       else
 	      FOUND=1
       fi
       if [ ! -f $SRCDIR/$LIBNDS ]
       then
         echo "Error: $LIBNDS not found in $SRCDIR"
-	      exit
+	      exit 1
       else
 	      FOUND=1
       fi
       if [ ! -f $SRCDIR/$LIBFAT ]
       then
         echo "Error: $LIBFAT not found in $SRCDIR"
-	      exit
+	      exit 1
       else
 	      FOUND=1
       fi
       if [ ! -f $SRCDIR/$DSWIFI ]
       then
         echo "Error: $DSWIFI not found in $SRCDIR"
-	      exit
+	      exit 1
       else
 	      FOUND=1
       fi
       if [ ! -f $SRCDIR/$LIBMIRKO ]
       then
         echo "Error: $LIBMIRKO not found in $SRCDIR"
-	      exit
+	      exit 1
       else
 	      FOUND=1
       fi
@@ -247,7 +267,7 @@ then
       if [ ! -f $SRCDIR/$LIBOGC ]
       then
         echo "Error: $LIBOGC not found in $SRCDIR"
-	      exit
+	      exit 1
       else
 	      FOUND=1
       fi
@@ -260,29 +280,29 @@ else
 
     if [ ! -f downloaded_sources ]
     then
-      $WGET --passive-ftp -c $BINUTILS_URL || { echo "Error: Failed to download "$BINUTILS; exit; }
+      $WGET --passive-ftp -c $BINUTILS_URL || { echo "Error: Failed to download "$BINUTILS; exit 1; }
 
-      $WGET -c $GCC_CORE_URL || { echo "Error: Failed to download "$GCC_CORE; exit; }
+      $WGET -c $GCC_CORE_URL || { echo "Error: Failed to download "$GCC_CORE; exit 1; }
 
-      $WGET -c $GCC_GPP_URL || { echo "Error: Failed to download "$GCC_GPP; exit; }
+      $WGET -c $GCC_GPP_URL || { echo "Error: Failed to download "$GCC_GPP; exit 1; }
 
-      $WGET -c $GDB_URL || { echo "Error: Failed to download "$GDB; exit; }
+      $WGET -c $GDB_URL || { echo "Error: Failed to download "$GDB; exit 1; }
 
-      $WGET --passive-ftp -c $NEWLIB_URL || { echo "Error: Failed to download "$NEWLIB; exit; }
+      $WGET --passive-ftp -c $NEWLIB_URL || { echo "Error: Failed to download "$NEWLIB; exit 1; }
 
       if [ $VERSION -eq 2 ]
       then
-       $WGET -c $LIBOGC_URL || { echo "Error: Failed to download "$LIBOGC; exit; }
+       $WGET -c $LIBOGC_URL || { echo "Error: Failed to download "$LIBOGC; exit 1; }
       fi
 
 
       if [ $VERSION -eq 1 ]
       then
-        $WGET -c $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit; }
-        $WGET -c $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit; }
-        $WGET -c $DSWIFI_URL || { echo "Error: Failed to download "$DSWIFI; exit; }
-        $WGET -c $LIBFAT_URL || { echo "Error: Failed to download "$LIBFAT; exit; }
-        $WGET -c $LIBMIRKO_URL || { echo "Error: Failed to download "$LIBMIRKO; exit; }
+        $WGET -c $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit 1; }
+        $WGET -c $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit 1; }
+        $WGET -c $DSWIFI_URL || { echo "Error: Failed to download "$DSWIFI; exit 1; }
+        $WGET -c $LIBFAT_URL || { echo "Error: Failed to download "$LIBFAT; exit 1; }
+        $WGET -c $LIBMIRKO_URL || { echo "Error: Failed to download "$LIBMIRKO; exit 1; }
       fi
       SRCDIR=`pwd`
       touch downloaded_sources
@@ -341,12 +361,15 @@ fi
 TOOLPATH=$(echo $INSTALLDIR | sed -e 's/^\([a-zA-Z]\):/\/\1/')
 export PATH=$PATH:$TOOLPATH/$package/bin
 
-echo
-echo 'Ready to install '$package' in '$INSTALLDIR
-echo
-echo 'press return to continue'
-
-read dummy
+if [ "$BUILD_DKPRO_AUTOMATED" != "1" ] ; then
+	
+	echo
+	echo 'Ready to install '$package' in '$INSTALLDIR
+	echo
+	echo 'press return to continue'
+	
+	read dummy
+fi
 
 patchdir=$(pwd)/$basedir/patches
 scriptdir=$(pwd)/$basedir/scripts
@@ -360,49 +383,49 @@ BUILDSCRIPTDIR=$(pwd)
 if [ ! -f extracted_archives ]
 then
   echo "Extracting $BINUTILS"
-  tar -xjf $SRCDIR/$BINUTILS || { echo "Error extracting "$BINUTILS; exit; }
+  tar -xjf $SRCDIR/$BINUTILS || { echo "Error extracting "$BINUTILS; exit 1; }
 
   echo "Extracting $GCC_CORE"
-  tar -xjf $SRCDIR/$GCC_CORE || { echo "Error extracting "$GCC_CORE; exit; }
+  tar -xjf $SRCDIR/$GCC_CORE || { echo "Error extracting "$GCC_CORE; exit 1; }
 
   echo "Extracting $GCC_GPP"
-  tar -xjf $SRCDIR/$GCC_GPP || { echo "Error extracting "$GCC_GPP; exit; }
+  tar -xjf $SRCDIR/$GCC_GPP || { echo "Error extracting "$GCC_GPP; exit 1; }
 
   echo "Extracting $NEWLIB"
-  tar -xzf $SRCDIR/$NEWLIB || { echo "Error extracting "$NEWLIB; exit; }
+  tar -xzf $SRCDIR/$NEWLIB || { echo "Error extracting "$NEWLIB; exit 1; }
 
   echo "Extracting $GDB"
-  tar -xjf $SRCDIR/$GDB || { echo "Error extracting "$GCC_GPP; exit; }
+  tar -xjf $SRCDIR/$GDB || { echo "Error extracting "$GCC_GPP; exit 1; }
 
   if [ $VERSION -eq 2 ]
   then
     echo "Extracting $LIBOGC"
     mkdir -p $LIBOGC_SRCDIR
-    bzip2 -cd $SRCDIR/$LIBOGC | tar -xf - -C $LIBOGC_SRCDIR  || { echo "Error extracting "$LIBOGC; exit; }
+    bzip2 -cd $SRCDIR/$LIBOGC | tar -xf - -C $LIBOGC_SRCDIR  || { echo "Error extracting "$LIBOGC; exit 1; }
   fi
 
   if [ $VERSION -eq 1 ]
   then
     echo "Extracting $LIBNDS"
     mkdir -p $LIBNDS_SRCDIR
-    bzip2 -cd $SRCDIR/$LIBNDS | tar -xf - -C $LIBNDS_SRCDIR  || { echo "Error extracting "$LIBNDS; exit; }
+    bzip2 -cd $SRCDIR/$LIBNDS | tar -xf - -C $LIBNDS_SRCDIR  || { echo "Error extracting "$LIBNDS; exit 1; }
 
     echo "Extracting $LIBGBA"
     mkdir -p $LIBGBA_SRCDIR
-    bzip2 -cd $SRCDIR/$LIBGBA | tar -xf - -C $LIBGBA_SRCDIR || { echo "Error extracting "$LIBGBA; exit; }
+    bzip2 -cd $SRCDIR/$LIBGBA | tar -xf - -C $LIBGBA_SRCDIR || { echo "Error extracting "$LIBGBA; exit 1; }
 
 
     echo "Extracting $LIBFAT"
     mkdir -p $LIBFAT_SRCDIR
-    bzip2 -cd $SRCDIR/$LIBFAT | tar -xf - -C $LIBFAT_SRCDIR || { echo "Error extracting "$LIBFAT; exit; }
+    bzip2 -cd $SRCDIR/$LIBFAT | tar -xf - -C $LIBFAT_SRCDIR || { echo "Error extracting "$LIBFAT; exit 1; }
 
     echo "Extracting $DSWIFI"
     mkdir -p $DSWIFI_SRCDIR
-    bzip2 -cd $SRCDIR/$DSWIFI | tar -xf - -C $DSWIFI_SRCDIR || { echo "Error extracting "$DSWIFI; exit; }
+    bzip2 -cd $SRCDIR/$DSWIFI | tar -xf - -C $DSWIFI_SRCDIR || { echo "Error extracting "$DSWIFI; exit 1; }
 
     echo "Extracting $LIBMIRKO"
     mkdir -p $LIBMIRKO_SRCDIR
-    bzip2 -cd $SRCDIR/$LIBMIRKO | tar -xf - -C $LIBMIRKO_SRCDIR || { echo "Error extracting "$LIBMIRKO; exit; }
+    bzip2 -cd $SRCDIR/$LIBMIRKO | tar -xf - -C $LIBMIRKO_SRCDIR || { echo "Error extracting "$LIBMIRKO; exit 1; }
   fi
 
   touch extracted_archives
@@ -417,22 +440,22 @@ then
 
   if [ -f $patchdir/binutils-$BINUTILS_VER.patch ]
   then
-    patch -p1 -d $BINUTILS_SRCDIR -i $patchdir/binutils-$BINUTILS_VER.patch || { echo "Error patching binutils"; exit; }
+    patch -p1 -d $BINUTILS_SRCDIR -i $patchdir/binutils-$BINUTILS_VER.patch || { echo "Error patching binutils"; exit 1; }
   fi
 
   if [ -f $patchdir/gcc-$GCC_VER.patch ]
   then
-    patch -p1 -d $GCC_SRCDIR -i $patchdir/gcc-$GCC_VER.patch || { echo "Error patching gcc"; exit; }
+    patch -p1 -d $GCC_SRCDIR -i $patchdir/gcc-$GCC_VER.patch || { echo "Error patching gcc"; exit 1; }
   fi
 
   if [ -f $patchdir/newlib-$NEWLIB_VER.patch ]
   then
-    patch -p1 -d $NEWLIB_SRCDIR -i $patchdir/newlib-$NEWLIB_VER.patch || { echo "Error patching newlib"; exit; }
+    patch -p1 -d $NEWLIB_SRCDIR -i $patchdir/newlib-$NEWLIB_VER.patch || { echo "Error patching newlib"; exit 1; }
   fi
 
   if [ -f $patchdir/gdb-$GDB_VER.patch ]
   then
-    patch -p1 -d $GDB_SRCDIR -i $patchdir/gdb-$GDB_VER.patch || { echo "Error patching gdb"; exit; }
+    patch -p1 -d $GDB_SRCDIR -i $patchdir/gdb-$GDB_VER.patch || { echo "Error patching gdb"; exit 1; }
   fi
 
   touch patched_sources
@@ -441,9 +464,9 @@ fi
 #---------------------------------------------------------------------------------
 # Build and install devkit components
 #---------------------------------------------------------------------------------
-if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh || { echo "Error building toolchain"; exit; }; cd $BUILDSCRIPTDIR; fi
-if [ -f $scriptdir/build-crtls.sh ]; then . $scriptdir/build-crtls.sh || { echo "Error building crtls"; exit; }; cd $BUILDSCRIPTDIR; fi
-if [ -f $scriptdir/build-tools.sh ]; then . $scriptdir/build-tools.sh || { echo "Error building tools"; exit; }; cd $BUILDSCRIPTDIR; fi
+if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh || { echo "Error building toolchain"; exit 1; }; cd $BUILDSCRIPTDIR; fi
+if [ -f $scriptdir/build-crtls.sh ]; then . $scriptdir/build-crtls.sh || { echo "Error building crtls"; exit 1; }; cd $BUILDSCRIPTDIR; fi
+if [ -f $scriptdir/build-tools.sh ]; then . $scriptdir/build-tools.sh || { echo "Error building tools"; exit 1; }; cd $BUILDSCRIPTDIR; fi
 
 #---------------------------------------------------------------------------------
 # strip binaries
@@ -466,42 +489,47 @@ find $INSTALLDIR/$package/$target -name *.a -exec $target-strip -d {} \;
 # Clean up temporary files and source directories
 #---------------------------------------------------------------------------------
 
-echo
-echo "Would you like to delete the build folders and patched sources? [Y/n]"
-read answer
-
-if [ "$answer" != "n" -a "$answer" != "N" ]
-then
-  echo "Removing patched sources and build directories"
-
-  rm -fr $target
-  rm -fr $BINUTILS_SRCDIR
-  rm -fr $NEWLIB_SRCDIR
-  rm -fr $GCC_SRCDIR
-
-  rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $LIBMIRKO_SRCDIR $DSWIFI_SRCDIR $LIBFAT_SRCDIR $GDB_SRCDIR
-  rm -fr mn10200
-  rm -fr pspsdk
-  rm -fr extracted_archives patched_sources checkout-psp-sdk
-
+if [ "$BUILD_DKPRO_AUTOMATED" != "1" ] ; then
+	
+	echo
+	echo "Would you like to delete the build folders and patched sources? [Y/n]"
+	read answer
+	
+	if [ "$answer" != "n" -a "$answer" != "N" ]
+	then
+	echo "Removing patched sources and build directories"
+	
+	rm -fr $target
+	rm -fr $BINUTILS_SRCDIR
+	rm -fr $NEWLIB_SRCDIR
+	rm -fr $GCC_SRCDIR
+	
+	rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $LIBMIRKO_SRCDIR $DSWIFI_SRCDIR $LIBFAT_SRCDIR $GDB_SRCDIR
+	rm -fr mn10200
+	rm -fr pspsdk
+	rm -fr extracted_archives patched_sources checkout-psp-sdk
+	
+	fi
 fi
 
-echo
-echo "Would you like to delete the downloaded source packages? [y/N]"
-read answer
-
-if [ "$answer" = "y" -o "$answer" = "Y" ]
-then
-    echo "removing archives"
-    rm -f $SRCDIR/$BINUTILS $SRCDIR/$GCC_CORE $SRCDIR/$GCC_GPP $SRCDIR/$NEWLIB
-    if [ $VERSION -eq 1 -o $VERSION -eq 4 ]
-    then
-      rm -f  $SRCDIR/$LIBGBA $SRCDIR/$LIBNDS $SRCDIR/$LIBMIRKO
-    fi
-    if [ $VERSION -eq 2 ]
-    then
-      rm -f  $SRCDIR/$LIBOGC
-    fi
+if [ "$BUILD_DKPRO_AUTOMATED" != "1" ] ; then
+	echo
+	echo "Would you like to delete the downloaded source packages? [y/N]"
+	read answer
+	
+	if [ "$answer" = "y" -o "$answer" = "Y" ]
+	then
+		echo "removing archives"
+		rm -f $SRCDIR/$BINUTILS $SRCDIR/$GCC_CORE $SRCDIR/$GCC_GPP $SRCDIR/$NEWLIB
+		if [ $VERSION -eq 1 -o $VERSION -eq 4 ]
+		then
+		rm -f  $SRCDIR/$LIBGBA $SRCDIR/$LIBNDS $SRCDIR/$LIBMIRKO
+		fi
+		if [ $VERSION -eq 2 ]
+		then
+		rm -f  $SRCDIR/$LIBOGC
+		fi
+	fi
 fi
 
 echo
