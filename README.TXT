@@ -21,8 +21,8 @@ Downloading the source packages
 When you run the build script it will ask you to choose from one of two options, one for if you have already downloaded the source packages and another for if you want it to download them for you (using wget).  If you choose option one and want to get the source packages for yourself then you can find them at the urls listed below;
 
 binutils 2.18.50  - ftp://sourceware.org/pub/binutils/snapshots/binutils-2.18.50.tar.bz2
-gcc-core 4.1.2 - http://ftp.gnu.org/gnu/gcc/gcc-4.2.3/gcc-core-4.1.3.tar.bz2
-gcc-g++ 4.1.2 - http://ftp.gnu.org/gnu/gcc/gcc-4.2.3/gcc-g++-4.1.3.tar.bz2
+gcc-core 4.2.3 - http://ftp.gnu.org/gnu/gcc/gcc-4.2.3/gcc-core-4.2.3.tar.bz2
+gcc-g++ 4.2.3 - http://ftp.gnu.org/gnu/gcc/gcc-4.2.3/gcc-g++-4.2.3.tar.bz2
 newlib 1.15.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.15.0.tar.gz
 
 
@@ -33,6 +33,12 @@ newlib 1.14.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.14.0.tar.gz
 devkitPSP is using earlier versions of binutils and gcc
 
 binutils 2.16.1  - http://ftp.gnu.org/gnu/binutils/binutils-2.16.1.tar.bz2
+gcc-core 4.1.2 - http://ftp.gnu.org/gnu/gcc/gcc-4.1.2/gcc-core-4.1.2.tar.bz2
+gcc-g++ 4.1.2 - http://ftp.gnu.org/gnu/gcc/gcc-4.1.2/gcc-g++-4.1.2.tar.bz2
+
+devkitARM is using gcc 4.1.2 and binutils 2.17
+
+binutils 2.17  - http://ftp.gnu.org/gnu/binutils/binutils-2.17.tar.bz2
 gcc-core 4.1.2 - http://ftp.gnu.org/gnu/gcc/gcc-4.1.2/gcc-core-4.1.2.tar.bz2
 gcc-g++ 4.1.2 - http://ftp.gnu.org/gnu/gcc/gcc-4.1.2/gcc-g++-4.1.2.tar.bz2
 
@@ -100,7 +106,7 @@ to use the built in crt0 and linkscript use powerpc-elf-gcc to link your project
 Credits
 -------
 
-* Thanks to WinterMute for bringing us devkitARM, the website is http://www.devkitpro.org
+* Thanks to WinterMute for bringing us devkitPro, the website is http://www.devkitpro.org
 * Build scripts written by WinterMute and tied together by GreenGianT
 * Thanks to Mr Spiv, Honkey Kong, Raleigh and JoostP for OS X testing
 * libogc written and supplied by Shagkur. Additional code by WinterMute
