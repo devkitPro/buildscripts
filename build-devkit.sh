@@ -34,6 +34,12 @@ LIBFAT_URL="$DEVKITPRO_URL/$LIBFAT"
 LIBMIRKO_URL="$DEVKITPRO_URL/$LIBMIRKO"
 GDB_URL="http://ftp.gnu.org/gnu/gdb/$GDB"
 
+#---------------------------------------------------------------------------------
+# Sane defaults for building toolchain
+#---------------------------------------------------------------------------------
+export CFLAGS="-O2 -pipe"
+export CXXFLAGS="$CLFAGS"
+unset LDFLAGS
 
 #---------------------------------------------------------------------------------
 # Look for automated configuration file to bypass prompts
