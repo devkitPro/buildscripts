@@ -26,11 +26,12 @@ BUILD_DKPRO_DOWNLOAD=0
 # Toolchain installation directory, comment if not specified
 #---------------------------------------------------------------------------------
 #BUILD_DKPRO_INSTALLDIR=/opt/devkitpro
+#BUILD_DKPRO_INSTALLDIR=c:/devkitPro
 
 #---------------------------------------------------------------------------------
 # Path to previously downloaded source packages, comment if not specified
 #---------------------------------------------------------------------------------
-#BUILD_DKPRO_SRCDIR=.
+BUILD_DKPRO_SRCDIR=/d/projects/archives
 
 #---------------------------------------------------------------------------------
 # Automated script execution
