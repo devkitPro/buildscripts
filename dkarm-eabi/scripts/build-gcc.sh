@@ -57,11 +57,6 @@ then
   touch configured-gcc
 fi
 
-
-# hack to get around msys/mingw build problem
-
-mkdir -p libiberty libcpp fixincludes
-
 if [ ! -f built-gcc ]
 then
   $MAKE all-gcc || { echo "Error building gcc"; exit 1; }
