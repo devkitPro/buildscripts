@@ -38,7 +38,7 @@ GDB_URL="http://ftp.gnu.org/gnu/gdb/$GDB"
 # Sane defaults for building toolchain
 #---------------------------------------------------------------------------------
 export CFLAGS="-O2 -pipe"
-export CXXFLAGS="$CLFAGS"
+export CXXFLAGS="$CFLAGS"
 unset LDFLAGS
 
 #---------------------------------------------------------------------------------
