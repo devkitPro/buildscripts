@@ -31,7 +31,7 @@ BUILD_DKPRO_DOWNLOAD=0
 #---------------------------------------------------------------------------------
 # Path to previously downloaded source packages, comment if not specified
 #---------------------------------------------------------------------------------
-BUILD_DKPRO_SRCDIR=/d/projects/archives
+#BUILD_DKPRO_SRCDIR=/d/projects/archives
 
 #---------------------------------------------------------------------------------
 # Automated script execution
