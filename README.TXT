@@ -26,10 +26,6 @@ gcc-g++ 4.2.3 - http://ftp.gnu.org/gnu/gcc/gcc-4.2.3/gcc-g++-4.2.3.tar.bz2
 newlib 1.15.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.15.0.tar.gz
 
 
-Currently devkitPPC is still using an earlier version of newlib.
-
-newlib 1.14.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.14.0.tar.gz
-
 devkitPSP is using earlier versions of binutils and gcc
 
 binutils 2.16.1  - http://ftp.gnu.org/gnu/binutils/binutils-2.16.1.tar.bz2
@@ -59,6 +55,8 @@ Simply run the "build-devkit.sh" script in the same directory as this text file 
 ./build-devkit.sh
 
 Once the script finds the source packages they will be decompressed and the build process will begin.  When its finished you have the option to delete all temporary files, sources and their source packages.
+
+To avoid having to manually answer prompts during the build the script will read variables from config.sh if it exists. Copy config.sh.sample to config.sh and set the variables as appropriate for your build.
 
 
 Using devkitARM
@@ -118,5 +116,5 @@ Credits
 * b2fxec by Mr Spiv
 * scripts made BSD compatible by o2addict
 
-  - blitzed #gbadev, #dsdev, #wiidev forever!
+  - irc.blitzed.org #gbadev, #dsdev, #wiidev forever!
 
