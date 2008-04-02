@@ -82,8 +82,8 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=4.1.2
-    BINUTILS_VER=2.17
+    GCC_VER=4.3.0
+    BINUTILS_VER=2.18.50
     NEWLIB_VER=1.15.0
     basedir='dkarm-eabi'
     package=devkitARM
@@ -502,7 +502,7 @@ done
 #---------------------------------------------------------------------------------
 # strip debug info from libraries
 #---------------------------------------------------------------------------------
-find $INSTALLDIR/$package/lib/gcc -name *.a -exec $target-strip -d {} \;
+find $INSTALLDIR/$package/lib/gcc/$target -name *.a -exec $target-strip -d {} \;
 find $INSTALLDIR/$package/$target -name *.a -exec $target-strip -d {} \;
 
 #---------------------------------------------------------------------------------
