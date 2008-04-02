@@ -173,7 +173,7 @@ SECTIONS
 		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
 		__bss_end = ABSOLUTE(.) ;
 
-	} >iwram
+	} AT>iwram
 
 	__bss_end__ = __bss_end ;
 
@@ -227,9 +227,9 @@ SECTIONS
 		.iwram9 { *(.iwram9) . = ALIGN(4);}
 	}>iwram = 0xff
 
-	__ewram_lma = __load_stop_iwram9;
-
 	__iwram_overlay_end = . ;
+  __ewram_lma = __iwram_overlay_lma + (__iwram_overlay_end - __iwram_overlay_start) ;
+
 	__iheap_start = . ;
 
 	__ewram_start = ORIGIN(ewram);
@@ -247,7 +247,7 @@ SECTIONS
  		*(.sbss)
  		. = ALIGN(4);
 		__sbss_end  = ABSOLUTE(.);
- 	} >ewram
+ 	} AT>ewram
 
 
 	__ewram_end = __sbss_end ;

@@ -144,6 +144,7 @@ SECTIONS
 
 
 	__dtcm_lma = . ;
+	__bss_vma = . ;
 
 	.dtcm __dtcm_start : AT (__dtcm_lma)
 	{
@@ -151,7 +152,7 @@ SECTIONS
 		*(.dtcm.*)
 		. = ALIGN(4);
 		__dtcm_end = ABSOLUTE(.);
-	} >dtcm = 0xff
+	} >dtcm  = 0xff
 
 
 	__itcm_lma = __dtcm_lma + SIZEOF(.dtcm);
@@ -171,13 +172,11 @@ SECTIONS
 		*(.sbss)
 		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
 		__sbss_end = ABSOLUTE(.);
-	} >dtcm
+	} >dtcm 
 	
 
 	
-	__bss_lma = __itcm_lma + SIZEOF(.itcm) ;
-	__appended_data = __itcm_lma + SIZEOF(.itcm) ;
-	.bss __bss_lma : AT (__bss_lma)
+	.bss __bss_vma (NOLOAD): 
 	{
 		__bss_start = ABSOLUTE(.);
 		__bss_start__ = ABSOLUTE(.);
@@ -188,12 +187,11 @@ SECTIONS
 		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
 		__bss_end = ABSOLUTE(.) ;
 		__bss_end__ = __bss_end ;
-	} >ewram
+	} AT>ewram 
 
 
-	_end = . ;
-	__end__ = . ;
-	PROVIDE (end = _end);
+	_end = __bss_end__ ;
+	__end__ = __bss_end__ ;
 
 
 
