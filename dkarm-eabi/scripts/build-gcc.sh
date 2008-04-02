@@ -48,11 +48,13 @@ then
         --enable-interwork --enable-multilib\
         --with-gcc --with-gnu-ld --with-gnu-as \
         --disable-shared --disable-threads --disable-win32-registry --disable-nls --disable-debug\
-        --disable-libmudflap --disable-libssp \
+        --disable-libmudflap --disable-libssp --disable-libgomp \
         --disable-libstdcxx-pch \
         --target=$target \
         --with-newlib \
         --prefix=$prefix\
+        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 22"
+
         || { echo "Error configuring gcc"; exit 1; }
   touch configured-gcc
 fi
