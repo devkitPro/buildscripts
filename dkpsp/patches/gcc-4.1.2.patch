@@ -1,6 +1,6 @@
-diff -Nbaur gcc-4.1.0/config.sub gcc-4.1.0-psp/config.sub
---- gcc-4.1.0/config.sub	Fri Dec 16 12:57:40 2005
-+++ gcc-4.1.0-psp/config.sub	Sun May  7 22:34:17 2006
+diff -Nbaur gcc-4.1.2/config.sub gcc-4.1.2-psp/config.sub
+--- gcc-4.1.2/config.sub	Fri Dec 16 12:57:40 2005
++++ gcc-4.1.2-psp/config.sub	Mon Feb 18 13:28:06 2008
 @@ -264,6 +264,7 @@
  	| mipsisa64sb1 | mipsisa64sb1el \
  	| mipsisa64sr71k | mipsisa64sr71kel \
@@ -28,9 +28,9 @@ diff -Nbaur gcc-4.1.0/config.sub gcc-4.1.0-psp/config.sub
  		;;
  	mips3*-*)
  		basic_machine=`echo $basic_machine | sed -e 's/mips3/mips64/'`
-diff -Nbaur gcc-4.1.0/gcc/c-incpath.c gcc-4.1.0-psp/gcc/c-incpath.c
---- gcc-4.1.0/gcc/c-incpath.c	Sat Jun 25 03:02:01 2005
-+++ gcc-4.1.0-psp/gcc/c-incpath.c	Sun May  7 22:34:29 2006
+diff -Nbaur gcc-4.1.2/gcc/c-incpath.c gcc-4.1.2-psp/gcc/c-incpath.c
+--- gcc-4.1.2/gcc/c-incpath.c	Sat Jun 25 03:02:01 2005
++++ gcc-4.1.2-psp/gcc/c-incpath.c	Mon Feb 18 13:28:06 2008
 @@ -331,13 +331,18 @@
    cpp_dir *p;
  
@@ -57,9 +57,9 @@ diff -Nbaur gcc-4.1.0/gcc/c-incpath.c gcc-4.1.0-psp/gcc/c-incpath.c
  #endif
  
    p = xmalloc (sizeof (cpp_dir));
-diff -Nbaur gcc-4.1.0/gcc/config/mips/allegrex.md gcc-4.1.0-psp/gcc/config/mips/allegrex.md
---- gcc-4.1.0/gcc/config/mips/allegrex.md	Thu Jan  1 00:00:00 1970
-+++ gcc-4.1.0-psp/gcc/config/mips/allegrex.md	Sun May  7 22:34:17 2006
+diff -Nbaur gcc-4.1.2/gcc/config/mips/allegrex.md gcc-4.1.2-psp/gcc/config/mips/allegrex.md
+--- gcc-4.1.2/gcc/config/mips/allegrex.md	Thu Jan  1 00:00:00 1970
++++ gcc-4.1.2-psp/gcc/config/mips/allegrex.md	Mon Feb 18 13:28:06 2008
 @@ -0,0 +1,183 @@
 +;; Sony ALLEGREX instructions.
 +;; Copyright (C) 2005 Free Software Foundation, Inc.
@@ -244,9 +244,9 @@ diff -Nbaur gcc-4.1.0/gcc/config/mips/allegrex.md gcc-4.1.0-psp/gcc/config/mips/
 +  "round.w.s\t%0,%1"
 +  [(set_attr "type"	"fcvt")
 +   (set_attr "mode"	"SF")])
-diff -Nbaur gcc-4.1.0/gcc/config/mips/mips.c gcc-4.1.0-psp/gcc/config/mips/mips.c
---- gcc-4.1.0/gcc/config/mips/mips.c	Fri Dec  9 08:15:58 2005
-+++ gcc-4.1.0-psp/gcc/config/mips/mips.c	Sun May  7 22:34:17 2006
+diff -Nbaur gcc-4.1.2/gcc/config/mips/mips.c gcc-4.1.2-psp/gcc/config/mips/mips.c
+--- gcc-4.1.2/gcc/config/mips/mips.c	Sun Sep 10 20:30:53 2006
++++ gcc-4.1.2-psp/gcc/config/mips/mips.c	Tue Mar 11 02:35:46 2008
 @@ -179,6 +179,12 @@
    MIPS_VOID_FTYPE_V2HI_V2HI,
    MIPS_VOID_FTYPE_V4QI_V4QI,
@@ -280,7 +280,16 @@ diff -Nbaur gcc-4.1.0/gcc/config/mips/mips.c gcc-4.1.0-psp/gcc/config/mips/mips.
  static rtx mips_expand_builtin_bposge (enum mips_builtin_type, rtx);
  static void mips_encode_section_info (tree, rtx, int);
  
-@@ -721,6 +733,7 @@
+@@ -600,6 +612,8 @@
+    should arrange to call mips32 hard floating point code.  */
+ int mips16_hard_float;
+ 
++unsigned int mips_preferred_stack_boundary;
++unsigned int mips_preferred_stack_align;
+ /* The architecture selected by -mipsN.  */
+ static const struct mips_cpu_info *mips_isa_info;
+ 
+@@ -721,6 +735,7 @@
  
    /* MIPS II */
    { "r6000", PROCESSOR_R6000, 2 },
@@ -288,7 +297,29 @@ diff -Nbaur gcc-4.1.0/gcc/config/mips/mips.c gcc-4.1.0-psp/gcc/config/mips/mips.
  
    /* MIPS III */
    { "r4000", PROCESSOR_R4000, 3 },
-@@ -10169,6 +10182,67 @@
+@@ -5058,6 +5073,21 @@
+       mips_lo_relocs[SYMBOL_GOTOFF_LOADGP] = "%lo(%neg(%gp_rel(";
+     }
+ 
++  /* Validate -mpreferred-stack-boundary= value, or provide default.
++     The default of 128-bit is for newABI else 64-bit.  */
++  mips_preferred_stack_boundary = (TARGET_NEWABI ? 128 : 64);
++  mips_preferred_stack_align = (TARGET_NEWABI ? 16 : 8);
++  if (mips_preferred_stack_boundary_string)
++    {
++      i = atoi (mips_preferred_stack_boundary_string);
++      if (i < 4 || i > 12)
++   error ("-mpreferred-stack-boundary=%d is not between 4 and 12", i);
++      else
++        {
++          mips_preferred_stack_align = (1 << i);
++          mips_preferred_stack_boundary = mips_preferred_stack_align * 8;
++        }
++    }
+   /* Thread-local relocation operators.  */
+   mips_lo_relocs[SYMBOL_TLSGD] = "%tlsgd(";
+   mips_lo_relocs[SYMBOL_TLSLDM] = "%tlsldm(";
+@@ -10183,6 +10213,67 @@
    BPOSGE_BUILTIN (32, MASK_DSP)
  };
  
@@ -356,7 +387,7 @@ diff -Nbaur gcc-4.1.0/gcc/config/mips/mips.c gcc-4.1.0-psp/gcc/config/mips/mips.
  /* This helps provide a mapping from builtin function codes to bdesc
     arrays.  */
  
-@@ -10189,6 +10263,7 @@
+@@ -10203,6 +10294,7 @@
  {
    { mips_bdesc, ARRAY_SIZE (mips_bdesc), PROCESSOR_MAX },
    { sb1_bdesc, ARRAY_SIZE (sb1_bdesc), PROCESSOR_SB1 },
@@ -364,7 +395,7 @@ diff -Nbaur gcc-4.1.0/gcc/config/mips/mips.c gcc-4.1.0-psp/gcc/config/mips/mips.
    { dsp_bdesc, ARRAY_SIZE (dsp_bdesc), PROCESSOR_MAX }
  };
  
-@@ -10292,6 +10367,9 @@
+@@ -10306,6 +10398,9 @@
      case MIPS_BUILTIN_BPOSGE32:
        return mips_expand_builtin_bposge (type, target);
  
@@ -374,7 +405,7 @@ diff -Nbaur gcc-4.1.0/gcc/config/mips/mips.c gcc-4.1.0-psp/gcc/config/mips/mips.
      default:
        return 0;
      }
-@@ -10310,8 +10388,8 @@
+@@ -10324,8 +10419,8 @@
    tree V4QI_type_node;
    unsigned int offset;
  
@@ -385,7 +416,7 @@ diff -Nbaur gcc-4.1.0/gcc/config/mips/mips.c gcc-4.1.0-psp/gcc/config/mips/mips.
      return;
  
    if (TARGET_PAIRED_SINGLE_FLOAT)
-@@ -10376,6 +10454,44 @@
+@@ -10390,6 +10485,44 @@
  				    double_type_node, double_type_node, NULL_TREE);
      }
  
@@ -430,7 +461,7 @@ diff -Nbaur gcc-4.1.0/gcc/config/mips/mips.c gcc-4.1.0-psp/gcc/config/mips/mips.
    if (TARGET_DSP)
      {
        V2HI_type_node = build_vector_type_for_mode (intHI_type_node, V2HImode);
-@@ -10557,6 +10673,10 @@
+@@ -10571,6 +10704,10 @@
  
    switch (i)
      {
@@ -441,7 +472,7 @@ diff -Nbaur gcc-4.1.0/gcc/config/mips/mips.c gcc-4.1.0-psp/gcc/config/mips/mips.
      case 2:
        emit_insn (GEN_FCN (icode) (ops[0], ops[1]));
        break;
-@@ -10765,6 +10885,28 @@
+@@ -10779,6 +10916,28 @@
        rtx symbol = XEXP (rtl, 0);
        SYMBOL_REF_FLAGS (symbol) |= SYMBOL_FLAG_LONG_CALL;
      }
@@ -470,9 +501,9 @@ diff -Nbaur gcc-4.1.0/gcc/config/mips/mips.c gcc-4.1.0-psp/gcc/config/mips/mips.
  }
  
  #include "gt-mips.h"
-diff -Nbaur gcc-4.1.0/gcc/config/mips/mips.h gcc-4.1.0-psp/gcc/config/mips/mips.h
---- gcc-4.1.0/gcc/config/mips/mips.h	Fri Feb 17 21:38:59 2006
-+++ gcc-4.1.0-psp/gcc/config/mips/mips.h	Sun May  7 22:34:17 2006
+diff -Nbaur gcc-4.1.2/gcc/config/mips/mips.h gcc-4.1.2-psp/gcc/config/mips/mips.h
+--- gcc-4.1.2/gcc/config/mips/mips.h	Fri Feb 17 21:38:59 2006
++++ gcc-4.1.2-psp/gcc/config/mips/mips.h	Tue Mar 11 02:35:46 2008
 @@ -59,6 +59,7 @@
    PROCESSOR_R9000,
    PROCESSOR_SB1,
@@ -557,21 +588,49 @@ diff -Nbaur gcc-4.1.0/gcc/config/mips/mips.h gcc-4.1.0-psp/gcc/config/mips/mips.
  
  /* Add -G xx support.  */
  
-@@ -1138,6 +1150,11 @@
- /* Define if loading short immediate values into registers sign extends.  */
- #define SHORT_IMMEDIATES_SIGN_EXTEND
- 
+@@ -1143,6 +1155,11 @@
+ #define CLZ_DEFINED_VALUE_AT_ZERO(MODE, VALUE) \
+   ((VALUE) = GET_MODE_BITSIZE (MODE), true)
+ 
 +/* The [d]clz instructions have the natural values at 0.  */
 +
 +#define CLZ_DEFINED_VALUE_AT_ZERO(MODE, VALUE) \
 +  ((VALUE) = GET_MODE_BITSIZE (MODE), true)
 +
- /* The [d]clz instructions have the natural values at 0.  */
+ /* Standard register usage.  */
  
- #define CLZ_DEFINED_VALUE_AT_ZERO(MODE, VALUE) \
-diff -Nbaur gcc-4.1.0/gcc/config/mips/mips.md gcc-4.1.0-psp/gcc/config/mips/mips.md
---- gcc-4.1.0/gcc/config/mips/mips.md	Fri Jul 29 18:25:27 2005
-+++ gcc-4.1.0-psp/gcc/config/mips/mips.md	Sun May  7 22:34:17 2006
+ /* Number of hardware registers.  We have:
+@@ -1936,7 +1953,7 @@
+    `current_function_outgoing_args_size'.  */
+ #define OUTGOING_REG_PARM_STACK_SPACE
+ 
+-#define STACK_BOUNDARY (TARGET_NEWABI ? 128 : 64)
++#define STACK_BOUNDARY (mips_preferred_stack_boundary)
+ 
+ #define RETURN_POPS_ARGS(FUNDECL,FUNTYPE,SIZE) 0
+ 
+@@ -2092,7 +2109,7 @@
+ /* Treat LOC as a byte offset from the stack pointer and round it up
+    to the next fully-aligned offset.  */
+ #define MIPS_STACK_ALIGN(LOC) \
+-  (TARGET_NEWABI ? ((LOC) + 15) & -16 : ((LOC) + 7) & -8)
++  ((LOC) + (mips_preferred_stack_align - 1) & -(mips_preferred_stack_align))
+ 
+ 
+ /* Implement `va_start' for varargs and stdarg.  */
+@@ -2795,6 +2812,9 @@
+ #endif
+ #endif
+ 
++extern unsigned int mips_preferred_stack_boundary;
++extern unsigned int mips_preferred_stack_align;
++extern const char *mips_preferred_stack_boundary_string;
+ #ifndef HAVE_AS_TLS
+ #define HAVE_AS_TLS 0
+ #endif
+diff -Nbaur gcc-4.1.2/gcc/config/mips/mips.md gcc-4.1.2-psp/gcc/config/mips/mips.md
+--- gcc-4.1.2/gcc/config/mips/mips.md	Sun Sep 10 20:30:53 2006
++++ gcc-4.1.2-psp/gcc/config/mips/mips.md	Mon Feb 18 13:28:06 2008
 @@ -142,6 +142,21 @@
     (UNSPEC_MTHLIP		365)
     (UNSPEC_WRDSP		366)
@@ -710,9 +769,20 @@ diff -Nbaur gcc-4.1.0/gcc/config/mips/mips.md gcc-4.1.0-psp/gcc/config/mips/mips
 +
 +; Sony ALLEGREX instructions.
 +(include "allegrex.md")
-diff -Nbaur gcc-4.1.0/gcc/config/mips/psp.h gcc-4.1.0-psp/gcc/config/mips/psp.h
---- gcc-4.1.0/gcc/config/mips/psp.h	Thu Jan  1 00:00:00 1970
-+++ gcc-4.1.0-psp/gcc/config/mips/psp.h	Sun May  7 22:34:17 2006
+diff -Nbaur gcc-4.1.2/gcc/config/mips/mips.opt gcc-4.1.2-psp/gcc/config/mips/mips.opt
+--- gcc-4.1.2/gcc/config/mips/mips.opt	Sat Jul 23 09:36:54 2005
++++ gcc-4.1.2-psp/gcc/config/mips/mips.opt	Tue Mar 11 02:35:46 2008
+@@ -216,3 +216,7 @@
+ mxgot
+ Target Report Var(TARGET_XGOT)
+ Lift restrictions on GOT size
++
++mpreferred-stack-boundary=
++Target RejectNegative Joined Var(mips_preferred_stack_boundary_string)
++Attempt to keep stack aligned to this power of 2
+diff -Nbaur gcc-4.1.2/gcc/config/mips/psp.h gcc-4.1.2-psp/gcc/config/mips/psp.h
+--- gcc-4.1.2/gcc/config/mips/psp.h	Thu Jan  1 00:00:00 1970
++++ gcc-4.1.2-psp/gcc/config/mips/psp.h	Mon Feb 18 13:28:06 2008
 @@ -0,0 +1,31 @@
 +/* Support for Sony's Playstation Portable (PSP).
 +   Copyright (C) 2005 Free Software Foundation, Inc.
@@ -745,9 +815,9 @@ diff -Nbaur gcc-4.1.0/gcc/config/mips/psp.h gcc-4.1.0-psp/gcc/config/mips/psp.h
 +/* Get rid of the .pdr section. */
 +#undef SUBTARGET_ASM_SPEC
 +#define SUBTARGET_ASM_SPEC "-mno-pdr"
-diff -Nbaur gcc-4.1.0/gcc/config/mips/t-allegrex gcc-4.1.0-psp/gcc/config/mips/t-allegrex
---- gcc-4.1.0/gcc/config/mips/t-allegrex	Thu Jan  1 00:00:00 1970
-+++ gcc-4.1.0-psp/gcc/config/mips/t-allegrex	Sun May  7 22:34:17 2006
+diff -Nbaur gcc-4.1.2/gcc/config/mips/t-allegrex gcc-4.1.2-psp/gcc/config/mips/t-allegrex
+--- gcc-4.1.2/gcc/config/mips/t-allegrex	Thu Jan  1 00:00:00 1970
++++ gcc-4.1.2-psp/gcc/config/mips/t-allegrex	Mon Feb 18 13:28:06 2008
 @@ -0,0 +1,29 @@
 +# Suppress building libgcc1.a, since the MIPS compiler port is complete
 +# and does not need anything from libgcc1.a.
@@ -778,9 +848,9 @@ diff -Nbaur gcc-4.1.0/gcc/config/mips/t-allegrex gcc-4.1.0-psp/gcc/config/mips/t
 +
 +LIBGCC = stmp-multilib
 +INSTALL_LIBGCC = install-multilib
-diff -Nbaur gcc-4.1.0/gcc/config.gcc gcc-4.1.0-psp/gcc/config.gcc
---- gcc-4.1.0/gcc/config.gcc	Mon Feb  6 16:07:46 2006
-+++ gcc-4.1.0-psp/gcc/config.gcc	Sun May  7 22:34:17 2006
+diff -Nbaur gcc-4.1.2/gcc/config.gcc gcc-4.1.2-psp/gcc/config.gcc
+--- gcc-4.1.2/gcc/config.gcc	Mon Oct 16 00:12:23 2006
++++ gcc-4.1.2-psp/gcc/config.gcc	Mon Feb 18 13:28:06 2008
 @@ -406,12 +406,6 @@
        tm_defines="${tm_defines} FBSD_MAJOR=5" ;;
      *-*-freebsd6 | *-*-freebsd[6].*)
@@ -806,7 +876,7 @@ diff -Nbaur gcc-4.1.0/gcc/config.gcc gcc-4.1.0-psp/gcc/config.gcc
  bfin*-*)
  	tm_file="${tm_file} dbxelf.h elfos.h bfin/elf.h"
          tmake_file=bfin/t-bfin
-@@ -1582,6 +1571,18 @@
+@@ -1579,6 +1568,18 @@
  mipstx39-*-elf* | mipstx39el-*-elf*)
  	tm_file="elfos.h ${tm_file} mips/r3900.h mips/elf.h"
  	tmake_file=mips/t-r3900
@@ -825,9 +895,9 @@ diff -Nbaur gcc-4.1.0/gcc/config.gcc gcc-4.1.0-psp/gcc/config.gcc
  	use_fixproto=yes
  	;;
  mmix-knuth-mmixware)
-diff -Nbaur gcc-4.1.0/gcc/gcc.c gcc-4.1.0-psp/gcc/gcc.c
---- gcc-4.1.0/gcc/gcc.c	Sat Jan 21 18:29:08 2006
-+++ gcc-4.1.0-psp/gcc/gcc.c	Sun May  7 22:34:29 2006
+diff -Nbaur gcc-4.1.2/gcc/gcc.c gcc-4.1.2-psp/gcc/gcc.c
+--- gcc-4.1.2/gcc/gcc.c	Tue Nov  7 14:26:21 2006
++++ gcc-4.1.2-psp/gcc/gcc.c	Mon Feb 18 13:28:06 2008
 @@ -3250,8 +3250,6 @@
        gcc_libexec_prefix = make_relative_prefix (argv[0],
  						 standard_bindir_prefix,
@@ -837,7 +907,7 @@ diff -Nbaur gcc-4.1.0/gcc/gcc.c gcc-4.1.0-psp/gcc/gcc.c
      }
    else
      gcc_libexec_prefix = make_relative_prefix (gcc_exec_prefix,
-@@ -6148,10 +6146,10 @@
+@@ -6151,10 +6149,10 @@
  
    /* We need to check standard_exec_prefix/just_machine_suffix/specs
       for any override of as, ld and libraries.  */
@@ -850,9 +920,9 @@ diff -Nbaur gcc-4.1.0/gcc/gcc.c gcc-4.1.0-psp/gcc/gcc.c
    strcat (specs_file, just_machine_suffix);
    strcat (specs_file, "specs");
    if (access (specs_file, R_OK) == 0)
-diff -Nbaur gcc-4.1.0/gcc/prefix.c gcc-4.1.0-psp/gcc/prefix.c
---- gcc-4.1.0/gcc/prefix.c	Sat Jun 25 03:02:01 2005
-+++ gcc-4.1.0-psp/gcc/prefix.c	Sun May  7 22:34:29 2006
+diff -Nbaur gcc-4.1.2/gcc/prefix.c gcc-4.1.2-psp/gcc/prefix.c
+--- gcc-4.1.2/gcc/prefix.c	Sat Jun 25 03:02:01 2005
++++ gcc-4.1.2-psp/gcc/prefix.c	Mon Feb 18 13:28:06 2008
 @@ -246,13 +246,16 @@
     The returned string is always malloc-ed, and the caller is
     responsible for freeing it.  */
@@ -879,9 +949,9 @@ diff -Nbaur gcc-4.1.0/gcc/prefix.c gcc-4.1.0-psp/gcc/prefix.c
 +
 +	putenv (concat ("GCC_EXEC_PREFIX=", std_prefix, NULL));
  }
-diff -Nbaur gcc-4.1.0/gcc/toplev.c gcc-4.1.0-psp/gcc/toplev.c
---- gcc-4.1.0/gcc/toplev.c	Sat Feb  4 22:13:20 2006
-+++ gcc-4.1.0-psp/gcc/toplev.c	Sun May  7 22:34:29 2006
+diff -Nbaur gcc-4.1.2/gcc/toplev.c gcc-4.1.2-psp/gcc/toplev.c
+--- gcc-4.1.2/gcc/toplev.c	Thu Aug  3 12:33:49 2006
++++ gcc-4.1.2-psp/gcc/toplev.c	Mon Feb 18 13:28:06 2008
 @@ -82,6 +82,7 @@
  #include "value-prof.h"
  #include "alloc-pool.h"
@@ -901,9 +971,9 @@ diff -Nbaur gcc-4.1.0/gcc/toplev.c gcc-4.1.0-psp/gcc/toplev.c
  
    hex_init ();
  
-diff -Nbaur gcc-4.1.0/gcc/version.c gcc-4.1.0-psp/gcc/version.c
---- gcc-4.1.0/gcc/version.c	Wed Mar 16 06:04:10 2005
-+++ gcc-4.1.0-psp/gcc/version.c	Sun May  7 22:37:23 2006
+diff -Nbaur gcc-4.1.2/gcc/version.c gcc-4.1.2-psp/gcc/version.c
+--- gcc-4.1.2/gcc/version.c	Wed Mar 16 06:04:10 2005
++++ gcc-4.1.2-psp/gcc/version.c	Mon Feb 18 13:28:07 2008
 @@ -8,7 +8,7 @@
     in parentheses.  You may also wish to include a number indicating
     the revision of your modified compiler.  */
