@@ -847,8 +847,8 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/chdir.c newlib-1.15.0-new/libgloss
 +}
 diff -Nbaur newlib-1.15.0/libgloss/libsysbase/close.c newlib-1.15.0-new/libgloss/libsysbase/close.c
 --- newlib-1.15.0/libgloss/libsysbase/close.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-new/libgloss/libsysbase/close.c	Sun Apr 13 18:13:37 2008
-@@ -0,0 +1,39 @@
++++ newlib-1.15.0-new/libgloss/libsysbase/close.c	Mon Apr 14 18:33:15 2008
+@@ -0,0 +1,41 @@
 +#include "config.h"
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -878,13 +878,15 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/close.c newlib-1.15.0-new/libgloss
 +
 +		__handle *handle = __get_handle(fileDesc);
 +
-+		dev = handle->device;
-+		fd = handle->fileStruct;
++		if ( handle != NULL) {
++			dev = handle->device;
++			fd = (unsigned int)handle->fileStruct;
 +
-+		if(devoptab_list[dev]->close_r)
-+			ret = devoptab_list[dev]->close_r(ptr,fd);
++			if(devoptab_list[dev]->close_r)
++				ret = devoptab_list[dev]->close_r(ptr,fd);
 +
-+		__release_handle(fileDesc);
++			__release_handle(fileDesc);
++		}
 +	}
 +	return ret;
 +}
