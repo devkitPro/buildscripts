@@ -84,10 +84,12 @@ then
 	--without-headers\
 	--disable-nls --disable-shared --enable-threads --disable-multilib \
 	--disable-win32-registry\
-    --disable-libstdcxx-pch \
+  --disable-libmudflap --disable-libssp --disable-libgomp \
+  --disable-libstdcxx-pch \
 	--target=$target \
 	--with-newlib \
 	--prefix=$prefix\
+	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 15" \
 	2>&1 | tee gcc_configure.log
   touch configured-gcc
 fi
