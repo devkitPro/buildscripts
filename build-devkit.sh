@@ -13,6 +13,7 @@ LIBOGC_VER=20080228
 LIBGBA_VER=20060720
 LIBNDS_VER=20071023
 LIBFAT_VER=20070127
+DEFAULT_ARM7_VER=20080414
 DSWIFI_VER=0.3.4
 LIBMIRKO_VER=0.9.7
 GDB_VER=6.7.1
@@ -22,6 +23,7 @@ LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
 LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
 LIBFAT="libfat-src-$LIBFAT_VER.tar.bz2"
 DSWIFI="dswifi-src-$DSWIFI_VER.tar.bz2"
+DEFAULT_ARM7="default_arm7-src-$DEFAULT_ARM7_VER.tar.bz2"
 LIBMIRKO="libmirko-src-$LIBMIRKO_VER.tar.bz2"
 GDB="gdb-$GDB_VER.tar.bz2"
 DEVKITPRO_URL="http://downloads.sourceforge.net/devkitpro"
@@ -32,6 +34,7 @@ LIBNDS_URL="$DEVKITPRO_URL/$LIBNDS"
 DSWIFI_URL="$DEVKITPRO_URL/$DSWIFI"
 LIBFAT_URL="$DEVKITPRO_URL/$LIBFAT"
 LIBMIRKO_URL="$DEVKITPRO_URL/$LIBMIRKO"
+DEFAULT_ARM7_URL="$DEVKITPRO_URL/$DEFAULT_ARM7"
 GDB_URL="http://ftp.gnu.org/gnu/gdb/$GDB"
 
 #---------------------------------------------------------------------------------
@@ -237,10 +240,10 @@ then
 
       if [ ! -f $SRCDIR/$GDB ]
       then
-	  echo "Error: $GDB not found in $SRCDIR"
-	  exit 1
+        echo "Error: $GDB not found in $SRCDIR"
+	      exit 1
       else
-	  FOUND=1
+        FOUND=1
       fi
 
       if [ $VERSION -eq 1 ]
@@ -249,38 +252,45 @@ then
         then
           echo "Error: $LIBGBA not found in $SRCDIR"
           exit 1
-      else
-	      FOUND=1
+        else
+	        FOUND=1
+        fi
+        if [ ! -f $SRCDIR/$LIBNDS ]
+        then
+          echo "Error: $LIBNDS not found in $SRCDIR"
+	        exit 1
+        else
+	        FOUND=1
+        fi
+        if [ ! -f $SRCDIR/$LIBFAT ]
+        then
+          echo "Error: $LIBFAT not found in $SRCDIR"
+	        exit 1
+        else
+	        FOUND=1
+        fi
+        if [ ! -f $SRCDIR/$DSWIFI ]
+        then
+          echo "Error: $DSWIFI not found in $SRCDIR"
+	        exit 1
+        else
+	        FOUND=1
+        fi
+        if [ ! -f $SRCDIR/$LIBMIRKO ]
+        then
+          echo "Error: $LIBMIRKO not found in $SRCDIR"
+	        exit 1
+        else
+	        FOUND=1
+        fi
+        if [ ! -f $SRCDIR/$DEFAULT_ARM7 ]
+        then
+          echo "Error: $DEFAULT_ARM7 not found in $SRCDIR"
+	        exit 1
+        else
+	        FOUND=1
+        fi
       fi
-      if [ ! -f $SRCDIR/$LIBNDS ]
-      then
-        echo "Error: $LIBNDS not found in $SRCDIR"
-	      exit 1
-      else
-	      FOUND=1
-      fi
-      if [ ! -f $SRCDIR/$LIBFAT ]
-      then
-        echo "Error: $LIBFAT not found in $SRCDIR"
-	      exit 1
-      else
-	      FOUND=1
-      fi
-      if [ ! -f $SRCDIR/$DSWIFI ]
-      then
-        echo "Error: $DSWIFI not found in $SRCDIR"
-	      exit 1
-      else
-	      FOUND=1
-      fi
-      if [ ! -f $SRCDIR/$LIBMIRKO ]
-      then
-        echo "Error: $LIBMIRKO not found in $SRCDIR"
-	      exit 1
-      else
-	      FOUND=1
-      fi
-    fi
 
     if [ $VERSION -eq 2 ]
     then
@@ -323,6 +333,7 @@ else
         $WGET -c $DSWIFI_URL || { echo "Error: Failed to download "$DSWIFI; exit 1; }
         $WGET -c $LIBFAT_URL || { echo "Error: Failed to download "$LIBFAT; exit 1; }
         $WGET -c $LIBMIRKO_URL || { echo "Error: Failed to download "$LIBMIRKO; exit 1; }
+        $WGET -c $DEFAULT_ARM7_URL || { echo "Error: Failed to download "$DEFAULT_ARM7; exit 1; }
       fi
       SRCDIR=`pwd`
       touch downloaded_sources
@@ -339,6 +350,7 @@ LIBFAT_SRCDIR="libfat-$LIBFAT_VER"
 DSWIFI_SRCDIR="dswifi-$DSWIFI_VER"
 LIBNDS_SRCDIR="libnds-$LIBNDS_VER"
 LIBMIRKO_SRCDIR="libmirko-$LIBMIRKO_VER"
+DEFAULT_ARM7_SRCDIR="default_arm7-$DEFAULT_ARM7_VER"
 
 
 #---------------------------------------------------------------------------------
@@ -446,6 +458,11 @@ then
     echo "Extracting $LIBMIRKO"
     mkdir -p $LIBMIRKO_SRCDIR
     bzip2 -cd $SRCDIR/$LIBMIRKO | tar -xf - -C $LIBMIRKO_SRCDIR || { echo "Error extracting "$LIBMIRKO; exit 1; }
+
+    echo "Extracting $DEFAULT_ARM7"
+    mkdir -p $DEFAULT_ARM7_SRCDIR
+    bzip2 -cd $SRCDIR/$DEFAULT_ARM7 | tar -xf - -C $DEFAULT_ARM7_SRCDIR || { echo "Error extracting "$DEFAULT_ARM7; exit 1; }
+
   fi
 
   touch extracted_archives
@@ -524,7 +541,7 @@ if [ "$BUILD_DKPRO_AUTOMATED" != "1" ] ; then
 	rm -fr $NEWLIB_SRCDIR
 	rm -fr $GCC_SRCDIR
 	
-	rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $LIBMIRKO_SRCDIR $DSWIFI_SRCDIR $LIBFAT_SRCDIR $GDB_SRCDIR
+	rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $LIBMIRKO_SRCDIR $DSWIFI_SRCDIR $LIBFAT_SRCDIR $GDB_SRCDIR $DEFAULT_ARM7_SRCDIR
 	rm -fr mn10200
 	rm -fr pspsdk
 	rm -fr extracted_archives patched_sources checkout-psp-sdk

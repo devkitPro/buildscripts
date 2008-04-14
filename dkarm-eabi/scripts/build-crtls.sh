@@ -48,6 +48,11 @@ cd $DSWIFI_SRCDIR
 $MAKE install INSTALLDIR=$TOOLPATH 
 cd $BUILDSCRIPTDIR
 
+echo "building default arm7 ..."
+cd $DEFAULT_ARM7_SRCDIR
+$MAKE install INSTALLDIR=$TOOLPATH 
+cd $BUILDSCRIPTDIR
+
 echo "building libmirko ..."
 cd $LIBMIRKO_SRCDIR
 $MAKE install INSTALLDIR=$TOOLPATH
