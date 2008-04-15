@@ -95,7 +95,7 @@ case "$VERSION" in
     toolchain=DEVKITARM
   ;;
   "2" )
-    GCC_VER=4.3.0
+    GCC_VER=4.2.3
     BINUTILS_VER=2.18.50
     NEWLIB_VER=1.15.0
     basedir='dkppc'
@@ -241,7 +241,7 @@ then
       if [ ! -f $SRCDIR/$GDB ]
       then
         echo "Error: $GDB not found in $SRCDIR"
-	      exit 1
+	    exit 1
       else
         FOUND=1
       fi
@@ -253,7 +253,7 @@ then
           echo "Error: $LIBGBA not found in $SRCDIR"
           exit 1
         else
-	        FOUND=1
+          FOUND=1
         fi
         if [ ! -f $SRCDIR/$LIBNDS ]
         then

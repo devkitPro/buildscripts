@@ -1,6 +1,6 @@
-diff -Nbaur gcc-4.3.0/config.sub gcc-4.3.0-ppc/config.sub
---- gcc-4.3.0/config.sub	Wed Jan 23 02:37:40 2008
-+++ gcc-4.3.0-ppc/config.sub	Sun Apr 13 21:26:32 2008
+diff -Nbaur gcc-4.2.3/config.sub gcc-4.2.3-ppc/config.sub
+--- gcc-4.2.3/config.sub	Mon Oct 16 04:27:17 2006
++++ gcc-4.2.3-ppc/config.sub	Tue Apr 15 15:19:42 2008
 @@ -230,6 +230,10 @@
  		basic_machine=m68k-atari
  		os=-mint
@@ -12,9 +12,38 @@ diff -Nbaur gcc-4.3.0/config.sub gcc-4.3.0-ppc/config.sub
  esac
  
  # Decode aliases for certain CPU-COMPANY combinations.
-diff -Nbaur gcc-4.3.0/gcc/config/rs6000/sysv4.h gcc-4.3.0-ppc/gcc/config/rs6000/sysv4.h
---- gcc-4.3.0/gcc/config/rs6000/sysv4.h	Wed Aug  8 20:33:24 2007
-+++ gcc-4.3.0-ppc/gcc/config/rs6000/sysv4.h	Mon Apr 14 00:27:50 2008
+diff -Nbaur gcc-4.2.3/gcc/c-incpath.c gcc-4.2.3-ppc/gcc/c-incpath.c
+--- gcc-4.2.3/gcc/c-incpath.c	Sat Sep  1 16:28:30 2007
++++ gcc-4.2.3-ppc/gcc/c-incpath.c	Tue Apr 15 15:19:42 2008
+@@ -340,13 +340,18 @@
+   cpp_dir *p;
+ 
+ #if defined (HAVE_DOS_BASED_FILE_SYSTEM)
+-  /* Convert all backslashes to slashes.  The native CRT stat()
+-     function does not recognize a directory that ends in a backslash
+-     (unless it is a drive root dir, such "c:\").  Forward slashes,
+-     trailing or otherwise, cause no problems for stat().  */
+-  char* c;
+-  for (c = path; *c; c++)
+-    if (*c == '\\') *c = '/';
++  /* Remove unnecessary trailing slashes.  On some versions of MS
++     Windows, trailing  _forward_ slashes cause no problems for stat().
++     On newer versions, stat() does not recognise a directory that ends
++     in a '\\' or '/', unless it is a drive root dir, such as "c:/",
++     where it is obligatory.  */
++  int pathlen = strlen (path);
++  char* end = path + pathlen - 1;
++  /* Preserve the lead '/' or lead "c:/".  */
++  char* start = path + (pathlen > 2 && path[1] == ':' ? 3 : 1);
++
++  for (; end > start && IS_DIR_SEPARATOR (*end); end--)
++    *end = 0;
+ #endif
+ 
+   p = XNEW (cpp_dir);
+diff -Nbaur gcc-4.2.3/gcc/config/rs6000/sysv4.h gcc-4.2.3-ppc/gcc/config/rs6000/sysv4.h
+--- gcc-4.2.3/gcc/config/rs6000/sysv4.h	Sat Sep  1 16:28:30 2007
++++ gcc-4.2.3-ppc/gcc/config/rs6000/sysv4.h	Tue Apr 15 15:21:10 2008
 @@ -651,7 +651,11 @@
  
  /* Default starting address if specified.  */
@@ -76,7 +105,7 @@ diff -Nbaur gcc-4.3.0/gcc/config/rs6000/sysv4.h gcc-4.3.0-ppc/gcc/config/rs6000/
    mcall-openbsd: %(lib_openbsd)     ; \
                 : %(lib_default)     }"
  
--#define LIB_DEFAULT_SPEC "-lc"
+-#define LIB_DEFAULT_SPEC ""
 +#define LIB_DEFAULT_SPEC "--start-group -lsysbase -lc --end-group"
  
  /* Override svr4.h definition.  */
@@ -170,9 +199,9 @@ diff -Nbaur gcc-4.3.0/gcc/config/rs6000/sysv4.h gcc-4.3.0-ppc/gcc/config/rs6000/
    { "cpp_os_ads",		CPP_OS_ADS_SPEC },			\
    { "cpp_os_yellowknife",	CPP_OS_YELLOWKNIFE_SPEC },		\
    { "cpp_os_mvme",		CPP_OS_MVME_SPEC },			\
-diff -Nbaur gcc-4.3.0/gcc/config/rs6000/sysv4.opt gcc-4.3.0-ppc/gcc/config/rs6000/sysv4.opt
---- gcc-4.3.0/gcc/config/rs6000/sysv4.opt	Tue Nov 27 05:58:21 2007
-+++ gcc-4.3.0-ppc/gcc/config/rs6000/sysv4.opt	Sun Apr 13 21:26:32 2008
+diff -Nbaur gcc-4.2.3/gcc/config/rs6000/sysv4.opt gcc-4.2.3-ppc/gcc/config/rs6000/sysv4.opt
+--- gcc-4.2.3/gcc/config/rs6000/sysv4.opt	Sat Sep  1 16:28:30 2007
++++ gcc-4.2.3-ppc/gcc/config/rs6000/sysv4.opt	Tue Apr 15 15:19:42 2008
 @@ -107,6 +107,26 @@
  Target RejectNegative
  Link with libads.a, libc.a and crt0.o
@@ -200,19 +229,19 @@ diff -Nbaur gcc-4.3.0/gcc/config/rs6000/sysv4.opt gcc-4.3.0-ppc/gcc/config/rs600
  myellowknife
  Target RejectNegative
  Link with libyk.a, libc.a and crt0.o
-diff -Nbaur gcc-4.3.0/gcc/gcc.c gcc-4.3.0-ppc/gcc/gcc.c
---- gcc-4.3.0/gcc/gcc.c	Sun Mar  2 22:55:19 2008
-+++ gcc-4.3.0-ppc/gcc/gcc.c	Sun Apr 13 21:30:36 2008
-@@ -3418,8 +3418,6 @@
+diff -Nbaur gcc-4.2.3/gcc/gcc.c gcc-4.2.3-ppc/gcc/gcc.c
+--- gcc-4.2.3/gcc/gcc.c	Sat Sep  1 16:28:30 2007
++++ gcc-4.2.3-ppc/gcc/gcc.c	Tue Apr 15 15:19:42 2008
+@@ -3369,8 +3369,6 @@
        gcc_libexec_prefix = make_relative_prefix (argv[0],
  						 standard_bindir_prefix,
  						 standard_libexec_prefix);
 -      if (gcc_exec_prefix)
--	xputenv (concat ("GCC_EXEC_PREFIX=", gcc_exec_prefix, NULL));
+-	putenv (concat ("GCC_EXEC_PREFIX=", gcc_exec_prefix, NULL));
      }
    else
      {
-@@ -6264,10 +6262,21 @@
+@@ -6213,10 +6211,21 @@
  
    /* We need to check standard_exec_prefix/just_machine_suffix/specs
       for any override of as, ld and libraries.  */
@@ -234,9 +263,9 @@ diff -Nbaur gcc-4.3.0/gcc/gcc.c gcc-4.3.0-ppc/gcc/gcc.c
    strcat (specs_file, just_machine_suffix);
    strcat (specs_file, "specs");
    if (access (specs_file, R_OK) == 0)
-diff -Nbaur gcc-4.3.0/gcc/prefix.c gcc-4.3.0-ppc/gcc/prefix.c
---- gcc-4.3.0/gcc/prefix.c	Mon Sep  3 18:09:20 2007
-+++ gcc-4.3.0-ppc/gcc/prefix.c	Sun Apr 13 21:26:32 2008
+diff -Nbaur gcc-4.2.3/gcc/prefix.c gcc-4.2.3-ppc/gcc/prefix.c
+--- gcc-4.2.3/gcc/prefix.c	Sat Sep  1 16:28:30 2007
++++ gcc-4.2.3-ppc/gcc/prefix.c	Tue Apr 15 15:19:42 2008
 @@ -245,13 +245,16 @@
     The returned string is always malloc-ed, and the caller is
     responsible for freeing it.  */
@@ -263,18 +292,38 @@ diff -Nbaur gcc-4.3.0/gcc/prefix.c gcc-4.3.0-ppc/gcc/prefix.c
 +
 +	putenv (concat ("GCC_EXEC_PREFIX=", std_prefix, NULL));
  }
-diff -Nbaur gcc-4.3.0/gcc/toplev.c gcc-4.3.0-ppc/gcc/toplev.c
---- gcc-4.3.0/gcc/toplev.c	Tue Feb  5 16:23:10 2008
-+++ gcc-4.3.0-ppc/gcc/toplev.c	Sun Apr 13 21:26:32 2008
-@@ -82,6 +82,7 @@
+diff -Nbaur gcc-4.2.3/gcc/stor-layout.c gcc-4.2.3-ppc/gcc/stor-layout.c
+--- gcc-4.2.3/gcc/stor-layout.c	Sat Sep  1 16:28:30 2007
++++ gcc-4.2.3-ppc/gcc/stor-layout.c	Tue Apr 15 15:19:42 2008
+@@ -530,7 +530,15 @@
+ #ifdef STRUCTURE_SIZE_BOUNDARY
+   /* Packed structures don't need to have minimum size.  */
+   if (! TYPE_PACKED (t))
+-    rli->record_align = MAX (rli->record_align, (unsigned) STRUCTURE_SIZE_BOUNDARY);
++    {
++      unsigned tmp;
++
++      /* #pragma pack overrides STRUCTURE_SIZE_BOUNDARY.  */
++      tmp = (unsigned) STRUCTURE_SIZE_BOUNDARY;
++      if (maximum_field_alignment != 0)
++	tmp = MIN (tmp, maximum_field_alignment);
++      rli->record_align = MAX (rli->record_align, tmp);
++    }
+ #endif
+ 
+   rli->offset = size_zero_node;
+diff -Nbaur gcc-4.2.3/gcc/toplev.c gcc-4.2.3-ppc/gcc/toplev.c
+--- gcc-4.2.3/gcc/toplev.c	Sat Sep  1 16:28:30 2007
++++ gcc-4.2.3-ppc/gcc/toplev.c	Tue Apr 15 15:19:42 2008
+@@ -81,6 +81,7 @@
+ #include "value-prof.h"
  #include "alloc-pool.h"
  #include "tree-mudflap.h"
- #include "tree-pass.h"
 +#include "prefix.h"
  
  #if defined (DWARF2_UNWIND_INFO) || defined (DWARF2_DEBUGGING_INFO)
  #include "dwarf2out.h"
-@@ -1622,6 +1623,10 @@
+@@ -1478,6 +1479,10 @@
    progname = p;
  
    xmalloc_set_program_name (progname);
@@ -284,4 +333,51 @@ diff -Nbaur gcc-4.3.0/gcc/toplev.c gcc-4.3.0-ppc/gcc/toplev.c
 +
  
    hex_init ();
+ 
+diff -Nbaur gcc-4.2.3/gcc/version.c gcc-4.2.3-ppc/gcc/version.c
+--- gcc-4.2.3/gcc/version.c	Wed Mar 16 06:04:10 2005
++++ gcc-4.2.3-ppc/gcc/version.c	Tue Apr 15 15:23:23 2008
+@@ -8,7 +8,7 @@
+    in parentheses.  You may also wish to include a number indicating
+    the revision of your modified compiler.  */
+ 
+-#define VERSUFFIX ""
++#define VERSUFFIX " (devkitPPC release 15)"
+ 
+ /* This is the location of the online document giving instructions for
+    reporting bugs.  If you distribute a modified version of GCC,
+@@ -17,7 +17,7 @@
+    forward us bugs reported to you, if you determine that they are
+    not bugs in your modifications.)  */
+ 
+-const char bug_report_url[] = "<URL:http://gcc.gnu.org/bugs.html>";
++const char bug_report_url[] = "<URL:http://wiki.devkitpro.org/index.php/Bug_Reports>";
+ 
+ /* The complete version string, assembled from several pieces.
+    BASEVER, DATESTAMP, and DEVPHASE are defined by the Makefile.  */
+diff -Nbaur gcc-4.2.3/libcpp/files.c gcc-4.2.3-ppc/libcpp/files.c
+--- gcc-4.2.3/libcpp/files.c	Sat Feb 18 09:25:31 2006
++++ gcc-4.2.3-ppc/libcpp/files.c	Tue Apr 15 15:19:43 2008
+@@ -226,6 +226,22 @@
+       close (file->fd);
+       file->fd = -1;
+     }
++#if defined(_WIN32) && !defined(__CYGWIN__)
++  else if (errno == EACCES)
++    {
++      /* On most UNIX systems, open succeeds on a directory.  Above,
++         we check if we have opened a directory and if so, set errno
++         to ENOENT.  However, on Windows, opening a directory
++         fails with EACCESS.  We want to return ENOENT in that
++         case too.  */
++      if (stat (file->path, &file->st) == 0
++          && S_ISDIR (file->st.st_mode))
++        errno = ENOENT;
++      else
++      /* The call to stat may have reset errno.  */
++      errno = EACCES;
++     }
++#endif
+   else if (errno == ENOTDIR)
+     errno = ENOENT;
  

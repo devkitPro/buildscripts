@@ -79,18 +79,16 @@ cd $target/gcc
 if [ ! -f configured-gcc ]
 then
   CFLAGS=-D__USE_MINGW_ACCESS ../../$GCC_SRCDIR/configure \
-	--enable-languages=c,c++ \
-	--with-cpu=750\
-	--without-headers\
-	--disable-nls --disable-shared --enable-threads --disable-multilib \
-	--disable-win32-registry\
-  --disable-libmudflap --disable-libssp --disable-libgomp \
+  --enable-languages=c,c++ \
+  --with-cpu=750\
+  --without-headers\
+  --disable-nls --disable-shared --enable-threads --disable-multilib \
+  --disable-win32-registry\
   --disable-libstdcxx-pch \
-	--target=$target \
-	--with-newlib \
-	--prefix=$prefix\
-	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 15" \
-	2>&1 | tee gcc_configure.log
+  --target=$target \
+  --with-newlib \
+  --prefix=$prefix\
+  2>&1 | tee gcc_configure.log
   touch configured-gcc
 fi
 
@@ -116,11 +114,11 @@ cd $target/newlib
 if [ ! -f configured-newlib ]
 then
   $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure \
-	--target=$target \
-	--prefix=$prefix \
-	--enable-newlib-mb \
-	--enable-newlib-hw-fp \
-	|| { echo "Error configuring newlib"; exit 1; }
+  --target=$target \
+  --prefix=$prefix \
+  --enable-newlib-mb \
+  --enable-newlib-hw-fp \
+  || { echo "Error configuring newlib"; exit 1; }
   touch configured-newlib
 fi
 
@@ -167,8 +165,8 @@ cd $target/gdb
 if [ ! -f configured-gdb ]
 then
   ../../$GDB_SRCDIR/configure \
-        --disable-nls --prefix=$prefix --target=$target \
-        || { echo "Error configuring gdb"; exit 1; }
+  --disable-nls --prefix=$prefix --target=$target \
+  || { echo "Error configuring gdb"; exit 1; }
   touch configured-gdb
 fi
 
