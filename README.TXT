@@ -1,4 +1,4 @@
-DevkitPro build scripts
+devkitPro build scripts
 --------------------------
 
 This readme will guide you through building devkitARM, devkitPPC or devkitPSP from source using a set of scripts.
@@ -32,11 +32,9 @@ binutils 2.16.1  - http://ftp.gnu.org/gnu/binutils/binutils-2.16.1.tar.bz2
 gcc-core 4.1.2 - http://ftp.gnu.org/gnu/gcc/gcc-4.1.2/gcc-core-4.1.2.tar.bz2
 gcc-g++ 4.1.2 - http://ftp.gnu.org/gnu/gcc/gcc-4.1.2/gcc-g++-4.1.2.tar.bz2
 
-devkitARM is using gcc 4.1.2 and binutils 2.17
-
-binutils 2.17  - http://ftp.gnu.org/gnu/binutils/binutils-2.17.tar.bz2
-gcc-core 4.1.2 - http://ftp.gnu.org/gnu/gcc/gcc-4.1.2/gcc-core-4.1.2.tar.bz2
-gcc-g++ 4.1.2 - http://ftp.gnu.org/gnu/gcc/gcc-4.1.2/gcc-g++-4.1.2.tar.bz2
+devkitARM is using gcc 4.3.0
+gcc-core 4.3.0 - http://ftp.gnu.org/gnu/gcc/gcc-4.3.0/gcc-core-4.3.0.tar.bz2
+gcc-g++ 4.3.0 - http://ftp.gnu.org/gnu/gcc/gcc-4.3.0/gcc-g++-4.3.0.tar.bz2
 
 
 libogc, libgba, libnds, libmirko, dswifi and libfat can be found in the sourceforge project.
@@ -107,7 +105,7 @@ Credits
 * Thanks to WinterMute for bringing us devkitPro, the website is http://www.devkitpro.org
 * Build scripts written by WinterMute and tied together by GreenGianT
 * Thanks to Mr Spiv, Honkey Kong, Raleigh and JoostP for OS X testing
-* libogc written and supplied by Shagkur. Additional code by WinterMute
+* libogc written and supplied by Shagkur. Additional code by WinterMute, Bushing & Tybor
 * libgba by WinterMute
 * libnds by Joat, Dovoto and WinterMute with contributions from many others.
 * dswifi by Sgstair
