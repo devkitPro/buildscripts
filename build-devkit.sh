@@ -16,7 +16,6 @@ LIBFAT_VER=20070127
 DEFAULT_ARM7_VER=20080414
 DSWIFI_VER=0.3.4
 LIBMIRKO_VER=0.9.7
-GDB_VER=6.7.1
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
@@ -25,7 +24,6 @@ LIBFAT="libfat-src-$LIBFAT_VER.tar.bz2"
 DSWIFI="dswifi-src-$DSWIFI_VER.tar.bz2"
 DEFAULT_ARM7="default_arm7-src-$DEFAULT_ARM7_VER.tar.bz2"
 LIBMIRKO="libmirko-src-$LIBMIRKO_VER.tar.bz2"
-GDB="gdb-$GDB_VER.tar.bz2"
 DEVKITPRO_URL="http://downloads.sourceforge.net/devkitpro"
 
 LIBOGC_URL="$DEVKITPRO_URL/$LIBOGC"
@@ -35,7 +33,6 @@ DSWIFI_URL="$DEVKITPRO_URL/$DSWIFI"
 LIBFAT_URL="$DEVKITPRO_URL/$LIBFAT"
 LIBMIRKO_URL="$DEVKITPRO_URL/$LIBMIRKO"
 DEFAULT_ARM7_URL="$DEVKITPRO_URL/$DEFAULT_ARM7"
-GDB_URL="http://ftp.gnu.org/gnu/gdb/$GDB"
 
 #---------------------------------------------------------------------------------
 # Sane defaults for building toolchain
@@ -87,7 +84,8 @@ case "$VERSION" in
   "1" )
     GCC_VER=4.3.0
     BINUTILS_VER=2.18.50
-    NEWLIB_VER=1.15.0
+    NEWLIB_VER=1.16.0
+    GDB_VER=6.8
     basedir='dkarm-eabi'
     package=devkitARM
     builddir=arm-eabi
@@ -97,7 +95,8 @@ case "$VERSION" in
   "2" )
     GCC_VER=4.2.3
     BINUTILS_VER=2.18.50
-    NEWLIB_VER=1.15.0
+    NEWLIB_VER=1.16.0
+    GDB_VER=6.8
     basedir='dkppc'
     package=devkitPPC
     builddir=powerpc-gekko
@@ -108,6 +107,7 @@ case "$VERSION" in
     GCC_VER=4.1.2
     BINUTILS_VER=2.16.1
     NEWLIB_VER=1.15.0
+    GDB_VER=6.7.1
     basedir='dkpsp'
     package=devkitPSP
     builddir=psp
@@ -129,6 +129,8 @@ GCC_GPP="gcc-g++-$GCC_VER.tar.bz2"
 GCC_CORE_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_CORE"
 GCC_GPP_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_GPP"
 BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
+GDB="gdb-$GDB_VER.tar.bz2"
+GDB_URL="http://ftp.gnu.org/gnu/gdb/$GDB"
 
 case "$BINUTILS_VER" in
  "2.18.50" )
