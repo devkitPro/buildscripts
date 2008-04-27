@@ -13,8 +13,18 @@ Bison, Flex and Wget from the gnuwin32 project
 
 http://sourceforge.net/projects/gnuwin32/
 
-For devkitPSP a command line subversion client is required to get the PSP SDK http://www.tigris.org  
+For devkitPSP a command line subversion client is required to get the PSP SDK http://www.tigris.org
 
+required packages for building on ubuntu
+
+sudo apt-get install build-essential autoconf automake bison flex libncurses5-dev libreadline-dev texinfo
+
+for building gcc 4.3.0 libgmp and libmpfr are required
+
+http://gmplib.org/
+http://www.mpfr.org/
+
+ 
 Downloading the source packages
 -------------------------------
 
@@ -23,14 +33,15 @@ When you run the build script it will ask you to choose from one of two options,
 binutils 2.18.50  - ftp://sourceware.org/pub/binutils/snapshots/binutils-2.18.50.tar.bz2
 gcc-core 4.2.3 - http://ftp.gnu.org/gnu/gcc/gcc-4.2.3/gcc-core-4.2.3.tar.bz2
 gcc-g++ 4.2.3 - http://ftp.gnu.org/gnu/gcc/gcc-4.2.3/gcc-g++-4.2.3.tar.bz2
-newlib 1.15.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.15.0.tar.gz
+newlib 1.16.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.16.0.tar.gz
 
 
-devkitPSP is using earlier versions of binutils and gcc
+devkitPSP is using earlier versions of binutils, gcc & newlib
 
 binutils 2.16.1  - http://ftp.gnu.org/gnu/binutils/binutils-2.16.1.tar.bz2
 gcc-core 4.1.2 - http://ftp.gnu.org/gnu/gcc/gcc-4.1.2/gcc-core-4.1.2.tar.bz2
 gcc-g++ 4.1.2 - http://ftp.gnu.org/gnu/gcc/gcc-4.1.2/gcc-g++-4.1.2.tar.bz2
+newlib 1.15.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.15.0.tar.gz
 
 devkitARM is using gcc 4.3.0
 gcc-core 4.3.0 - http://ftp.gnu.org/gnu/gcc/gcc-4.3.0/gcc-core-4.3.0.tar.bz2
