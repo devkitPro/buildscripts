@@ -1,6 +1,6 @@
-diff -Nbaur newlib-1.15.0/libgloss/configure newlib-1.15.0-arm/libgloss/configure
---- newlib-1.15.0/libgloss/configure	Mon Dec 18 21:48:18 2006
-+++ newlib-1.15.0-arm/libgloss/configure	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/configure newlib-1.16.0-arm/libgloss/configure
+--- newlib-1.16.0/libgloss/configure	Thu Feb  8 21:22:05 2007
++++ newlib-1.16.0-arm/libgloss/configure	Sat Apr 26 01:36:06 2008
 @@ -272,8 +272,10 @@
  PACKAGE_BUGREPORT=''
  
@@ -12,7 +12,7 @@ diff -Nbaur newlib-1.15.0/libgloss/configure newlib-1.15.0-arm/libgloss/configur
  ac_subdirs_all="$ac_subdirs_all i386"
  ac_subdirs_all="$ac_subdirs_all m32r"
  ac_subdirs_all="$ac_subdirs_all m68hc11"
-@@ -1287,6 +1289,7 @@
+@@ -1288,6 +1290,7 @@
  
  
  
@@ -20,7 +20,7 @@ diff -Nbaur newlib-1.15.0/libgloss/configure newlib-1.15.0-arm/libgloss/configur
  if test "${enable_shared}" = "yes" ; then
      echo "Shared libraries not supported for cross compiling, ignored"
  fi
-@@ -1823,6 +1826,10 @@
+@@ -1824,6 +1827,10 @@
  
  
  subdirs="$subdirs libnosys"
@@ -31,9 +31,9 @@ diff -Nbaur newlib-1.15.0/libgloss/configure newlib-1.15.0-arm/libgloss/configur
  
  
  case "${target}" in
-diff -Nbaur newlib-1.15.0/libgloss/configure.in newlib-1.15.0-arm/libgloss/configure.in
---- newlib-1.15.0/libgloss/configure.in	Mon Dec 18 21:48:18 2006
-+++ newlib-1.15.0-arm/libgloss/configure.in	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/configure.in newlib-1.16.0-arm/libgloss/configure.in
+--- newlib-1.16.0/libgloss/configure.in	Thu Feb  8 21:22:05 2007
++++ newlib-1.16.0-arm/libgloss/configure.in	Sat Apr 26 01:36:06 2008
 @@ -2,6 +2,7 @@
  AC_PREREQ(2.59)
  AC_INIT([libgloss],[LIBGLOSS_VERSION])
@@ -50,10 +50,10 @@ diff -Nbaur newlib-1.15.0/libgloss/configure.in newlib-1.15.0-arm/libgloss/confi
  
  case "${target}" in
    i[[3456]]86-*-elf* | i[[3456]]86-*-coff*)
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/Makefile.in newlib-1.15.0-arm/libgloss/libsysbase/Makefile.in
---- newlib-1.15.0/libgloss/libsysbase/Makefile.in	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/Makefile.in	Fri Mar 14 20:23:18 2008
-@@ -0,0 +1,146 @@
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/Makefile.in newlib-1.16.0-arm/libgloss/libsysbase/Makefile.in
+--- newlib-1.16.0/libgloss/libsysbase/Makefile.in	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/Makefile.in	Sat Apr 26 01:46:34 2008
+@@ -0,0 +1,147 @@
 +# Copyright (c) 1998 Cygnus Support
 +#
 +# The authors hereby grant permission to use, copy, modify, distribute,
@@ -124,7 +124,8 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/Makefile.in newlib-1.15.0-arm/libg
 +OBJS = abort.o iosupport.o close.o environ.o execve.o fork.o fstat.o getpid.o gettod.o \
 +	isatty.o kill.o link.o lseek.o open.o read.o sbrk.o stat.o \
 +	times.o unlink.o wait.o write.o _exit.o malloc_vars.o \
-+	chdir.o mkdir.o dir.o rename.o build_argv.o statvfs.o
++	chdir.o mkdir.o dir.o rename.o build_argv.o statvfs.o \
++	handle_manager.o
 +
 +# Object files specific to particular targets.
 +EVALOBJS = ${OBJS}
@@ -200,9 +201,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/Makefile.in newlib-1.15.0-arm/libg
 +
 +config.status: configure
 +	$(SHELL) config.status --recheck
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/_exit.c newlib-1.15.0-arm/libgloss/libsysbase/_exit.c
---- newlib-1.15.0/libgloss/libsysbase/_exit.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/_exit.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/_exit.c newlib-1.16.0-arm/libgloss/libsysbase/_exit.c
+--- newlib-1.16.0/libgloss/libsysbase/_exit.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/_exit.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,14 @@
 +/* Stub version of _exit.  */
 +
@@ -218,9 +219,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/_exit.c newlib-1.15.0-arm/libgloss
 +
 +	while(1);
 +}
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/abort.c newlib-1.15.0-arm/libgloss/libsysbase/abort.c
---- newlib-1.15.0/libgloss/libsysbase/abort.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/abort.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/abort.c newlib-1.16.0-arm/libgloss/libsysbase/abort.c
+--- newlib-1.16.0/libgloss/libsysbase/abort.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/abort.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,8 @@
 +#include <stdlib.h>
 +#include <unistd.h>
@@ -230,9 +231,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/abort.c newlib-1.15.0-arm/libgloss
 +  _exit (1);
 +}
 +
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/acconfig.h newlib-1.15.0-arm/libgloss/libsysbase/acconfig.h
---- newlib-1.15.0/libgloss/libsysbase/acconfig.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/acconfig.h	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/acconfig.h newlib-1.16.0-arm/libgloss/libsysbase/acconfig.h
+--- newlib-1.16.0/libgloss/libsysbase/acconfig.h	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/acconfig.h	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,26 @@
 +/* Name of package.  */
 +#undef PACKAGE
@@ -260,9 +261,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/acconfig.h newlib-1.15.0-arm/libgl
 +
 +/* symbol prefix */
 +#undef __SYMBOL_PREFIX
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/aclocal.m4 newlib-1.15.0-arm/libgloss/libsysbase/aclocal.m4
---- newlib-1.15.0/libgloss/libsysbase/aclocal.m4	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/aclocal.m4	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/aclocal.m4 newlib-1.16.0-arm/libgloss/libsysbase/aclocal.m4
+--- newlib-1.16.0/libgloss/libsysbase/aclocal.m4	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/aclocal.m4	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,344 @@
 +# generated automatically by aclocal 1.9.5 -*- Autoconf -*-
 +
@@ -608,9 +609,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/aclocal.m4 newlib-1.15.0-arm/libgl
 +])
 +
 +m4_include([../acinclude.m4])
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/build_argv.c newlib-1.15.0-arm/libgloss/libsysbase/build_argv.c
---- newlib-1.15.0/libgloss/libsysbase/build_argv.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/build_argv.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/build_argv.c newlib-1.16.0-arm/libgloss/libsysbase/build_argv.c
+--- newlib-1.16.0/libgloss/libsysbase/build_argv.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/build_argv.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,31 @@
 +struct __argv {
 +	int argvMagic;
@@ -643,9 +644,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/build_argv.c newlib-1.15.0-arm/lib
 +	argstruct->argc = argCount;
 +	argstruct->endARGV = &argv[argCount];
 +}
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/chdir.c newlib-1.15.0-arm/libgloss/libsysbase/chdir.c
---- newlib-1.15.0/libgloss/libsysbase/chdir.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/chdir.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/chdir.c newlib-1.16.0-arm/libgloss/libsysbase/chdir.c
+--- newlib-1.16.0/libgloss/libsysbase/chdir.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/chdir.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,175 @@
 +#include <unistd.h>
 +#include <reent.h>
@@ -822,16 +823,16 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/chdir.c newlib-1.15.0-arm/libgloss
 +	
 +	return buf;
 +}
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/close.c newlib-1.15.0-arm/libgloss/libsysbase/close.c
---- newlib-1.15.0/libgloss/libsysbase/close.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/close.c	Fri Mar 14 20:19:09 2008
-@@ -0,0 +1,38 @@
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/close.c newlib-1.16.0-arm/libgloss/libsysbase/close.c
+--- newlib-1.16.0/libgloss/libsysbase/close.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/close.c	Sat Apr 26 01:44:34 2008
+@@ -0,0 +1,40 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
 +#include <stdio.h>
 +#include <errno.h>
 +
-+#include <sys/iosupport.h>
++#include "handle_manager.h"
 +
 +#ifdef REENTRANT_SYSCALLS_PROVIDED
 +//---------------------------------------------------------------------------------
@@ -852,21 +853,23 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/close.c newlib-1.15.0-arm/libgloss
 +
 +	if(fileDesc!=-1) {
 +
-+		__handle *handle = fileDesc;
++		__handle *handle = __get_handle(fileDesc);
 +
-+		dev = handle->device;
-+		fd = handle->fileStruct;
++		if ( handle != NULL) {
++			dev = handle->device;
++			fd = (unsigned int)handle->fileStruct;
 +
-+		if(devoptab_list[dev]->close_r)
-+			ret = devoptab_list[dev]->close_r(ptr,fd);
++			if(devoptab_list[dev]->close_r)
++				ret = devoptab_list[dev]->close_r(ptr,fd);
 +
-+		free(fileDesc);
++			__release_handle(fileDesc);
++		}
 +	}
 +	return ret;
 +}
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/config.h.in newlib-1.15.0-arm/libgloss/libsysbase/config.h.in
---- newlib-1.15.0/libgloss/libsysbase/config.h.in	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/config.h.in	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/config.h.in newlib-1.16.0-arm/libgloss/libsysbase/config.h.in
+--- newlib-1.16.0/libgloss/libsysbase/config.h.in	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/config.h.in	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,22 @@
 +/* config.h.in.  Generated automatically from configure.in by autoheader.  */
 +
@@ -890,9 +893,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/config.h.in newlib-1.15.0-arm/libg
 +
 +/* symbol prefix */
 +#undef __SYMBOL_PREFIX
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/configure newlib-1.15.0-arm/libgloss/libsysbase/configure
---- newlib-1.15.0/libgloss/libsysbase/configure	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/configure	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/configure newlib-1.16.0-arm/libgloss/libsysbase/configure
+--- newlib-1.16.0/libgloss/libsysbase/configure	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/configure	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,3543 @@
 +#! /bin/sh
 +# Guess values for system-dependent variables and create Makefiles.
@@ -4437,9 +4440,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/configure newlib-1.15.0-arm/libglo
 +
 +
 +
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/configure.in newlib-1.15.0-arm/libgloss/libsysbase/configure.in
---- newlib-1.15.0/libgloss/libsysbase/configure.in	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/configure.in	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/configure.in newlib-1.16.0-arm/libgloss/libsysbase/configure.in
+--- newlib-1.16.0/libgloss/libsysbase/configure.in	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/configure.in	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,204 @@
 +# Copyright (c) 1995, 1996 Cygnus Support
 +#
@@ -4645,9 +4648,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/configure.in newlib-1.15.0-arm/lib
 +AC_OUTPUT
 +
 +
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/dir.c newlib-1.15.0-arm/libgloss/libsysbase/dir.c
---- newlib-1.15.0/libgloss/libsysbase/dir.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/dir.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/dir.c newlib-1.16.0-arm/libgloss/libsysbase/dir.c
+--- newlib-1.16.0/libgloss/libsysbase/dir.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/dir.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,94 @@
 +#include <reent.h>
 +#include <sys/iosupport.h>
@@ -4743,9 +4746,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/dir.c newlib-1.15.0-arm/libgloss/l
 +	return ret;
 +}
 +
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/environ.c newlib-1.15.0-arm/libgloss/libsysbase/environ.c
---- newlib-1.15.0/libgloss/libsysbase/environ.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/environ.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/environ.c newlib-1.16.0-arm/libgloss/libsysbase/environ.c
+--- newlib-1.16.0/libgloss/libsysbase/environ.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/environ.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,6 @@
 +/*
 + * Version of environ for no OS.
@@ -4753,9 +4756,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/environ.c newlib-1.15.0-arm/libglo
 +
 +char *__env[1] = { 0 };
 +char **environ = __env;
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/execve.c newlib-1.15.0-arm/libgloss/libsysbase/execve.c
---- newlib-1.15.0/libgloss/libsysbase/execve.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/execve.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/execve.c newlib-1.16.0-arm/libgloss/libsysbase/execve.c
+--- newlib-1.16.0/libgloss/libsysbase/execve.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/execve.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,19 @@
 +/*
 + * Stub version of execve.
@@ -4776,9 +4779,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/execve.c newlib-1.15.0-arm/libglos
 +  return -1;
 +}
 +
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/fork.c newlib-1.15.0-arm/libgloss/libsysbase/fork.c
---- newlib-1.15.0/libgloss/libsysbase/fork.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/fork.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/fork.c newlib-1.16.0-arm/libgloss/libsysbase/fork.c
+--- newlib-1.16.0/libgloss/libsysbase/fork.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/fork.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,19 @@
 +/*
 + * Stub version of fork.
@@ -4799,17 +4802,17 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/fork.c newlib-1.15.0-arm/libgloss/
 +}
 +
 +stub_warning(_fork)
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/fstat.c newlib-1.15.0-arm/libgloss/libsysbase/fstat.c
---- newlib-1.15.0/libgloss/libsysbase/fstat.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/fstat.c	Fri Mar 14 20:19:09 2008
-@@ -0,0 +1,45 @@
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/fstat.c newlib-1.16.0-arm/libgloss/libsysbase/fstat.c
+--- newlib-1.16.0/libgloss/libsysbase/fstat.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/fstat.c	Sat Apr 26 03:20:14 2008
+@@ -0,0 +1,48 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
 +#include <sys/types.h>
 +#include <sys/stat.h>
 +#include <errno.h>
 +
-+#include <sys/iosupport.h>
++#include "handle_manager.h"
 +
 +#ifdef REENTRANT_SYSCALLS_PROVIDED
 +//---------------------------------------------------------------------------------
@@ -4836,7 +4839,10 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/fstat.c newlib-1.15.0-arm/libgloss
 +		if ( fileDesc < 3) {
 +			dev = fileDesc;
 +		} else {
-+			handle = (__handle *)fileDesc;
++			handle = __get_handle(fileDesc);
++
++			if ( NULL == handle ) return ret;
++
 +			dev = handle->device;
 +			fd = (int)handle->fileStruct;
 +		}
@@ -4848,9 +4854,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/fstat.c newlib-1.15.0-arm/libgloss
 +	}
 +	return ret;
 +}
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/getpid.c newlib-1.15.0-arm/libgloss/libsysbase/getpid.c
---- newlib-1.15.0/libgloss/libsysbase/getpid.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/getpid.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/getpid.c newlib-1.16.0-arm/libgloss/libsysbase/getpid.c
+--- newlib-1.16.0/libgloss/libsysbase/getpid.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/getpid.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,20 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -4872,9 +4878,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/getpid.c newlib-1.15.0-arm/libglos
 +	return -1;
 +}
 +
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/gettod.c newlib-1.15.0-arm/libgloss/libsysbase/gettod.c
---- newlib-1.15.0/libgloss/libsysbase/gettod.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/gettod.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/gettod.c newlib-1.16.0-arm/libgloss/libsysbase/gettod.c
+--- newlib-1.16.0/libgloss/libsysbase/gettod.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/gettod.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,25 @@
 +/*
 + * Stub version of gettimeofday.
@@ -4901,10 +4907,75 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/gettod.c newlib-1.15.0-arm/libglos
 +}
 +
 +stub_warning(_gettimeofday)
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/iosupport.c newlib-1.15.0-arm/libgloss/libsysbase/iosupport.c
---- newlib-1.15.0/libgloss/libsysbase/iosupport.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/iosupport.c	Fri Mar 14 20:19:09 2008
-@@ -0,0 +1,98 @@
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/handle_manager.c newlib-1.16.0-arm/libgloss/libsysbase/handle_manager.c
+--- newlib-1.16.0/libgloss/libsysbase/handle_manager.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/handle_manager.c	Sat Apr 26 03:17:34 2008
+@@ -0,0 +1,47 @@
++#include <stdlib.h>
++#include <stdio.h>
++
++#include "handle_manager.h"
++
++#define MAX_HANDLES 128
++
++static __handle* handles[MAX_HANDLES];
++
++
++void __release_handle(int fd) {
++
++	if ( fd < 3 || fd >= MAX_HANDLES + 3 ) return;
++
++	fd -= 3;
++	__handle* handle = handles[fd];
++	if ( NULL != handle ) {
++		free(handle);
++		handles[fd] = NULL;
++	}
++
++}
++
++int  __alloc_handle(int size) {
++
++	int i;
++
++	for ( i = 0; i < MAX_HANDLES; i++ ) {
++		if ( handles[i] == NULL ) break;
++	}
++	
++	if ( i == MAX_HANDLES ) return -1;
++	
++	handles[i] = malloc(size);
++	
++	if ( NULL == handles[i] ) return -1;
++	
++	return i+3; 
++}
++
++__handle *__get_handle(int fd) {
++
++	if ( fd < 3 || fd > MAX_HANDLES + 3 ) return NULL;
++	
++	return handles[fd-3];
++
++}
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/handle_manager.h newlib-1.16.0-arm/libgloss/libsysbase/handle_manager.h
+--- newlib-1.16.0/libgloss/libsysbase/handle_manager.h	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/handle_manager.h	Fri Apr 25 13:13:32 2008
+@@ -0,0 +1,10 @@
++#ifndef __HANDLE_MANAGER_H__
++#define __HANDLE_MANAGER_H__
++
++#include <sys/iosupport.h>
++
++void __release_handle(int fd);
++int  __alloc_handle(int size);
++__handle *__get_handle(int fd);
++
++#endif
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/iosupport.c newlib-1.16.0-arm/libgloss/libsysbase/iosupport.c
+--- newlib-1.16.0/libgloss/libsysbase/iosupport.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/iosupport.c	Sat Apr 26 01:48:28 2008
+@@ -0,0 +1,106 @@
 +#include <stdlib.h>
 +#include <string.h>
 +#include <sys/iosupport.h>
@@ -4933,7 +5004,15 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/iosupport.c newlib-1.15.0-arm/libg
 +	NULL,		// device stat
 +	NULL,		// device link
 +	NULL,		// device unlink
-+	NULL		// device chdir
++	NULL,		// device chdir
++	NULL,		// device rename
++	NULL,		// device mkdir
++	0,			// dirStateSize
++	NULL,		// device diropen_r
++	NULL,		// device dirreset_r
++	NULL,		// device dirnext_r
++	NULL,		// device dirclose_r
++	NULL		// device statvfs_r
 +};
 +
 +//---------------------------------------------------------------------------------
@@ -5003,9 +5082,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/iosupport.c newlib-1.15.0-arm/libg
 +	}
 +	return devnum;
 +}
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/isatty.c newlib-1.15.0-arm/libgloss/libsysbase/isatty.c
---- newlib-1.15.0/libgloss/libsysbase/isatty.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/isatty.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/isatty.c newlib-1.16.0-arm/libgloss/libsysbase/isatty.c
+--- newlib-1.16.0/libgloss/libsysbase/isatty.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/isatty.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,10 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -5017,9 +5096,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/isatty.c newlib-1.15.0-arm/libglos
 +//---------------------------------------------------------------------------------
 +	return 0;
 +}
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/kill.c newlib-1.15.0-arm/libgloss/libsysbase/kill.c
---- newlib-1.15.0/libgloss/libsysbase/kill.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/kill.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/kill.c newlib-1.16.0-arm/libgloss/libsysbase/kill.c
+--- newlib-1.16.0/libgloss/libsysbase/kill.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/kill.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,23 @@
 +/*
 + * Stub version of kill.
@@ -5044,9 +5123,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/kill.c newlib-1.15.0-arm/libgloss/
 +  ptr->_errno = ENOSYS;
 +  return -1;
 +}
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/link.c newlib-1.15.0-arm/libgloss/libsysbase/link.c
---- newlib-1.15.0/libgloss/libsysbase/link.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/link.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/link.c newlib-1.16.0-arm/libgloss/libsysbase/link.c
+--- newlib-1.16.0/libgloss/libsysbase/link.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/link.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,36 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -5084,16 +5163,16 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/link.c newlib-1.15.0-arm/libgloss/
 +	return ret;
 +}
 +
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/lseek.c newlib-1.15.0-arm/libgloss/libsysbase/lseek.c
---- newlib-1.15.0/libgloss/libsysbase/lseek.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/lseek.c	Fri Mar 14 20:19:09 2008
-@@ -0,0 +1,46 @@
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/lseek.c newlib-1.16.0-arm/libgloss/libsysbase/lseek.c
+--- newlib-1.16.0/libgloss/libsysbase/lseek.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/lseek.c	Sat Apr 26 01:51:13 2008
+@@ -0,0 +1,53 @@
 +
 +#include <_ansi.h>
 +#include <_syslist.h>
 +#include <errno.h>
 +
-+#include <sys/iosupport.h>
++#include "handle_manager.h"
 +
 +//---------------------------------------------------------------------------------
 +#ifdef REENTRANT_SYSCALLS_PROVIDED
@@ -5123,9 +5202,16 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/lseek.c newlib-1.15.0-arm/libgloss
 +
 +	if(fileDesc!=-1) {
 +
-+		handle = (__handle *)fileDesc;
-+		dev = handle->device;
-+		fd = (int)handle->fileStruct;
++		if ( fileDesc < 3) {
++			dev = fileDesc;
++		} else {
++			handle = __get_handle(fileDesc);
++
++			if ( NULL == handle ) return ret;
++
++			dev = handle->device;
++			fd = (int)handle->fileStruct;
++		}
 +
 +		if(devoptab_list[dev]->seek_r)
 +			ret = devoptab_list[dev]->seek_r( r, fd, pos, dir);
@@ -5134,15 +5220,15 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/lseek.c newlib-1.15.0-arm/libgloss
 +	return ret;
 +
 +}
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/malloc_vars.c newlib-1.15.0-arm/libgloss/libsysbase/malloc_vars.c
---- newlib-1.15.0/libgloss/libsysbase/malloc_vars.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/malloc_vars.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/malloc_vars.c newlib-1.16.0-arm/libgloss/libsysbase/malloc_vars.c
+--- newlib-1.16.0/libgloss/libsysbase/malloc_vars.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/malloc_vars.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,2 @@
 +char *fake_heap_end = (char*)0;
 +char *fake_heap_start = (char*)0;
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/mkdir.c newlib-1.15.0-arm/libgloss/libsysbase/mkdir.c
---- newlib-1.15.0/libgloss/libsysbase/mkdir.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/mkdir.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/mkdir.c newlib-1.16.0-arm/libgloss/libsysbase/mkdir.c
+--- newlib-1.16.0/libgloss/libsysbase/mkdir.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/mkdir.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,18 @@
 +#include <reent.h>
 +#include <sys/iosupport.h>
@@ -5162,10 +5248,10 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/mkdir.c newlib-1.15.0-arm/libgloss
 +	
 +	return ret;
 +}
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/open.c newlib-1.15.0-arm/libgloss/libsysbase/open.c
---- newlib-1.15.0/libgloss/libsysbase/open.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/open.c	Fri Mar 14 20:19:09 2008
-@@ -0,0 +1,58 @@
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/open.c newlib-1.16.0-arm/libgloss/libsysbase/open.c
+--- newlib-1.16.0/libgloss/libsysbase/open.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/open.c	Sat Apr 26 03:59:59 2008
+@@ -0,0 +1,57 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
 +#include <string.h>
@@ -5194,46 +5280,45 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/open.c newlib-1.15.0-arm/libgloss/
 +	struct _reent *r = _REENT;
 +#endif
 +	__handle *handle;
-+	int dev,fd;
++	int dev, fd, ret;
 +
 +	dev = FindDevice(file);
 +
 +	fd = -1;
-+	handle = (__handle *)-1;
 +	if(dev!=-1 && devoptab_list[dev]->open_r) {
 +
-+		handle = (__handle *)malloc( sizeof(__handle) + devoptab_list[dev]->structSize );
++		fd = __alloc_handle(sizeof(__handle) + devoptab_list[dev]->structSize );
 +
-+		if ( NULL != handle ) {
++		if ( -1 != fd ) {
++			handle = __get_handle(fd);
 +			handle->device = dev;
 +			handle->fileStruct = ((void *)handle) + sizeof(__handle);
 +
-+			fd = devoptab_list[dev]->open_r(r, handle->fileStruct, file, flags, mode);
++			ret = devoptab_list[dev]->open_r(r, handle->fileStruct, file, flags, mode);
 +
-+			if ( fd == -1 ) {
-+				free(handle);
-+				handle = (__handle *)-1;
++			if ( ret == -1 ) {
++				__release_handle(fd);
++				fd = -1;
 +			}
 +		} else {
 +			r->_errno = ENOSR;
-+			handle = (__handle *)-1;
 +		}
 +	} else {
 +		r->_errno = ENOSYS;
 +	}
 +
-+	return (int)handle;
++	return fd;
 +}
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/read.c newlib-1.15.0-arm/libgloss/libsysbase/read.c
---- newlib-1.15.0/libgloss/libsysbase/read.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/read.c	Fri Mar 14 20:19:09 2008
-@@ -0,0 +1,44 @@
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/read.c newlib-1.16.0-arm/libgloss/libsysbase/read.c
+--- newlib-1.16.0/libgloss/libsysbase/read.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/read.c	Sat Apr 26 01:51:19 2008
+@@ -0,0 +1,47 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
 +#include <stdio.h>
 +#include <errno.h>
 +
-+#include <sys/iosupport.h>
++#include "handle_manager.h"
 +
 +#ifdef REENTRANT_SYSCALLS_PROVIDED
 +//---------------------------------------------------------------------------------
@@ -5262,7 +5347,10 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/read.c newlib-1.15.0-arm/libgloss/
 +		if ( fileDesc < 3) {
 +			dev = fileDesc;
 +		} else {
-+			handle = (__handle *)fileDesc;
++			handle = __get_handle(fileDesc);
++
++			if ( NULL == handle ) return ret;
++
 +			dev = handle->device;
 +			fd = (int)handle->fileStruct;
 +		}
@@ -5272,9 +5360,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/read.c newlib-1.15.0-arm/libgloss/
 +	return ret;
 +}
 +
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/rename.c newlib-1.15.0-arm/libgloss/libsysbase/rename.c
---- newlib-1.15.0/libgloss/libsysbase/rename.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/rename.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/rename.c newlib-1.16.0-arm/libgloss/libsysbase/rename.c
+--- newlib-1.16.0/libgloss/libsysbase/rename.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/rename.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,25 @@
 +#include <reent.h>
 +#include <sys/iosupport.h>
@@ -5301,9 +5389,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/rename.c newlib-1.15.0-arm/libglos
 +	
 +	return ret;
 +}
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/sbrk.c newlib-1.15.0-arm/libgloss/libsysbase/sbrk.c
---- newlib-1.15.0/libgloss/libsysbase/sbrk.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/sbrk.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/sbrk.c newlib-1.16.0-arm/libgloss/libsysbase/sbrk.c
+--- newlib-1.16.0/libgloss/libsysbase/sbrk.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/sbrk.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,61 @@
 +#include <_ansi.h>
 +#include <sys/types.h>
@@ -5366,9 +5454,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/sbrk.c newlib-1.15.0-arm/libgloss/
 +
 +	return (caddr_t) prev_heap_start;
 +}
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/stat.c newlib-1.15.0-arm/libgloss/libsysbase/stat.c
---- newlib-1.15.0/libgloss/libsysbase/stat.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/stat.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/stat.c newlib-1.16.0-arm/libgloss/libsysbase/stat.c
+--- newlib-1.16.0/libgloss/libsysbase/stat.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/stat.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,39 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5409,9 +5497,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/stat.c newlib-1.15.0-arm/libgloss/
 +	return ret;
 +}
 +
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/statvfs.c newlib-1.15.0-arm/libgloss/libsysbase/statvfs.c
---- newlib-1.15.0/libgloss/libsysbase/statvfs.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/statvfs.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/statvfs.c newlib-1.16.0-arm/libgloss/libsysbase/statvfs.c
+--- newlib-1.16.0/libgloss/libsysbase/statvfs.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/statvfs.c	Sat Apr 26 01:36:06 2008
 @@ -0,0 +1,23 @@
 +#include <reent.h>
 +#include <sys/iosupport.h>
@@ -5436,9 +5524,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/statvfs.c newlib-1.15.0-arm/libglo
 +	
 +	return ret;
 +}
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/times.c newlib-1.15.0-arm/libgloss/libsysbase/times.c
---- newlib-1.15.0/libgloss/libsysbase/times.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/times.c	Fri Mar 14 23:20:03 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/times.c newlib-1.16.0-arm/libgloss/libsysbase/times.c
+--- newlib-1.16.0/libgloss/libsysbase/times.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/times.c	Sat Apr 26 03:24:09 2008
 @@ -0,0 +1,47 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -5474,7 +5562,7 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/times.c newlib-1.15.0-arm/libgloss
 +_DEFUN (_gettimeofday_r, (ptr, ptimeval, ptimezone),
 +     struct _reent *ptr _AND
 +     struct timeval *ptimeval _AND
-+     struct timezone *ptimezone)
++     void *ptimezone)
 +{
 +
 +	time_t ret = -1;
@@ -5488,9 +5576,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/times.c newlib-1.15.0-arm/libgloss
 +	return ret;
 +}
 \ No newline at end of file
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/unlink.c newlib-1.15.0-arm/libgloss/libsysbase/unlink.c
---- newlib-1.15.0/libgloss/libsysbase/unlink.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/unlink.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/unlink.c newlib-1.16.0-arm/libgloss/libsysbase/unlink.c
+--- newlib-1.16.0/libgloss/libsysbase/unlink.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/unlink.c	Sat Apr 26 01:36:07 2008
 @@ -0,0 +1,32 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -5524,9 +5612,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/unlink.c newlib-1.15.0-arm/libglos
 +	return ret;
 +}
 +
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/wait.c newlib-1.15.0-arm/libgloss/libsysbase/wait.c
---- newlib-1.15.0/libgloss/libsysbase/wait.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/wait.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/wait.c newlib-1.16.0-arm/libgloss/libsysbase/wait.c
+--- newlib-1.16.0/libgloss/libsysbase/wait.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/wait.c	Sat Apr 26 01:36:07 2008
 @@ -0,0 +1,19 @@
 +/*
 + * Stub version of wait.
@@ -5547,9 +5635,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/wait.c newlib-1.15.0-arm/libgloss/
 +}
 +
 +stub_warning(_wait)
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/warning.h newlib-1.15.0-arm/libgloss/libsysbase/warning.h
---- newlib-1.15.0/libgloss/libsysbase/warning.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/warning.h	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/warning.h newlib-1.16.0-arm/libgloss/libsysbase/warning.h
+--- newlib-1.16.0/libgloss/libsysbase/warning.h	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/warning.h	Sat Apr 26 01:36:07 2008
 @@ -0,0 +1,43 @@
 +#ifndef __WARNING_H__
 +#define __WARNING_H__
@@ -5594,23 +5682,23 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/warning.h newlib-1.15.0-arm/libglo
 +                "warning: " #name " is not implemented and will always fail")
 +
 +#endif /* __WARNING_H__ */
-diff -Nbaur newlib-1.15.0/libgloss/libsysbase/write.c newlib-1.15.0-arm/libgloss/libsysbase/write.c
---- newlib-1.15.0/libgloss/libsysbase/write.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/libgloss/libsysbase/write.c	Fri Mar 14 20:19:09 2008
-@@ -0,0 +1,44 @@
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/write.c newlib-1.16.0-arm/libgloss/libsysbase/write.c
+--- newlib-1.16.0/libgloss/libsysbase/write.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/libgloss/libsysbase/write.c	Sat Apr 26 01:52:08 2008
+@@ -0,0 +1,47 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
 +#include <stdio.h>
 +#include <errno.h>
 +
-+#include <sys/iosupport.h>
++#include "handle_manager.h"
 +
 +#ifdef REENTRANT_SYSCALLS_PROVIDED
 +//---------------------------------------------------------------------------------
 +_ssize_t _DEFUN(_write_r,(r, fileDesc, ptr, len),
 +			struct _reent * r _AND
 +			int   fileDesc  _AND
-+			void *ptr   _AND
++			const void *ptr   _AND
 +			size_t   len) {
 +//---------------------------------------------------------------------------------
 +#else
@@ -5633,7 +5721,10 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/write.c newlib-1.15.0-arm/libgloss
 +		if ( fileDesc < 3) {
 +			dev = fileDesc;
 +		} else {
-+			handle = (__handle *)fileDesc;
++			handle = __get_handle(fileDesc);
++
++			if ( NULL == handle ) return ret;
++
 +			dev = handle->device;
 +			fd = (int)handle->fileStruct;
 +		}
@@ -5642,21 +5733,9 @@ diff -Nbaur newlib-1.15.0/libgloss/libsysbase/write.c newlib-1.15.0-arm/libgloss
 +	}
 +	return ret;
 +}
-diff -Nbaur newlib-1.15.0/newlib/libc/include/reent.h newlib-1.15.0-arm/newlib/libc/include/reent.h
---- newlib-1.15.0/newlib/libc/include/reent.h	Wed Aug 27 17:24:57 2003
-+++ newlib-1.15.0-arm/newlib/libc/include/reent.h	Fri Mar 14 20:19:09 2008
-@@ -77,7 +77,7 @@
- extern _CLOCK_T_ _times_r _PARAMS ((struct _reent *, struct tms *));
- extern int _unlink_r _PARAMS ((struct _reent *, const char *));
- extern int _wait_r _PARAMS ((struct _reent *, int *));
--extern _ssize_t _write_r _PARAMS ((struct _reent *, int, const void *, size_t));
-+extern _ssize_t _write_r _PARAMS ((struct _reent *, int, void *, size_t));
- 
- /* This one is not guaranteed to be available on all targets.  */
- extern int _gettimeofday_r _PARAMS ((struct _reent *, struct timeval *tp, struct timezone *tzp));
-diff -Nbaur newlib-1.15.0/newlib/libc/include/stdint.h newlib-1.15.0-arm/newlib/libc/include/stdint.h
---- newlib-1.15.0/newlib/libc/include/stdint.h	Wed Aug 16 22:39:43 2006
-+++ newlib-1.15.0-arm/newlib/libc/include/stdint.h	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/newlib/libc/include/stdint.h newlib-1.16.0-arm/newlib/libc/include/stdint.h
+--- newlib-1.16.0/newlib/libc/include/stdint.h	Wed Aug 16 22:39:43 2006
++++ newlib-1.16.0-arm/newlib/libc/include/stdint.h	Sat Apr 26 01:36:07 2008
 @@ -79,13 +79,13 @@
  #endif
  #endif
@@ -5676,28 +5755,9 @@ diff -Nbaur newlib-1.15.0/newlib/libc/include/stdint.h newlib-1.15.0-arm/newlib/
  #define __int32_t_defined 1
  #elif __STDINT_EXP(SHRT_MAX) == 0x7fffffffL
  typedef signed short int32_t;
-diff -Nbaur newlib-1.15.0/newlib/libc/include/stdio.h newlib-1.15.0-arm/newlib/libc/include/stdio.h
---- newlib-1.15.0/newlib/libc/include/stdio.h	Tue Sep 26 22:22:19 2006
-+++ newlib-1.15.0-arm/newlib/libc/include/stdio.h	Fri Mar 14 20:19:09 2008
-@@ -179,6 +179,7 @@
- int	_EXFUN(printf, (const char *, ...));
- int	_EXFUN(scanf, (const char *, ...));
- int	_EXFUN(sscanf, (const char *, const char *, ...));
-+int	_EXFUN(siscanf, (const char *, const char *, ...));
- int	_EXFUN(vfprintf, (FILE *, const char *, __VALIST));
- int	_EXFUN(vprintf, (const char *, __VALIST));
- int	_EXFUN(vsprintf, (char *, const char *, __VALIST));
-@@ -252,6 +253,7 @@
- int	_EXFUN(vfscanf, (FILE *, const char *, __VALIST));
- int	_EXFUN(viprintf, (const char *, __VALIST));
- int	_EXFUN(viscanf, (const char *, __VALIST));
-+int	_EXFUN(viprintf, (const char *, __VALIST));
- int	_EXFUN(vscanf, (const char *, __VALIST));
- int	_EXFUN(vsiscanf, (const char *, const char *, __VALIST));
- int	_EXFUN(vsscanf, (const char *, const char *, __VALIST));
-diff -Nbaur newlib-1.15.0/newlib/libc/include/sys/dir.h newlib-1.15.0-arm/newlib/libc/include/sys/dir.h
---- newlib-1.15.0/newlib/libc/include/sys/dir.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/newlib/libc/include/sys/dir.h	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/dir.h newlib-1.16.0-arm/newlib/libc/include/sys/dir.h
+--- newlib-1.16.0/newlib/libc/include/sys/dir.h	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/newlib/libc/include/sys/dir.h	Sat Apr 26 01:36:07 2008
 @@ -0,0 +1,32 @@
 +/* <dir.h>
 +
@@ -5731,9 +5791,9 @@ diff -Nbaur newlib-1.15.0/newlib/libc/include/sys/dir.h newlib-1.15.0-arm/newlib
 +#endif
 +
 +#endif // _dir_h_
-diff -Nbaur newlib-1.15.0/newlib/libc/include/sys/iosupport.h newlib-1.15.0-arm/newlib/libc/include/sys/iosupport.h
---- newlib-1.15.0/newlib/libc/include/sys/iosupport.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/newlib/libc/include/sys/iosupport.h	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/iosupport.h newlib-1.16.0-arm/newlib/libc/include/sys/iosupport.h
+--- newlib-1.16.0/newlib/libc/include/sys/iosupport.h	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/newlib/libc/include/sys/iosupport.h	Sat Apr 26 01:36:07 2008
 @@ -0,0 +1,65 @@
 +//---------------------------------------------------------------------------------
 +#ifndef __iosupp_h__
@@ -5800,39 +5860,9 @@ diff -Nbaur newlib-1.15.0/newlib/libc/include/sys/iosupport.h newlib-1.15.0-arm/
 +//---------------------------------------------------------------------------------
 +#endif // __iosupp_h__
 +//---------------------------------------------------------------------------------
-diff -Nbaur newlib-1.15.0/newlib/libc/include/sys/reent.h newlib-1.15.0-arm/newlib/libc/include/sys/reent.h
---- newlib-1.15.0/newlib/libc/include/sys/reent.h	Tue Sep 26 22:22:19 2006
-+++ newlib-1.15.0-arm/newlib/libc/include/sys/reent.h	Fri Mar 14 20:19:09 2008
-@@ -153,7 +153,7 @@
-   int	_r;		/* read space left for getc() */
-   int	_w;		/* write space left for putc() */
-   short	_flags;		/* flags, below; this FILE is free if 0 */
--  short	_file;		/* fileno, if Unix descriptor, else -1 */
-+  int	_file;		/* fileno, if Unix descriptor, else -1 */
-   struct __sbuf _bf;	/* the buffer (at least 1 byte, if !NULL) */
-   int	_lbfsize;	/* 0 or -_bf._size, for inline putc */
- 
-@@ -170,7 +170,7 @@
-   int	_r;		/* read space left for getc() */
-   int	_w;		/* write space left for putc() */
-   short	_flags;		/* flags, below; this FILE is free if 0 */
--  short	_file;		/* fileno, if Unix descriptor, else -1 */
-+  int	_file;		/* fileno, if Unix descriptor, else -1 */
-   struct __sbuf _bf;	/* the buffer (at least 1 byte, if !NULL) */
-   int	_lbfsize;	/* 0 or -_bf._size, for inline putc */
- 
-@@ -218,7 +218,7 @@
-   int	_r;		/* read space left for getc() */
-   int	_w;		/* write space left for putc() */
-   short	_flags;		/* flags, below; this FILE is free if 0 */
--  short	_file;		/* fileno, if Unix descriptor, else -1 */
-+  int	_file;		/* fileno, if Unix descriptor, else -1 */
-   struct __sbuf _bf;	/* the buffer (at least 1 byte, if !NULL) */
-   int	_lbfsize;	/* 0 or -_bf._size, for inline putc */
- 
-diff -Nbaur newlib-1.15.0/newlib/libc/include/sys/statvfs.h newlib-1.15.0-arm/newlib/libc/include/sys/statvfs.h
---- newlib-1.15.0/newlib/libc/include/sys/statvfs.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.15.0-arm/newlib/libc/include/sys/statvfs.h	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/statvfs.h newlib-1.16.0-arm/newlib/libc/include/sys/statvfs.h
+--- newlib-1.16.0/newlib/libc/include/sys/statvfs.h	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-arm/newlib/libc/include/sys/statvfs.h	Sat Apr 26 01:36:07 2008
 @@ -0,0 +1,35 @@
 +#ifndef _SYS_STATVFS_H
 +#define _SYS_STATVFS_H
@@ -5870,9 +5900,9 @@ diff -Nbaur newlib-1.15.0/newlib/libc/include/sys/statvfs.h newlib-1.15.0-arm/ne
 +
 +#endif // _SYS_STATVFS_H
 \ No newline at end of file
-diff -Nbaur newlib-1.15.0/newlib/libc/include/sys/types.h newlib-1.15.0-arm/newlib/libc/include/sys/types.h
---- newlib-1.15.0/newlib/libc/include/sys/types.h	Wed Sep 13 23:09:27 2006
-+++ newlib-1.15.0-arm/newlib/libc/include/sys/types.h	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/types.h newlib-1.16.0-arm/newlib/libc/include/sys/types.h
+--- newlib-1.16.0/newlib/libc/include/sys/types.h	Tue Sep 18 21:05:17 2007
++++ newlib-1.16.0-arm/newlib/libc/include/sys/types.h	Sat Apr 26 01:36:07 2008
 @@ -130,7 +130,7 @@
      defined(__sparc__) || defined(__SPU__)
  typedef	unsigned long	ino_t;
@@ -5882,16 +5912,7 @@ diff -Nbaur newlib-1.15.0/newlib/libc/include/sys/types.h newlib-1.15.0-arm/newl
  #endif
  #endif /*__CYGWIN__*/
  
-@@ -163,7 +163,7 @@
- typedef unsigned long long dev_t;
- #else
- #ifndef __CYGWIN__
--typedef	short	dev_t;
-+typedef	int	dev_t;
- #endif
- #endif
- 
-@@ -261,6 +261,9 @@
+@@ -252,6 +252,9 @@
  
  typedef unsigned long useconds_t;
  typedef long suseconds_t;
@@ -5901,9 +5922,9 @@ diff -Nbaur newlib-1.15.0/newlib/libc/include/sys/types.h newlib-1.15.0-arm/newl
  
  #include <sys/features.h>
  
-diff -Nbaur newlib-1.15.0/newlib/libc/locale/locale.c newlib-1.15.0-arm/newlib/libc/locale/locale.c
---- newlib-1.15.0/newlib/libc/locale/locale.c	Fri Apr 23 22:44:21 2004
-+++ newlib-1.15.0-arm/newlib/libc/locale/locale.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/newlib/libc/locale/locale.c newlib-1.16.0-arm/newlib/libc/locale/locale.c
+--- newlib-1.16.0/newlib/libc/locale/locale.c	Fri Apr 23 22:44:21 2004
++++ newlib-1.16.0-arm/newlib/libc/locale/locale.c	Sat Apr 26 01:36:07 2008
 @@ -95,7 +95,7 @@
  #ifdef __CYGWIN__
  int __declspec(dllexport) __mb_cur_max = 1;
@@ -5946,9 +5967,9 @@ diff -Nbaur newlib-1.15.0/newlib/libc/locale/locale.c newlib-1.15.0-arm/newlib/l
              }
  
            if (category == LC_CTYPE)
-diff -Nbaur newlib-1.15.0/newlib/libc/misc/init.c newlib-1.15.0-arm/newlib/libc/misc/init.c
---- newlib-1.15.0/newlib/libc/misc/init.c	Fri Jan  7 18:04:39 2005
-+++ newlib-1.15.0-arm/newlib/libc/misc/init.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/newlib/libc/misc/init.c newlib-1.16.0-arm/newlib/libc/misc/init.c
+--- newlib-1.16.0/newlib/libc/misc/init.c	Fri Jan  7 18:04:39 2005
++++ newlib-1.16.0-arm/newlib/libc/misc/init.c	Sat Apr 26 01:36:07 2008
 @@ -57,4 +57,8 @@
  
    _fini ();
@@ -5958,32 +5979,28 @@ diff -Nbaur newlib-1.15.0/newlib/libc/misc/init.c newlib-1.15.0-arm/newlib/libc/
 +#error why am I not defined
 +
  #endif
-diff -Nbaur newlib-1.15.0/newlib/libc/stdio/vfprintf.c newlib-1.15.0-arm/newlib/libc/stdio/vfprintf.c
---- newlib-1.15.0/newlib/libc/stdio/vfprintf.c	Tue Nov 14 21:29:26 2006
-+++ newlib-1.15.0-arm/newlib/libc/stdio/vfprintf.c	Fri Mar 14 20:19:09 2008
-@@ -1000,10 +1000,17 @@
- 		case 's':
- 		case 'S':
- 			sign = '\0';
--			if ((cp = GET_ARG (N, ap, char_ptr_t)) == NULL) {
-+            cp = GET_ARG (N, ap, char_ptr_t);
-+#ifndef __OPTIMIZE_SIZE__
-+            /* Behavior is undefined if the user passed a
-+               NULL string when precision is not 0.
-+               However, if we are not optimizing for size,
-+               we might as well mirror glibc behavior.  */
-+            if (cp == NULL) {
- 				cp = "(null)";
--				size = 6;
-+                size = ((unsigned) prec > 6U) ? 6 : prec;
- 			}
-+#endif /* __OPTIMIZE_SIZE__ */
- 			else if (ch == 'S' || (flags & LONGINT)) {
- 				mbstate_t ps;
- 				_CONST wchar_t *wcp;
-diff -Nbaur newlib-1.15.0/newlib/libc/syscalls/Makefile.am newlib-1.15.0-arm/newlib/libc/syscalls/Makefile.am
---- newlib-1.15.0/newlib/libc/syscalls/Makefile.am	Mon May  1 23:01:07 2006
-+++ newlib-1.15.0-arm/newlib/libc/syscalls/Makefile.am	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/newlib/libc/reent/gettimeofdayr.c newlib-1.16.0-arm/newlib/libc/reent/gettimeofdayr.c
+--- newlib-1.16.0/newlib/libc/reent/gettimeofdayr.c	Fri Jul  6 17:56:30 2007
++++ newlib-1.16.0-arm/newlib/libc/reent/gettimeofdayr.c	Sat Apr 26 03:28:34 2008
+@@ -59,7 +59,7 @@
+ 	Check libc.a to see if its available on yours.
+ */
+ 
+-int
++/*int
+ _DEFUN (_gettimeofday_r, (ptr, ptimeval, ptimezone),
+      struct _reent *ptr _AND
+      struct timeval *ptimeval _AND
+@@ -72,5 +72,5 @@
+     ptr->_errno = errno;
+   return ret;
+ }
+-
++*/
+ #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */
+diff -Nbaur newlib-1.16.0/newlib/libc/syscalls/Makefile.am newlib-1.16.0-arm/newlib/libc/syscalls/Makefile.am
+--- newlib-1.16.0/newlib/libc/syscalls/Makefile.am	Mon May  1 23:01:07 2006
++++ newlib-1.16.0-arm/newlib/libc/syscalls/Makefile.am	Sat Apr 26 01:36:07 2008
 @@ -21,7 +21,6 @@
  	sysunlink.c	\
  	syswrite.c
@@ -5992,9 +6009,9 @@ diff -Nbaur newlib-1.15.0/newlib/libc/syscalls/Makefile.am newlib-1.15.0-arm/new
  ## Weed out EL/IX level 3 interfaces if necessary
  if ELIX_LEVEL_1
  ELIX_SOURCES =
-diff -Nbaur newlib-1.15.0/newlib/libc/syscalls/syslink.c newlib-1.15.0-arm/newlib/libc/syscalls/syslink.c
---- newlib-1.15.0/newlib/libc/syscalls/syslink.c	Tue Jun  3 20:48:08 2003
-+++ newlib-1.15.0-arm/newlib/libc/syscalls/syslink.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/newlib/libc/syscalls/syslink.c newlib-1.16.0-arm/newlib/libc/syscalls/syslink.c
+--- newlib-1.16.0/newlib/libc/syscalls/syslink.c	Tue Jun  3 20:48:08 2003
++++ newlib-1.16.0-arm/newlib/libc/syscalls/syslink.c	Sat Apr 26 01:36:07 2008
 @@ -4,8 +4,8 @@
  
  int
@@ -6006,9 +6023,9 @@ diff -Nbaur newlib-1.15.0/newlib/libc/syscalls/syslink.c newlib-1.15.0-arm/newli
  {
  #ifdef REENTRANT_SYSCALLS_PROVIDED
    return _link_r (_REENT, old, new);
-diff -Nbaur newlib-1.15.0/newlib/libc/syscalls/sysunlink.c newlib-1.15.0-arm/newlib/libc/syscalls/sysunlink.c
---- newlib-1.15.0/newlib/libc/syscalls/sysunlink.c	Tue Jun  3 20:48:08 2003
-+++ newlib-1.15.0-arm/newlib/libc/syscalls/sysunlink.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/newlib/libc/syscalls/sysunlink.c newlib-1.16.0-arm/newlib/libc/syscalls/sysunlink.c
+--- newlib-1.16.0/newlib/libc/syscalls/sysunlink.c	Tue Jun  3 20:48:08 2003
++++ newlib-1.16.0-arm/newlib/libc/syscalls/sysunlink.c	Sat Apr 26 01:36:07 2008
 @@ -4,7 +4,7 @@
  
  int
@@ -6018,9 +6035,9 @@ diff -Nbaur newlib-1.15.0/newlib/libc/syscalls/sysunlink.c newlib-1.15.0-arm/new
  {
  #ifdef REENTRANT_SYSCALLS_PROVIDED
    return _unlink_r (_REENT, file);
-diff -Nbaur newlib-1.15.0/newlib/libc/time/asctime_r.c newlib-1.15.0-arm/newlib/libc/time/asctime_r.c
---- newlib-1.15.0/newlib/libc/time/asctime_r.c	Wed May 10 18:58:29 2000
-+++ newlib-1.15.0-arm/newlib/libc/time/asctime_r.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/newlib/libc/time/asctime_r.c newlib-1.16.0-arm/newlib/libc/time/asctime_r.c
+--- newlib-1.16.0/newlib/libc/time/asctime_r.c	Wed May 10 18:58:29 2000
++++ newlib-1.16.0-arm/newlib/libc/time/asctime_r.c	Sat Apr 26 01:36:07 2008
 @@ -18,7 +18,7 @@
  	"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
    };
@@ -6030,9 +6047,9 @@ diff -Nbaur newlib-1.15.0/newlib/libc/time/asctime_r.c newlib-1.15.0-arm/newlib/
  	   day_name[tim_p->tm_wday], 
  	   mon_name[tim_p->tm_mon],
  	   tim_p->tm_mday, tim_p->tm_hour, tim_p->tm_min,
-diff -Nbaur newlib-1.15.0/newlib/libc/time/strftime.c newlib-1.15.0-arm/newlib/libc/time/strftime.c
---- newlib-1.15.0/newlib/libc/time/strftime.c	Fri Feb 25 22:31:21 2005
-+++ newlib-1.15.0-arm/newlib/libc/time/strftime.c	Fri Mar 14 20:19:09 2008
+diff -Nbaur newlib-1.16.0/newlib/libc/time/strftime.c newlib-1.16.0-arm/newlib/libc/time/strftime.c
+--- newlib-1.16.0/newlib/libc/time/strftime.c	Fri Feb 25 22:31:21 2005
++++ newlib-1.16.0-arm/newlib/libc/time/strftime.c	Sat Apr 26 01:36:07 2008
 @@ -424,7 +424,7 @@
  	    int century = tim_p->tm_year >= 0
  	      ? tim_p->tm_year / 100 + YEAR_BASE / 100
