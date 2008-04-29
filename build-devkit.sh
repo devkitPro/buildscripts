@@ -46,9 +46,9 @@ unset LDFLAGS
 #---------------------------------------------------------------------------------
  
 echo -n "Looking for configuration file... "
-if [ -f config.sh ]; then
+if [ -f ./config.sh ]; then
   echo "Found."
-  . config.sh
+  . ./config.sh
 else
   echo "Not found"
 fi
