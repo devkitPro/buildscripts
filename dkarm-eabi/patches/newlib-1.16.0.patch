@@ -5311,7 +5311,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/open.c newlib-1.16.0-arm/libgloss/
 +}
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/read.c newlib-1.16.0-arm/libgloss/libsysbase/read.c
 --- newlib-1.16.0/libgloss/libsysbase/read.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-arm/libgloss/libsysbase/read.c	Sat Apr 26 01:51:19 2008
++++ newlib-1.16.0-arm/libgloss/libsysbase/read.c	Wed Apr 30 03:24:57 2008
 @@ -0,0 +1,47 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -5362,15 +5362,27 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/read.c newlib-1.16.0-arm/libgloss/
 +
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/rename.c newlib-1.16.0-arm/libgloss/libsysbase/rename.c
 --- newlib-1.16.0/libgloss/libsysbase/rename.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-arm/libgloss/libsysbase/rename.c	Sat Apr 26 01:36:06 2008
-@@ -0,0 +1,25 @@
++++ newlib-1.16.0-arm/libgloss/libsysbase/rename.c	Wed Apr 30 03:20:55 2008
+@@ -0,0 +1,37 @@
 +#include <reent.h>
 +#include <sys/iosupport.h>
 +#include <errno.h>
 +
-+int _rename (const char *existing, const char *newName) {
-+	struct _reent *r = _REENT;
-+
++#ifdef REENTRANT_SYSCALLS_PROVIDED
++int
++_DEFUN (_rename_r, (ptr, existing, newName),
++     struct _reent *ptr _AND
++     _CONST char *existing _AND
++     _CONST char *newName)
++{
++#else
++int
++_DEFUN(rename, (existing, newName),
++       _CONST char *existing _AND
++       _CONST char *newName)
++{
++	struct _reent *ptr = _REENT;
++#endif
 +	int ret;
 +	int sourceDev = FindDevice(existing);
 +	int destDev = FindDevice(newName);
@@ -5379,12 +5391,12 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/rename.c newlib-1.16.0-arm/libglos
 +
 +	if ( sourceDev == destDev) {
 +		if (devoptab_list[destDev]->rename_r) {
-+			ret = devoptab_list[destDev]->rename_r( r, existing, newName);
++			ret = devoptab_list[destDev]->rename_r( ptr, existing, newName);
 +		} else {
-+			r->_errno = ENOSYS;
++			ptr->_errno = ENOSYS;
 +		}
 +	} else {
-+		r->_errno = EXDEV;
++		ptr->_errno = EXDEV;
 +	}
 +	
 +	return ret;
