@@ -515,7 +515,11 @@ for f in $INSTALLDIR/$package/bin/* \
          $INSTALLDIR/$package/$target/bin/* \
          $INSTALLDIR/$package/libexec/gcc/$target/$GCC_VER/*
 do
-  strip $f
+  # exclude dll for windows, directories & the gccbug text file
+  if  ! [[ "$f" == *.dll || -d $f || "$f" == *-gccbug ]] 
+  then
+    strip $f
+  fi
 done
 
 #---------------------------------------------------------------------------------
