@@ -1,7 +1,7 @@
 diff -Nbaur gcc-4.3.0/gcc/config/arm/t-arm-elf gcc-4.3.0-arm/gcc/config/arm/t-arm-elf
 --- gcc-4.3.0/gcc/config/arm/t-arm-elf	Wed Jan  3 23:48:10 2007
 +++ gcc-4.3.0-arm/gcc/config/arm/t-arm-elf	Mon Mar 24 19:58:16 2008
-@@ -25,9 +25,9 @@
+@@ -25,16 +25,16 @@
  # MULTILIB_DIRNAMES   += ep9312
  # MULTILIB_EXCEPTIONS += *mthumb/*mcpu=ep9312*
  # 	
@@ -14,6 +14,15 @@ diff -Nbaur gcc-4.3.0/gcc/config/arm/t-arm-elf gcc-4.3.0-arm/gcc/config/arm/t-ar
  # 
  # MULTILIB_OPTIONS    += mhard-float/msoft-float
  # MULTILIB_DIRNAMES   += fpu soft
+ # MULTILIB_EXCEPTIONS += *mthumb/*mhard-float*
+ # 
+-# MULTILIB_OPTIONS    += mno-thumb-interwork/mthumb-interwork
+-# MULTILIB_DIRNAMES   += normal interwork
++MULTILIB_OPTIONS    += mno-thumb-interwork/mthumb-interwork
++MULTILIB_DIRNAMES   += normal interwork
+ # 
+ # MULTILIB_OPTIONS    += fno-leading-underscore/fleading-underscore
+ # MULTILIB_DIRNAMES   += elf under
 diff -Nbaur gcc-4.3.0/gcc/config/arm/unknown-elf.h gcc-4.3.0-arm/gcc/config/arm/unknown-elf.h
 --- gcc-4.3.0/gcc/config/arm/unknown-elf.h	Thu Aug  2 11:49:31 2007
 +++ gcc-4.3.0-arm/gcc/config/arm/unknown-elf.h	Mon Mar 24 19:58:16 2008
