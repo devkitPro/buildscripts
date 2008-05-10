@@ -1,6 +1,6 @@
 diff -Nbaur newlib-1.16.0/config.sub newlib-1.16.0-ppc/config.sub
 --- newlib-1.16.0/config.sub	Wed Dec  5 03:27:21 2007
-+++ newlib-1.16.0-ppc/config.sub	Fri Apr 25 13:13:31 2008
++++ newlib-1.16.0-ppc/config.sub	Thu May  8 18:35:49 2008
 @@ -230,6 +230,10 @@
  		basic_machine=m68k-atari
  		os=-mint
@@ -14,7 +14,7 @@ diff -Nbaur newlib-1.16.0/config.sub newlib-1.16.0-ppc/config.sub
  # Decode aliases for certain CPU-COMPANY combinations.
 diff -Nbaur newlib-1.16.0/libgloss/configure newlib-1.16.0-ppc/libgloss/configure
 --- newlib-1.16.0/libgloss/configure	Thu Feb  8 21:22:05 2007
-+++ newlib-1.16.0-ppc/libgloss/configure	Fri Apr 25 13:13:31 2008
++++ newlib-1.16.0-ppc/libgloss/configure	Thu May  8 18:35:49 2008
 @@ -272,8 +272,10 @@
  PACKAGE_BUGREPORT=''
  
@@ -47,7 +47,7 @@ diff -Nbaur newlib-1.16.0/libgloss/configure newlib-1.16.0-ppc/libgloss/configur
  case "${target}" in
 diff -Nbaur newlib-1.16.0/libgloss/configure.in newlib-1.16.0-ppc/libgloss/configure.in
 --- newlib-1.16.0/libgloss/configure.in	Thu Feb  8 21:22:05 2007
-+++ newlib-1.16.0-ppc/libgloss/configure.in	Fri Apr 25 13:13:31 2008
++++ newlib-1.16.0-ppc/libgloss/configure.in	Thu May  8 18:35:49 2008
 @@ -2,6 +2,7 @@
  AC_PREREQ(2.59)
  AC_INIT([libgloss],[LIBGLOSS_VERSION])
@@ -66,7 +66,7 @@ diff -Nbaur newlib-1.16.0/libgloss/configure.in newlib-1.16.0-ppc/libgloss/confi
    i[[3456]]86-*-elf* | i[[3456]]86-*-coff*)
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/Makefile.in newlib-1.16.0-ppc/libgloss/libsysbase/Makefile.in
 --- newlib-1.16.0/libgloss/libsysbase/Makefile.in	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/Makefile.in	Fri Apr 25 13:13:31 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/Makefile.in	Thu May  8 18:35:49 2008
 @@ -0,0 +1,147 @@
 +# Copyright (c) 1998 Cygnus Support
 +#
@@ -217,7 +217,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/Makefile.in newlib-1.16.0-ppc/libg
 +	$(SHELL) config.status --recheck
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/_exit.c newlib-1.16.0-ppc/libgloss/libsysbase/_exit.c
 --- newlib-1.16.0/libgloss/libsysbase/_exit.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/_exit.c	Fri Apr 25 13:13:31 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/_exit.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,19 @@
 +/* Stub version of _exit.  */
 +
@@ -240,7 +240,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/_exit.c newlib-1.16.0-ppc/libgloss
 +}
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/abort.c newlib-1.16.0-ppc/libgloss/libsysbase/abort.c
 --- newlib-1.16.0/libgloss/libsysbase/abort.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/abort.c	Fri Apr 25 13:13:31 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/abort.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,8 @@
 +#include <stdlib.h>
 +#include <unistd.h>
@@ -252,7 +252,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/abort.c newlib-1.16.0-ppc/libgloss
 +
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/acconfig.h newlib-1.16.0-ppc/libgloss/libsysbase/acconfig.h
 --- newlib-1.16.0/libgloss/libsysbase/acconfig.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/acconfig.h	Fri Apr 25 13:13:31 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/acconfig.h	Thu May  8 18:35:49 2008
 @@ -0,0 +1,29 @@
 +/* Name of package.  */
 +#undef PACKAGE
@@ -285,7 +285,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/acconfig.h newlib-1.16.0-ppc/libgl
 +#undef __SYMBOL_PREFIX
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/aclocal.m4 newlib-1.16.0-ppc/libgloss/libsysbase/aclocal.m4
 --- newlib-1.16.0/libgloss/libsysbase/aclocal.m4	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/aclocal.m4	Fri Apr 25 13:13:31 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/aclocal.m4	Thu May  8 18:35:49 2008
 @@ -0,0 +1,344 @@
 +# generated automatically by aclocal 1.9.5 -*- Autoconf -*-
 +
@@ -633,7 +633,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/aclocal.m4 newlib-1.16.0-ppc/libgl
 +m4_include([../acinclude.m4])
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/build_argv.c newlib-1.16.0-ppc/libgloss/libsysbase/build_argv.c
 --- newlib-1.16.0/libgloss/libsysbase/build_argv.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/build_argv.c	Fri Apr 25 13:13:31 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/build_argv.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,31 @@
 +struct __argv {
 +	int argvMagic;
@@ -668,7 +668,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/build_argv.c newlib-1.16.0-ppc/lib
 +}
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/chdir.c newlib-1.16.0-ppc/libgloss/libsysbase/chdir.c
 --- newlib-1.16.0/libgloss/libsysbase/chdir.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/chdir.c	Fri Apr 25 13:13:31 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/chdir.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,175 @@
 +#include <unistd.h>
 +#include <reent.h>
@@ -847,7 +847,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/chdir.c newlib-1.16.0-ppc/libgloss
 +}
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/close.c newlib-1.16.0-ppc/libgloss/libsysbase/close.c
 --- newlib-1.16.0/libgloss/libsysbase/close.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/close.c	Fri Apr 25 13:13:31 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/close.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,41 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -892,7 +892,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/close.c newlib-1.16.0-ppc/libgloss
 +}
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/config.h.in newlib-1.16.0-ppc/libgloss/libsysbase/config.h.in
 --- newlib-1.16.0/libgloss/libsysbase/config.h.in	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/config.h.in	Fri Apr 25 13:13:31 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/config.h.in	Thu May  8 18:35:49 2008
 @@ -0,0 +1,25 @@
 +/* config.h.in.  Generated automatically from configure.in by autoheader.  */
 +
@@ -921,7 +921,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/config.h.in newlib-1.16.0-ppc/libg
 +#undef __SYMBOL_PREFIX
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/configure newlib-1.16.0-ppc/libgloss/libsysbase/configure
 --- newlib-1.16.0/libgloss/libsysbase/configure	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/configure	Fri Apr 25 13:13:31 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/configure	Thu May  8 18:35:49 2008
 @@ -0,0 +1,3553 @@
 +#! /bin/sh
 +# Guess values for system-dependent variables and create Makefiles.
@@ -4478,7 +4478,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/configure newlib-1.16.0-ppc/libglo
 +
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/configure.in newlib-1.16.0-ppc/libgloss/libsysbase/configure.in
 --- newlib-1.16.0/libgloss/libsysbase/configure.in	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/configure.in	Fri Apr 25 13:13:31 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/configure.in	Thu May  8 18:35:49 2008
 @@ -0,0 +1,208 @@
 +# Copyright (c) 1995, 1996 Cygnus Support
 +#
@@ -4690,7 +4690,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/configure.in newlib-1.16.0-ppc/lib
 +
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/dir.c newlib-1.16.0-ppc/libgloss/libsysbase/dir.c
 --- newlib-1.16.0/libgloss/libsysbase/dir.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/dir.c	Fri Apr 25 13:13:31 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/dir.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,94 @@
 +#include <reent.h>
 +#include <sys/iosupport.h>
@@ -4788,7 +4788,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/dir.c newlib-1.16.0-ppc/libgloss/l
 +
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/environ.c newlib-1.16.0-ppc/libgloss/libsysbase/environ.c
 --- newlib-1.16.0/libgloss/libsysbase/environ.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/environ.c	Fri Apr 25 13:13:31 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/environ.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,6 @@
 +/*
 + * Version of environ for no OS.
@@ -4798,7 +4798,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/environ.c newlib-1.16.0-ppc/libglo
 +char **environ = __env;
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/execve.c newlib-1.16.0-ppc/libgloss/libsysbase/execve.c
 --- newlib-1.16.0/libgloss/libsysbase/execve.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/execve.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/execve.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,19 @@
 +/*
 + * Stub version of execve.
@@ -4821,7 +4821,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/execve.c newlib-1.16.0-ppc/libglos
 +
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/flock.c newlib-1.16.0-ppc/libgloss/libsysbase/flock.c
 --- newlib-1.16.0/libgloss/libsysbase/flock.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/flock.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/flock.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,21 @@
 +#include <config.h>
 +#include <_ansi.h>
@@ -4846,7 +4846,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/flock.c newlib-1.16.0-ppc/libgloss
 +}
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/fork.c newlib-1.16.0-ppc/libgloss/libsysbase/fork.c
 --- newlib-1.16.0/libgloss/libsysbase/fork.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/fork.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/fork.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,19 @@
 +/*
 + * Stub version of fork.
@@ -4869,7 +4869,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/fork.c newlib-1.16.0-ppc/libgloss/
 +stub_warning(_fork)
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/fstat.c newlib-1.16.0-ppc/libgloss/libsysbase/fstat.c
 --- newlib-1.16.0/libgloss/libsysbase/fstat.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/fstat.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/fstat.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,48 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -4921,7 +4921,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/fstat.c newlib-1.16.0-ppc/libgloss
 +}
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/getpid.c newlib-1.16.0-ppc/libgloss/libsysbase/getpid.c
 --- newlib-1.16.0/libgloss/libsysbase/getpid.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/getpid.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/getpid.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,21 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -4946,7 +4946,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/getpid.c newlib-1.16.0-ppc/libglos
 +
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/gettod.c newlib-1.16.0-ppc/libgloss/libsysbase/gettod.c
 --- newlib-1.16.0/libgloss/libsysbase/gettod.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/gettod.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/gettod.c	Fri May  9 01:42:47 2008
 @@ -0,0 +1,25 @@
 +/*
 + * Stub version of gettimeofday.
@@ -4966,7 +4966,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/gettod.c newlib-1.16.0-ppc/libglos
 +int
 +_DEFUN (_gettimeofday, (ptimeval, ptimezone),
 +        struct timeval  *ptimeval  _AND
-+        struct timezone *ptimezone)
++        void *ptimezone)
 +{
 +  errno = ENOSYS;
 +  return -1;
@@ -4975,7 +4975,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/gettod.c newlib-1.16.0-ppc/libglos
 +stub_warning(_gettimeofday)
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/handle_manager.c newlib-1.16.0-ppc/libgloss/libsysbase/handle_manager.c
 --- newlib-1.16.0/libgloss/libsysbase/handle_manager.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/handle_manager.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/handle_manager.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,47 @@
 +#include <stdlib.h>
 +#include <stdio.h>
@@ -5026,7 +5026,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/handle_manager.c newlib-1.16.0-ppc
 +}
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/handle_manager.h newlib-1.16.0-ppc/libgloss/libsysbase/handle_manager.h
 --- newlib-1.16.0/libgloss/libsysbase/handle_manager.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/handle_manager.h	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/handle_manager.h	Thu May  8 18:35:49 2008
 @@ -0,0 +1,10 @@
 +#ifndef __HANDLE_MANAGER_H__
 +#define __HANDLE_MANAGER_H__
@@ -5040,7 +5040,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/handle_manager.h newlib-1.16.0-ppc
 +#endif
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/iosupport.c newlib-1.16.0-ppc/libgloss/libsysbase/iosupport.c
 --- newlib-1.16.0/libgloss/libsysbase/iosupport.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/iosupport.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/iosupport.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,106 @@
 +#include <stdlib.h>
 +#include <string.h>
@@ -5150,7 +5150,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/iosupport.c newlib-1.16.0-ppc/libg
 +}
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/isatty.c newlib-1.16.0-ppc/libgloss/libsysbase/isatty.c
 --- newlib-1.16.0/libgloss/libsysbase/isatty.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/isatty.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/isatty.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,10 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -5164,7 +5164,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/isatty.c newlib-1.16.0-ppc/libglos
 +}
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/kill.c newlib-1.16.0-ppc/libgloss/libsysbase/kill.c
 --- newlib-1.16.0/libgloss/libsysbase/kill.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/kill.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/kill.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,23 @@
 +/*
 + * Stub version of kill.
@@ -5191,7 +5191,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/kill.c newlib-1.16.0-ppc/libgloss/
 +}
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/link.c newlib-1.16.0-ppc/libgloss/libsysbase/link.c
 --- newlib-1.16.0/libgloss/libsysbase/link.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/link.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/link.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,37 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5232,7 +5232,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/link.c newlib-1.16.0-ppc/libgloss/
 +
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/lseek.c newlib-1.16.0-ppc/libgloss/libsysbase/lseek.c
 --- newlib-1.16.0/libgloss/libsysbase/lseek.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/lseek.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/lseek.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,53 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5289,13 +5289,13 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/lseek.c newlib-1.16.0-ppc/libgloss
 +}
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/malloc_vars.c newlib-1.16.0-ppc/libgloss/libsysbase/malloc_vars.c
 --- newlib-1.16.0/libgloss/libsysbase/malloc_vars.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/malloc_vars.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/malloc_vars.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,2 @@
 +char *fake_heap_end = (char*)0;
 +char *fake_heap_start = (char*)0;
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/mkdir.c newlib-1.16.0-ppc/libgloss/libsysbase/mkdir.c
 --- newlib-1.16.0/libgloss/libsysbase/mkdir.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/mkdir.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/mkdir.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,18 @@
 +#include <reent.h>
 +#include <sys/iosupport.h>
@@ -5317,7 +5317,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/mkdir.c newlib-1.16.0-ppc/libgloss
 +}
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/open.c newlib-1.16.0-ppc/libgloss/libsysbase/open.c
 --- newlib-1.16.0/libgloss/libsysbase/open.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/open.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/open.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,57 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5378,7 +5378,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/open.c newlib-1.16.0-ppc/libgloss/
 +}
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/read.c newlib-1.16.0-ppc/libgloss/libsysbase/read.c
 --- newlib-1.16.0/libgloss/libsysbase/read.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/read.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/read.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,48 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5430,7 +5430,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/read.c newlib-1.16.0-ppc/libgloss/
 +
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/rename.c newlib-1.16.0-ppc/libgloss/libsysbase/rename.c
 --- newlib-1.16.0/libgloss/libsysbase/rename.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/rename.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/rename.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,25 @@
 +#include <reent.h>
 +#include <sys/iosupport.h>
@@ -5459,7 +5459,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/rename.c newlib-1.16.0-ppc/libglos
 +}
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/sbrk.c newlib-1.16.0-ppc/libgloss/libsysbase/sbrk.c
 --- newlib-1.16.0/libgloss/libsysbase/sbrk.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/sbrk.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/sbrk.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,26 @@
 +#include "config.h"
 +#include <sys/iosupport.h>
@@ -5489,7 +5489,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/sbrk.c newlib-1.16.0-ppc/libgloss/
 +}
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/stat.c newlib-1.16.0-ppc/libgloss/libsysbase/stat.c
 --- newlib-1.16.0/libgloss/libsysbase/stat.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/stat.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/stat.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,39 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5532,7 +5532,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/stat.c newlib-1.16.0-ppc/libgloss/
 +
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/statvfs.c newlib-1.16.0-ppc/libgloss/libsysbase/statvfs.c
 --- newlib-1.16.0/libgloss/libsysbase/statvfs.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/statvfs.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/statvfs.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,23 @@
 +#include <reent.h>
 +#include <sys/iosupport.h>
@@ -5559,7 +5559,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/statvfs.c newlib-1.16.0-ppc/libglo
 +}
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/syscall_support.c newlib-1.16.0-ppc/libgloss/libsysbase/syscall_support.c
 --- newlib-1.16.0/libgloss/libsysbase/syscall_support.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/syscall_support.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/syscall_support.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,65 @@
 +#include <sys/iosupport.h>
 +
@@ -5628,7 +5628,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/syscall_support.c newlib-1.16.0-pp
 +
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/unlink.c newlib-1.16.0-ppc/libgloss/libsysbase/unlink.c
 --- newlib-1.16.0/libgloss/libsysbase/unlink.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/unlink.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/unlink.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,33 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5665,7 +5665,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/unlink.c newlib-1.16.0-ppc/libglos
 +
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/wait.c newlib-1.16.0-ppc/libgloss/libsysbase/wait.c
 --- newlib-1.16.0/libgloss/libsysbase/wait.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/wait.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/wait.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,19 @@
 +/*
 + * Stub version of wait.
@@ -5688,7 +5688,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/wait.c newlib-1.16.0-ppc/libgloss/
 +stub_warning(_wait)
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/warning.h newlib-1.16.0-ppc/libgloss/libsysbase/warning.h
 --- newlib-1.16.0/libgloss/libsysbase/warning.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/warning.h	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/warning.h	Thu May  8 18:35:49 2008
 @@ -0,0 +1,43 @@
 +#ifndef __WARNING_H__
 +#define __WARNING_H__
@@ -5735,7 +5735,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/warning.h newlib-1.16.0-ppc/libglo
 +#endif /* __WARNING_H__ */
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/write.c newlib-1.16.0-ppc/libgloss/libsysbase/write.c
 --- newlib-1.16.0/libgloss/libsysbase/write.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/write.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/libsysbase/write.c	Thu May  8 18:35:49 2008
 @@ -0,0 +1,48 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5787,7 +5787,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/write.c newlib-1.16.0-ppc/libgloss
 +}
 diff -Nbaur newlib-1.16.0/libgloss/rs6000/Makefile.in newlib-1.16.0-ppc/libgloss/rs6000/Makefile.in
 --- newlib-1.16.0/libgloss/rs6000/Makefile.in	Tue Aug 30 17:11:27 2005
-+++ newlib-1.16.0-ppc/libgloss/rs6000/Makefile.in	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/libgloss/rs6000/Makefile.in	Fri May  9 08:52:21 2008
 @@ -121,6 +121,9 @@
  MBX_TEST	= mbx-test
  MBX_INSTALL	= install-mbx
@@ -5811,7 +5811,7 @@ diff -Nbaur newlib-1.16.0/libgloss/rs6000/Makefile.in newlib-1.16.0-ppc/libgloss
  
  crt0.o: crt0.S
  
-+crtmain.o: crtmain.S
++crtmain.o: crtmain.c
 +
  simulator.o: simulator.S
  sim-getrusage.o: sim-getrusage.S
@@ -5835,19 +5835,32 @@ diff -Nbaur newlib-1.16.0/libgloss/rs6000/Makefile.in newlib-1.16.0-ppc/libgloss
  
  doc:
  info:
-diff -Nbaur newlib-1.16.0/libgloss/rs6000/crtmain.S newlib-1.16.0-ppc/libgloss/rs6000/crtmain.S
---- newlib-1.16.0/libgloss/rs6000/crtmain.S	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/rs6000/crtmain.S	Fri Apr 25 13:13:32 2008
-@@ -0,0 +1,6 @@
-+.globl __crtmain
-+__crtmain:
-+	bl		__init
-+	bl		SYS_PreMain
-+	bl		main
-+	b			exit
+diff -Nbaur newlib-1.16.0/libgloss/rs6000/crtmain.c newlib-1.16.0-ppc/libgloss/rs6000/crtmain.c
+--- newlib-1.16.0/libgloss/rs6000/crtmain.c	Thu Jan  1 00:00:00 1970
++++ newlib-1.16.0-ppc/libgloss/rs6000/crtmain.c	Fri May  9 08:57:48 2008
+@@ -0,0 +1,19 @@
++#include <unistd.h>
++
++struct __argv {
++	int argvMagic;		//!< argv magic number, set to 0x5f617267 ('_arg') if valid 
++	char *commandLine;	//!< base address of command line, set of null terminated strings
++	int length;//!< total length of command line
++	int argc;
++	char **argv;
++};
++
++extern struct __argv *__system_argv;
++void __init();
++void SYS_PreMain();
++
++void __crtmain() {
++	__init();
++	SYS_PreMain();
++	exit ( main(__system_argv->argc,__system_argv->argv) );
++}
 diff -Nbaur newlib-1.16.0/newlib/configure.host newlib-1.16.0-ppc/newlib/configure.host
 --- newlib-1.16.0/newlib/configure.host	Wed Nov  7 21:42:24 2007
-+++ newlib-1.16.0-ppc/newlib/configure.host	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/newlib/configure.host	Thu May  8 18:35:49 2008
 @@ -669,6 +669,11 @@
  	default_newlib_io_long_long="yes"
  	newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES"
@@ -5862,7 +5875,7 @@ diff -Nbaur newlib-1.16.0/newlib/configure.host newlib-1.16.0-ppc/newlib/configu
    powerpc*-*-linux* | \
 diff -Nbaur newlib-1.16.0/newlib/libc/include/stdint.h newlib-1.16.0-ppc/newlib/libc/include/stdint.h
 --- newlib-1.16.0/newlib/libc/include/stdint.h	Wed Aug 16 22:39:43 2006
-+++ newlib-1.16.0-ppc/newlib/libc/include/stdint.h	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/newlib/libc/include/stdint.h	Thu May  8 18:35:49 2008
 @@ -79,13 +79,13 @@
  #endif
  #endif
@@ -5884,7 +5897,7 @@ diff -Nbaur newlib-1.16.0/newlib/libc/include/stdint.h newlib-1.16.0-ppc/newlib/
  typedef signed short int32_t;
 diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/dir.h newlib-1.16.0-ppc/newlib/libc/include/sys/dir.h
 --- newlib-1.16.0/newlib/libc/include/sys/dir.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/newlib/libc/include/sys/dir.h	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/newlib/libc/include/sys/dir.h	Thu May  8 18:35:49 2008
 @@ -0,0 +1,32 @@
 +/* <dir.h>
 +
@@ -5920,7 +5933,7 @@ diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/dir.h newlib-1.16.0-ppc/newlib
 +#endif // _dir_h_
 diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/iosupport.h newlib-1.16.0-ppc/newlib/libc/include/sys/iosupport.h
 --- newlib-1.16.0/newlib/libc/include/sys/iosupport.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/newlib/libc/include/sys/iosupport.h	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/newlib/libc/include/sys/iosupport.h	Thu May  8 18:35:49 2008
 @@ -0,0 +1,78 @@
 +//---------------------------------------------------------------------------------
 +#ifndef __iosupp_h__
@@ -6002,7 +6015,7 @@ diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/iosupport.h newlib-1.16.0-ppc/
 +//---------------------------------------------------------------------------------
 diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/statvfs.h newlib-1.16.0-ppc/newlib/libc/include/sys/statvfs.h
 --- newlib-1.16.0/newlib/libc/include/sys/statvfs.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/newlib/libc/include/sys/statvfs.h	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/newlib/libc/include/sys/statvfs.h	Thu May  8 18:35:49 2008
 @@ -0,0 +1,35 @@
 +#ifndef _SYS_STATVFS_H
 +#define _SYS_STATVFS_H
@@ -6042,7 +6055,7 @@ diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/statvfs.h newlib-1.16.0-ppc/ne
 \ No newline at end of file
 diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/types.h newlib-1.16.0-ppc/newlib/libc/include/sys/types.h
 --- newlib-1.16.0/newlib/libc/include/sys/types.h	Tue Sep 18 21:05:17 2007
-+++ newlib-1.16.0-ppc/newlib/libc/include/sys/types.h	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/newlib/libc/include/sys/types.h	Thu May  8 18:35:49 2008
 @@ -130,7 +130,7 @@
      defined(__sparc__) || defined(__SPU__)
  typedef	unsigned long	ino_t;
@@ -6064,7 +6077,7 @@ diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/types.h newlib-1.16.0-ppc/newl
  
 diff -Nbaur newlib-1.16.0/newlib/libc/locale/locale.c newlib-1.16.0-ppc/newlib/libc/locale/locale.c
 --- newlib-1.16.0/newlib/libc/locale/locale.c	Fri Apr 23 22:44:21 2004
-+++ newlib-1.16.0-ppc/newlib/libc/locale/locale.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/newlib/libc/locale/locale.c	Thu May  8 18:35:49 2008
 @@ -95,7 +95,7 @@
  #ifdef __CYGWIN__
  int __declspec(dllexport) __mb_cur_max = 1;
@@ -6109,7 +6122,7 @@ diff -Nbaur newlib-1.16.0/newlib/libc/locale/locale.c newlib-1.16.0-ppc/newlib/l
            if (category == LC_CTYPE)
 diff -Nbaur newlib-1.16.0/newlib/libc/machine/powerpc/sys/lock.h newlib-1.16.0-ppc/newlib/libc/machine/powerpc/sys/lock.h
 --- newlib-1.16.0/newlib/libc/machine/powerpc/sys/lock.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/newlib/libc/machine/powerpc/sys/lock.h	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/newlib/libc/machine/powerpc/sys/lock.h	Thu May  8 18:35:49 2008
 @@ -0,0 +1,53 @@
 +#ifndef __SYS_LOCK_H__
 +#define __SYS_LOCK_H__
@@ -6166,7 +6179,7 @@ diff -Nbaur newlib-1.16.0/newlib/libc/machine/powerpc/sys/lock.h newlib-1.16.0-p
 +#endif /* __SYS_LOCK_H__ */
 diff -Nbaur newlib-1.16.0/newlib/libc/machine/powerpc/sys/stdio.h newlib-1.16.0-ppc/newlib/libc/machine/powerpc/sys/stdio.h
 --- newlib-1.16.0/newlib/libc/machine/powerpc/sys/stdio.h	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/newlib/libc/machine/powerpc/sys/stdio.h	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/newlib/libc/machine/powerpc/sys/stdio.h	Thu May  8 18:35:49 2008
 @@ -0,0 +1,25 @@
 +#ifndef _NEWLIB_STDIO_H
 +#define _NEWLIB_STDIO_H
@@ -6195,7 +6208,7 @@ diff -Nbaur newlib-1.16.0/newlib/libc/machine/powerpc/sys/stdio.h newlib-1.16.0-
 +
 diff -Nbaur newlib-1.16.0/newlib/libc/misc/init.c newlib-1.16.0-ppc/newlib/libc/misc/init.c
 --- newlib-1.16.0/newlib/libc/misc/init.c	Fri Jan  7 18:04:39 2005
-+++ newlib-1.16.0-ppc/newlib/libc/misc/init.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/newlib/libc/misc/init.c	Thu May  8 18:35:49 2008
 @@ -57,4 +57,8 @@
  
    _fini ();
@@ -6207,7 +6220,7 @@ diff -Nbaur newlib-1.16.0/newlib/libc/misc/init.c newlib-1.16.0-ppc/newlib/libc/
  #endif
 diff -Nbaur newlib-1.16.0/newlib/libc/stdlib/mlock.c newlib-1.16.0-ppc/newlib/libc/stdlib/mlock.c
 --- newlib-1.16.0/newlib/libc/stdlib/mlock.c	Fri Oct 28 22:21:07 2005
-+++ newlib-1.16.0-ppc/newlib/libc/stdlib/mlock.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/newlib/libc/stdlib/mlock.c	Thu May  8 18:35:49 2008
 @@ -39,6 +39,7 @@
  #include <malloc.h>
  #include <sys/lock.h>
@@ -6225,7 +6238,7 @@ diff -Nbaur newlib-1.16.0/newlib/libc/stdlib/mlock.c newlib-1.16.0-ppc/newlib/li
  #endif
 diff -Nbaur newlib-1.16.0/newlib/libc/syscalls/Makefile.am newlib-1.16.0-ppc/newlib/libc/syscalls/Makefile.am
 --- newlib-1.16.0/newlib/libc/syscalls/Makefile.am	Mon May  1 23:01:07 2006
-+++ newlib-1.16.0-ppc/newlib/libc/syscalls/Makefile.am	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/newlib/libc/syscalls/Makefile.am	Thu May  8 18:35:49 2008
 @@ -21,7 +21,6 @@
  	sysunlink.c	\
  	syswrite.c
@@ -6236,7 +6249,7 @@ diff -Nbaur newlib-1.16.0/newlib/libc/syscalls/Makefile.am newlib-1.16.0-ppc/new
  ELIX_SOURCES =
 diff -Nbaur newlib-1.16.0/newlib/libc/syscalls/syslink.c newlib-1.16.0-ppc/newlib/libc/syscalls/syslink.c
 --- newlib-1.16.0/newlib/libc/syscalls/syslink.c	Tue Jun  3 20:48:08 2003
-+++ newlib-1.16.0-ppc/newlib/libc/syscalls/syslink.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/newlib/libc/syscalls/syslink.c	Thu May  8 18:35:49 2008
 @@ -4,8 +4,8 @@
  
  int
@@ -6250,7 +6263,7 @@ diff -Nbaur newlib-1.16.0/newlib/libc/syscalls/syslink.c newlib-1.16.0-ppc/newli
    return _link_r (_REENT, old, new);
 diff -Nbaur newlib-1.16.0/newlib/libc/syscalls/sysunlink.c newlib-1.16.0-ppc/newlib/libc/syscalls/sysunlink.c
 --- newlib-1.16.0/newlib/libc/syscalls/sysunlink.c	Tue Jun  3 20:48:08 2003
-+++ newlib-1.16.0-ppc/newlib/libc/syscalls/sysunlink.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/newlib/libc/syscalls/sysunlink.c	Thu May  8 18:35:49 2008
 @@ -4,7 +4,7 @@
  
  int
@@ -6262,7 +6275,7 @@ diff -Nbaur newlib-1.16.0/newlib/libc/syscalls/sysunlink.c newlib-1.16.0-ppc/new
    return _unlink_r (_REENT, file);
 diff -Nbaur newlib-1.16.0/newlib/libc/time/asctime_r.c newlib-1.16.0-ppc/newlib/libc/time/asctime_r.c
 --- newlib-1.16.0/newlib/libc/time/asctime_r.c	Wed May 10 18:58:29 2000
-+++ newlib-1.16.0-ppc/newlib/libc/time/asctime_r.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/newlib/libc/time/asctime_r.c	Thu May  8 18:35:49 2008
 @@ -18,7 +18,7 @@
  	"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
    };
@@ -6274,7 +6287,7 @@ diff -Nbaur newlib-1.16.0/newlib/libc/time/asctime_r.c newlib-1.16.0-ppc/newlib/
  	   tim_p->tm_mday, tim_p->tm_hour, tim_p->tm_min,
 diff -Nbaur newlib-1.16.0/newlib/libc/time/strftime.c newlib-1.16.0-ppc/newlib/libc/time/strftime.c
 --- newlib-1.16.0/newlib/libc/time/strftime.c	Fri Feb 25 22:31:21 2005
-+++ newlib-1.16.0-ppc/newlib/libc/time/strftime.c	Fri Apr 25 13:13:32 2008
++++ newlib-1.16.0-ppc/newlib/libc/time/strftime.c	Thu May  8 18:35:50 2008
 @@ -424,7 +424,7 @@
  	    int century = tim_p->tm_year >= 0
  	      ? tim_p->tm_year / 100 + YEAR_BASE / 100
