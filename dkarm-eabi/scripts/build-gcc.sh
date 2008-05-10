@@ -132,7 +132,7 @@ cd $target/gdb
 if [ ! -f configured-gdb ]
 then
   ../../$GDB_SRCDIR/configure \
-        --disable-nls --prefix=$prefix --target=$target \
+        --disable-nls --prefix=$prefix --target=$target --disable-werror \
         || { echo "Error configuring gdb"; exit 1; }
   touch configured-gdb
 fi
