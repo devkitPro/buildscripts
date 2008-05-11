@@ -29,4 +29,16 @@ then
   touch installed-libogc
 fi
 
+cd $LIBFAT_SRCDIR
+if [ ! -f built-libfat ]
+then
+  echo "building libfat ..."
+  $MAKE install INSTALLDIR=$TOOLPATH 
+  touch built-libfat
+fi
+
+
+cd $BUILDSCRIPTDIR
+
+
 
