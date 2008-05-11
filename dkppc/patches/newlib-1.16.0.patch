@@ -5430,13 +5430,27 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/read.c newlib-1.16.0-ppc/libgloss/
 +
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/rename.c newlib-1.16.0-ppc/libgloss/libsysbase/rename.c
 --- newlib-1.16.0/libgloss/libsysbase/rename.c	Thu Jan  1 00:00:00 1970
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/rename.c	Thu May  8 18:35:49 2008
-@@ -0,0 +1,25 @@
++++ newlib-1.16.0-ppc/libgloss/libsysbase/rename.c	Sun May 11 06:14:49 2008
+@@ -0,0 +1,39 @@
 +#include <reent.h>
 +#include <sys/iosupport.h>
 +#include <errno.h>
 +
-+int _rename (const char *existing, const char *newName) {
++#ifdef REENTRANT_SYSCALLS_PROVIDED
++int
++_DEFUN (_rename_r, (ptr, existing, newName),
++     struct _reent *ptr _AND
++     _CONST char *existing _AND
++     _CONST char *newName)
++{
++#else
++int
++_DEFUN(rename, (existing, newName),
++       _CONST char *existing _AND
++       _CONST char *newName)
++{
++	struct _reent *ptr = _REENT;
++#endif
 +	struct _reent *r = _REENT;
 +
 +	int ret;
