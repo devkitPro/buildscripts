@@ -162,7 +162,7 @@ SECTIONS
 
 	__data_lma = __iwram_lma + SIZEOF(.iwram) ;
 
-	.bss ALIGN(4) :
+	.bss ALIGN(4) (NOLOAD) :
 	{
 		__bss_start = ABSOLUTE(.);
 		__bss_start__ = ABSOLUTE(.);
@@ -241,14 +241,13 @@ SECTIONS
 
 	__pad_lma = __ewram_lma + SIZEOF(.ewram);
 
-	.sbss ALIGN(4):
+	.sbss ALIGN(4)(NOLOAD):
  	{
 		__sbss_start = ABSOLUTE(.);
  		*(.sbss)
  		. = ALIGN(4);
 		__sbss_end  = ABSOLUTE(.);
  	} AT>ewram
-
 
 	__ewram_end = __sbss_end ;
 	__eheap_start = __sbss_end;

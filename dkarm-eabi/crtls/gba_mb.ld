@@ -170,7 +170,7 @@ SECTIONS
 
 	__data_lma = __iwram_lma + SIZEOF(.iwram) ;
 
-	.bss ALIGN(4) :
+	.bss ALIGN(4) (NOLOAD):
 	{
 		__bss_start = ABSOLUTE(.);
 		__bss_start__ = ABSOLUTE(.);
@@ -229,7 +229,7 @@ SECTIONS
 
 	__ewram_overlay_lma = __ewram_lma + SIZEOF(.ewram);
 
-	.sbss ALIGN(4):
+	.sbss ALIGN(4)(NOLOAD):
  	{
 		__sbss_start = ABSOLUTE(.);
 		*(.sbss)
