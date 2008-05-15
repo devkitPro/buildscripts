@@ -1,18 +1,20 @@
 #!/bin/sh
 #---------------------------------------------------------------------------------
 # Build scripts for
-#	devkitARM release 21
-#	devkitPPC release 14
+#	devkitARM release 23b
+#	devkitPPC release 15
 #	devkitPSP release 12
 #---------------------------------------------------------------------------------
+echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support"
+exit 1
 
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=20080228
+LIBOGC_VER=20080515
 LIBGBA_VER=20060720
-LIBNDS_VER=20071023
-LIBFAT_VER=20070127
+LIBNDS_VER=20080511
+LIBFAT_VER=20080514
 DEFAULT_ARM7_VER=20080416
 DSWIFI_VER=0.3.4
 LIBMIRKO_VER=0.9.7
@@ -264,13 +266,6 @@ then
         else
 	        FOUND=1
         fi
-        if [ ! -f $SRCDIR/$LIBFAT ]
-        then
-          echo "Error: $LIBFAT not found in $SRCDIR"
-	        exit 1
-        else
-	        FOUND=1
-        fi
         if [ ! -f $SRCDIR/$DSWIFI ]
         then
           echo "Error: $DSWIFI not found in $SRCDIR"
@@ -303,8 +298,21 @@ then
       else
 	      FOUND=1
       fi
-
     fi
+
+
+    if [ $VERSION -eq 1 -o $VERSION -eq 2 ]
+    then
+      if [ ! -f $SRCDIR/$LIBFAT ]
+      then
+        echo "Error: $LIBFAT not found in $SRCDIR"
+        exit 1
+      else
+	      FOUND=1
+      fi
+    fi
+
+
 
     done
 
@@ -327,13 +335,16 @@ else
        $WGET -c $LIBOGC_URL || { echo "Error: Failed to download "$LIBOGC; exit 1; }
       fi
 
+      if [ $VERSION -eq 1 -o $VERSION -eq 2 ]
+      then
+        $WGET -c $LIBFAT_URL || { echo "Error: Failed to download "$LIBFAT; exit 1; }
+      fi
 
       if [ $VERSION -eq 1 ]
       then
         $WGET -c $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit 1; }
         $WGET -c $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit 1; }
         $WGET -c $DSWIFI_URL || { echo "Error: Failed to download "$DSWIFI; exit 1; }
-        $WGET -c $LIBFAT_URL || { echo "Error: Failed to download "$LIBFAT; exit 1; }
         $WGET -c $LIBMIRKO_URL || { echo "Error: Failed to download "$LIBMIRKO; exit 1; }
         $WGET -c $DEFAULT_ARM7_URL || { echo "Error: Failed to download "$DEFAULT_ARM7; exit 1; }
       fi
