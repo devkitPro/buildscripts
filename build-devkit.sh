@@ -5,16 +5,13 @@
 #	devkitPPC release 15
 #	devkitPSP release 12
 #---------------------------------------------------------------------------------
-echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support"
-exit 1
 
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=20080515
+LIBOGC_VER=20080601
 LIBGBA_VER=20060720
 LIBNDS_VER=20080511
-LIBFAT_VER=20080514
 DEFAULT_ARM7_VER=20080416
 DSWIFI_VER=0.3.4
 LIBMIRKO_VER=0.9.7
@@ -22,7 +19,6 @@ LIBMIRKO_VER=0.9.7
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
 LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
-LIBFAT="libfat-src-$LIBFAT_VER.tar.bz2"
 DSWIFI="dswifi-src-$DSWIFI_VER.tar.bz2"
 DEFAULT_ARM7="default_arm7-src-$DEFAULT_ARM7_VER.tar.bz2"
 LIBMIRKO="libmirko-src-$LIBMIRKO_VER.tar.bz2"
@@ -32,7 +28,6 @@ LIBOGC_URL="$DEVKITPRO_URL/$LIBOGC"
 LIBGBA_URL="$DEVKITPRO_URL/$LIBGBA"
 LIBNDS_URL="$DEVKITPRO_URL/$LIBNDS"
 DSWIFI_URL="$DEVKITPRO_URL/$DSWIFI"
-LIBFAT_URL="$DEVKITPRO_URL/$LIBFAT"
 LIBMIRKO_URL="$DEVKITPRO_URL/$LIBMIRKO"
 DEFAULT_ARM7_URL="$DEVKITPRO_URL/$DEFAULT_ARM7"
 
@@ -88,6 +83,7 @@ case "$VERSION" in
     BINUTILS_VER=2.18.50
     NEWLIB_VER=1.16.0
     GDB_VER=6.8
+    LIBFAT_VER=20070127
     basedir='dkarm-eabi'
     package=devkitARM
     builddir=arm-eabi
@@ -99,6 +95,7 @@ case "$VERSION" in
     BINUTILS_VER=2.18.50
     NEWLIB_VER=1.16.0
     GDB_VER=6.8
+    LIBFAT_VER=20080530
     basedir='dkppc'
     package=devkitPPC
     builddir=powerpc-gekko
@@ -145,6 +142,8 @@ esac
 
 NEWLIB="newlib-$NEWLIB_VER.tar.gz"
 NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/$NEWLIB"
+LIBFAT="libfat-src-$LIBFAT_VER.tar.bz2"
+LIBFAT_URL="$DEVKITPRO_URL/$LIBFAT"
 
 DOWNLOAD=0
 

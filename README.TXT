@@ -48,11 +48,7 @@ gcc-core 4.3.0 - http://ftp.gnu.org/gnu/gcc/gcc-4.3.0/gcc-core-4.3.0.tar.bz2
 gcc-g++ 4.3.0 - http://ftp.gnu.org/gnu/gcc/gcc-4.3.0/gcc-g++-4.3.0.tar.bz2
 
 
-libogc, libgba, libnds, libmirko, dswifi and libfat can be found in the sourceforge project.
-
-http://sourceforge.net/projects/devkitpro
-
-
+libogc, libgba, libnds, libmirko, dswifi and libfat can be found in the sourceforge project. See http://wiki.devkitpro.org/index.php/Getting_Started for links.
 
 The top level shell script has now been unified and offers the option of devkitARM, devkitPPC or devkitPSP.
 
@@ -67,17 +63,12 @@ Once the script finds the source packages they will be decompressed and the buil
 
 To avoid having to manually answer prompts during the build the script will read variables from config.sh if it exists. Copy config.sh.sample to config.sh and set the variables as appropriate for your build.
 
+Several examples tarballs are provided for the platforms supported by devkitARM & devkitPPC, these include basic templates for starting your own projects. See http://wiki.devkitpro.org/index.php/Getting_Started for links.
 
 Using devkitARM
 ---------------
 
-All you need to do now to use devkitARM is make sure that your freshly built tools are in your PATH, something like this;
-
-export PATH=$PATH:<path to devkitARM>/bin
-
-(Obviously replace <path to devkitARM> with the full path to the devkitARM installation directory)
-
-to use the built in crt0 and linkscript use arm-elf-gcc to link your project
+to use the built in crt0 and linkscript use arm-eabi-gcc to link your project
 
 Several specs files are built in for the various platforms
 
@@ -89,26 +80,25 @@ Several specs files are built in for the various platforms
 	-specs=ds_cart for a DS arm7 binary which runs from GBA cart.
 	-specs=gp32.specs for standard GP32 app.
 	-specs=gp32_gpsdk.specs for official gamepark SDK GP32 app.
-	
-Getting started
----------------
-
-The best thing to do next is test the compiler, so grab an examples tarball from sourceforge & run make in the top level.
-
-http://sourceforge.net/project/showfiles.php?group_id=114505&package_id=159894
 
 Using devkitPPC
 ---------------
 
-All you need to do now to use devkitPPC is make sure that your freshly built tools are in your PATH, something like this;
+to use the built in crt0 and linkscript use powerpc-gekko-gcc to link your project, using the command line switch -mgcn for a bare bones system, -mogc to use libogc and the multi-threaded microkernel for gamecube, -mrvl for wii.
 
-export PATH=$PATH:<path to devkitPPC>/bin
+Using devkitPSP
+---------------
 
-(Obviously replace <path to devkitPPC> with the full path to the devkitPPC installation directory)
+All you need to do now to use devkitPSP is make sure that your freshly built tools are in your PATH, something like this;
 
-to use the built in crt0 and linkscript use powerpc-elf-gcc to link your project, using the command line switch -mgcn for a bare bones system, -mogc to use libogc and the multi-threaded microkernel.
+export PATH=$PATH:<path to devkitPSP>/bin
 
+(Obviously replace <path to devkitPSP> with the full path to the devkitPSP installation directory)
 
+Getting started
+---------------
+
+The best thing to do next is test the compiler, so grab an examples tarball from sourceforge & run make in the top level.
 
 Credits
 -------
@@ -116,7 +106,7 @@ Credits
 * Thanks to WinterMute for bringing us devkitPro, the website is http://www.devkitpro.org
 * Build scripts written by WinterMute and tied together by GreenGianT
 * Thanks to Mr Spiv, Honkey Kong, Raleigh and JoostP for OS X testing
-* libogc written and supplied by Shagkur. Additional code by WinterMute, Bushing & Tybor
+* libogc written and supplied by Shagkur. Additional code by WinterMute, Bushing, Marcan & Tybor
 * libgba by WinterMute
 * libnds by Joat, Dovoto and WinterMute with contributions from many others.
 * dswifi by Sgstair
