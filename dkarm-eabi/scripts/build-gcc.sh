@@ -53,7 +53,7 @@ then
         --target=$target \
         --with-newlib \
         --prefix=$prefix\
-        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 23a" \
+        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 24" \
         || { echo "Error configuring gcc"; exit 1; }
   touch configured-gcc
 fi
