@@ -208,9 +208,6 @@ _start:
 	ldr	r3, =__libc_init_array	@ global constructors
 	blx	r3
 
-	ldr	r3, =initSystem
-	blx	r3			@ jump to user code
-
 	ldr	r0, =_libnds_argv
 
 	@ reset heap base
@@ -218,9 +215,13 @@ _start:
 	ldr	r1,=fake_heap_start
 	str	r2,[r1]
 
+	push	{r0}
+	ldr	r3, =initSystem
+	blx	r3			@ jump to user code
+	pop	{r0}
+
 	ldr	r1, [r0,#16]		@ argv
 	ldr	r0, [r0,#12]		@ argc
-
 
 	ldr	r3, =main
 	blx	r3			@ jump to user code

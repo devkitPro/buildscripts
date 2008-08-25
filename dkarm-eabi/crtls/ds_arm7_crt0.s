@@ -28,16 +28,21 @@ _start:
 	bl	ClearMem
 
 	ldr	r3, =__libc_init_array	@ global constructors
-	bl	_call_via_r3
+	bl	_blx_r3_stub
 
 	mov	r0, #0			@ int argc
 	mov	r1, #0			@ char *argv[]
 	ldr	r3, =main
-	bl	_call_via_r3		@ jump to user code
+	bl	_blx_r3_stub
 		
 	@ If the user ever returns, return to flash cartridge
 	mov	r0, #0x08000000
 	bx	r0
+
+@---------------------------------------------------------------------------------
+_blx_r3_stub:
+@---------------------------------------------------------------------------------
+	bx	r3
 
 @---------------------------------------------------------------------------------
 @ Clear memory to 0x00 if length != 0
