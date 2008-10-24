@@ -1,6 +1,18 @@
+diff -Nbaur gcc-4.3.2/Makefile.in gcc-4.3.2-arm/Makefile.in
+--- gcc-4.3.2/Makefile.in	2008-08-16 08:28:01.000000000 +0100
++++ gcc-4.3.2-arm/Makefile.in	2008-10-19 20:02:58.000000000 +0100
+@@ -380,7 +380,7 @@
+ # We want to ensure that TARGET libraries (which we know are built with
+ # gcc) are built with "-O2 -g", so prepend those options when setting
+ # CFLAGS_FOR_TARGET and CXXFLAGS_FOR_TARGET.
+-CFLAGS_FOR_TARGET = -O2 -g $(CFLAGS) $(SYSROOT_CFLAGS_FOR_TARGET) \
++CFLAGS_FOR_TARGET = -O2 -g $(SYSROOT_CFLAGS_FOR_TARGET) \
+ 	$(DEBUG_PREFIX_CFLAGS_FOR_TARGET)
+ SYSROOT_CFLAGS_FOR_TARGET = @SYSROOT_CFLAGS_FOR_TARGET@
+ DEBUG_PREFIX_CFLAGS_FOR_TARGET = @DEBUG_PREFIX_CFLAGS_FOR_TARGET@
 diff -Nbaur gcc-4.3.2/gcc/config/arm/t-arm-elf gcc-4.3.2-arm/gcc/config/arm/t-arm-elf
---- gcc-4.3.2/gcc/config/arm/t-arm-elf	Wed Jan  3 23:48:10 2007
-+++ gcc-4.3.2-arm/gcc/config/arm/t-arm-elf	Thu Sep  4 12:16:03 2008
+--- gcc-4.3.2/gcc/config/arm/t-arm-elf	2007-01-03 23:48:10.000000000 +0000
++++ gcc-4.3.2-arm/gcc/config/arm/t-arm-elf	2008-10-22 23:23:03.000000000 +0100
 @@ -11,23 +11,23 @@
  MULTILIB_EXCEPTIONS  = 
  MULTILIB_MATCHES     =
@@ -38,8 +50,8 @@ diff -Nbaur gcc-4.3.2/gcc/config/arm/t-arm-elf gcc-4.3.2-arm/gcc/config/arm/t-ar
  # MULTILIB_OPTIONS    += mhard-float/msoft-float
  # MULTILIB_DIRNAMES   += fpu soft
 diff -Nbaur gcc-4.3.2/gcc/config/arm/unknown-elf.h gcc-4.3.2-arm/gcc/config/arm/unknown-elf.h
---- gcc-4.3.2/gcc/config/arm/unknown-elf.h	Thu Aug  2 11:49:31 2007
-+++ gcc-4.3.2-arm/gcc/config/arm/unknown-elf.h	Thu Sep  4 12:15:53 2008
+--- gcc-4.3.2/gcc/config/arm/unknown-elf.h	2007-08-02 11:49:31.000000000 +0100
++++ gcc-4.3.2-arm/gcc/config/arm/unknown-elf.h	2008-10-19 00:59:47.000000000 +0100
 @@ -93,4 +93,4 @@
     udivmoddi4, which will depend on the exception unwind routines,
     which will depend on abort, which is defined in libc.  */ 
@@ -47,8 +59,8 @@ diff -Nbaur gcc-4.3.2/gcc/config/arm/unknown-elf.h gcc-4.3.2-arm/gcc/config/arm/
 -#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L --end-group"
 +#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
 diff -Nbaur gcc-4.3.2/gcc/gcc.c gcc-4.3.2-arm/gcc/gcc.c
---- gcc-4.3.2/gcc/gcc.c	Sun Mar  2 22:55:19 2008
-+++ gcc-4.3.2-arm/gcc/gcc.c	Thu Sep  4 12:15:53 2008
+--- gcc-4.3.2/gcc/gcc.c	2008-03-02 22:55:19.000000000 +0000
++++ gcc-4.3.2-arm/gcc/gcc.c	2008-10-19 00:59:47.000000000 +0100
 @@ -635,6 +635,11 @@
  #endif
  #endif
@@ -109,8 +121,8 @@ diff -Nbaur gcc-4.3.2/gcc/gcc.c gcc-4.3.2-arm/gcc/gcc.c
    strcat (specs_file, "specs");
    if (access (specs_file, R_OK) == 0)
 diff -Nbaur gcc-4.3.2/gcc/prefix.c gcc-4.3.2-arm/gcc/prefix.c
---- gcc-4.3.2/gcc/prefix.c	Mon Sep  3 18:09:20 2007
-+++ gcc-4.3.2-arm/gcc/prefix.c	Thu Sep  4 12:15:53 2008
+--- gcc-4.3.2/gcc/prefix.c	2007-09-03 18:09:20.000000000 +0100
++++ gcc-4.3.2-arm/gcc/prefix.c	2008-10-19 00:59:47.000000000 +0100
 @@ -245,13 +245,16 @@
     The returned string is always malloc-ed, and the caller is
     responsible for freeing it.  */
@@ -138,8 +150,8 @@ diff -Nbaur gcc-4.3.2/gcc/prefix.c gcc-4.3.2-arm/gcc/prefix.c
 +	putenv (concat ("GCC_EXEC_PREFIX=", std_prefix, NULL));
  }
 diff -Nbaur gcc-4.3.2/gcc/toplev.c gcc-4.3.2-arm/gcc/toplev.c
---- gcc-4.3.2/gcc/toplev.c	Thu Apr 24 18:59:01 2008
-+++ gcc-4.3.2-arm/gcc/toplev.c	Thu Sep  4 12:15:53 2008
+--- gcc-4.3.2/gcc/toplev.c	2008-04-24 18:59:01.000000000 +0100
++++ gcc-4.3.2-arm/gcc/toplev.c	2008-10-19 00:59:47.000000000 +0100
 @@ -82,6 +82,7 @@
  #include "alloc-pool.h"
  #include "tree-mudflap.h"
@@ -148,14 +160,26 @@ diff -Nbaur gcc-4.3.2/gcc/toplev.c gcc-4.3.2-arm/gcc/toplev.c
  
  #if defined (DWARF2_UNWIND_INFO) || defined (DWARF2_DEBUGGING_INFO)
  #include "dwarf2out.h"
-@@ -1622,6 +1623,10 @@
-   progname = p;
+@@ -1623,6 +1624,10 @@
  
    xmalloc_set_program_name (progname);
-+
+ 
 +  p = getenv("GCC_EXEC_PREFIX");
 +  if (p && strlen(p)) set_std_prefix (p, strlen(p));
 +
- 
++
    hex_init ();
  
+   /* Unlock the stdio streams.  */
+diff -Nbaur gcc-4.3.2/libcpp/Makefile.in gcc-4.3.2-arm/libcpp/Makefile.in
+--- gcc-4.3.2/libcpp/Makefile.in	2008-08-27 19:09:37.000000000 +0100
++++ gcc-4.3.2-arm/libcpp/Makefile.in	2008-10-19 20:06:28.000000000 +0100
+@@ -197,7 +197,7 @@
+ # Dependency rule.
+ COMPILE.base = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(ALL_CFLAGS) -c
+ ifeq ($(DEPMODE),depmode=gcc3)
+-COMPILE = $(COMPILE.base) -o $@ -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Po
++COMPILE = $(COMPILE.base) -o $@ 
+ else
+ COMPILE = source='$<' object='$@' libtool=no DEPDIR=$(DEPDIR) $(DEPMODE) \
+ 	  $(depcomp) $(COMPILE.base)
