@@ -5,6 +5,17 @@
 
 prefix=$INSTALLDIR/devkitPPC
 
+PLATFORM=`uname -s`
+
+case $PLATFORM in
+  "Darwin" )
+    CONFIG_EXTRA=env CFLAGS="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" LDFLAGS="-arch i386 -arch ppc"
+    ;;
+#  "" )
+#    CONFIG_EXTRA=CFLAGS=-D__USE_MINGW_ACCESS
+    ;;
+esac
+
 #---------------------------------------------------------------------------------
 # build and install ppc binutils
 #---------------------------------------------------------------------------------
@@ -14,7 +25,7 @@ cd $target/binutils
 
 if [ ! -f configured-binutils ]
 then
-  ../../$BINUTILS_SRCDIR/configure \
+  $CONFIG_EXTRA ../../$BINUTILS_SRCDIR/configure \
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
 	--with-gcc --with-gnu-as --with-gnu-ld \
 	|| { echo "Error configuing ppc binutils"; exit 1; }
@@ -44,7 +55,7 @@ cd mn10200/binutils
 
 if [ ! -f configured-binutils ]
 then
-  ../../$BINUTILS_SRCDIR/configure \
+  $CONFIG_EXTRA ../../$BINUTILS_SRCDIR/configure \
 	--prefix=$prefix --target=mn10200 --disable-nls --disable-shared --disable-debug \
 	--with-gcc --with-gnu-as --with-gnu-ld \
 	|| { echo "Error configuing mn10200 binutils"; exit 1; }
@@ -78,7 +89,7 @@ cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
-  CFLAGS=-D__USE_MINGW_ACCESS ../../$GCC_SRCDIR/configure \
+  $CONFIG_EXTRA ../../$GCC_SRCDIR/configure \
   --enable-languages=c,c++ \
   --with-cpu=750\
   --without-headers\
@@ -164,7 +175,7 @@ cd $target/gdb
 
 if [ ! -f configured-gdb ]
 then
-  ../../$GDB_SRCDIR/configure \
+  $CONFIG_EXTRA ../../$GDB_SRCDIR/configure \
   --disable-nls --prefix=$prefix --target=$target --disable-werror \
   || { echo "Error configuring gdb"; exit 1; }
   touch configured-gdb

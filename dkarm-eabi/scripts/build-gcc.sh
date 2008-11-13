@@ -5,6 +5,16 @@
 
 prefix=$INSTALLDIR/devkitARM
 
+PLATFORM=`uname -s`
+
+case $PLATFORM in
+  "Darwin" )
+    CONFIG_EXTRA=env CFLAGS="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" LDFLAGS="-arch i386 -arch ppc"
+    ;;
+  "" )
+    ;;
+esac
+
 #---------------------------------------------------------------------------------
 # build and install binutils
 #---------------------------------------------------------------------------------
@@ -14,7 +24,7 @@ cd $target/binutils
 
 if [ ! -f configured-binutils ]
 then
-  ../../$BINUTILS_SRCDIR/configure \
+  $CONFIG_EXTRA ../../$BINUTILS_SRCDIR/configure \
         --prefix=$prefix --target=$target --disable-nls \
         || { echo "Error configuring binutils"; exit 1; }
   touch configured-binutils
@@ -42,7 +52,7 @@ cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
-  CFLAGS=-D__USE_MINGW_ACCESS ../../$GCC_SRCDIR/configure \
+  $CONFIG_EXTRA ../../$GCC_SRCDIR/configure \
         --enable-languages=c,c++ \
         --with-cpu=arm7tdmi\
         --enable-interwork --enable-multilib\
@@ -131,7 +141,7 @@ cd $target/gdb
 
 if [ ! -f configured-gdb ]
 then
-  ../../$GDB_SRCDIR/configure \
+  $CONFIG_EXTRA ../../$GDB_SRCDIR/configure \
         --disable-nls --prefix=$prefix --target=$target --disable-werror \
         || { echo "Error configuring gdb"; exit 1; }
   touch configured-gdb
