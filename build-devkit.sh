@@ -1,10 +1,16 @@
 #!/bin/sh
 #---------------------------------------------------------------------------------
 # Build scripts for
-#	devkitARM release 23b
-#	devkitPPC release 15
+#	devkitARM release 24
+#	devkitPPC release 16
 #	devkitPSP release 12
 #---------------------------------------------------------------------------------
+
+if [ 1 -eq 1 ] ; then 
+  echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support" 	 
+  exit 1
+fi
+
 
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
@@ -79,8 +85,8 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=4.3.1
-    BINUTILS_VER=2.18.50
+    GCC_VER=4.3.2
+    BINUTILS_VER=2.18.93
     NEWLIB_VER=1.16.0
     GDB_VER=6.8
     LIBFAT_VER=20070127
@@ -91,8 +97,8 @@ case "$VERSION" in
     toolchain=DEVKITARM
   ;;
   "2" )
-    GCC_VER=4.2.3
-    BINUTILS_VER=2.18.50
+    GCC_VER=4.2.4
+    BINUTILS_VER=2.18.93
     NEWLIB_VER=1.16.0
     GDB_VER=6.8
     LIBFAT_VER=20080530
@@ -132,7 +138,7 @@ GDB="gdb-$GDB_VER.tar.bz2"
 GDB_URL="http://ftp.gnu.org/gnu/gdb/$GDB"
 
 case "$BINUTILS_VER" in
- "2.18.50" )
+ "2.18.50" | "2.18.93" )
    BINUTILS_URL="ftp://sourceware.org/pub/binutils/snapshots/$BINUTILS"
  ;;
  * )  
@@ -157,7 +163,7 @@ do
   echo "The installation requires binutils-$BINUTILS_VER, gcc-$GCC_VER and newlib-$NEWLIB_VER.  Please select an option:"
   echo
   echo "1: I have already downloaded the source packages"
-  echo "2: Download the packages for me (requires wget)"
+  echo "2: Download the packages for me (requires curl)"
   read DOWNLOAD
 
   if [ "$DOWNLOAD" -ne 1 -a "$DOWNLOAD" -ne 2 ]
@@ -168,11 +174,11 @@ done
 
 if [ "$DOWNLOAD" -eq 2 ]
 then
-  if test "`wget -V`"
+  if test "`curl -V`"
   then
-    WGET=wget
+    CURL=curl
   else
-    echo "ERROR: Please make sure you have 'wget' installed."
+    echo "ERROR: Please make sure you have 'curl' installed."
     exit 1
   fi
 fi
@@ -319,33 +325,33 @@ else
 
     if [ ! -f downloaded_sources ]
     then
-      $WGET --passive-ftp -c $BINUTILS_URL || { echo "Error: Failed to download "$BINUTILS; exit 1; }
+      $CURL -L -O  $BINUTILS_URL || { echo "Error: Failed to download "$BINUTILS; exit 1; }
 
-      $WGET -c $GCC_CORE_URL || { echo "Error: Failed to download "$GCC_CORE; exit 1; }
+      $CURL -L -O  $GCC_CORE_URL || { echo "Error: Failed to download "$GCC_CORE; exit 1; }
 
-      $WGET -c $GCC_GPP_URL || { echo "Error: Failed to download "$GCC_GPP; exit 1; }
+      $CURL -L -O $GCC_GPP_URL || { echo "Error: Failed to download "$GCC_GPP; exit 1; }
 
-      $WGET -c $GDB_URL || { echo "Error: Failed to download "$GDB; exit 1; }
+      $CURL -L -O $GDB_URL || { echo "Error: Failed to download "$GDB; exit 1; }
 
-      $WGET --passive-ftp -c $NEWLIB_URL || { echo "Error: Failed to download "$NEWLIB; exit 1; }
+      $CURL -L -O $NEWLIB_URL || { echo "Error: Failed to download "$NEWLIB; exit 1; }
 
       if [ $VERSION -eq 2 ]
       then
-       $WGET -c $LIBOGC_URL || { echo "Error: Failed to download "$LIBOGC; exit 1; }
+       $CURL -L -O $LIBOGC_URL || { echo "Error: Failed to download "$LIBOGC; exit 1; }
       fi
 
       if [ $VERSION -eq 1 -o $VERSION -eq 2 ]
       then
-        $WGET -c $LIBFAT_URL || { echo "Error: Failed to download "$LIBFAT; exit 1; }
+        $CURL -L -O $LIBFAT_URL || { echo "Error: Failed to download "$LIBFAT; exit 1; }
       fi
 
       if [ $VERSION -eq 1 ]
       then
-        $WGET -c $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit 1; }
-        $WGET -c $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit 1; }
-        $WGET -c $DSWIFI_URL || { echo "Error: Failed to download "$DSWIFI; exit 1; }
-        $WGET -c $LIBMIRKO_URL || { echo "Error: Failed to download "$LIBMIRKO; exit 1; }
-        $WGET -c $DEFAULT_ARM7_URL || { echo "Error: Failed to download "$DEFAULT_ARM7; exit 1; }
+        $CURL -L -O $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit 1; }
+        $CURL -L -O $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit 1; }
+        $CURL -L -O $DSWIFI_URL || { echo "Error: Failed to download "$DSWIFI; exit 1; }
+        $CURL -L -O $LIBMIRKO_URL || { echo "Error: Failed to download "$LIBMIRKO; exit 1; }
+        $CURL -L -O $DEFAULT_ARM7_URL || { echo "Error: Failed to download "$DEFAULT_ARM7; exit 1; }
       fi
       SRCDIR=`pwd`
       touch downloaded_sources
@@ -572,16 +578,17 @@ if [ "$BUILD_DKPRO_AUTOMATED" != "1" ] ; then
 	
 	if [ "$answer" = "y" -o "$answer" = "Y" ]
 	then
-		echo "removing archives"
+	echo "removing archives"
 		rm -f $SRCDIR/$BINUTILS $SRCDIR/$GCC_CORE $SRCDIR/$GCC_GPP $SRCDIR/$NEWLIB
 		if [ $VERSION -eq 1 -o $VERSION -eq 4 ]
 		then
-		rm -f  $SRCDIR/$LIBGBA $SRCDIR/$LIBNDS $SRCDIR/$LIBMIRKO
+			rm -f  $SRCDIR/$LIBGBA $SRCDIR/$LIBNDS $SRCDIR/$LIBMIRKO
 		fi
 		if [ $VERSION -eq 2 ]
 		then
-		rm -f  $SRCDIR/$LIBOGC
+		 	rm -f  $SRCDIR/$LIBOGC
 		fi
+		rm downloaded_sources
 	fi
 fi
 
