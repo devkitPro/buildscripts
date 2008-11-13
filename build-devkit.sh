@@ -325,33 +325,33 @@ else
 
     if [ ! -f downloaded_sources ]
     then
-      $CURL -L -O  $BINUTILS_URL || { echo "Error: Failed to download "$BINUTILS; exit 1; }
+      $CURL -f -L -O  $BINUTILS_URL || { echo "Error: Failed to download "$BINUTILS; exit 1; }
 
-      $CURL -L -O  $GCC_CORE_URL || { echo "Error: Failed to download "$GCC_CORE; exit 1; }
+      $CURL -f -L -O  $GCC_CORE_URL || { echo "Error: Failed to download "$GCC_CORE; exit 1; }
 
-      $CURL -L -O $GCC_GPP_URL || { echo "Error: Failed to download "$GCC_GPP; exit 1; }
+      $CURL -f -L -O $GCC_GPP_URL || { echo "Error: Failed to download "$GCC_GPP; exit 1; }
 
-      $CURL -L -O $GDB_URL || { echo "Error: Failed to download "$GDB; exit 1; }
+      $CURL -f -L -O $GDB_URL || { echo "Error: Failed to download "$GDB; exit 1; }
 
-      $CURL -L -O $NEWLIB_URL || { echo "Error: Failed to download "$NEWLIB; exit 1; }
+      $CURL -f -L -O $NEWLIB_URL || { echo "Error: Failed to download "$NEWLIB; exit 1; }
 
       if [ $VERSION -eq 2 ]
       then
-       $CURL -L -O $LIBOGC_URL || { echo "Error: Failed to download "$LIBOGC; exit 1; }
+       $CURL -f -L -O $LIBOGC_URL || { echo "Error: Failed to download "$LIBOGC; exit 1; }
       fi
 
       if [ $VERSION -eq 1 -o $VERSION -eq 2 ]
       then
-        $CURL -L -O $LIBFAT_URL || { echo "Error: Failed to download "$LIBFAT; exit 1; }
+        $CURL -f -L -O $LIBFAT_URL || { echo "Error: Failed to download "$LIBFAT; exit 1; }
       fi
 
       if [ $VERSION -eq 1 ]
       then
-        $CURL -L -O $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit 1; }
-        $CURL -L -O $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit 1; }
-        $CURL -L -O $DSWIFI_URL || { echo "Error: Failed to download "$DSWIFI; exit 1; }
-        $CURL -L -O $LIBMIRKO_URL || { echo "Error: Failed to download "$LIBMIRKO; exit 1; }
-        $CURL -L -O $DEFAULT_ARM7_URL || { echo "Error: Failed to download "$DEFAULT_ARM7; exit 1; }
+        $CURL -f -L -O $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit 1; }
+        $CURL -f -L -O $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit 1; }
+        $CURL -f -L -O $DSWIFI_URL || { echo "Error: Failed to download "$DSWIFI; exit 1; }
+        $CURL -f -L -O $LIBMIRKO_URL || { echo "Error: Failed to download "$LIBMIRKO; exit 1; }
+        $CURL -f -L -O $DEFAULT_ARM7_URL || { echo "Error: Failed to download "$DEFAULT_ARM7; exit 1; }
       fi
       SRCDIR=`pwd`
       touch downloaded_sources
