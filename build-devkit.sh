@@ -86,7 +86,7 @@ done
 case "$VERSION" in
   "1" )
     GCC_VER=4.3.2
-    BINUTILS_VER=2.18.93
+    BINUTILS_VER=2.19
     NEWLIB_VER=1.16.0
     GDB_VER=6.8
     LIBFAT_VER=20070127
@@ -98,7 +98,7 @@ case "$VERSION" in
   ;;
   "2" )
     GCC_VER=4.2.4
-    BINUTILS_VER=2.18.93
+    BINUTILS_VER=2.19
     NEWLIB_VER=1.16.0
     GDB_VER=6.8
     LIBFAT_VER=20080530
