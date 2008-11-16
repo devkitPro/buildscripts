@@ -1,6 +1,6 @@
-diff -Nbaur gcc-4.2.3/config.sub gcc-4.2.3-ppc/config.sub
---- gcc-4.2.3/config.sub	Mon Oct 16 04:27:17 2006
-+++ gcc-4.2.3-ppc/config.sub	Tue Apr 15 15:19:42 2008
+diff -Nbaur gcc-4.2.4/config.sub gcc-4.2.4-ppc/config.sub
+--- gcc-4.2.4/config.sub	2006-10-16 04:27:17.000000000 +0100
++++ gcc-4.2.4-ppc/config.sub	2008-10-18 05:11:48.000000000 +0100
 @@ -230,6 +230,10 @@
  		basic_machine=m68k-atari
  		os=-mint
@@ -12,9 +12,9 @@ diff -Nbaur gcc-4.2.3/config.sub gcc-4.2.3-ppc/config.sub
  esac
  
  # Decode aliases for certain CPU-COMPANY combinations.
-diff -Nbaur gcc-4.2.3/gcc/c-incpath.c gcc-4.2.3-ppc/gcc/c-incpath.c
---- gcc-4.2.3/gcc/c-incpath.c	Sat Sep  1 16:28:30 2007
-+++ gcc-4.2.3-ppc/gcc/c-incpath.c	Tue Apr 15 15:19:42 2008
+diff -Nbaur gcc-4.2.4/gcc/c-incpath.c gcc-4.2.4-ppc/gcc/c-incpath.c
+--- gcc-4.2.4/gcc/c-incpath.c	2007-09-01 16:28:30.000000000 +0100
++++ gcc-4.2.4-ppc/gcc/c-incpath.c	2008-10-18 05:11:48.000000000 +0100
 @@ -340,13 +340,18 @@
    cpp_dir *p;
  
@@ -41,9 +41,9 @@ diff -Nbaur gcc-4.2.3/gcc/c-incpath.c gcc-4.2.3-ppc/gcc/c-incpath.c
  #endif
  
    p = XNEW (cpp_dir);
-diff -Nbaur gcc-4.2.3/gcc/config/rs6000/sysv4.h gcc-4.2.3-ppc/gcc/config/rs6000/sysv4.h
---- gcc-4.2.3/gcc/config/rs6000/sysv4.h	Sat Sep  1 16:28:30 2007
-+++ gcc-4.2.3-ppc/gcc/config/rs6000/sysv4.h	Tue Apr 15 15:21:10 2008
+diff -Nbaur gcc-4.2.4/gcc/config/rs6000/sysv4.h gcc-4.2.4-ppc/gcc/config/rs6000/sysv4.h
+--- gcc-4.2.4/gcc/config/rs6000/sysv4.h	2007-09-01 16:28:30.000000000 +0100
++++ gcc-4.2.4-ppc/gcc/config/rs6000/sysv4.h	2008-10-18 05:11:48.000000000 +0100
 @@ -651,7 +651,11 @@
  
  /* Default starting address if specified.  */
@@ -199,9 +199,9 @@ diff -Nbaur gcc-4.2.3/gcc/config/rs6000/sysv4.h gcc-4.2.3-ppc/gcc/config/rs6000/
    { "cpp_os_ads",		CPP_OS_ADS_SPEC },			\
    { "cpp_os_yellowknife",	CPP_OS_YELLOWKNIFE_SPEC },		\
    { "cpp_os_mvme",		CPP_OS_MVME_SPEC },			\
-diff -Nbaur gcc-4.2.3/gcc/config/rs6000/sysv4.opt gcc-4.2.3-ppc/gcc/config/rs6000/sysv4.opt
---- gcc-4.2.3/gcc/config/rs6000/sysv4.opt	Sat Sep  1 16:28:30 2007
-+++ gcc-4.2.3-ppc/gcc/config/rs6000/sysv4.opt	Tue Apr 15 15:19:42 2008
+diff -Nbaur gcc-4.2.4/gcc/config/rs6000/sysv4.opt gcc-4.2.4-ppc/gcc/config/rs6000/sysv4.opt
+--- gcc-4.2.4/gcc/config/rs6000/sysv4.opt	2007-09-01 16:28:30.000000000 +0100
++++ gcc-4.2.4-ppc/gcc/config/rs6000/sysv4.opt	2008-10-18 05:11:48.000000000 +0100
 @@ -107,6 +107,26 @@
  Target RejectNegative
  Link with libads.a, libc.a and crt0.o
@@ -229,9 +229,9 @@ diff -Nbaur gcc-4.2.3/gcc/config/rs6000/sysv4.opt gcc-4.2.3-ppc/gcc/config/rs600
  myellowknife
  Target RejectNegative
  Link with libyk.a, libc.a and crt0.o
-diff -Nbaur gcc-4.2.3/gcc/gcc.c gcc-4.2.3-ppc/gcc/gcc.c
---- gcc-4.2.3/gcc/gcc.c	Sat Sep  1 16:28:30 2007
-+++ gcc-4.2.3-ppc/gcc/gcc.c	Tue Apr 15 15:19:42 2008
+diff -Nbaur gcc-4.2.4/gcc/gcc.c gcc-4.2.4-ppc/gcc/gcc.c
+--- gcc-4.2.4/gcc/gcc.c	2007-09-01 16:28:30.000000000 +0100
++++ gcc-4.2.4-ppc/gcc/gcc.c	2008-10-18 05:11:48.000000000 +0100
 @@ -3369,8 +3369,6 @@
        gcc_libexec_prefix = make_relative_prefix (argv[0],
  						 standard_bindir_prefix,
@@ -263,9 +263,9 @@ diff -Nbaur gcc-4.2.3/gcc/gcc.c gcc-4.2.3-ppc/gcc/gcc.c
    strcat (specs_file, just_machine_suffix);
    strcat (specs_file, "specs");
    if (access (specs_file, R_OK) == 0)
-diff -Nbaur gcc-4.2.3/gcc/prefix.c gcc-4.2.3-ppc/gcc/prefix.c
---- gcc-4.2.3/gcc/prefix.c	Sat Sep  1 16:28:30 2007
-+++ gcc-4.2.3-ppc/gcc/prefix.c	Tue Apr 15 15:19:42 2008
+diff -Nbaur gcc-4.2.4/gcc/prefix.c gcc-4.2.4-ppc/gcc/prefix.c
+--- gcc-4.2.4/gcc/prefix.c	2007-09-01 16:28:30.000000000 +0100
++++ gcc-4.2.4-ppc/gcc/prefix.c	2008-10-18 05:11:48.000000000 +0100
 @@ -245,13 +245,16 @@
     The returned string is always malloc-ed, and the caller is
     responsible for freeing it.  */
@@ -292,9 +292,9 @@ diff -Nbaur gcc-4.2.3/gcc/prefix.c gcc-4.2.3-ppc/gcc/prefix.c
 +
 +	putenv (concat ("GCC_EXEC_PREFIX=", std_prefix, NULL));
  }
-diff -Nbaur gcc-4.2.3/gcc/stor-layout.c gcc-4.2.3-ppc/gcc/stor-layout.c
---- gcc-4.2.3/gcc/stor-layout.c	Sat Sep  1 16:28:30 2007
-+++ gcc-4.2.3-ppc/gcc/stor-layout.c	Tue Apr 15 15:19:42 2008
+diff -Nbaur gcc-4.2.4/gcc/stor-layout.c gcc-4.2.4-ppc/gcc/stor-layout.c
+--- gcc-4.2.4/gcc/stor-layout.c	2007-09-01 16:28:30.000000000 +0100
++++ gcc-4.2.4-ppc/gcc/stor-layout.c	2008-10-18 05:11:48.000000000 +0100
 @@ -530,7 +530,15 @@
  #ifdef STRUCTURE_SIZE_BOUNDARY
    /* Packed structures don't need to have minimum size.  */
@@ -312,9 +312,9 @@ diff -Nbaur gcc-4.2.3/gcc/stor-layout.c gcc-4.2.3-ppc/gcc/stor-layout.c
  #endif
  
    rli->offset = size_zero_node;
-diff -Nbaur gcc-4.2.3/gcc/toplev.c gcc-4.2.3-ppc/gcc/toplev.c
---- gcc-4.2.3/gcc/toplev.c	Sat Sep  1 16:28:30 2007
-+++ gcc-4.2.3-ppc/gcc/toplev.c	Tue Apr 15 15:19:42 2008
+diff -Nbaur gcc-4.2.4/gcc/toplev.c gcc-4.2.4-ppc/gcc/toplev.c
+--- gcc-4.2.4/gcc/toplev.c	2007-09-01 16:28:30.000000000 +0100
++++ gcc-4.2.4-ppc/gcc/toplev.c	2008-10-18 05:11:48.000000000 +0100
 @@ -81,6 +81,7 @@
  #include "value-prof.h"
  #include "alloc-pool.h"
@@ -323,20 +323,20 @@ diff -Nbaur gcc-4.2.3/gcc/toplev.c gcc-4.2.3-ppc/gcc/toplev.c
  
  #if defined (DWARF2_UNWIND_INFO) || defined (DWARF2_DEBUGGING_INFO)
  #include "dwarf2out.h"
-@@ -1478,6 +1479,10 @@
-   progname = p;
+@@ -1479,6 +1480,10 @@
  
    xmalloc_set_program_name (progname);
-+
+ 
 +  p = getenv("GCC_EXEC_PREFIX");
 +  if (p && strlen(p)) set_std_prefix (p, strlen(p));
 +
- 
++
    hex_init ();
  
-diff -Nbaur gcc-4.2.3/gcc/version.c gcc-4.2.3-ppc/gcc/version.c
---- gcc-4.2.3/gcc/version.c	Wed Mar 16 06:04:10 2005
-+++ gcc-4.2.3-ppc/gcc/version.c	Tue Apr 15 15:23:23 2008
+   /* Unlock the stdio streams.  */
+diff -Nbaur gcc-4.2.4/gcc/version.c gcc-4.2.4-ppc/gcc/version.c
+--- gcc-4.2.4/gcc/version.c	2005-03-16 06:04:10.000000000 +0000
++++ gcc-4.2.4-ppc/gcc/version.c	2008-10-18 05:11:48.000000000 +0100
 @@ -8,7 +8,7 @@
     in parentheses.  You may also wish to include a number indicating
     the revision of your modified compiler.  */
@@ -355,9 +355,9 @@ diff -Nbaur gcc-4.2.3/gcc/version.c gcc-4.2.3-ppc/gcc/version.c
  
  /* The complete version string, assembled from several pieces.
     BASEVER, DATESTAMP, and DEVPHASE are defined by the Makefile.  */
-diff -Nbaur gcc-4.2.3/libcpp/files.c gcc-4.2.3-ppc/libcpp/files.c
---- gcc-4.2.3/libcpp/files.c	Sat Feb 18 09:25:31 2006
-+++ gcc-4.2.3-ppc/libcpp/files.c	Tue Apr 15 15:19:43 2008
+diff -Nbaur gcc-4.2.4/libcpp/files.c gcc-4.2.4-ppc/libcpp/files.c
+--- gcc-4.2.4/libcpp/files.c	2006-02-18 09:25:31.000000000 +0000
++++ gcc-4.2.4-ppc/libcpp/files.c	2008-10-18 05:11:49.000000000 +0100
 @@ -226,6 +226,22 @@
        close (file->fd);
        file->fd = -1;
