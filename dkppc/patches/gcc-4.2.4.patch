@@ -342,7 +342,7 @@ diff -Nbaur gcc-4.2.4/gcc/version.c gcc-4.2.4-ppc/gcc/version.c
     the revision of your modified compiler.  */
  
 -#define VERSUFFIX ""
-+#define VERSUFFIX " (devkitPPC release 15)"
++#define VERSUFFIX " (devkitPPC release 16)"
  
  /* This is the location of the online document giving instructions for
     reporting bugs.  If you distribute a modified version of GCC,
