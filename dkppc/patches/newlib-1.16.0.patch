@@ -5275,7 +5275,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/handle_manager.h newlib-1.16.0-ppc
 +#endif
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/iosupport.c newlib-1.16.0-ppc/libgloss/libsysbase/iosupport.c
 --- newlib-1.16.0/libgloss/libsysbase/iosupport.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.16.0-ppc/libgloss/libsysbase/iosupport.c	2008-11-13 04:54:25.000000000 +0000
++++ newlib-1.16.0-ppc/libgloss/libsysbase/iosupport.c	2008-11-19 03:26:25.000000000 +0000
 @@ -0,0 +1,121 @@
 +#include <stdlib.h>
 +#include <string.h>
@@ -5388,7 +5388,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/iosupport.c newlib-1.16.0-ppc/libg
 +}
 +
 +//---------------------------------------------------------------------------------
-+const devoptab_t* GetDeviceOptTab (const char *name) {
++const devoptab_t* GetDeviceOpTab (const char *name) {
 +//---------------------------------------------------------------------------------
 +	int dev = FindDevice(name);
 +	if (dev >= 0 && dev < STD_MAX) {
@@ -6326,7 +6326,7 @@ diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/dirent.h newlib-1.16.0-ppc/new
 \ No newline at end of file
 diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/iosupport.h newlib-1.16.0-ppc/newlib/libc/include/sys/iosupport.h
 --- newlib-1.16.0/newlib/libc/include/sys/iosupport.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.16.0-ppc/newlib/libc/include/sys/iosupport.h	2008-11-13 04:55:22.000000000 +0000
++++ newlib-1.16.0-ppc/newlib/libc/include/sys/iosupport.h	2008-11-19 03:22:17.000000000 +0000
 @@ -0,0 +1,82 @@
 +//---------------------------------------------------------------------------------
 +#ifndef __iosupp_h__
@@ -6401,7 +6401,7 @@ diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/iosupport.h newlib-1.16.0-ppc/
 +int FindDevice(const char* name);
 +int RemoveDevice(const char* name);
 +void setDefaultDevice( int device );
-+const devoptab_t* GetDeviceOptTab (const char *name);
++const devoptab_t* GetDeviceOpTab (const char *name);
 +	
 +#ifdef __cplusplus
 +}
