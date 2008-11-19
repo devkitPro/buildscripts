@@ -8,10 +8,11 @@ prefix=$INSTALLDIR/devkitARM
 PLATFORM=`uname -s`
 
 case $PLATFORM in
-  "Darwin" )
+  Darwin )
     CONFIG_EXTRA=env CFLAGS="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" LDFLAGS="-arch i386 -arch ppc"
     ;;
-  "" )
+  MINGW32* )
+    CONFIG_EXTRA=env CFLAGS="-D__USE_MINGW_ACCESS"
     ;;
 esac
 
