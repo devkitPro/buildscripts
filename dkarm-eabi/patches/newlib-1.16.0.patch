@@ -93,7 +93,7 @@ diff -Nbaur newlib-1.16.0/libgloss/configure.in newlib-1.16.0-arm/libgloss/confi
    i[[3456]]86-*-elf* | i[[3456]]86-*-coff*)
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/Makefile.in newlib-1.16.0-arm/libgloss/libsysbase/Makefile.in
 --- newlib-1.16.0/libgloss/libsysbase/Makefile.in	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.16.0-arm/libgloss/libsysbase/Makefile.in	2008-11-20 00:08:40.000000000 +0000
++++ newlib-1.16.0-arm/libgloss/libsysbase/Makefile.in	2008-11-20 21:08:34.000000000 +0000
 @@ -0,0 +1,147 @@
 +# Copyright (c) 1998 Cygnus Support
 +#
@@ -166,7 +166,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/Makefile.in newlib-1.16.0-arm/libg
 +	isatty.o kill.o link.o lseek.o open.o read.o sbrk.o stat.o times.o \
 +	unlink.o wait.o write.o _exit.o malloc_vars.o \
 +	chdir.o mkdir.o dir.o rename.o build_argv.o statvfs.o \
-+	flock.o syscall_support.o handle_manager.o truncate.o ftruncate.o dirent.o
++	flock.o syscall_support.o handle_manager.o truncate.o ftruncate.o dirent.o fsync.o
 +
 +# Object files specific to particular targets.
 +EVALOBJS = ${OBJS}
@@ -5125,10 +5125,10 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/fstat.c newlib-1.16.0-arm/libgloss
 +	}
 +	return ret;
 +}
-diff -Nbaur newlib-1.16.0/libgloss/libsysbase/ftruncate.c newlib-1.16.0-arm/libgloss/libsysbase/ftruncate.c
---- newlib-1.16.0/libgloss/libsysbase/ftruncate.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.16.0-arm/libgloss/libsysbase/ftruncate.c	2008-11-13 08:55:46.000000000 +0000
-@@ -0,0 +1,52 @@
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/fsync.c newlib-1.16.0-arm/libgloss/libsysbase/fsync.c
+--- newlib-1.16.0/libgloss/libsysbase/fsync.c	1970-01-01 01:00:00.000000000 +0100
++++ newlib-1.16.0-arm/libgloss/libsysbase/fsync.c	2008-11-20 21:05:56.000000000 +0000
+@@ -0,0 +1,36 @@
 +#include "config.h"
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -5138,45 +5138,70 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/ftruncate.c newlib-1.16.0-arm/libg
 +
 +#include "handle_manager.h"
 +
-+#ifdef REENTRANT_SYSCALLS_PROVIDED
-+//---------------------------------------------------------------------------------
-+int _DEFUN (ftruncate_r, (r, fileDesc, len),
-+			struct _reent * r _AND
-+			int   fileDesc  _AND
-+			off_t   len) {
-+//---------------------------------------------------------------------------------
-+#else
-+//---------------------------------------------------------------------------------
-+int _DEFUN (ftruncate,(fileDesc, len),
-+			int   fileDesc  _AND
-+			off_t   len) {
-+//---------------------------------------------------------------------------------
-+	struct _reent *r = _REENT;
-+//---------------------------------------------------------------------------------
-+#endif
-+//---------------------------------------------------------------------------------
++int _DEFUN (fsync,(fileDesc),
++			int   fileDesc ) {
 +	int ret = -1;
 +	unsigned int dev = 0;
 +	unsigned int fd = -1;
 +	
 +	__handle * handle;
 +	
-+	if(fileDesc!=-1) {
-+		
-+		if ( fileDesc < 3) {
-+			dev = fileDesc;
-+		} else {
-+			handle = __get_handle(fileDesc);
-+		
-+			if ( NULL == handle ) return ret;
-+				
-+			dev = handle->device;
-+			fd = (int)handle->fileStruct;
++	if ( fileDesc < 3) {
++		errno = EINVAL;
++	} else {
++		handle = __get_handle(fileDesc);
++	
++		if ( NULL == handle ) {
++			errno = EINVAL;
++			return ret;
 +		}
-+			
-+		if(devoptab_list[dev]->seek_r)
-+			ret = devoptab_list[dev]->ftruncate_r( r, fd, len);
-+			
++				
++		dev = handle->device;
++		fd = (int)handle->fileStruct;
++
++		if(devoptab_list[dev]->fsync_r)
++			ret = devoptab_list[dev]->fsync_r( _REENT, fd);
++	}
++		
++	return ret;
++}
+diff -Nbaur newlib-1.16.0/libgloss/libsysbase/ftruncate.c newlib-1.16.0-arm/libgloss/libsysbase/ftruncate.c
+--- newlib-1.16.0/libgloss/libsysbase/ftruncate.c	1970-01-01 01:00:00.000000000 +0100
++++ newlib-1.16.0-arm/libgloss/libsysbase/ftruncate.c	2008-11-20 18:30:03.000000000 +0000
+@@ -0,0 +1,37 @@
++#include "config.h"
++#include <_ansi.h>
++#include <_syslist.h>
++#include <stdio.h>
++#include <errno.h>
++#include <fcntl.h>
++
++#include "handle_manager.h"
++
++int _DEFUN (ftruncate,(fileDesc, len),
++			int   fileDesc  _AND
++			off_t   len) {
++	int ret = -1;
++	unsigned int dev = 0;
++	unsigned int fd = -1;
++	
++	__handle * handle;
++	
++	if ( fileDesc < 3) {
++		errno = EINVAL;
++	} else {
++		handle = __get_handle(fileDesc);
++	
++		if ( NULL == handle ) {
++			errno = EINVAL;
++			return ret;
++		}
++				
++		dev = handle->device;
++		fd = (int)handle->fileStruct;
++
++		if(devoptab_list[dev]->ftruncate_r)
++			ret = devoptab_list[dev]->ftruncate_r( _REENT, fd, len);
 +	}
 +		
 +	return ret;
@@ -5302,8 +5327,8 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/handle_manager.h newlib-1.16.0-arm
 +#endif
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/iosupport.c newlib-1.16.0-arm/libgloss/libsysbase/iosupport.c
 --- newlib-1.16.0/libgloss/libsysbase/iosupport.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.16.0-arm/libgloss/libsysbase/iosupport.c	2008-11-17 05:36:32.000000000 +0000
-@@ -0,0 +1,121 @@
++++ newlib-1.16.0-arm/libgloss/libsysbase/iosupport.c	2008-11-20 18:34:54.000000000 +0000
+@@ -0,0 +1,122 @@
 +#include <stdlib.h>
 +#include <string.h>
 +#include <sys/iosupport.h>
@@ -5342,6 +5367,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/iosupport.c newlib-1.16.0-arm/libg
 +	NULL,		// device dirclose_r
 +	NULL,		// device statvfs_r
 +	NULL,		// device ftruncate_r
++	NULL,		// device fsync_r
 +	NULL		// deviceData
 +};
 +
@@ -5950,8 +5976,8 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/times.c newlib-1.16.0-arm/libgloss
 \ No newline at end of file
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/truncate.c newlib-1.16.0-arm/libgloss/libsysbase/truncate.c
 --- newlib-1.16.0/libgloss/libsysbase/truncate.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.16.0-arm/libgloss/libsysbase/truncate.c	2008-11-13 08:55:46.000000000 +0000
-@@ -0,0 +1,67 @@
++++ newlib-1.16.0-arm/libgloss/libsysbase/truncate.c	2008-11-20 18:04:48.000000000 +0000
+@@ -0,0 +1,59 @@
 +#include "config.h"
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -5961,64 +5987,56 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/truncate.c newlib-1.16.0-arm/libgl
 +
 +#include "handle_manager.h"
 +
-+#ifdef REENTRANT_SYSCALLS_PROVIDED
-+//---------------------------------------------------------------------------------
-+int _DEFUN (truncate_r, (r, file, len),
-+			struct _reent * r _AND
-+			const char *file  _AND
-+			off_t   len) {
-+//---------------------------------------------------------------------------------
-+#else
-+//---------------------------------------------------------------------------------
 +int _DEFUN (truncate, (file, len),
-+			const char *file  _AND
-+			off_t   len) {
-+//---------------------------------------------------------------------------------
-+		struct _reent *r = _REENT;
-+#endif
-+		__handle *handle;
-+		int dev, fd, ret;
++			const char *file _AND
++			off_t len)
++{
++				
++	__handle *handle;
++	int dev, fd, ret;
++
++	struct _reent * r = _REENT;
++
++	dev = FindDevice(file);
 +		
-+		dev = FindDevice(file);
-+		
-+		fd = -1;
-+		if(dev!=-1 && devoptab_list[dev]->open_r && devoptab_list[dev]->close_r && 
-+		   devoptab_list[dev]->ftruncate_r) 
-+		{
++	fd = -1;
++	if(dev!=-1 && devoptab_list[dev]->open_r && devoptab_list[dev]->close_r && 
++	   devoptab_list[dev]->ftruncate_r) 
++	{
 +			
-+			fd = __alloc_handle(sizeof(__handle) + devoptab_list[dev]->structSize );
++		fd = __alloc_handle(sizeof(__handle) + devoptab_list[dev]->structSize );
 +			
-+			if ( -1 != fd ) {
-+				handle = __get_handle(fd);
-+				handle->device = dev;
-+				handle->fileStruct = ((void *)handle) + sizeof(__handle);
++		if ( -1 != fd ) {
++			handle = __get_handle(fd);
++			handle->device = dev;
++			handle->fileStruct = ((void *)handle) + sizeof(__handle);
 +				
-+				ret = devoptab_list[dev]->open_r(r, handle->fileStruct, file, O_WRONLY, 0);
++			ret = devoptab_list[dev]->open_r(r, handle->fileStruct, file, O_WRONLY, 0);
 +				
-+				if ( ret < 0 ) {
-+					__release_handle(fd);
-+					return ret;
-+				}
++			if ( ret < 0 ) {
++				__release_handle(fd);
++				return ret;
++			}
 +				
-+				ret = devoptab_list[dev]->ftruncate_r(r, fd, len);
++			ret = devoptab_list[dev]->ftruncate_r(r, fd, len);
 +				
-+				devoptab_list[dev]->close_r(r, fd);
++			devoptab_list[dev]->close_r(r, fd);
 +				
-+				if (ret >= 0) {
-+					ret = devoptab_list[dev]->close_r(r, fd);
-+				} else {
-+					// Close it anyway, we don't want to leak memory
-+					devoptab_list[dev]->close_r(r, fd);
-+				}
++			if (ret >= 0) {
++				ret = devoptab_list[dev]->close_r(r, fd);
 +			} else {
-+				r->_errno = ENOSR;
++				// Close it anyway, we don't want to leak memory
++				devoptab_list[dev]->close_r(r, fd);
 +			}
 +		} else {
-+			r->_errno = ENOSYS;
++			r->_errno = ENOSR;
 +		}
-+		
-+		return ret;
++	} else {
++		r->_errno = ENOSYS;
 +	}
++
++	return ret;
++}
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/unlink.c newlib-1.16.0-arm/libgloss/libsysbase/unlink.c
 --- newlib-1.16.0/libgloss/libsysbase/unlink.c	1970-01-01 01:00:00.000000000 +0100
 +++ newlib-1.16.0-arm/libgloss/libsysbase/unlink.c	2008-11-13 08:55:46.000000000 +0000
@@ -6293,8 +6311,8 @@ diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/dirent.h newlib-1.16.0-arm/new
 \ No newline at end of file
 diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/iosupport.h newlib-1.16.0-arm/newlib/libc/include/sys/iosupport.h
 --- newlib-1.16.0/newlib/libc/include/sys/iosupport.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.16.0-arm/newlib/libc/include/sys/iosupport.h	2008-11-19 03:23:15.000000000 +0000
-@@ -0,0 +1,77 @@
++++ newlib-1.16.0-arm/newlib/libc/include/sys/iosupport.h	2008-11-20 21:06:43.000000000 +0000
+@@ -0,0 +1,78 @@
 +//---------------------------------------------------------------------------------
 +#ifndef __iosupp_h__
 +#define __iosupp_h__
@@ -6346,6 +6364,7 @@ diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/iosupport.h newlib-1.16.0-arm/
 +	int (*dirclose_r)(struct _reent *r, DIR_ITER *dirState);
 +	int (*statvfs_r)(struct _reent *r, const char *path, struct statvfs *buf);
 +	int (*ftruncate_r)(struct _reent *r, int fd, off_t len);
++	int (*fsync_r)(struct _reent *r, int fd);
 +	void *deviceData;
 +} devoptab_t;
 +	
@@ -6553,15 +6572,19 @@ diff -Nbaur newlib-1.16.0/newlib/libc/reent/gettimeofdayr.c newlib-1.16.0-arm/ne
  #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */
 diff -Nbaur newlib-1.16.0/newlib/libc/syscalls/Makefile.am newlib-1.16.0-arm/newlib/libc/syscalls/Makefile.am
 --- newlib-1.16.0/newlib/libc/syscalls/Makefile.am	2006-05-01 23:01:07.000000000 +0100
-+++ newlib-1.16.0-arm/newlib/libc/syscalls/Makefile.am	2008-10-19 02:39:55.000000000 +0100
-@@ -21,7 +21,6 @@
++++ newlib-1.16.0-arm/newlib/libc/syscalls/Makefile.am	2008-11-20 03:42:13.000000000 +0000
+@@ -19,8 +19,9 @@
+ 	sysstat.c	\
+ 	systimes.c	\
  	sysunlink.c	\
- 	syswrite.c
- 
+-	syswrite.c
 -
++	syswrite.c \
++	sysftruncate.c \
++	systruncate.c
+ 
  ## Weed out EL/IX level 3 interfaces if necessary
  if ELIX_LEVEL_1
- ELIX_SOURCES =
 diff -Nbaur newlib-1.16.0/newlib/libc/syscalls/syslink.c newlib-1.16.0-arm/newlib/libc/syscalls/syslink.c
 --- newlib-1.16.0/newlib/libc/syscalls/syslink.c	2003-06-03 20:48:08.000000000 +0100
 +++ newlib-1.16.0-arm/newlib/libc/syscalls/syslink.c	2008-10-19 02:39:55.000000000 +0100
