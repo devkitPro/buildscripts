@@ -93,7 +93,7 @@ diff -Nbaur newlib-1.16.0/libgloss/configure.in newlib-1.16.0-arm/libgloss/confi
    i[[3456]]86-*-elf* | i[[3456]]86-*-coff*)
 diff -Nbaur newlib-1.16.0/libgloss/libsysbase/Makefile.in newlib-1.16.0-arm/libgloss/libsysbase/Makefile.in
 --- newlib-1.16.0/libgloss/libsysbase/Makefile.in	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.16.0-arm/libgloss/libsysbase/Makefile.in	2008-11-13 08:55:46.000000000 +0000
++++ newlib-1.16.0-arm/libgloss/libsysbase/Makefile.in	2008-11-20 00:08:40.000000000 +0000
 @@ -0,0 +1,147 @@
 +# Copyright (c) 1998 Cygnus Support
 +#
@@ -163,7 +163,7 @@ diff -Nbaur newlib-1.16.0/libgloss/libsysbase/Makefile.in newlib-1.16.0-arm/libg
 +
 +# object files needed
 +OBJS = abort.o iosupport.o close.o environ.o execve.o fork.o fstat.o getpid.o gettod.o \
-+	isatty.o kill.o link.o lseek.o open.o read.o sbrk.o stat.o \
++	isatty.o kill.o link.o lseek.o open.o read.o sbrk.o stat.o times.o \
 +	unlink.o wait.o write.o _exit.o malloc_vars.o \
 +	chdir.o mkdir.o dir.o rename.o build_argv.o statvfs.o \
 +	flock.o syscall_support.o handle_manager.o truncate.o ftruncate.o dirent.o
