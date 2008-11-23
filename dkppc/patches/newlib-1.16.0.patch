@@ -6548,6 +6548,25 @@ diff -Nbaur newlib-1.16.0/newlib/libc/locale/locale.c newlib-1.16.0-ppc/newlib/l
              }
  
            if (category == LC_CTYPE)
+diff -Nbaur newlib-1.16.0/newlib/libc/machine/powerpc/machine/_types.h newlib-1.16.0-ppc/newlib/libc/machine/powerpc/machine/_types.h
+--- newlib-1.16.0/newlib/libc/machine/powerpc/machine/_types.h	1970-01-01 01:00:00.000000000 +0100
++++ newlib-1.16.0-ppc/newlib/libc/machine/powerpc/machine/_types.h	2008-11-23 08:58:33.000000000 +0000
+@@ -0,0 +1,15 @@
++/*
++ *  $Id: newlib-1.16.0.patch,v 1.7 2008-11-23 09:11:25 wntrmute Exp $
++ */
++
++#ifndef _MACHINE__TYPES_H
++#define _MACHINE__TYPES_H
++#include <machine/_default_types.h>
++
++#define __fpos_t_defined
++typedef long long _fpos_t;
++
++#define __off_t_defined
++typedef long long _off_t;
++
++#endif // _MACHINE__TYPES_H
 diff -Nbaur newlib-1.16.0/newlib/libc/machine/powerpc/sys/lock.h newlib-1.16.0-ppc/newlib/libc/machine/powerpc/sys/lock.h
 --- newlib-1.16.0/newlib/libc/machine/powerpc/sys/lock.h	1970-01-01 01:00:00.000000000 +0100
 +++ newlib-1.16.0-ppc/newlib/libc/machine/powerpc/sys/lock.h	2008-10-19 16:45:49.000000000 +0100
