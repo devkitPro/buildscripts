@@ -9,10 +9,10 @@ PLATFORM=`uname -s`
 
 case $PLATFORM in
   Darwin )
-    CONFIG_EXTRA=env CFLAGS="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" LDFLAGS="-arch i386 -arch ppc"
+    env CONFIG_EXTRA=CFLAGS="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" LDFLAGS="-arch i386 -arch ppc"
     ;;
   MINGW32* )
-    CONFIG_EXTRA=env CFLAGS="-D__USE_MINGW_ACCESS"
+    env CONFIG_EXTRA=CFLAGS="-D__USE_MINGW_ACCESS"
     ;;
 esac
 
@@ -27,7 +27,7 @@ if [ ! -f configured-binutils ]
 then
   $CONFIG_EXTRA ../../$BINUTILS_SRCDIR/configure \
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
-	--with-gcc --with-gnu-as --with-gnu-ld \
+	--with-gcc --with-gnu-as --with-gnu-ld --disable-dependency-tracking \
 	|| { echo "Error configuing ppc binutils"; exit 1; }
 	touch configured-binutils
 fi
@@ -99,6 +99,7 @@ then
   --target=$target \
   --with-newlib \
   --prefix=$prefix\
+  --disable-denpendency-tracking \
   2>&1 | tee gcc_configure.log
   touch configured-gcc
 fi
@@ -121,6 +122,9 @@ fi
 cd $BUILDSCRIPTDIR
 mkdir -p $target/newlib
 cd $target/newlib
+
+unset CFLAGS
+unset LDFLAGS
 
 if [ ! -f configured-newlib ]
 then
