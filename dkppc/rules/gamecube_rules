@@ -11,7 +11,7 @@ MACHDEP =  -DGEKKO -mogc -mcpu=750 -meabi -mhard-float
 
 %.dol: %.elf
 	@echo output ... $(notdir $@)
-	@$(OBJCOPY)  -O binary $< $@
+	@elf2dol $< $@
 
 #---------------------------------------------------------------------------------
 %.elf:

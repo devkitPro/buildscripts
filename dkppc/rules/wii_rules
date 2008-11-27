@@ -11,7 +11,7 @@ include $(DEVKITPPC)/base_rules
 
 %.dol: %.elf
 	@echo output ... $(notdir $@)
-	@$(OBJCOPY)  -O binary $< $@
+	@elf2dol  $< $@
 
 #---------------------------------------------------------------------------------
 %.elf:

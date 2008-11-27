@@ -1,13 +1,5 @@
 /*
- * Linkscript for GC, automatically sets up DOL structures,
- * generate ELF file and use objdump, or generate binary
- * directly.
- *
- * PSUL doesn't seem to handle separate text and data sections correctly,
- * that is why the text and data sections are merged in the header.
- *
- * If you want to experiment, it should be quite obvious how to
- * change the header to list the data separately.
+ * Linkscript for Wii
  */
 
 OUTPUT_FORMAT("elf32-powerpc", "elf32-powerpc", "elf32-powerpc");
@@ -15,100 +7,35 @@ OUTPUT_ARCH(powerpc:common);
 EXTERN(_start);
 ENTRY(_start);
 
+PHDRS
+{
+  stub PT_LOAD FLAGS(5);
+  text PT_LOAD FLAGS(5);
+  data PT_LOAD FLAGS(6);
+}
 
 SECTIONS
 {
+	/* stub is loaded at physical address 0x00003400 (though both 0x80003400 and 0x00003400 are equivalent for IOS) */
+	/* This can also be used to load an arbitrary standalone stub at an arbitrary address in memory, for any purpose */
+	/* Use -Wl,--section-start,.stub=0xADDRESS to change */
+	. = 0x00003400;
 
-	/* DOL header (from TITANIK's GC docs) */
-	/* default base address */
-	. = 0x80003f00;
-	.header	:
+	.stub :
 	{
-		file_start = .;
-		/*    0000-001B  Text[0..6] sections File Positions */
-		LONG(text_file_start);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
+		KEEP(*(.stub))
+	} :stub = 0
 
-		/*    001C-0047  Data[0..10] sections File Positions */
-		LONG(data_file_start);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-
-		/*    0048-0063  Text[0..6] sections Mem Address */
-		LONG(text_mem_start);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-
-		/*    0064-008F  Data[0..10] sections Mem Address */
-		LONG(data_mem_start);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-
-		/*    0090-00AB  Text[0..6] sections Sizes */
-		LONG(text_mem_size);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-
-		/*    00AC-00D7  Data[0..10] sections Sizes */
-		LONG(data_mem_size);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-		LONG(0);
-
-		/*	00D8  BSS Mem address
-			00DC  BSS Size */
-		LONG(bss_mem_start);
-		LONG(bss_mem_size);
-
-		/*    00E0  Entry Point */
-		LONG(ABSOLUTE(_start));
-	}
+	/* default base address */
+	/* use -Wl,--section-start,.init=0xADDRESS to change */
+	. = 0x80004000;
 
 	/* Program */
-	. = file_start + 0x100;
-	text_mem_start = .;
-
 	.init          :
 	{
 		KEEP (*crt0.o(*.init))
 		KEEP (*(.init))
-	} = 0
+	} :text = 0
 	.plt      : { *(.plt)	}
 	.interp			: { *(.interp) 	}
 	.hash			: { *(.hash) }
@@ -156,7 +83,6 @@ SECTIONS
 	{
 		*(.text)
 		*(.text.*)
-		*(.stub)
 		/* .gnu.warning sections are handled specially by elf32.em.  */
 		*(.gnu.warning)
 		*(.gnu.linkonce.t.*)
@@ -173,10 +99,7 @@ SECTIONS
 	PROVIDE (_etext = .);
 	PROVIDE (etext = .);
 
-	text_mem_size = . - text_mem_start;
-
-	data_mem_start = .;
-	.rodata   : { *(.rodata) *(.rodata.*) *(.gnu.linkonce.r.*) }
+	.rodata   : { *(.rodata) *(.rodata.*) *(.gnu.linkonce.r.*) } :data
 	.rodata1   : { *(.rodata1) }
 	.sdata2   : { *(.sdata2) *(.sdata2.*) *(.gnu.linkonce.s2.*) }
 	.sbss2   : { *(.sbss2) *(.sbss2.*) *(.gnu.linkonce.sb2.*) }
@@ -267,10 +190,7 @@ SECTIONS
 
 	_edata = .;
 	PROVIDE (edata = .);
-
-	data_mem_size = . - data_mem_start;
-
-	bss_mem_start = .;
+	
 	.sbss      :
 	{
 		__sbss_start = .;
@@ -305,13 +225,6 @@ SECTIONS
 		PROVIDE (__bss_end = .);
 		__bss_end = .;
 	}
- 
- 	bss_mem_size = . - bss_mem_start;
-
-	/* calculate file addresses */
-	text_file_start = text_mem_start - file_start;
-	data_file_start = data_mem_start - file_start;
-	bss_file_start = bss_mem_start - file_start;
 
 	_end = .;
 	PROVIDE(end = .);
@@ -358,7 +271,7 @@ __intrstack_addr = (__stack_addr + 0x4000);
 __intrstack_end = (__stack_addr);
 __Arena1Lo = (__intrstack_addr + 31) & (-32);
 __Arena1Hi = (0x816ffff0);
-__Arena2Lo = (0x90000800);
+__Arena2Lo = (0x90002000);
 __Arena2Hi = (0x933E0000);
 
 __gxregs = (__Arena1Hi + 31) & (-32);
@@ -369,12 +282,6 @@ __ipcbufferHi = (0x93400000);
 PROVIDE (__stack = (0x816ffff0));
 
 PROVIDE(__isIPL = __isIPL);
-PROVIDE(__text_start = text_mem_start);
-PROVIDE(__text_fstart = text_file_start);
-PROVIDE(__data_start = data_mem_start);
-PROVIDE(__data_fstart = data_file_start);
-PROVIDE(__bss_start = bss_mem_start);
-PROVIDE(__bss_fstart = bss_file_start);
 PROVIDE(__stack_addr = __stack_addr);
 PROVIDE(__stack_end = __stack_end);
 PROVIDE(__intrstack_addr = __intrstack_addr);
