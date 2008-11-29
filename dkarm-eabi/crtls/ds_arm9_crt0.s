@@ -97,7 +97,7 @@ _start:
 	mcr	p15, 0, r0, c6, c1, 0
 
 	@-------------------------------------------------------------------------
-	@ Region 2 - iwram
+	@ Region 2 - shared iwram
 	@-------------------------------------------------------------------------
 	ldr	r0,=( PAGE_32K | 0x037F8000 | 1)	
 	mcr	p15, 0, r0, c6, c2, 0
@@ -119,6 +119,11 @@ _start:
 	@ Region 5 - ITCM
 	@-------------------------------------------------------------------------
 	ldr	r0,=__itcm_start
+
+	@ align to 32k boundary
+	mov	r0,r0,lsr #15
+	mov	r0,r0,lsl #15
+
 	orr	r0,r0,#(PAGE_32K | 1)
 	mcr	p15, 0, r0, c6, c5, 0
 
@@ -179,12 +184,19 @@ _start:
 	msr	cpsr, r0
 	ldr	sp, =__sp_usr		@ Set user stack
 
-	ldr	r1, =__itcm_lma		@ Copy instruction tightly coupled memory (itcm section) from LMA to VMA (ROM to RAM)
+	ldr	r1, =__itcm_lma		@ Copy instruction tightly coupled memory (itcm section) from LMA to VMA
 	ldr	r2, =__itcm_start
 	ldr	r4, =__itcm_end
 	bl	CopyMemCheck
 
-	ldr	r1, =__dtcm_lma		@ Copy data tightly coupled memory (dtcm section) from LMA to VMA (ROM to RAM)
+	ldr	r1, =__vectors_lma		@ Copy instruction tightly coupled memory (itcm section) from LMA to VMA
+	ldr	r2, =__itcm_start		@ alternate vectors based accessed via itcm mirror
+	mov	r2,r2,lsr #15			@ rounded to 32k boundary
+	mov	r2,r2,lsl #15
+	ldr	r4, =__vectors_end
+	bl	CopyMemCheck
+
+	ldr	r1, =__dtcm_lma		@ Copy data tightly coupled memory (dtcm section) from LMA to VMA
 	ldr	r2, =__dtcm_start
 	ldr	r4, =__dtcm_end
 	bl	CopyMemCheck
@@ -295,7 +307,7 @@ ClearMem:
 @---------------------------------------------------------------------------------
 	mov	r2, #3			@ Round down to nearest word boundary
 	add	r1, r1, r2		@ Shouldn't be needed
-	bics	r1, r1, r2		@ Clear 2 LSB (and set Z)
+	bics	r1, r1, r2	@ Clear 2 LSB (and set Z)
 	bxeq	lr			@ Quit if copy size is 0
 
 	mov	r2, #0
@@ -325,7 +337,7 @@ CopyMem:
 @---------------------------------------------------------------------------------
 	mov	r0, #3			@ These commands are used in cases where
 	add	r3, r3, r0		@ the length is not a multiple of 4,
-	bics	r3, r3, r0		@ even though it should be.
+	bics	r3, r3, r0	@ even though it should be.
 	bxeq	lr			@ Length is zero, so exit
 CIDLoop:
 	ldmia	r1!, {r0}

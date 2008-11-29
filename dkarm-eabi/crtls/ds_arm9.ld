@@ -7,9 +7,11 @@ MEMORY {
 	rom	: ORIGIN = 0x08000000, LENGTH = 32M
 	ewram	: ORIGIN = 0x02000000, LENGTH = 4M - 4k
 	dtcm	: ORIGIN = 0x0b000000, LENGTH = 16K
-	itcm	: ORIGIN = 0x01000000, LENGTH = 32K
+	vectors	: ORIGIN = 0x00000000, LENGTH = 256
+	itcm	: ORIGIN = 0x01000100, LENGTH = 32K - 256
 }
 
+__vectors_start	=	ORIGIN(vectors);
 __itcm_start	=	ORIGIN(itcm);
 __ewram_end	=	ORIGIN(ewram) + LENGTH(ewram);
 __eheap_end	=	ORIGIN(ewram) + LENGTH(ewram);
@@ -165,7 +167,17 @@ SECTIONS
 		__itcm_end = ABSOLUTE(.);
 	} >itcm = 0xff
 	
-	.sbss __dtcm_end : 
+	__vectors_lma = __itcm_lma + SIZEOF(.itcm);
+
+	.vectors __vectors_start : AT (__vectors_lma)
+	{
+		*(.vectors)
+		*vectors.*(.text)
+		. = ALIGN(4);
+		__vectors_end = ABSOLUTE(.);
+	} >vectors = 0xff
+	
+	.sbss __dtcm_end (NOLOAD): 
 	{
 		__sbss_start = ABSOLUTE(.);
 		__sbss_start__ = ABSOLUTE(.);
@@ -173,9 +185,7 @@ SECTIONS
 		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
 		__sbss_end = ABSOLUTE(.);
 	} >dtcm 
-	
 
-	
 	.bss __bss_vma (NOLOAD): 
 	{
 		__bss_start = ABSOLUTE(.);
@@ -192,8 +202,6 @@ SECTIONS
 
 	_end = __bss_end__ ;
 	__end__ = __bss_end__ ;
-
-
 
 	/* Stabs debugging sections.  */
 	.stab 0 : { *(.stab) }
