@@ -6465,6 +6465,22 @@ diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/types.h newlib-1.16.0-arm/newl
  #include <sys/features.h>
  
  
+diff -Nbaur newlib-1.16.0/newlib/libc/include/sys/unistd.h newlib-1.16.0-arm/newlib/libc/include/sys/unistd.h
+--- newlib-1.16.0/newlib/libc/include/sys/unistd.h	2007-11-08 16:20:12.000000000 +0000
++++ newlib-1.16.0-arm/newlib/libc/include/sys/unistd.h	2008-11-27 13:23:55.000000000 +0000
+@@ -201,12 +201,10 @@
+ int     _EXFUN(_execve, (const char *__path, char * const __argv[], char * const __envp[] ));
+ #endif
+ 
+-#if defined(__CYGWIN__) || defined(__rtems__) || defined(__sh__) || defined(__SPU__)
+ #if !defined(__INSIDE_CYGWIN__)
+ int     _EXFUN(ftruncate, (int __fd, off_t __length));
+ int     _EXFUN(truncate, (const char *, off_t __length));
+ #endif
+-#endif
+ 
+ #if defined(__CYGWIN__) || defined(__rtems__)
+ int	_EXFUN(getdtablesize, (void));
 diff -Nbaur newlib-1.16.0/newlib/libc/locale/locale.c newlib-1.16.0-arm/newlib/libc/locale/locale.c
 --- newlib-1.16.0/newlib/libc/locale/locale.c	2004-04-23 22:44:21.000000000 +0100
 +++ newlib-1.16.0-arm/newlib/libc/locale/locale.c	2008-10-19 02:39:55.000000000 +0100
