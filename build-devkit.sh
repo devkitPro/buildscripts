@@ -15,11 +15,11 @@ fi
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=20080602
-LIBGBA_VER=20060720
-LIBNDS_VER=20071023
-DEFAULT_ARM7_VER=20080416
-DSWIFI_VER=0.3.4
+LIBOGC_VER=1.17.0
+LIBGBA_VER=20081205
+LIBNDS_VER=20081205
+DEFAULT_ARM7_VER=20081205
+DSWIFI_VER=0.3.5
 LIBMIRKO_VER=0.9.7
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
@@ -89,7 +89,7 @@ case "$VERSION" in
     BINUTILS_VER=2.19
     NEWLIB_VER=1.16.0
     GDB_VER=6.8
-    LIBFAT_VER=20070127
+    LIBFAT_VER=20081205
     basedir='dkarm-eabi'
     package=devkitARM
     builddir=arm-eabi
@@ -101,7 +101,7 @@ case "$VERSION" in
     BINUTILS_VER=2.19
     NEWLIB_VER=1.16.0
     GDB_VER=6.8
-    LIBFAT_VER=20080530
+    LIBFAT_VER=20081205
     basedir='dkppc'
     package=devkitPPC
     builddir=powerpc-gekko
@@ -163,7 +163,7 @@ do
   echo "The installation requires binutils-$BINUTILS_VER, gcc-$GCC_VER and newlib-$NEWLIB_VER.  Please select an option:"
   echo
   echo "1: I have already downloaded the source packages"
-  echo "2: Download the packages for me (requires curl)"
+  echo "2: Download the packages for me (requires curl or wget)"
   read DOWNLOAD
 
   if [ "$DOWNLOAD" -ne 1 -a "$DOWNLOAD" -ne 2 ]
@@ -174,12 +174,17 @@ done
 
 if [ "$DOWNLOAD" -eq 2 ]
 then
-  if test "`curl -V`"
+  if test "`curl -V > /dev/null`"
   then
-    CURL=curl
+    FETCH=curl -f -L -O
   else
-    echo "ERROR: Please make sure you have 'curl' installed."
-    exit 1
+    if test "`wget -V`"
+    then
+      FETCH=wget  
+    else
+      echo "ERROR: Please make sure you have 'curl' installed."
+      exit 1
+    fi
   fi
 fi
 
@@ -325,33 +330,33 @@ else
 
     if [ ! -f downloaded_sources ]
     then
-      $CURL -f -L -O  $BINUTILS_URL || { echo "Error: Failed to download "$BINUTILS; exit 1; }
+      $FETCH $BINUTILS_URL || { echo "Error: Failed to download "$BINUTILS; exit 1; }
 
-      $CURL -f -L -O  $GCC_CORE_URL || { echo "Error: Failed to download "$GCC_CORE; exit 1; }
+      $FETCH $GCC_CORE_URL || { echo "Error: Failed to download "$GCC_CORE; exit 1; }
 
-      $CURL -f -L -O $GCC_GPP_URL || { echo "Error: Failed to download "$GCC_GPP; exit 1; }
+      $FETCH $GCC_GPP_URL || { echo "Error: Failed to download "$GCC_GPP; exit 1; }
 
-      $CURL -f -L -O $GDB_URL || { echo "Error: Failed to download "$GDB; exit 1; }
+      $FETCH $GDB_URL || { echo "Error: Failed to download "$GDB; exit 1; }
 
-      $CURL -f -L -O $NEWLIB_URL || { echo "Error: Failed to download "$NEWLIB; exit 1; }
+      $FETCH $NEWLIB_URL || { echo "Error: Failed to download "$NEWLIB; exit 1; }
 
       if [ $VERSION -eq 2 ]
       then
-       $CURL -f -L -O $LIBOGC_URL || { echo "Error: Failed to download "$LIBOGC; exit 1; }
+       $FETCH $LIBOGC_URL || { echo "Error: Failed to download "$LIBOGC; exit 1; }
       fi
 
       if [ $VERSION -eq 1 -o $VERSION -eq 2 ]
       then
-        $CURL -f -L -O $LIBFAT_URL || { echo "Error: Failed to download "$LIBFAT; exit 1; }
+        $FETCH $LIBFAT_URL || { echo "Error: Failed to download "$LIBFAT; exit 1; }
       fi
 
       if [ $VERSION -eq 1 ]
       then
-        $CURL -f -L -O $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit 1; }
-        $CURL -f -L -O $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit 1; }
-        $CURL -f -L -O $DSWIFI_URL || { echo "Error: Failed to download "$DSWIFI; exit 1; }
-        $CURL -f -L -O $LIBMIRKO_URL || { echo "Error: Failed to download "$LIBMIRKO; exit 1; }
-        $CURL -f -L -O $DEFAULT_ARM7_URL || { echo "Error: Failed to download "$DEFAULT_ARM7; exit 1; }
+        $FETCH $LIBNDS_URL || { echo "Error: Failed to download "$LIBNDS; exit 1; }
+        $FETCH $LIBGBA_URL || { echo "Error: Failed to download "$LIBGBA; exit 1; }
+        $FETCH $DSWIFI_URL || { echo "Error: Failed to download "$DSWIFI; exit 1; }
+        $FETCH $LIBMIRKO_URL || { echo "Error: Failed to download "$LIBMIRKO; exit 1; }
+        $FETCH $DEFAULT_ARM7_URL || { echo "Error: Failed to download "$DEFAULT_ARM7; exit 1; }
       fi
       SRCDIR=`pwd`
       touch downloaded_sources
