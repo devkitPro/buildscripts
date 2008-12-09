@@ -27,6 +27,8 @@ cd $BUILDSCRIPTDIR
 $MAKE -C tools/general
 $MAKE -C tools/general install PREFIX=$DEVKITARM/bin
 
+$MAKE -C tools/gba
+$MAKE -C tools/gba install PREFIX=$DEVKITARM/bin
 
 echo "building libnds ..."
 cd $LIBNDS_SRCDIR
