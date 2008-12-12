@@ -15,7 +15,7 @@ http://sourceforge.net/projects/gnuwin32/
 
 For devkitPSP a command line subversion client is required to get the PSP SDK http://www.tigris.org
 
-required packages for building on ubuntu
+required packages for building on debian/*buntu
 
 sudo apt-get install build-essential autoconf automake bison flex libncurses5-dev libreadline-dev texinfo
 
@@ -24,31 +24,15 @@ for building gcc 4.3.0 libgmp and libmpfr are required
 http://gmplib.org/
 http://www.mpfr.org/
 
+Some of the tools for devkitARM and devkitPPC also require FreeImage
+
+http://freeimage.sourceforge.net/
+
  
 Downloading the source packages
 -------------------------------
 
-When you run the build script it will ask you to choose from one of two options, one for if you have already downloaded the source packages and another for if you want it to download them for you (using wget).  If you choose option one and want to get the source packages for yourself then you can find them at the urls listed below;
-
-binutils 2.18.50  - ftp://sourceware.org/pub/binutils/snapshots/binutils-2.18.50.tar.bz2
-gcc-core 4.2.3 - http://ftp.gnu.org/gnu/gcc/gcc-4.2.3/gcc-core-4.2.3.tar.bz2
-gcc-g++ 4.2.3 - http://ftp.gnu.org/gnu/gcc/gcc-4.2.3/gcc-g++-4.2.3.tar.bz2
-newlib 1.16.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.16.0.tar.gz
-
-
-devkitPSP is using earlier versions of binutils, gcc & newlib
-
-binutils 2.16.1  - http://ftp.gnu.org/gnu/binutils/binutils-2.16.1.tar.bz2
-gcc-core 4.1.2 - http://ftp.gnu.org/gnu/gcc/gcc-4.1.2/gcc-core-4.1.2.tar.bz2
-gcc-g++ 4.1.2 - http://ftp.gnu.org/gnu/gcc/gcc-4.1.2/gcc-g++-4.1.2.tar.bz2
-newlib 1.15.0  - ftp://sources.redhat.com/pub/newlib/newlib-1.15.0.tar.gz
-
-devkitARM is using gcc 4.3.0
-gcc-core 4.3.0 - http://ftp.gnu.org/gnu/gcc/gcc-4.3.0/gcc-core-4.3.0.tar.bz2
-gcc-g++ 4.3.0 - http://ftp.gnu.org/gnu/gcc/gcc-4.3.0/gcc-g++-4.3.0.tar.bz2
-
-
-libogc, libgba, libnds, libmirko, dswifi and libfat can be found in the sourceforge project. See http://wiki.devkitpro.org/index.php/Getting_Started for links.
+When you run the build script it will ask you to choose from one of two options, one for if you have already downloaded the source packages and another for if you want it to download them for you (using wget or curl).
 
 The top level shell script has now been unified and offers the option of devkitARM, devkitPPC or devkitPSP.
 
@@ -112,6 +96,7 @@ Credits
 * dswifi by Sgstair
 * libfat by Chishm
 * libmirko by Mr Mirko
+* maxmod by eKid
 * b2fxec by Mr Spiv
 * scripts made BSD compatible by o2addict
 
