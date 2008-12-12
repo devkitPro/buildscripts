@@ -42,11 +42,17 @@ cd $BUILDSCRIPTDIR
 
 echo "building libfat ..."
 cd $LIBFAT_SRCDIR
-$MAKE install INSTALLDIR=$TOOLPATH 
+$MAKE nds-install INSTALLDIR=$TOOLPATH 
+$MAKE gba-install INSTALLDIR=$TOOLPATH 
 cd $BUILDSCRIPTDIR
 
 echo "building dswifi ..."
 cd $DSWIFI_SRCDIR
+$MAKE install INSTALLDIR=$TOOLPATH 
+cd $BUILDSCRIPTDIR
+
+echo "building maxmod ..."
+cd $MAXMOD_SRCDIR
 $MAKE install INSTALLDIR=$TOOLPATH 
 cd $BUILDSCRIPTDIR
 

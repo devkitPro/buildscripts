@@ -6,7 +6,7 @@
 #	devkitPSP release 12
 #---------------------------------------------------------------------------------
 
-if [ 1 -eq 1 ] ; then 
+if [ 0 -eq 1 ] ; then 
   echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support" 	 
   exit 1
 fi
@@ -16,16 +16,18 @@ fi
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
 LIBOGC_VER=1.7.0
-LIBGBA_VER=20081205
-LIBNDS_VER=20081205
-DEFAULT_ARM7_VER=20081205
+LIBGBA_VER=20081210
+LIBNDS_VER=1.3.1
+DEFAULT_ARM7_VER=20081210
 DSWIFI_VER=0.3.5
 LIBMIRKO_VER=0.9.7
+MAXMOD_VER=1.0.1
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
 LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
 DSWIFI="dswifi-src-$DSWIFI_VER.tar.bz2"
+MAXMOD="maxmod-src-$MAXMOD_VER.tar.bz2"
 DEFAULT_ARM7="default_arm7-src-$DEFAULT_ARM7_VER.tar.bz2"
 LIBMIRKO="libmirko-src-$LIBMIRKO_VER.tar.bz2"
 DEVKITPRO_URL="http://downloads.sourceforge.net/devkitpro"
@@ -36,6 +38,7 @@ LIBNDS_URL="$DEVKITPRO_URL/$LIBNDS"
 DSWIFI_URL="$DEVKITPRO_URL/$DSWIFI"
 LIBMIRKO_URL="$DEVKITPRO_URL/$LIBMIRKO"
 DEFAULT_ARM7_URL="$DEVKITPRO_URL/$DEFAULT_ARM7"
+MAXMOD_URL="$DEVKITPRO_URL/$MAXMOD"
 
 #---------------------------------------------------------------------------------
 # Sane defaults for building toolchain
@@ -89,7 +92,7 @@ case "$VERSION" in
     BINUTILS_VER=2.19
     NEWLIB_VER=1.16.0
     GDB_VER=6.8
-    LIBFAT_VER=20081205
+    LIBFAT_VER=1.0.2
     basedir='dkarm-eabi'
     package=devkitARM
     builddir=arm-eabi
@@ -101,7 +104,7 @@ case "$VERSION" in
     BINUTILS_VER=2.19
     NEWLIB_VER=1.16.0
     GDB_VER=6.8
-    LIBFAT_VER=20081205
+    LIBFAT_VER=1.0.2
     basedir='dkppc'
     package=devkitPPC
     builddir=powerpc-gekko
@@ -131,23 +134,14 @@ esac
 
 GCC_CORE="gcc-core-$GCC_VER.tar.bz2"
 GCC_GPP="gcc-g++-$GCC_VER.tar.bz2"
-GCC_CORE_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_CORE"
-GCC_GPP_URL="http://ftp.gnu.org/gnu/gcc/gcc-$GCC_VER/$GCC_GPP"
+GCC_CORE_URL="$DEVKITPRO_URL/$GCC_CORE"
+GCC_GPP_URL="$DEVKITPRO_URL/$GCC_GPP"
 BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
 GDB="gdb-$GDB_VER.tar.bz2"
-GDB_URL="http://ftp.gnu.org/gnu/gdb/$GDB"
-
-case "$BINUTILS_VER" in
- "2.18.50" | "2.18.93" )
-   BINUTILS_URL="ftp://sourceware.org/pub/binutils/snapshots/$BINUTILS"
- ;;
- * )  
-   BINUTILS_URL="http://ftp.gnu.org/gnu/binutils/$BINUTILS"
- ;;
-esac
-
+GDB_URL="$DEVKITPRO_URL/$GDB"
+BINUTILS_URL="$DEVKITPRO_URL/$BINUTILS"
 NEWLIB="newlib-$NEWLIB_VER.tar.gz"
-NEWLIB_URL="ftp://sources.redhat.com/pub/newlib/$NEWLIB"
+NEWLIB_URL="$DEVKITPRO_URL/$NEWLIB"
 LIBFAT="libfat-src-$LIBFAT_VER.tar.bz2"
 LIBFAT_URL="$DEVKITPRO_URL/$LIBFAT"
 
@@ -172,19 +166,14 @@ do
   fi
 done
 
-if [ "$DOWNLOAD" -eq 2 ]
-then
-  if test "`curl -V > /dev/null`"
-  then
-    FETCH=curl -f -L -O
+if [ "$DOWNLOAD" -eq 2 ]; then
+  if test "`curl -V`"; then
+    FETCH="curl -f -L -O"
+  elif test "`wget -V`"; then
+    FETCH=wget  
   else
-    if test "`wget -V`"
-    then
-      FETCH=wget  
-    else
-      echo "ERROR: Please make sure you have 'curl' installed."
-      exit 1
-    fi
+    echo "ERROR: Please make sure you have wget or curl installed."
+    exit 1
   fi
 fi
 
@@ -222,34 +211,34 @@ then
 
       if [ ! -f $SRCDIR/$BINUTILS ]
       then
-	  echo "Error: $BINUTILS not found in $SRCDIR"
-	  exit 1
+	    echo "Error: $BINUTILS not found in $SRCDIR"
+	    exit 1
       else
-	  FOUND=1
+	    FOUND=1
       fi
 
       if [ ! -f $SRCDIR/$GCC_GPP ]
       then
-    	  echo "Error: $GCC_GPP not found in $SRCDIR"
-	      exit 1
+        echo "Error: $GCC_GPP not found in $SRCDIR"
+        exit 1
       else
 	      FOUND=1
       fi
 
       if [ ! -f $SRCDIR/$GCC_CORE ]
       then
-    	  echo "Error: $GCC_CORE not found in $SRCDIR"
-	      exit 1
+        echo "Error: $GCC_CORE not found in $SRCDIR"
+        exit 1
       else
-	      FOUND=1
+        FOUND=1
       fi
 
       if [ ! -f $SRCDIR/$NEWLIB ]
       then
-	  echo "Error: $NEWLIB not found in $SRCDIR"
-	  exit 1
+        echo "Error: $NEWLIB not found in $SRCDIR"
+        exit 1
       else
-	  FOUND=1
+        FOUND=1
       fi
 
       if [ ! -f $SRCDIR/$GDB ]
@@ -293,6 +282,13 @@ then
         if [ ! -f $SRCDIR/$DEFAULT_ARM7 ]
         then
           echo "Error: $DEFAULT_ARM7 not found in $SRCDIR"
+	        exit 1
+        else
+	        FOUND=1
+        fi
+        if [ ! -f $SRCDIR/$MAXMOD ]
+        then
+          echo "Error: $MAXMOD not found in $SRCDIR"
 	        exit 1
         else
 	        FOUND=1
@@ -357,6 +353,7 @@ else
         $FETCH $DSWIFI_URL || { echo "Error: Failed to download "$DSWIFI; exit 1; }
         $FETCH $LIBMIRKO_URL || { echo "Error: Failed to download "$LIBMIRKO; exit 1; }
         $FETCH $DEFAULT_ARM7_URL || { echo "Error: Failed to download "$DEFAULT_ARM7; exit 1; }
+        $FETCH $MAXMOD_URL || { echo "Error: Failed to download "$MAXMOD; exit 1; }
       fi
       SRCDIR=`pwd`
       touch downloaded_sources
@@ -485,6 +482,10 @@ then
     echo "Extracting $DEFAULT_ARM7"
     mkdir -p $DEFAULT_ARM7_SRCDIR
     bzip2 -cd $SRCDIR/$DEFAULT_ARM7 | tar -xf - -C $DEFAULT_ARM7_SRCDIR || { echo "Error extracting "$DEFAULT_ARM7; exit 1; }
+
+    echo "Extracting $MAXMOD"
+    mkdir -p $MAXMOD_SRCDIR
+    bzip2 -cd $SRCDIR/$MAXMOD | tar -xf - -C $MAXMOD_SRCDIR || { echo "Error extracting "$MAXMOD; exit 1; }
 
   fi
 

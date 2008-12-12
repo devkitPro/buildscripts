@@ -33,7 +33,7 @@ cd $LIBFAT_SRCDIR
 if [ ! -f built-libfat ]
 then
   echo "building libfat ..."
-  $MAKE install INSTALLDIR=$TOOLPATH 
+  $MAKE ogc-install INSTALLDIR=$TOOLPATH 
   touch built-libfat
 fi
 
