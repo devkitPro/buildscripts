@@ -9,12 +9,14 @@ PLATFORM=`uname -s`
 
 case $PLATFORM in
   Darwin )
-    env CONFIG_EXTRA=CFLAGS="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" LDFLAGS="-arch i386 -arch ppc"
+    CONFIG_EXTRA=env CFLAGS="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" LDFLAGS="-arch i386 -arch ppc"
     ;;
   MINGW32* )
-    env CONFIG_EXTRA=CFLAGS="-D__USE_MINGW_ACCESS"
+    CONFIG_EXTRA=env CFLAGS="-D__USE_MINGW_ACCESS"
     ;;
 esac
+
+echo "$CONFIG_EXTRA"
 
 #---------------------------------------------------------------------------------
 # build and install ppc binutils
@@ -177,17 +179,29 @@ cd $BUILDSCRIPTDIR
 mkdir -p $target/gdb
 cd $target/gdb
 
+PLATFORM=`uname -s`
+
+
 if [ ! -f configured-gdb ]
 then
-  $CONFIG_EXTRA ../../$GDB_SRCDIR/configure \
-  --disable-nls --prefix=$prefix --target=$target --disable-werror \
-  || { echo "Error configuring gdb"; exit 1; }
+  case $PLATFORM in
+    Darwin )
+      env CFLAGS="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" LDFLAGS="-arch i386 -arch ppc" ../../$GDB_SRCDIR/configure \
+      --disable-nls --prefix=$prefix --target=$target --disable-werror \
+      || { echo "Error configuring gdb"; exit 1; }
+    ;;
+    * )
+      ../../$GDB_SRCDIR/configure \
+      --disable-nls --prefix=$prefix --target=$target --disable-werror \
+      || { echo "Error configuring gdb"; exit 1; }
+    ;;
+esac
   touch configured-gdb
 fi
 
 if [ ! -f built-gdb ]
 then
-  $MAKE || { echo "Error building gdb"; exit 1; }
+  $CONFIG_EXTRA $MAKE || { echo "Error building gdb"; exit 1; }
   touch built-gdb
 fi
 
