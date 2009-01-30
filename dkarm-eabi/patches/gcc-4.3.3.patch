@@ -1,0 +1,185 @@
+diff -Nbaur gcc-4.3.2/Makefile.in gcc-4.3.2-arm/Makefile.in
+--- gcc-4.3.2/Makefile.in	2008-08-16 08:28:01.000000000 +0100
++++ gcc-4.3.2-arm/Makefile.in	2008-10-19 20:02:58.000000000 +0100
+@@ -380,7 +380,7 @@
+ # We want to ensure that TARGET libraries (which we know are built with
+ # gcc) are built with "-O2 -g", so prepend those options when setting
+ # CFLAGS_FOR_TARGET and CXXFLAGS_FOR_TARGET.
+-CFLAGS_FOR_TARGET = -O2 -g $(CFLAGS) $(SYSROOT_CFLAGS_FOR_TARGET) \
++CFLAGS_FOR_TARGET = -O2 -g $(SYSROOT_CFLAGS_FOR_TARGET) \
+ 	$(DEBUG_PREFIX_CFLAGS_FOR_TARGET)
+ SYSROOT_CFLAGS_FOR_TARGET = @SYSROOT_CFLAGS_FOR_TARGET@
+ DEBUG_PREFIX_CFLAGS_FOR_TARGET = @DEBUG_PREFIX_CFLAGS_FOR_TARGET@
+diff -Nbaur gcc-4.3.2/gcc/config/arm/t-arm-elf gcc-4.3.2-arm/gcc/config/arm/t-arm-elf
+--- gcc-4.3.2/gcc/config/arm/t-arm-elf	2007-01-03 23:48:10.000000000 +0000
++++ gcc-4.3.2-arm/gcc/config/arm/t-arm-elf	2008-10-22 23:23:03.000000000 +0100
+@@ -11,23 +11,23 @@
+ MULTILIB_EXCEPTIONS  = 
+ MULTILIB_MATCHES     =
+ 
+-#MULTILIB_OPTIONS      += march=armv7
+-#MULTILIB_DIRNAMES     += thumb2
+-#MULTILIB_EXCEPTIONS   += march=armv7* marm/*march=armv7*
+-#MULTILIB_MATCHES      += march?armv7=march?armv7-a
+-#MULTILIB_MATCHES      += march?armv7=march?armv7-r
+-#MULTILIB_MATCHES      += march?armv7=march?armv7-m
+-#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a8
+-#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-r4
+-#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m3
++MULTILIB_OPTIONS      += march=armv7
++MULTILIB_DIRNAMES     += thumb2
++MULTILIB_EXCEPTIONS   += march=armv7* marm/*march=armv7*
++MULTILIB_MATCHES      += march?armv7=march?armv7-a
++MULTILIB_MATCHES      += march?armv7=march?armv7-r
++MULTILIB_MATCHES      += march?armv7=march?armv7-m
++MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a8
++MULTILIB_MATCHES      += march?armv7=mcpu?cortex-r4
++MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m3
+ 
+ # MULTILIB_OPTIONS    += mcpu=ep9312
+ # MULTILIB_DIRNAMES   += ep9312
+ # MULTILIB_EXCEPTIONS += *mthumb/*mcpu=ep9312*
+ # 	
+-# MULTILIB_OPTIONS     += mlittle-endian/mbig-endian
+-# MULTILIB_DIRNAMES    += le be
+-# MULTILIB_MATCHES     += mbig-endian=mbe mlittle-endian=mle
++MULTILIB_OPTIONS     += mlittle-endian/mbig-endian
++MULTILIB_DIRNAMES    += le be
++MULTILIB_MATCHES     += mbig-endian=mbe mlittle-endian=mle
+ # 
+ # MULTILIB_OPTIONS    += mhard-float/msoft-float
+ # MULTILIB_DIRNAMES   += fpu soft
+diff -Nbaur gcc-4.3.2/gcc/config/arm/unknown-elf.h gcc-4.3.2-arm/gcc/config/arm/unknown-elf.h
+--- gcc-4.3.2/gcc/config/arm/unknown-elf.h	2007-08-02 11:49:31.000000000 +0100
++++ gcc-4.3.2-arm/gcc/config/arm/unknown-elf.h	2008-10-19 00:59:47.000000000 +0100
+@@ -93,4 +93,4 @@
+    udivmoddi4, which will depend on the exception unwind routines,
+    which will depend on abort, which is defined in libc.  */ 
+ #undef LINK_GCC_C_SEQUENCE_SPEC
+-#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L --end-group"
++#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
+diff -Nbaur gcc-4.3.2/gcc/gcc.c gcc-4.3.2-arm/gcc/gcc.c
+--- gcc-4.3.2/gcc/gcc.c	2008-03-02 22:55:19.000000000 +0000
++++ gcc-4.3.2-arm/gcc/gcc.c	2008-10-19 00:59:47.000000000 +0100
+@@ -635,6 +635,11 @@
+ #endif
+ #endif
+ 
++#ifndef LIBGLOSS_SPEC
++# define LIBGLOSS_SPEC "-lsysbase"
++#endif
++
++
+ /* config.h can define STARTFILE_SPEC to override the default crt0 files.  */
+ #ifndef STARTFILE_SPEC
+ #define STARTFILE_SPEC  \
+@@ -762,6 +767,7 @@
+ static const char *mflib_spec = MFLIB_SPEC;
+ static const char *link_gomp_spec = "";
+ static const char *libgcc_spec = LIBGCC_SPEC;
++static const char *libgloss_spec = LIBGLOSS_SPEC;
+ static const char *endfile_spec = ENDFILE_SPEC;
+ static const char *startfile_spec = STARTFILE_SPEC;
+ static const char *switches_need_spaces = SWITCHES_NEED_SPACES;
+@@ -1586,6 +1592,7 @@
+   INIT_STATIC_SPEC ("mflib",			&mflib_spec),
+   INIT_STATIC_SPEC ("link_gomp",		&link_gomp_spec),
+   INIT_STATIC_SPEC ("libgcc",			&libgcc_spec),
++  INIT_STATIC_SPEC ("libgloss",			&libgloss_spec),
+   INIT_STATIC_SPEC ("startfile",		&startfile_spec),
+   INIT_STATIC_SPEC ("switches_need_spaces",	&switches_need_spaces),
+   INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
+@@ -3418,8 +3425,6 @@
+       gcc_libexec_prefix = make_relative_prefix (argv[0],
+ 						 standard_bindir_prefix,
+ 						 standard_libexec_prefix);
+-      if (gcc_exec_prefix)
+-	xputenv (concat ("GCC_EXEC_PREFIX=", gcc_exec_prefix, NULL));
+     }
+   else
+     {
+@@ -6264,10 +6269,21 @@
+ 
+   /* We need to check standard_exec_prefix/just_machine_suffix/specs
+      for any override of as, ld and libraries.  */
++  if ( gcc_exec_prefix )
++  {
++    specs_file = alloca (strlen (gcc_exec_prefix)
++		         + strlen (just_machine_suffix) + sizeof ("specs"));
++
++    strcpy (specs_file, gcc_exec_prefix);
++  } else {
++
+   specs_file = alloca (strlen (standard_exec_prefix)
+ 		       + strlen (just_machine_suffix) + sizeof ("specs"));
+ 
+   strcpy (specs_file, standard_exec_prefix);
++
++  }
++
+   strcat (specs_file, just_machine_suffix);
+   strcat (specs_file, "specs");
+   if (access (specs_file, R_OK) == 0)
+diff -Nbaur gcc-4.3.2/gcc/prefix.c gcc-4.3.2-arm/gcc/prefix.c
+--- gcc-4.3.2/gcc/prefix.c	2007-09-03 18:09:20.000000000 +0100
++++ gcc-4.3.2-arm/gcc/prefix.c	2008-10-19 00:59:47.000000000 +0100
+@@ -245,13 +245,16 @@
+    The returned string is always malloc-ed, and the caller is
+    responsible for freeing it.  */
+ 
++
++static const char *old_prefix = PREFIX;
++
+ char *
+ update_path (const char *path, const char *key)
+ {
+   char *result, *p;
+-  const int len = strlen (std_prefix);
++  const int len = strlen (old_prefix);
+ 
+-  if (! strncmp (path, std_prefix, len)
++  if (! strncmp (path, old_prefix, len)
+       && (IS_DIR_SEPARATOR(path[len])
+           || path[len] == '\0')
+       && key != 0)
+@@ -353,4 +356,6 @@
+ set_std_prefix (const char *prefix, int len)
+ {
+   std_prefix = save_string (prefix, len);
++
++	putenv (concat ("GCC_EXEC_PREFIX=", std_prefix, NULL));
+ }
+diff -Nbaur gcc-4.3.2/gcc/toplev.c gcc-4.3.2-arm/gcc/toplev.c
+--- gcc-4.3.2/gcc/toplev.c	2008-04-24 18:59:01.000000000 +0100
++++ gcc-4.3.2-arm/gcc/toplev.c	2008-10-19 00:59:47.000000000 +0100
+@@ -82,6 +82,7 @@
+ #include "alloc-pool.h"
+ #include "tree-mudflap.h"
+ #include "tree-pass.h"
++#include "prefix.h"
+ 
+ #if defined (DWARF2_UNWIND_INFO) || defined (DWARF2_DEBUGGING_INFO)
+ #include "dwarf2out.h"
+@@ -1623,6 +1624,10 @@
+ 
+   xmalloc_set_program_name (progname);
+ 
++  p = getenv("GCC_EXEC_PREFIX");
++  if (p && strlen(p)) set_std_prefix (p, strlen(p));
++
++
+   hex_init ();
+ 
+   /* Unlock the stdio streams.  */
+diff -Nbaur gcc-4.3.2/libcpp/Makefile.in gcc-4.3.2-arm/libcpp/Makefile.in
+--- gcc-4.3.2/libcpp/Makefile.in	2008-08-27 19:09:37.000000000 +0100
++++ gcc-4.3.2-arm/libcpp/Makefile.in	2008-10-19 20:06:28.000000000 +0100
+@@ -197,7 +197,7 @@
+ # Dependency rule.
+ COMPILE.base = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(ALL_CFLAGS) -c
+ ifeq ($(DEPMODE),depmode=gcc3)
+-COMPILE = $(COMPILE.base) -o $@ -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Po
++COMPILE = $(COMPILE.base) -o $@ 
+ else
+ COMPILE = source='$<' object='$@' libtool=no DEPDIR=$(DEPDIR) $(DEPMODE) \
+ 	  $(depcomp) $(COMPILE.base)

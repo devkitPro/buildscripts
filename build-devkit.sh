@@ -19,9 +19,9 @@ LIBOGC_VER=1.7.0
 LIBGBA_VER=20081210
 LIBNDS_VER=1.3.1
 DEFAULT_ARM7_VER=20081210
-DSWIFI_VER=0.3.5
+DSWIFI_VER=0.3.6
 LIBMIRKO_VER=0.9.7
-MAXMOD_VER=1.0.1
+MAXMOD_VER=1.0.2
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
@@ -88,11 +88,11 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=4.3.2
+    GCC_VER=4.3.3
     BINUTILS_VER=2.19
-    NEWLIB_VER=1.16.0
+    NEWLIB_VER=1.17.0
     GDB_VER=6.8
-    LIBFAT_VER=1.0.2
+    LIBFAT_VER=1.0.3
     basedir='dkarm-eabi'
     package=devkitARM
     builddir=arm-eabi
@@ -104,7 +104,7 @@ case "$VERSION" in
     BINUTILS_VER=2.19
     NEWLIB_VER=1.16.0
     GDB_VER=6.8
-    LIBFAT_VER=1.0.2
+    LIBFAT_VER=1.0.3
     basedir='dkppc'
     package=devkitPPC
     builddir=powerpc-gekko
@@ -369,6 +369,7 @@ LIBGBA_SRCDIR="libgba-$LIBGBA_VER"
 LIBFAT_SRCDIR="libfat-$LIBFAT_VER"
 DSWIFI_SRCDIR="dswifi-$DSWIFI_VER"
 LIBNDS_SRCDIR="libnds-$LIBNDS_VER"
+MAXMOD_SRCDIR="maxmod-$MAXMOD_VER"
 LIBMIRKO_SRCDIR="libmirko-$LIBMIRKO_VER"
 DEFAULT_ARM7_SRCDIR="default_arm7-$DEFAULT_ARM7_VER"
 
@@ -556,47 +557,54 @@ find $INSTALLDIR/$package/$target -name *.a -exec $target-strip -d {} \;
 
 if [ "$BUILD_DKPRO_AUTOMATED" != "1" ] ; then
 	
-	echo
-	echo "Would you like to delete the build folders and patched sources? [Y/n]"
-	read answer
+  echo
+  echo "Would you like to delete the build folders and patched sources? [Y/n]"
+  read answer
+else
+  answer=y
+fi
 	
-	if [ "$answer" != "n" -a "$answer" != "N" ]
-	then
-	echo "Removing patched sources and build directories"
+if [ "$answer" != "n" -a "$answer" != "N" ]
+  then
 	
-	rm -fr $target
-	rm -fr $BINUTILS_SRCDIR
-	rm -fr $NEWLIB_SRCDIR
-	rm -fr $GCC_SRCDIR
+  echo "Removing patched sources and build directories"
 	
-	rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $LIBMIRKO_SRCDIR $DSWIFI_SRCDIR $LIBFAT_SRCDIR $GDB_SRCDIR $DEFAULT_ARM7_SRCDIR
-	rm -fr mn10200
-	rm -fr pspsdk
-	rm -fr extracted_archives patched_sources checkout-psp-sdk
+  rm -fr $target
+  rm -fr $BINUTILS_SRCDIR
+  rm -fr $NEWLIB_SRCDIR
+  rm -fr $GCC_SRCDIR
+  rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $LIBMIRKO_SRCDIR $DSWIFI_SRCDIR $LIBFAT_SRCDIR $GDB_SRCDIR $DEFAULT_ARM7_SRCDIR $MAXMOD_SRCDIR
+  rm -fr mn10200
+  rm -fr pspsdk
+  rm -fr extracted_archives patched_sources checkout-psp-sdk
 	
-	fi
 fi
 
 if [ "$BUILD_DKPRO_AUTOMATED" != "1" ] ; then
-	echo
-	echo "Would you like to delete the downloaded source packages? [y/N]"
-	read answer
+  echo
+  echo "Would you like to delete the downloaded source packages? [y/N]"
+  read answer
+else
+  answer=y
+fi 
 	
-	if [ "$answer" = "y" -o "$answer" = "Y" ]
+if [ "$answer" = "y" -o "$answer" = "Y" ]
+then
+  echo "removing archives"
+  rm -f $SRCDIR/$BINUTILS $SRCDIR/$GCC_CORE $SRCDIR/$GCC_GPP $SRCDIR/$NEWLIB
+
+  if [ $VERSION -eq 1 -o $VERSION -eq 4 ]
+  then
+   rm -f  $SRCDIR/$LIBGBA $SRCDIR/$LIBNDS $SRCDIR/$LIBMIRKO
+  fi
+
+  if [ $VERSION -eq 2 ]
 	then
-	echo "removing archives"
-		rm -f $SRCDIR/$BINUTILS $SRCDIR/$GCC_CORE $SRCDIR/$GCC_GPP $SRCDIR/$NEWLIB
-		if [ $VERSION -eq 1 -o $VERSION -eq 4 ]
-		then
-			rm -f  $SRCDIR/$LIBGBA $SRCDIR/$LIBNDS $SRCDIR/$LIBMIRKO
-		fi
-		if [ $VERSION -eq 2 ]
-		then
-		 	rm -f  $SRCDIR/$LIBOGC
-		fi
-		rm downloaded_sources
-	fi
+	  rm -f  $SRCDIR/$LIBOGC
+  fi
+  rm -f downloaded_sources
 fi
+
 
 echo
 echo "note: Add the following to your environment;  DEVKITPRO=$TOOLPATH $toolchain=$TOOLPATH/$package"

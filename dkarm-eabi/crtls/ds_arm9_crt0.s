@@ -190,11 +190,8 @@ _start:
 	bl	CopyMemCheck
 
 	ldr	r1, =__vectors_lma		@ Copy reserved vectors area (itcm section) from LMA to VMA
-	ldr	r2, =__itcm_start		@ alternate vectors base accessed via itcm mirror
-	mov	r2,r2,lsr #15			@ rounded to 32k boundary
-	mov	r2,r2,lsl #15
+	ldr	r2, =__vectors_start
 	ldr	r4, =__vectors_end
-	add r4,r4,r2
 	bl	CopyMemCheck
 
 	ldr	r1, =__dtcm_lma		@ Copy data tightly coupled memory (dtcm section) from LMA to VMA

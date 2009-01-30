@@ -64,7 +64,7 @@ then
         --target=$target \
         --with-newlib \
         --prefix=$prefix\
-        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 24" \
+        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 25" \
         || { echo "Error configuring gcc"; exit 1; }
   touch configured-gcc
 fi
@@ -140,11 +140,22 @@ cd $BUILDSCRIPTDIR
 mkdir -p $target/gdb
 cd $target/gdb
 
+PLATFORM=`uname -s`
+
 if [ ! -f configured-gdb ]
 then
-  $CONFIG_EXTRA ../../$GDB_SRCDIR/configure \
-        --disable-nls --prefix=$prefix --target=$target --disable-werror \
-        || { echo "Error configuring gdb"; exit 1; }
+  case $PLATFORM in
+    Darwin )
+      env CFLAGS="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" LDFLAGS="-arch i386 -arch ppc" ../../$GDB_SRCDIR/configure \
+      --disable-nls --prefix=$prefix --target=$target --disable-werror \
+      || { echo "Error configuring gdb"; exit 1; }
+    ;;
+    * )
+      ../../$GDB_SRCDIR/configure \
+      --disable-nls --prefix=$prefix --target=$target --disable-werror \
+      || { echo "Error configuring gdb"; exit 1; }
+    ;;
+esac
   touch configured-gdb
 fi
 
