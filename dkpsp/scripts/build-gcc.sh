@@ -2,6 +2,17 @@
 
 prefix=$INSTALLDIR/devkitPSP
 
+PLATFORM=`uname -s`
+
+case $PLATFORM in
+  Darwin )
+    CONFIG_EXTRA=env CFLAGS="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" LDFLAGS="-arch i386 -arch ppc"
+    ;;
+  MINGW32* )
+    CONFIG_EXTRA=env CFLAGS="-D__USE_MINGW_ACCESS"
+    ;;
+esac
+
 #---------------------------------------------------------------------------------
 # build and install binutils
 #---------------------------------------------------------------------------------
@@ -11,7 +22,7 @@ cd $target/binutils
 
 if [ ! -f configured-binutils ]
 then
-  ../../$BINUTILS_SRCDIR/configure \
+  $CONFIG_EXTRA ../../$BINUTILS_SRCDIR/configure \
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
 	--disable-threads --with-gcc --with-gnu-as --with-gnu-ld --with-stabs \
 	|| { echo "Error configuring binutils"; exit 1; }
@@ -41,7 +52,7 @@ cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
-  CFLAGS=-D__USE_MINGW_ACCESS ../../$GCC_SRCDIR/configure \
+   $CONFIG_EXTRA ../../$GCC_SRCDIR/configure \
 	--enable-languages=c,c++ \
 	--disable-multilib\
 	--with-gcc --with-gnu-ld --with-gnu-as\
@@ -51,6 +62,7 @@ then
 	--target=$target \
 	--with-newlib \
 	--prefix=$prefix \
+	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 13" \
 	|| { echo "Error configuring gcc"; exit 1; }
   touch configured-gcc
 fi
@@ -68,6 +80,7 @@ then
   $MAKE install-gcc || { echo "Error installing gcc"; exit 1; }
   touch installed-gcc
 fi
+unset CFLAGS
 cd $BUILDSCRIPTDIR
 
 if [ ! -f checkout-psp-sdk ]
@@ -162,7 +175,7 @@ fi
 if [ ! -f installed-sdk ]
 then
   $MAKE install || { echo "ERROR INSTALLING PSPSDK"; exit 1; }
-  touch built-sdk
+  touch installed-sdk
 fi
 
 cd $BUILDSCRIPTDIR
@@ -173,11 +186,22 @@ cd $BUILDSCRIPTDIR
 mkdir -p $target/gdb
 cd $target/gdb
 
+PLATFORM=`uname -s`
+
 if [ ! -f configured-gdb ]
 then
-  ../../$GDB_SRCDIR/configure \
-	--prefix=$prefix --target=$target --disable-nls --disable-werror \
-	|| { echo "Error configuring gdb"; exit 1; }
+  case $PLATFORM in
+    Darwin )
+      env CFLAGS="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" LDFLAGS="-arch i386 -arch ppc" ../../$GDB_SRCDIR/configure \
+      --disable-nls --prefix=$prefix --target=$target --disable-werror \
+      || { echo "Error configuring gdb"; exit 1; }
+    ;;
+    * )
+      ../../$GDB_SRCDIR/configure \
+      --disable-nls --prefix=$prefix --target=$target --disable-werror \
+      || { echo "Error configuring gdb"; exit 1; }
+    ;;
+esac
   touch configured-gdb
 fi
 
