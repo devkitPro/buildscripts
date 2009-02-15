@@ -112,10 +112,10 @@ case "$VERSION" in
     toolchain=DEVKITPPC
   ;;
   "3" )
-    GCC_VER=4.1.2
+    GCC_VER=4.3.3
     BINUTILS_VER=2.16.1
-    NEWLIB_VER=1.15.0
-    GDB_VER=6.7.1
+    NEWLIB_VER=1.17.0
+    GDB_VER=6.8
     basedir='dkpsp'
     package=devkitPSP
     builddir=psp
