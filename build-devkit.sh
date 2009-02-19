@@ -1,9 +1,9 @@
 #!/bin/sh
 #---------------------------------------------------------------------------------
 # Build scripts for
-#	devkitARM release 24
+#	devkitARM release 25
 #	devkitPPC release 16
-#	devkitPSP release 12
+#	devkitPSP release 13
 #---------------------------------------------------------------------------------
 
 if [ 0 -eq 1 ] ; then 
@@ -15,19 +15,21 @@ fi
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=1.7.0
+LIBOGC_VER=1.7.1
 LIBGBA_VER=20081210
-LIBNDS_VER=1.3.1
-DEFAULT_ARM7_VER=20081210
+LIBNDS_VER=1.3.2
+DEFAULT_ARM7_VER=20090219
 DSWIFI_VER=0.3.6
 LIBMIRKO_VER=0.9.7
-MAXMOD_VER=1.0.2
+MAXMOD_VER=1.0.3
+FILESYSTEM_VER=0.9.1
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
 LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
 DSWIFI="dswifi-src-$DSWIFI_VER.tar.bz2"
 MAXMOD="maxmod-src-$MAXMOD_VER.tar.bz2"
+FILESYSTEM="libfilesystem-src-$FILESYSTEM_VER.tar.bz2"
 DEFAULT_ARM7="default_arm7-src-$DEFAULT_ARM7_VER.tar.bz2"
 LIBMIRKO="libmirko-src-$LIBMIRKO_VER.tar.bz2"
 DEVKITPRO_URL="http://downloads.sourceforge.net/devkitpro"
@@ -39,6 +41,7 @@ DSWIFI_URL="$DEVKITPRO_URL/$DSWIFI"
 LIBMIRKO_URL="$DEVKITPRO_URL/$LIBMIRKO"
 DEFAULT_ARM7_URL="$DEVKITPRO_URL/$DEFAULT_ARM7"
 MAXMOD_URL="$DEVKITPRO_URL/$MAXMOD"
+FILESYSTEM_URL="$DEVKITPRO_URL/$FILESYSTEM"
 
 #---------------------------------------------------------------------------------
 # Sane defaults for building toolchain
@@ -293,6 +296,13 @@ then
         else
 	        FOUND=1
         fi
+        if [ ! -f $SRCDIR/$FILESYSTEM ]
+        then
+          echo "Error: $FILESYSTEM not found in $SRCDIR"
+	        exit 1
+        else
+	        FOUND=1
+        fi
       fi
 
     if [ $VERSION -eq 2 ]
@@ -354,6 +364,7 @@ else
         $FETCH $LIBMIRKO_URL || { echo "Error: Failed to download "$LIBMIRKO; exit 1; }
         $FETCH $DEFAULT_ARM7_URL || { echo "Error: Failed to download "$DEFAULT_ARM7; exit 1; }
         $FETCH $MAXMOD_URL || { echo "Error: Failed to download "$MAXMOD; exit 1; }
+        $FETCH $FILESYSTEM_URL || { echo "Error: Failed to download "$FILESYSTEM; exit 1; }
       fi
       SRCDIR=`pwd`
       touch downloaded_sources
@@ -370,6 +381,7 @@ LIBFAT_SRCDIR="libfat-$LIBFAT_VER"
 DSWIFI_SRCDIR="dswifi-$DSWIFI_VER"
 LIBNDS_SRCDIR="libnds-$LIBNDS_VER"
 MAXMOD_SRCDIR="maxmod-$MAXMOD_VER"
+FILESYSTEM_SRCDIR="filesystem-$FILESYSTEM_VER"
 LIBMIRKO_SRCDIR="libmirko-$LIBMIRKO_VER"
 DEFAULT_ARM7_SRCDIR="default_arm7-$DEFAULT_ARM7_VER"
 
@@ -488,6 +500,10 @@ then
     mkdir -p $MAXMOD_SRCDIR
     bzip2 -cd $SRCDIR/$MAXMOD | tar -xf - -C $MAXMOD_SRCDIR || { echo "Error extracting "$MAXMOD; exit 1; }
 
+    echo "Extracting $FILESYSTEM"
+    mkdir -p $FILESYSTEM_SRCDIR
+    bzip2 -cd $SRCDIR/$FILESYSTEM | tar -xf - -C $FILESYSTEM_SRCDIR || { echo "Error extracting "$FILESYSTEM; exit 1; }
+
   fi
 
   touch extracted_archives
@@ -585,7 +601,7 @@ if [ "$BUILD_DKPRO_AUTOMATED" != "1" ] ; then
   echo "Would you like to delete the downloaded source packages? [y/N]"
   read answer
 else
-  answer=y
+  answer=n
 fi 
 	
 if [ "$answer" = "y" -o "$answer" = "Y" ]
