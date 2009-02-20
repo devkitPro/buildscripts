@@ -136,9 +136,9 @@ case "$VERSION" in
 esac
 
 GCC_CORE="gcc-core-$GCC_VER.tar.bz2"
-GCC_GPP="gcc-g%2B%2B-$GCC_VER.tar.bz2"
+GCC_GPP="gcc-g++-$GCC_VER.tar.bz2"
 GCC_CORE_URL="$DEVKITPRO_URL/$GCC_CORE"
-GCC_GPP_URL="$DEVKITPRO_URL/$GCC_GPP"
+GCC_GPP_URL="$DEVKITPRO_URL/gcc-g%2B%2B-$GCC_VER.tar.bz2"
 BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
 GDB="gdb-$GDB_VER.tar.bz2"
 GDB_URL="$DEVKITPRO_URL/$GDB"
