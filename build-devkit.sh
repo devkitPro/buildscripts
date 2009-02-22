@@ -341,6 +341,10 @@ else
       $FETCH $GCC_CORE_URL || { echo "Error: Failed to download "$GCC_CORE; exit 1; }
 
       $FETCH $GCC_GPP_URL || { echo "Error: Failed to download "$GCC_GPP; exit 1; }
+      if [ -f gcc-g%2B%2B-$GCC_VER.tar.bz2 ]
+      then
+        mv gcc-g%2B%2B-$GCC_VER.tar.bz2 gcc-g++-$GCC_VER.tar.bz2
+      fi
 
       $FETCH $GDB_URL || { echo "Error: Failed to download "$GDB; exit 1; }
 
