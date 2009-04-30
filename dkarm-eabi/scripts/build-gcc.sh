@@ -8,11 +8,12 @@ prefix=$INSTALLDIR/devkitARM
 PLATFORM=`uname -s`
 
 case $PLATFORM in
-  Darwin )
-    CONFIG_EXTRA=env CFLAGS="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" LDFLAGS="-arch i386 -arch ppc"
+  Darwin )	
+    cflags="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
+	ldflags="-arch i386 -arch ppc"
     ;;
   MINGW32* )
-    CONFIG_EXTRA=env CFLAGS="-D__USE_MINGW_ACCESS"
+    cflags="-D__USE_MINGW_ACCESS"
     ;;
 esac
 
@@ -25,7 +26,7 @@ cd $target/binutils
 
 if [ ! -f configured-binutils ]
 then
-  $CONFIG_EXTRA ../../$BINUTILS_SRCDIR/configure \
+  CFLAGS=$cflags LDFLAGS=$ldflags ../../$BINUTILS_SRCDIR/configure \
         --prefix=$prefix --target=$target --disable-nls \
         || { echo "Error configuring binutils"; exit 1; }
   touch configured-binutils
@@ -53,8 +54,8 @@ cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
-  $CONFIG_EXTRA ../../$GCC_SRCDIR/configure \
-        --enable-languages=c,c++ \
+  CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../$GCC_SRCDIR/configure \
+        --enable-languages=c,c++,objc \
         --with-cpu=arm7tdmi\
         --enable-interwork --enable-multilib\
         --with-gcc --with-gnu-ld --with-gnu-as \
@@ -64,7 +65,7 @@ then
         --target=$target \
         --with-newlib \
         --prefix=$prefix\
-        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 25" \
+        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 26" \
         || { echo "Error configuring gcc"; exit 1; }
   touch configured-gcc
 fi
@@ -81,6 +82,7 @@ then
   touch installed-gcc
 fi
 
+unset CFLAGS
 cd $BUILDSCRIPTDIR
 
 #---------------------------------------------------------------------------------
@@ -144,18 +146,9 @@ PLATFORM=`uname -s`
 
 if [ ! -f configured-gdb ]
 then
-  case $PLATFORM in
-    Darwin )
-      env CFLAGS="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" LDFLAGS="-arch i386 -arch ppc" ../../$GDB_SRCDIR/configure \
-      --disable-nls --prefix=$prefix --target=$target --disable-werror \
-      || { echo "Error configuring gdb"; exit 1; }
-    ;;
-    * )
-      ../../$GDB_SRCDIR/configure \
-      --disable-nls --prefix=$prefix --target=$target --disable-werror \
-      || { echo "Error configuring gdb"; exit 1; }
-    ;;
-esac
+  CFLAGS="$cflags" LDFLAGS="$ldflags" ../../$GDB_SRCDIR/configure \
+  --disable-nls --prefix=$prefix --target=$target --disable-werror \
+  || { echo "Error configuring gdb"; exit 1; }
   touch configured-gdb
 fi
 
