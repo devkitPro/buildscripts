@@ -91,7 +91,7 @@ cd $target/gcc
 if [ ! -f configured-gcc ]
 then
    CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../$GCC_SRCDIR/configure \
-  --enable-languages=c,c++ \
+  --enable-languages=c,c++,objc \
   --with-cpu=750\
   --without-headers\
   --disable-nls --disable-shared --enable-threads --disable-multilib \
