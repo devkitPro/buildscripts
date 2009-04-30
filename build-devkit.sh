@@ -1,8 +1,8 @@
 #!/bin/sh
 #---------------------------------------------------------------------------------
 # Build scripts for
-#	devkitARM release 25
-#	devkitPPC release 16
+#	devkitARM release 26
+#	devkitPPC release 17
 #	devkitPSP release 13
 #---------------------------------------------------------------------------------
 
@@ -17,12 +17,12 @@ fi
 #---------------------------------------------------------------------------------
 LIBOGC_VER=1.7.1
 LIBGBA_VER=20081210
-LIBNDS_VER=1.3.2
-DEFAULT_ARM7_VER=20090219
-DSWIFI_VER=0.3.6
+LIBNDS_VER=1.3.3
+DEFAULT_ARM7_VER=0.5.2
+DSWIFI_VER=0.3.7
 LIBMIRKO_VER=0.9.7
-MAXMOD_VER=1.0.3
-FILESYSTEM_VER=0.9.1
+MAXMOD_VER=1.0.4
+FILESYSTEM_VER=0.9.2
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
@@ -91,8 +91,8 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=4.3.3
-    BINUTILS_VER=2.19
+    GCC_VER=4.4.0
+    BINUTILS_VER=2.19.1
     NEWLIB_VER=1.17.0
     GDB_VER=6.8
     LIBFAT_VER=1.0.3
@@ -104,8 +104,8 @@ case "$VERSION" in
   ;;
   "2" )
     GCC_VER=4.2.4
-    BINUTILS_VER=2.19
-    NEWLIB_VER=1.16.0
+    BINUTILS_VER=2.19.1
+    NEWLIB_VER=1.17.0
     GDB_VER=6.8
     LIBFAT_VER=1.0.3
     basedir='dkppc'
@@ -137,8 +137,12 @@ esac
 
 GCC_CORE="gcc-core-$GCC_VER.tar.bz2"
 GCC_GPP="gcc-g++-$GCC_VER.tar.bz2"
+GCC_OBJC="gcc-objc-$GCC_VER.tar.bz2"
+
 GCC_CORE_URL="$DEVKITPRO_URL/$GCC_CORE"
-GCC_GPP_URL="$DEVKITPRO_URL/gcc-g%2B%2B-$GCC_VER.tar.bz2"
+GCC_GPP_URL="$DEVKITPRO_URL/gcc-g++-$GCC_VER.tar.bz2"
+GCC_OBJC_URL="$DEVKITPRO_URL/$GCC_OBJC"
+
 BINUTILS="binutils-$BINUTILS_VER.tar.bz2"
 GDB="gdb-$GDB_VER.tar.bz2"
 GDB_URL="$DEVKITPRO_URL/$GDB"
@@ -234,6 +238,14 @@ then
         exit 1
       else
         FOUND=1
+      fi
+
+      if [ ! -f $SRCDIR/$GCC_OBJC ]
+      then
+        echo "Error: $GCC_OBJC not found in $SRCDIR"
+        exit 1
+      else
+	      FOUND=1
       fi
 
       if [ ! -f $SRCDIR/$NEWLIB ]
@@ -341,10 +353,8 @@ else
       $FETCH $GCC_CORE_URL || { echo "Error: Failed to download "$GCC_CORE; exit 1; }
 
       $FETCH $GCC_GPP_URL || { echo "Error: Failed to download "$GCC_GPP; exit 1; }
-      if [ -f gcc-g%2B%2B-$GCC_VER.tar.bz2 ]
-      then
-        mv gcc-g%2B%2B-$GCC_VER.tar.bz2 gcc-g++-$GCC_VER.tar.bz2
-      fi
+
+      $FETCH $GCC_OBJC_URL || { echo "Error: Failed to download "$GCC_OBJC; exit 1; }
 
       $FETCH $GDB_URL || { echo "Error: Failed to download "$GDB; exit 1; }
 
@@ -459,6 +469,9 @@ then
 
   echo "Extracting $GCC_GPP"
   tar -xjf $SRCDIR/$GCC_GPP || { echo "Error extracting "$GCC_GPP; exit 1; }
+
+  echo "Extracting $GCC_OBJC"
+  tar -xjf $SRCDIR/$GCC_OBJC || { echo "Error extracting "$GCC_OBJC; exit 1; }
 
   echo "Extracting $NEWLIB"
   tar -xzf $SRCDIR/$NEWLIB || { echo "Error extracting "$NEWLIB; exit 1; }
