@@ -1,0 +1,37 @@
+diff -Nbaur binutils-2.18.93/config.sub binutils-2.18.93-ppc/config.sub
+--- binutils-2.18.93/config.sub	2008-04-14 10:28:35.000000000 +0100
++++ binutils-2.18.93-ppc/config.sub	2008-10-18 02:19:55.000000000 +0100
+@@ -230,6 +230,10 @@
+ 		basic_machine=m68k-atari
+ 		os=-mint
+ 		;;
++	-gekko)
++		basic_machine=powerpc-devkitpro
++		os=-elf
++		;;
+ esac
+ 
+ # Decode aliases for certain CPU-COMPANY combinations.
+diff -Nbaur binutils-2.18.93/gas/config/tc-ppc.c binutils-2.18.93-ppc/gas/config/tc-ppc.c
+--- binutils-2.18.93/gas/config/tc-ppc.c	2008-08-02 05:38:50.000000000 +0100
++++ binutils-2.18.93-ppc/gas/config/tc-ppc.c	2008-10-18 02:33:57.000000000 +0100
+@@ -850,6 +850,9 @@
+   /* Do all PPC750s have paired single ops?  */
+   else if (strcmp (arg, "750cl") == 0)
+     ppc_cpu = PPC_OPCODE_PPC | PPC_OPCODE_PPCPS;
++  /* PowerPC Gekko */
++  else if (strcmp (arg, "gekko") == 0)
++    ppc_cpu = PPC_OPCODE_CLASSIC | PPC_OPCODE_PPC | PPC_OPCODE_32 | PPC_OPCODE_PPCPS;
+   else if (strcmp (arg, "403") == 0)
+     ppc_cpu = (PPC_OPCODE_PPC | PPC_OPCODE_CLASSIC
+ 	       | PPC_OPCODE_403 | PPC_OPCODE_32);
+@@ -1145,7 +1148,8 @@
+ -m464			generate code for PowerPC 464\n\
+ -m7400, -m7410, -m7450, -m7455\n\
+ 			generate code for PowerPC 7400/7410/7450/7455\n\
+--m750cl			generate code for PowerPC 750cl\n"));
++-m750cl			generate code for PowerPC 750cl\n\
++-mgekko			generate code for PowerPC Gekko\n"));
+   fprintf (stream, _("\
+ -mppc64, -m620		generate code for PowerPC 620/625/630\n\
+ -mppc64bridge		generate code for PowerPC 64, including bridge insns\n\

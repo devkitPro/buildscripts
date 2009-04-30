@@ -8,15 +8,14 @@ prefix=$INSTALLDIR/devkitPPC
 PLATFORM=`uname -s`
 
 case $PLATFORM in
-  Darwin )
-    CONFIG_EXTRA=env CFLAGS="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" LDFLAGS="-arch i386 -arch ppc"
+  Darwin )	
+    cflags="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
+	ldflags="-arch i386 -arch ppc"
     ;;
   MINGW32* )
-    CONFIG_EXTRA=env CFLAGS="-D__USE_MINGW_ACCESS"
+    cflags="-D__USE_MINGW_ACCESS"
     ;;
 esac
-
-echo "$CONFIG_EXTRA"
 
 #---------------------------------------------------------------------------------
 # build and install ppc binutils
@@ -27,7 +26,7 @@ cd $target/binutils
 
 if [ ! -f configured-binutils ]
 then
-  $CONFIG_EXTRA ../../$BINUTILS_SRCDIR/configure \
+  CFLAGS=$cflags LDFLAGS=$ldflags ../../$BINUTILS_SRCDIR/configure \
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
 	--with-gcc --with-gnu-as --with-gnu-ld --disable-dependency-tracking \
 	|| { echo "Error configuing ppc binutils"; exit 1; }
@@ -57,7 +56,7 @@ cd mn10200/binutils
 
 if [ ! -f configured-binutils ]
 then
-  $CONFIG_EXTRA ../../$BINUTILS_SRCDIR/configure \
+  CFLAGS=$cflags LDFLAGS=$ldflags ../../$BINUTILS_SRCDIR/configure \
 	--prefix=$prefix --target=mn10200 --disable-nls --disable-shared --disable-debug \
 	--with-gcc --with-gnu-as --with-gnu-ld \
 	|| { echo "Error configuing mn10200 binutils"; exit 1; }
@@ -91,7 +90,7 @@ cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
-  $CONFIG_EXTRA ../../$GCC_SRCDIR/configure \
+   CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../$GCC_SRCDIR/configure \
   --enable-languages=c,c++ \
   --with-cpu=750\
   --without-headers\
@@ -101,7 +100,8 @@ then
   --target=$target \
   --with-newlib \
   --prefix=$prefix\
-  --disable-denpendency-tracking \
+  --disable-dependency-tracking \
+  --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 17" \
   2>&1 | tee gcc_configure.log
   touch configured-gcc
 fi
@@ -184,24 +184,15 @@ PLATFORM=`uname -s`
 
 if [ ! -f configured-gdb ]
 then
-  case $PLATFORM in
-    Darwin )
-      env CFLAGS="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc" LDFLAGS="-arch i386 -arch ppc" ../../$GDB_SRCDIR/configure \
-      --disable-nls --prefix=$prefix --target=$target --disable-werror \
-      || { echo "Error configuring gdb"; exit 1; }
-    ;;
-    * )
-      ../../$GDB_SRCDIR/configure \
-      --disable-nls --prefix=$prefix --target=$target --disable-werror \
-      || { echo "Error configuring gdb"; exit 1; }
-    ;;
-esac
+  CFLAGS="$cflags" LDFLAGS="$ldflags" ../../$GDB_SRCDIR/configure \
+  --disable-nls --prefix=$prefix --target=$target --disable-werror \
+  || { echo "Error configuring gdb"; exit 1; }
   touch configured-gdb
 fi
 
 if [ ! -f built-gdb ]
 then
-  $CONFIG_EXTRA $MAKE || { echo "Error building gdb"; exit 1; }
+  $MAKE || { echo "Error building gdb"; exit 1; }
   touch built-gdb
 fi
 

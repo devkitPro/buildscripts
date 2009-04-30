@@ -1,6 +1,6 @@
 diff -Nbaur gcc-4.2.4/Makefile.in gcc-4.2.4-ppc/Makefile.in
 --- gcc-4.2.4/Makefile.in	2006-12-29 17:47:06.000000000 +0000
-+++ gcc-4.2.4-ppc/Makefile.in	2008-11-23 10:37:09.000000000 +0000
++++ gcc-4.2.4-ppc/Makefile.in	2009-04-30 01:26:57.000000000 +0100
 @@ -341,7 +341,7 @@
  # CFLAGS will be just -g.  We want to ensure that TARGET libraries
  # (which we know are built with gcc) are built with optimizations so
@@ -12,13 +12,13 @@ diff -Nbaur gcc-4.2.4/Makefile.in gcc-4.2.4-ppc/Makefile.in
  LIBCFLAGS_FOR_TARGET = $(CFLAGS_FOR_TARGET)
 diff -Nbaur gcc-4.2.4/config.sub gcc-4.2.4-ppc/config.sub
 --- gcc-4.2.4/config.sub	2006-10-16 04:27:17.000000000 +0100
-+++ gcc-4.2.4-ppc/config.sub	2008-10-18 05:11:48.000000000 +0100
++++ gcc-4.2.4-ppc/config.sub	2009-04-30 01:28:17.000000000 +0100
 @@ -230,6 +230,10 @@
  		basic_machine=m68k-atari
  		os=-mint
  		;;
 +	-gekko)
-+		basic_machine=powerpc-eabi
++		basic_machine=powerpc-devkitpro
 +		os=-elf
 +		;;
  esac
@@ -26,7 +26,7 @@ diff -Nbaur gcc-4.2.4/config.sub gcc-4.2.4-ppc/config.sub
  # Decode aliases for certain CPU-COMPANY combinations.
 diff -Nbaur gcc-4.2.4/gcc/c-incpath.c gcc-4.2.4-ppc/gcc/c-incpath.c
 --- gcc-4.2.4/gcc/c-incpath.c	2007-09-01 16:28:30.000000000 +0100
-+++ gcc-4.2.4-ppc/gcc/c-incpath.c	2008-10-18 05:11:48.000000000 +0100
++++ gcc-4.2.4-ppc/gcc/c-incpath.c	2009-04-30 01:26:57.000000000 +0100
 @@ -340,13 +340,18 @@
    cpp_dir *p;
  
@@ -55,7 +55,7 @@ diff -Nbaur gcc-4.2.4/gcc/c-incpath.c gcc-4.2.4-ppc/gcc/c-incpath.c
    p = XNEW (cpp_dir);
 diff -Nbaur gcc-4.2.4/gcc/config/rs6000/sysv4.h gcc-4.2.4-ppc/gcc/config/rs6000/sysv4.h
 --- gcc-4.2.4/gcc/config/rs6000/sysv4.h	2007-09-01 16:28:30.000000000 +0100
-+++ gcc-4.2.4-ppc/gcc/config/rs6000/sysv4.h	2008-10-18 05:11:48.000000000 +0100
++++ gcc-4.2.4-ppc/gcc/config/rs6000/sysv4.h	2009-04-30 01:26:57.000000000 +0100
 @@ -651,7 +651,11 @@
  
  /* Default starting address if specified.  */
@@ -213,7 +213,7 @@ diff -Nbaur gcc-4.2.4/gcc/config/rs6000/sysv4.h gcc-4.2.4-ppc/gcc/config/rs6000/
    { "cpp_os_mvme",		CPP_OS_MVME_SPEC },			\
 diff -Nbaur gcc-4.2.4/gcc/config/rs6000/sysv4.opt gcc-4.2.4-ppc/gcc/config/rs6000/sysv4.opt
 --- gcc-4.2.4/gcc/config/rs6000/sysv4.opt	2007-09-01 16:28:30.000000000 +0100
-+++ gcc-4.2.4-ppc/gcc/config/rs6000/sysv4.opt	2008-10-18 05:11:48.000000000 +0100
++++ gcc-4.2.4-ppc/gcc/config/rs6000/sysv4.opt	2009-04-30 01:26:57.000000000 +0100
 @@ -107,6 +107,26 @@
  Target RejectNegative
  Link with libads.a, libc.a and crt0.o
@@ -243,7 +243,7 @@ diff -Nbaur gcc-4.2.4/gcc/config/rs6000/sysv4.opt gcc-4.2.4-ppc/gcc/config/rs600
  Link with libyk.a, libc.a and crt0.o
 diff -Nbaur gcc-4.2.4/gcc/gcc.c gcc-4.2.4-ppc/gcc/gcc.c
 --- gcc-4.2.4/gcc/gcc.c	2007-09-01 16:28:30.000000000 +0100
-+++ gcc-4.2.4-ppc/gcc/gcc.c	2008-10-18 05:11:48.000000000 +0100
++++ gcc-4.2.4-ppc/gcc/gcc.c	2009-04-30 01:26:57.000000000 +0100
 @@ -3369,8 +3369,6 @@
        gcc_libexec_prefix = make_relative_prefix (argv[0],
  						 standard_bindir_prefix,
@@ -277,7 +277,7 @@ diff -Nbaur gcc-4.2.4/gcc/gcc.c gcc-4.2.4-ppc/gcc/gcc.c
    if (access (specs_file, R_OK) == 0)
 diff -Nbaur gcc-4.2.4/gcc/prefix.c gcc-4.2.4-ppc/gcc/prefix.c
 --- gcc-4.2.4/gcc/prefix.c	2007-09-01 16:28:30.000000000 +0100
-+++ gcc-4.2.4-ppc/gcc/prefix.c	2008-10-18 05:11:48.000000000 +0100
++++ gcc-4.2.4-ppc/gcc/prefix.c	2009-04-30 01:26:57.000000000 +0100
 @@ -245,13 +245,16 @@
     The returned string is always malloc-ed, and the caller is
     responsible for freeing it.  */
@@ -306,7 +306,7 @@ diff -Nbaur gcc-4.2.4/gcc/prefix.c gcc-4.2.4-ppc/gcc/prefix.c
  }
 diff -Nbaur gcc-4.2.4/gcc/stor-layout.c gcc-4.2.4-ppc/gcc/stor-layout.c
 --- gcc-4.2.4/gcc/stor-layout.c	2007-09-01 16:28:30.000000000 +0100
-+++ gcc-4.2.4-ppc/gcc/stor-layout.c	2008-10-18 05:11:48.000000000 +0100
++++ gcc-4.2.4-ppc/gcc/stor-layout.c	2009-04-30 01:26:58.000000000 +0100
 @@ -530,7 +530,15 @@
  #ifdef STRUCTURE_SIZE_BOUNDARY
    /* Packed structures don't need to have minimum size.  */
@@ -326,7 +326,7 @@ diff -Nbaur gcc-4.2.4/gcc/stor-layout.c gcc-4.2.4-ppc/gcc/stor-layout.c
    rli->offset = size_zero_node;
 diff -Nbaur gcc-4.2.4/gcc/toplev.c gcc-4.2.4-ppc/gcc/toplev.c
 --- gcc-4.2.4/gcc/toplev.c	2007-09-01 16:28:30.000000000 +0100
-+++ gcc-4.2.4-ppc/gcc/toplev.c	2008-10-18 05:11:48.000000000 +0100
++++ gcc-4.2.4-ppc/gcc/toplev.c	2009-04-30 01:26:58.000000000 +0100
 @@ -81,6 +81,7 @@
  #include "value-prof.h"
  #include "alloc-pool.h"
@@ -348,13 +348,13 @@ diff -Nbaur gcc-4.2.4/gcc/toplev.c gcc-4.2.4-ppc/gcc/toplev.c
    /* Unlock the stdio streams.  */
 diff -Nbaur gcc-4.2.4/gcc/version.c gcc-4.2.4-ppc/gcc/version.c
 --- gcc-4.2.4/gcc/version.c	2005-03-16 06:04:10.000000000 +0000
-+++ gcc-4.2.4-ppc/gcc/version.c	2008-10-18 05:11:48.000000000 +0100
++++ gcc-4.2.4-ppc/gcc/version.c	2009-04-30 14:35:09.000000000 +0100
 @@ -8,7 +8,7 @@
     in parentheses.  You may also wish to include a number indicating
     the revision of your modified compiler.  */
  
 -#define VERSUFFIX ""
-+#define VERSUFFIX " (devkitPPC release 15)"
++#define VERSUFFIX " (devkitPPC release 17)"
  
  /* This is the location of the online document giving instructions for
     reporting bugs.  If you distribute a modified version of GCC,
@@ -369,7 +369,7 @@ diff -Nbaur gcc-4.2.4/gcc/version.c gcc-4.2.4-ppc/gcc/version.c
     BASEVER, DATESTAMP, and DEVPHASE are defined by the Makefile.  */
 diff -Nbaur gcc-4.2.4/libcpp/Makefile.in gcc-4.2.4-ppc/libcpp/Makefile.in
 --- gcc-4.2.4/libcpp/Makefile.in	2008-05-19 15:28:07.000000000 +0100
-+++ gcc-4.2.4-ppc/libcpp/Makefile.in	2008-11-23 10:37:37.000000000 +0000
++++ gcc-4.2.4-ppc/libcpp/Makefile.in	2009-04-30 01:26:58.000000000 +0100
 @@ -196,7 +196,7 @@
  # Dependency rule.
  COMPILE.base = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(ALL_CFLAGS) -c
@@ -381,7 +381,7 @@ diff -Nbaur gcc-4.2.4/libcpp/Makefile.in gcc-4.2.4-ppc/libcpp/Makefile.in
  	  $(depcomp) $(COMPILE.base)
 diff -Nbaur gcc-4.2.4/libcpp/files.c gcc-4.2.4-ppc/libcpp/files.c
 --- gcc-4.2.4/libcpp/files.c	2006-02-18 09:25:31.000000000 +0000
-+++ gcc-4.2.4-ppc/libcpp/files.c	2008-10-18 05:11:49.000000000 +0100
++++ gcc-4.2.4-ppc/libcpp/files.c	2009-04-30 01:26:58.000000000 +0100
 @@ -226,6 +226,22 @@
        close (file->fd);
        file->fd = -1;
