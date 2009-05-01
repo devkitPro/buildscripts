@@ -33,6 +33,11 @@ export OBJCOPY	:=	$(PREFIX)objcopy
 	@$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d $(CFLAGS) -c $< -o $@
 
 #---------------------------------------------------------------------------------
+%.o: %.m
+	@echo $(notdir $<)
+	@$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d $(OBJCFLAGS) -c $< -o $@
+
+#---------------------------------------------------------------------------------
 %.o: %.s
 	@echo $(notdir $<)
 	@$(CC) -MMD -MP -MF $(DEPSDIR)/$*.d -x assembler-with-cpp $(ASFLAGS) -c $< -o $@
