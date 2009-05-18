@@ -101,7 +101,7 @@ then
   --with-newlib \
   --prefix=$prefix\
   --disable-dependency-tracking \
-  --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 17" \
+  --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 18 alpha" \
   2>&1 | tee gcc_configure.log
   touch configured-gcc
 fi

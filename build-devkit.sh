@@ -6,7 +6,7 @@
 #	devkitPSP release 13
 #---------------------------------------------------------------------------------
 
-if [ 0 -eq 1 ] ; then 
+if [ 1 -eq 1 ] ; then 
   echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support" 	 
   exit 1
 fi
@@ -103,7 +103,7 @@ case "$VERSION" in
     toolchain=DEVKITARM
   ;;
   "2" )
-    GCC_VER=4.2.4
+    GCC_VER=4.4.0
     BINUTILS_VER=2.19.1
     NEWLIB_VER=1.17.0
     GDB_VER=6.8

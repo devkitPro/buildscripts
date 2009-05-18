@@ -5211,8 +5211,8 @@ diff -Nbaur newlib-1.17.0/libgloss/libsysbase/getpid.c newlib-1.17.0-ppc/libglos
 +
 diff -Nbaur newlib-1.17.0/libgloss/libsysbase/gettod.c newlib-1.17.0-ppc/libgloss/libsysbase/gettod.c
 --- newlib-1.17.0/libgloss/libsysbase/gettod.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.17.0-ppc/libgloss/libsysbase/gettod.c	2008-12-30 09:33:00.000000000 +0000
-@@ -0,0 +1,25 @@
++++ newlib-1.17.0-ppc/libgloss/libsysbase/gettod.c	2009-05-14 20:59:10.000000000 +0100
+@@ -0,0 +1,39 @@
 +/*
 + * Stub version of gettimeofday.
 + */
@@ -5222,22 +5222,36 @@ diff -Nbaur newlib-1.17.0/libgloss/libsysbase/gettod.c newlib-1.17.0-ppc/libglos
 +#include <_syslist.h>
 +#include <sys/time.h>
 +#include <sys/times.h>
++#include <sys/iosupport.h>
 +#include <errno.h>
-+#include "warning.h"
 +
-+struct timeval;
-+struct timezone;
-+
++#ifdef REENTRANT_SYSCALLS_PROVIDED
++//---------------------------------------------------------------------------------
++int
++_DEFUN(_gettimeofday_r,(ptr,ptimeval,ptimezone),
++			struct _reent *ptr _AND
++			struct timeval *ptimeval _AND
++			void *ptimezone)
++{
++//---------------------------------------------------------------------------------
++#else
++//---------------------------------------------------------------------------------
 +int
 +_DEFUN (_gettimeofday, (ptimeval, ptimezone),
 +        struct timeval  *ptimeval  _AND
 +        void *ptimezone)
 +{
-+  errno = ENOSYS;
-+  return -1;
++//---------------------------------------------------------------------------------
++	struct _reent *ptr = _REENT;
++#endif
++
++	if ( __syscalls.gettod_r ) return __syscalls.gettod_r(ptr, ptimeval, ptimezone);
++
++	ptr->_errno = ENOSYS;
++	return -1;
++
 +}
 +
-+stub_warning(_gettimeofday)
 diff -Nbaur newlib-1.17.0/libgloss/libsysbase/handle_manager.c newlib-1.17.0-ppc/libgloss/libsysbase/handle_manager.c
 --- newlib-1.17.0/libgloss/libsysbase/handle_manager.c	1970-01-01 01:00:00.000000000 +0100
 +++ newlib-1.17.0-ppc/libgloss/libsysbase/handle_manager.c	2008-12-30 09:33:00.000000000 +0000
@@ -5861,7 +5875,7 @@ diff -Nbaur newlib-1.17.0/libgloss/libsysbase/statvfs.c newlib-1.17.0-ppc/libglo
 +}
 diff -Nbaur newlib-1.17.0/libgloss/libsysbase/syscall_support.c newlib-1.17.0-ppc/libgloss/libsysbase/syscall_support.c
 --- newlib-1.17.0/libgloss/libsysbase/syscall_support.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.17.0-ppc/libgloss/libsysbase/syscall_support.c	2008-12-30 09:33:00.000000000 +0000
++++ newlib-1.17.0-ppc/libgloss/libsysbase/syscall_support.c	2009-05-14 18:26:39.000000000 +0100
 @@ -0,0 +1,66 @@
 +#include <sys/iosupport.h>
 +
@@ -5876,7 +5890,7 @@ diff -Nbaur newlib-1.17.0/libgloss/libsysbase/syscall_support.c newlib-1.17.0-pp
 +	NULL,	// malloc_lock
 +	NULL,	// malloc_unlock
 +	NULL,	// exit
-+	NULL	// times_r
++	NULL	// gettod_r
 +};
 +
 +int __libc_lock_init(int *lock,int recursive) { 
@@ -6234,7 +6248,7 @@ diff -Nbaur newlib-1.17.0/libgloss/rs6000/crtmain.c newlib-1.17.0-ppc/libgloss/r
 +	exit ( main(__system_argv->argc,__system_argv->argv) );
 +}
 diff -Nbaur newlib-1.17.0/newlib/configure.host newlib-1.17.0-ppc/newlib/configure.host
---- newlib-1.17.0/newlib/configure.host	2009-04-27 01:37:58.000000000 +0100
+--- newlib-1.17.0/newlib/configure.host	2008-12-17 23:09:09.000000000 +0000
 +++ newlib-1.17.0-ppc/newlib/configure.host	2009-04-27 01:38:25.000000000 +0100
 @@ -683,6 +683,11 @@
  	default_newlib_io_long_long="yes"
@@ -6354,8 +6368,8 @@ diff -Nbaur newlib-1.17.0/newlib/libc/include/sys/dirent.h newlib-1.17.0-ppc/new
 \ No newline at end of file
 diff -Nbaur newlib-1.17.0/newlib/libc/include/sys/iosupport.h newlib-1.17.0-ppc/newlib/libc/include/sys/iosupport.h
 --- newlib-1.17.0/newlib/libc/include/sys/iosupport.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.17.0-ppc/newlib/libc/include/sys/iosupport.h	2008-12-30 09:33:00.000000000 +0000
-@@ -0,0 +1,83 @@
++++ newlib-1.17.0-ppc/newlib/libc/include/sys/iosupport.h	2009-05-14 18:25:57.000000000 +0100
+@@ -0,0 +1,85 @@
 +//---------------------------------------------------------------------------------
 +#ifndef __iosupp_h__
 +#define __iosupp_h__
@@ -6368,6 +6382,7 @@ diff -Nbaur newlib-1.17.0/newlib/libc/include/sys/iosupport.h newlib-1.17.0-ppc/
 +#include <reent.h>
 +#include <sys/dir.h>
 +#include <sys/statvfs.h>
++#include <sys/time.h>
 +
 +enum	{
 +	STD_IN,
@@ -6422,6 +6437,7 @@ diff -Nbaur newlib-1.17.0/newlib/libc/include/sys/iosupport.h newlib-1.17.0-ppc/
 +	void (*malloc_lock) (struct _reent *ptr);
 +	void (*malloc_unlock) (struct _reent *ptr);
 +	void (*exit) ( int rc );
++	int (*gettod_r) (struct _reent *ptr, struct timeval *tp, struct timezone *tz);
 +} __syscalls_t;
 +
 +extern __syscalls_t __syscalls;
@@ -6439,6 +6455,18 @@ diff -Nbaur newlib-1.17.0/newlib/libc/include/sys/iosupport.h newlib-1.17.0-ppc/
 +//---------------------------------------------------------------------------------
 +#endif // __iosupp_h__
 +//---------------------------------------------------------------------------------
+diff -Nbaur newlib-1.17.0/newlib/libc/include/sys/reent.h newlib-1.17.0-ppc/newlib/libc/include/sys/reent.h
+--- newlib-1.17.0/newlib/libc/include/sys/reent.h	2008-12-10 23:43:12.000000000 +0000
++++ newlib-1.17.0-ppc/newlib/libc/include/sys/reent.h	2009-05-11 18:47:12.000000000 +0100
+@@ -203,7 +203,7 @@
+ 
+   /* Unix stdio files get aligned to block boundaries on fseek() */
+   int	_blksize;	/* stat.st_blksize (may be != _bf._size) */
+-  int	_offset;	/* current lseek offset */
++  _fpos_t	_offset;	/* current lseek offset */
+ 
+ #ifndef _REENT_SMALL
+   struct _reent *_data;	/* Here for binary compatibility? Remove? */
 diff -Nbaur newlib-1.17.0/newlib/libc/include/sys/statvfs.h newlib-1.17.0-ppc/newlib/libc/include/sys/statvfs.h
 --- newlib-1.17.0/newlib/libc/include/sys/statvfs.h	1970-01-01 01:00:00.000000000 +0100
 +++ newlib-1.17.0-ppc/newlib/libc/include/sys/statvfs.h	2008-12-30 09:33:00.000000000 +0000
@@ -6767,6 +6795,19 @@ diff -Nbaur newlib-1.17.0/newlib/libc/stdio/findfp.c newlib-1.17.0-ppc/newlib/li
  
    __sinit_lock_release ();
  }
+diff -Nbaur newlib-1.17.0/newlib/libc/stdio/fopen.c newlib-1.17.0-ppc/newlib/libc/stdio/fopen.c
+--- newlib-1.17.0/newlib/libc/stdio/fopen.c	2004-06-11 21:37:10.000000000 +0100
++++ newlib-1.17.0-ppc/newlib/libc/stdio/fopen.c	2009-05-14 15:24:25.000000000 +0100
+@@ -151,6 +151,9 @@
+ 
+   _flockfile (fp);
+ 
++  flags &= ~(__SLBF | __SNBF | __SMBF);
++  flags |= __SNBF;
++
+   fp->_file = f;
+   fp->_flags = flags;
+   fp->_cookie = (_PTR) fp;
 diff -Nbaur newlib-1.17.0/newlib/libc/stdio/fread.c newlib-1.17.0-ppc/newlib/libc/stdio/fread.c
 --- newlib-1.17.0/newlib/libc/stdio/fread.c	2008-12-11 17:27:56.000000000 +0000
 +++ newlib-1.17.0-ppc/newlib/libc/stdio/fread.c	2009-01-15 21:23:53.000000000 +0000
