@@ -15,7 +15,7 @@ fi
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=1.7.1
+LIBOGC_VER=1.7.2
 LIBGBA_VER=20081210
 LIBNDS_VER=1.3.3
 DEFAULT_ARM7_VER=0.5.2
@@ -23,6 +23,7 @@ DSWIFI_VER=0.3.7
 LIBMIRKO_VER=0.9.7
 MAXMOD_VER=1.0.4
 FILESYSTEM_VER=0.9.2
+LIBFAT_VER=1.0.5
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
@@ -30,6 +31,7 @@ LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
 DSWIFI="dswifi-src-$DSWIFI_VER.tar.bz2"
 MAXMOD="maxmod-src-$MAXMOD_VER.tar.bz2"
 FILESYSTEM="libfilesystem-src-$FILESYSTEM_VER.tar.bz2"
+LIBFAT="libfat-src-$LIBFAT_VER.tar.bz2"
 DEFAULT_ARM7="default_arm7-src-$DEFAULT_ARM7_VER.tar.bz2"
 LIBMIRKO="libmirko-src-$LIBMIRKO_VER.tar.bz2"
 DEVKITPRO_URL="http://downloads.sourceforge.net/devkitpro"
@@ -42,6 +44,7 @@ LIBMIRKO_URL="$DEVKITPRO_URL/$LIBMIRKO"
 DEFAULT_ARM7_URL="$DEVKITPRO_URL/$DEFAULT_ARM7"
 MAXMOD_URL="$DEVKITPRO_URL/$MAXMOD"
 FILESYSTEM_URL="$DEVKITPRO_URL/$FILESYSTEM"
+LIBFAT_URL="$DEVKITPRO_URL/$LIBFAT"
 
 #---------------------------------------------------------------------------------
 # Sane defaults for building toolchain
@@ -95,7 +98,6 @@ case "$VERSION" in
     BINUTILS_VER=2.19.1
     NEWLIB_VER=1.17.0
     GDB_VER=6.8
-    LIBFAT_VER=1.0.3
     basedir='dkarm-eabi'
     package=devkitARM
     builddir=arm-eabi
@@ -107,7 +109,6 @@ case "$VERSION" in
     BINUTILS_VER=2.19.1
     NEWLIB_VER=1.17.0
     GDB_VER=6.8
-    LIBFAT_VER=1.0.3
     basedir='dkppc'
     package=devkitPPC
     builddir=powerpc-gekko
@@ -149,8 +150,6 @@ GDB_URL="$DEVKITPRO_URL/$GDB"
 BINUTILS_URL="$DEVKITPRO_URL/$BINUTILS"
 NEWLIB="newlib-$NEWLIB_VER.tar.gz"
 NEWLIB_URL="$DEVKITPRO_URL/$NEWLIB"
-LIBFAT="libfat-src-$LIBFAT_VER.tar.bz2"
-LIBFAT_URL="$DEVKITPRO_URL/$LIBFAT"
 
 DOWNLOAD=0
 
@@ -486,6 +485,13 @@ then
     bzip2 -cd $SRCDIR/$LIBOGC | tar -xf - -C $LIBOGC_SRCDIR  || { echo "Error extracting "$LIBOGC; exit 1; }
   fi
 
+  if [ $VERSION -eq 1 -o $VERSION -eq 2 ]
+  then
+    echo "Extracting $LIBFAT"
+    mkdir -p $LIBFAT_SRCDIR
+    bzip2 -cd $SRCDIR/$LIBFAT | tar -xf - -C $LIBFAT_SRCDIR || { echo "Error extracting "$LIBFAT; exit 1; }
+  fi
+
   if [ $VERSION -eq 1 ]
   then
     echo "Extracting $LIBNDS"
@@ -495,11 +501,6 @@ then
     echo "Extracting $LIBGBA"
     mkdir -p $LIBGBA_SRCDIR
     bzip2 -cd $SRCDIR/$LIBGBA | tar -xf - -C $LIBGBA_SRCDIR || { echo "Error extracting "$LIBGBA; exit 1; }
-
-
-    echo "Extracting $LIBFAT"
-    mkdir -p $LIBFAT_SRCDIR
-    bzip2 -cd $SRCDIR/$LIBFAT | tar -xf - -C $LIBFAT_SRCDIR || { echo "Error extracting "$LIBFAT; exit 1; }
 
     echo "Extracting $DSWIFI"
     mkdir -p $DSWIFI_SRCDIR
