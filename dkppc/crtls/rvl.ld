@@ -270,7 +270,7 @@ __stack_end = (__bss_start + SIZEOF(.bss));
 __intrstack_addr = (__stack_addr + 0x4000);
 __intrstack_end = (__stack_addr);
 __Arena1Lo = (__intrstack_addr + 31) & (-32);
-__Arena1Hi = (0x816ffff0);
+__Arena1Hi = (0x817FEFF0);
 __Arena2Lo = (0x90002000);
 __Arena2Hi = (0x933E0000);
 
@@ -279,7 +279,7 @@ __ipcbufferLo = (0x933e0000);
 __ipcbufferHi = (0x93400000);
 
 /* for backward compatibility with old crt0 */
-PROVIDE (__stack = (0x816ffff0));
+PROVIDE (__stack = (0x817FEFF0));
 
 PROVIDE(__isIPL = __isIPL);
 PROVIDE(__stack_addr = __stack_addr);
