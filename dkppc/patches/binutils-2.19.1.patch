@@ -7,7 +7,7 @@ diff -Nbaur binutils-2.19.1/config.sub binutils-2.19.1-ppc/config.sub
  		;;
 +	-gekko)
 +		basic_machine=powerpc-devkitpro
-+		os=-elf
++		os=-eabi
 +		;;
  esac
  

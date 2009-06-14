@@ -7,7 +7,7 @@ diff -Nbaur gcc-4.4.0/config.sub gcc-4.4.0-ppc/config.sub
  		;;
 +	-gekko)
 +		basic_machine=powerpc-devkitpro
-+		os=-elf
++		os=-eabi
 +		;;
  esac
  

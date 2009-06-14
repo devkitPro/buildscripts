@@ -6,8 +6,8 @@ diff -Nbaur gdb-6.7.1/config.sub gdb-6.7.1-ppc/config.sub
  		os=-mint
  		;;
 +	-gekko)
-+		basic_machine=powerpc-eabi
-+		os=-elf
++		basic_machine=powerpc-devkitpro
++		os=-eabi
 +		;;
  esac
  
