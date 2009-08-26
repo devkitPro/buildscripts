@@ -94,7 +94,7 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=4.4.0
+    GCC_VER=4.4.1
     BINUTILS_VER=2.19.1
     NEWLIB_VER=1.17.0
     GDB_VER=6.8
@@ -105,14 +105,14 @@ case "$VERSION" in
     toolchain=DEVKITARM
   ;;
   "2" )
-    GCC_VER=4.4.0
+    GCC_VER=4.4.1
     BINUTILS_VER=2.19.1
-    NEWLIB_VER=1.17.0
+    NEWLIB_VER=1.17.1
     GDB_VER=6.8
     basedir='dkppc'
     package=devkitPPC
-    builddir=powerpc-gekko
-    target=powerpc-gekko
+    builddir=powerpc-eabi
+    target=powerpc-eabi
     toolchain=DEVKITPPC
   ;;
   "3" )
