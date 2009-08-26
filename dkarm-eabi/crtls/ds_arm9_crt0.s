@@ -8,7 +8,7 @@
 #define PAGE_8K		(0b01100 << 1)
 #define PAGE_16K	(0b01101 << 1)
 #define PAGE_32K	(0b01110 << 1)
-#define PAGE_64K	(0b00111 << 1)
+#define PAGE_64K	(0b01111 << 1)
 #define PAGE_128K	(0b10000 << 1)
 #define PAGE_256K	(0b10001 << 1)
 #define PAGE_512K	(0b10010 << 1)

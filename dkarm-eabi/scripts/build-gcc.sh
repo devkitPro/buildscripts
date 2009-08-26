@@ -54,6 +54,7 @@ cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
+  cp -r $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/newlib/libc/include $INSTALLDIR/devkitARM/$target/sys-include
   CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../$GCC_SRCDIR/configure \
         --enable-languages=c,c++,objc \
         --with-cpu=arm7tdmi\
@@ -65,21 +66,22 @@ then
         --target=$target \
         --with-newlib \
         --prefix=$prefix\
-        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 26" \
+        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 27 alpha" \
         || { echo "Error configuring gcc"; exit 1; }
   touch configured-gcc
 fi
 
-if [ ! -f built-gcc ]
+if [ ! -f built-gcc-stage1 ]
 then
-  $MAKE all-gcc || { echo "Error building gcc"; exit 1; }
-  touch built-gcc
+  $MAKE all-gcc || { echo "Error building gcc stage1"; exit 1; }
+  touch built-gcc-stage1
 fi
 
-if [ ! -f installed-gcc ]
+if [ ! -f installed-gcc-stage1 ]
 then
   $MAKE install-gcc || { echo "Error installing gcc"; exit 1; }
-  touch installed-gcc
+  touch installed-gcc-stage1
+  rm -fr $INSTALLDIR/devkitARM/$target/sys-include
 fi
 
 unset CFLAGS
@@ -122,16 +124,16 @@ fi
 cd $BUILDSCRIPTDIR
 cd $target/gcc
 
-if [ ! -f built-g++ ]
+if [ ! -f built-gcc-stage2 ]
 then
-  $MAKE || { echo "Error building g++"; exit 1; }
-  touch built-g++
+  $MAKE || { echo "Error building gcc stage2"; exit 1; }
+  touch built-gcc-stage2
 fi
 
-if [ ! -f installed-g++ ]
+if [ ! -f installed-gcc-stage2 ]
 then
-  $MAKE install || { echo "Error installing g++"; exit 1; }
-  touch installed-g++
+  $MAKE install || { echo "Error installing gcc stage2"; exit 1; }
+  touch installed-gcc-stage2
 fi
 
 cd $BUILDSCRIPTDIR

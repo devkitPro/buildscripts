@@ -1,8 +1,8 @@
 #---------------------------------------------------------------------------------
-# path to tools - this can be deleted if you set the path in windows
+# path to tools
 #---------------------------------------------------------------------------------
-export PATH		:=	$(DEVKITARM)/bin:$(PATH)
-
+export PATH		:=	$(DEVKITARM)/bin:$(DEVKITPRO)/portlibs/arm/bin:$(PATH)
+export PORTLIBS	:=	$(DEVKITPRO)/portlibs/arm
 #---------------------------------------------------------------------------------
 # the prefix on the compiler executables
 #---------------------------------------------------------------------------------
