@@ -90,32 +90,33 @@ cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
-   CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../$GCC_SRCDIR/configure \
+  cp -r $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/newlib/libc/include $INSTALLDIR/devkitPPC/$target/sys-include
+  CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../$GCC_SRCDIR/configure \
   --enable-languages=c,c++,objc \
-  --with-cpu=750\
-  --without-headers\
+  --with-cpu=750 \
   --disable-nls --disable-shared --enable-threads --disable-multilib \
-  --disable-win32-registry\
+  --disable-win32-registry \
   --disable-libstdcxx-pch \
   --target=$target \
   --with-newlib \
   --prefix=$prefix\
   --disable-dependency-tracking \
-  --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 18 alpha" \
+  --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 18 alpha5" \
   2>&1 | tee gcc_configure.log
   touch configured-gcc
 fi
 
-if [ ! -f built-gcc ]
+if [ ! -f built-gcc-stage1 ]
 then
-  $MAKE all-gcc || { echo "Error building gcc"; exit 1; }
-  touch built-gcc
+  $MAKE all-gcc || { echo "Error building gcc stage1"; exit 1; }
+  touch built-gcc-stage1
 fi
 
-if [ ! -f installed-gcc ]
+if [ ! -f installed-gcc-stage1 ]
 then
-  $MAKE install-gcc || { echo "Error installing gcc"; exit 1; }
-  touch installed-gcc
+  $MAKE install-gcc || { echo "Error installing gcc stage1"; exit 1; }
+  touch installed-gcc-stage1
+  rm -fr $INSTALLDIR/devkitPPC/$target/sys-include
 fi
 
 #---------------------------------------------------------------------------------
@@ -157,19 +158,21 @@ cd $BUILDSCRIPTDIR
 #---------------------------------------------------------------------------------
 
 cd $BUILDSCRIPTDIR
+mkdir -p $target/gcc
 cd $target/gcc
 
-if [ ! -f built-gpp ]
+if [ ! -f built-gcc-stage2 ]
 then
-  $MAKE || { echo "Error building g++"; exit 1; }
-  touch built-gpp
+  $MAKE all || { echo "Error building gcc stage2"; exit 1; }
+  touch built-gcc-stage2
 fi
 
-if [ ! -f installed-gpp ]
+if [ ! -f installed-gcc-stage2 ]
 then
-  $MAKE install || { echo "Error installing g++"; exit 1; }
-  touch installed-gpp
+  $MAKE install || { echo "Error installing gcc stage2"; exit 1; }
+  touch installed-gcc
 fi
+
 
 cd $BUILDSCRIPTDIR
 

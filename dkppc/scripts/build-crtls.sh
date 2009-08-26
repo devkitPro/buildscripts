@@ -29,6 +29,8 @@ then
   touch installed-libogc
 fi
 
+cd $BUILDSCRIPTDIR
+
 cd $LIBFAT_SRCDIR
 if [ ! -f built-libfat ]
 then

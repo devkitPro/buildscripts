@@ -1,12 +1,13 @@
 #---------------------------------------------------------------------------------
-# path to tools - this can be deleted if you set the path in windows
+# path to tools 
 #---------------------------------------------------------------------------------
-export PATH		:=	$(DEVKITPPC)/bin:$(PATH)
+export PATH		:=	$(DEVKITPPC)/bin:$(DEVKITPRO)/portlibs/ppc/bin:$(PATH)
+export PORTLIBS	:=	$(DEVKITPRO)/portlibs/ppc
 
 #---------------------------------------------------------------------------------
 # the prefix on the compiler executables
 #---------------------------------------------------------------------------------
-PREFIX	:=	powerpc-gekko-
+PREFIX	:=	powerpc-eabi-
 
 export AS		:=	$(PREFIX)as
 export CC		:=	$(PREFIX)gcc

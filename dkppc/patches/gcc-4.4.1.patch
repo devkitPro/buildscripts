@@ -1,17 +1,3 @@
-diff -Nbaur gcc-4.4.0/config.sub gcc-4.4.0-ppc/config.sub
---- gcc-4.4.0/config.sub	2008-12-18 03:27:27.000000000 +0000
-+++ gcc-4.4.0-ppc/config.sub	2009-04-26 22:32:15.000000000 +0100
-@@ -230,6 +230,10 @@
- 		basic_machine=m68k-atari
- 		os=-mint
- 		;;
-+	-gekko)
-+		basic_machine=powerpc-devkitpro
-+		os=-eabi
-+		;;
- esac
- 
- # Decode aliases for certain CPU-COMPANY combinations.
 diff -Nbaur gcc-4.4.0/gcc/config/rs6000/rs6000.h gcc-4.4.0-ppc/gcc/config/rs6000/rs6000.h
 --- gcc-4.4.0/gcc/config/rs6000/rs6000.h	2009-04-10 00:23:07.000000000 +0100
 +++ gcc-4.4.0-ppc/gcc/config/rs6000/rs6000.h	2009-04-27 01:51:15.000000000 +0100
@@ -220,7 +206,16 @@ diff -Nbaur gcc-4.4.0/gcc/config/rs6000/sysv4.opt gcc-4.4.0-ppc/gcc/config/rs600
  Link with libyk.a, libc.a and crt0.o
 diff -Nbaur gcc-4.4.0/gcc/gcc.c gcc-4.4.0-ppc/gcc/gcc.c
 --- gcc-4.4.0/gcc/gcc.c	2009-03-17 21:25:59.000000000 +0000
-+++ gcc-4.4.0-ppc/gcc/gcc.c	2009-04-26 22:58:37.000000000 +0100
++++ gcc-4.4.0-ppc/gcc/gcc.c	2009-06-17 02:15:34.000000000 +0100
+@@ -698,7 +698,7 @@
+    -lgcc and -lc order specially, yet not require them to override all
+    of LINK_COMMAND_SPEC.  */
+ #ifndef LINK_GCC_C_SEQUENCE_SPEC
+-#define LINK_GCC_C_SEQUENCE_SPEC "%G %L %G"
++#define LINK_GCC_C_SEQUENCE_SPEC "%G %L %G -lm"
+ #endif
+ 
+ #ifndef LINK_SSP_SPEC
 @@ -3455,8 +3455,6 @@
        gcc_libexec_prefix = make_relative_prefix (argv[0],
  						 standard_bindir_prefix,
