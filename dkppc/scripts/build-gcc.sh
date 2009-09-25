@@ -99,9 +99,10 @@ then
   --disable-libstdcxx-pch \
   --target=$target \
   --with-newlib \
+  --with-headers \
   --prefix=$prefix\
   --disable-dependency-tracking \
-  --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 18 alpha5" \
+  --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 18" \
   2>&1 | tee gcc_configure.log
   touch configured-gcc
 fi
