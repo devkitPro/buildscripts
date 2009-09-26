@@ -99,7 +99,6 @@ then
   --disable-libstdcxx-pch \
   --target=$target \
   --with-newlib \
-  --with-headers \
   --prefix=$prefix\
   --disable-dependency-tracking \
   --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 18" \
