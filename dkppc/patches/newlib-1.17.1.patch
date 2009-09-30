@@ -10220,7 +10220,7 @@ diff -Nbaur newlib-1.17.1/libgloss/libsysbase/handle_manager.h newlib-1.17.1-ppc
 +#endif
 diff -Nbaur newlib-1.17.1/libgloss/libsysbase/iosupport.c newlib-1.17.1-ppc/libgloss/libsysbase/iosupport.c
 --- newlib-1.17.1/libgloss/libsysbase/iosupport.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.17.1-ppc/libgloss/libsysbase/iosupport.c	2009-06-16 23:32:27.000000000 +0100
++++ newlib-1.17.1-ppc/libgloss/libsysbase/iosupport.c	2009-10-01 00:35:31.000000000 +0100
 @@ -0,0 +1,122 @@
 +#include <stdlib.h>
 +#include <string.h>
@@ -10278,6 +10278,8 @@ diff -Nbaur newlib-1.17.1/libgloss/libsysbase/iosupport.c newlib-1.17.1-ppc/libg
 +//---------------------------------------------------------------------------------
 +	int i = 0, namelen, dev = -1;
 +
++	if (strchr(name, ':') == NULL) return defaultDevice;
++
 +	while(i<STD_MAX) {
 +		if(devoptab_list[i]) {
 +			namelen = strlen(devoptab_list[i]->name);
@@ -10290,8 +10292,6 @@ diff -Nbaur newlib-1.17.1/libgloss/libsysbase/iosupport.c newlib-1.17.1-ppc/libg
 +		}
 +		i++;
 +	}
-+
-+	if ( dev == -1 && defaultDevice != -1 ) dev = defaultDevice;
 +
 +	return dev;
 +}
