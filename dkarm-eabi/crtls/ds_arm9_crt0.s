@@ -38,7 +38,7 @@
 #define DCACHE_ENABLE	(1<<2)
 #define PROTECT_ENABLE	(1<<0)
 
-	.equ	_libnds_argv,0x027FFF70
+	.equ	_libnds_argv,0x02FFFE70
 
 @---------------------------------------------------------------------------------
 	.section ".init"
@@ -91,9 +91,9 @@ _start:
 	mcr	p15, 0, r0, c6, c0, 0
 
 	@-------------------------------------------------------------------------
-	@ Region 1 - Main Memory
+	@ Region 1 - System ROM
 	@-------------------------------------------------------------------------
-	ldr	r0,=( PAGE_4M | 0x02000000 | 1)	
+	ldr	r0,=( PAGE_32K | 0xFFFF0000 | 1)	
 	mcr	p15, 0, r0, c6, c1, 0
 
 	@-------------------------------------------------------------------------
@@ -102,21 +102,16 @@ _start:
 	ldr	r0,=( PAGE_4K | 0x00000000 | 1)	
 	mcr	p15, 0, r0, c6, c2, 0
 
-	@-------------------------------------------------------------------------
-	@ Region 3 - DS Accessory (GBA Cart)
-	@-------------------------------------------------------------------------
-	ldr	r0,=( PAGE_128M | 0x08000000 | 1)	
-	mcr	p15, 0, r0, c6, c3, 0
 
 	@-------------------------------------------------------------------------
-	@ Region 4 - DTCM
+	@ Region 3 - DTCM
 	@-------------------------------------------------------------------------
 	ldr	r0,=__dtcm_start
 	orr	r0,r0,#(PAGE_16K | 1)
-	mcr	p15, 0, r0, c6, c4, 0
+	mcr	p15, 0, r0, c6, c3, 0
 
 	@-------------------------------------------------------------------------
-	@ Region 5 - ITCM
+	@ Region 4 - ITCM
 	@-------------------------------------------------------------------------
 	ldr	r0,=__itcm_start
 
@@ -125,19 +120,53 @@ _start:
 	mov	r0,r0,lsl #15
 
 	orr	r0,r0,#(PAGE_32K | 1)
-	mcr	p15, 0, r0, c6, c5, 0
+	mcr	p15, 0, r0, c6, c4, 0
+
+	ldr	r0,=0x4004008
+	ldr	r0,[r0]
+	ands	r0,r0,#0x8000
+	bne	dsi_mode
+
+	swi	0xf0000
+	ldr	r1,=( PAGE_128M | 0x08000000 | 1)	
+	cmp	r0,#0
+	bne	debug_mode
+
+	ldr	r2,=( PAGE_4M | 0x02000000 | 1)	
+	ldr	r3,=( PAGE_4M | 0x02C00000 | 1)	
+	mov	r8,#0x02400000
+
+	b	setregions
+
+debug_mode:
+	ldr	r2,=( PAGE_8M | 0x02000000 | 1)	
+	ldr	r3,=( PAGE_8M | 0x02800000 | 1)	
+	mov	r8,#0x02800000
+	b	setregions
+
+dsi_mode:
+	ldr	r1,=( PAGE_8M  | 0x03000000 | 1)	
+	ldr	r2,=( PAGE_16M | 0x02000000 | 1)	
+	ldr	r3,=( PAGE_16M | 0x0C000000 | 1)	
+	mov	r8,#0x03000000
+
+setregions:
 
 	@-------------------------------------------------------------------------
-	@ Region 6 - System ROM
+	@ Region 5 - DS Accessory (GBA Cart) / DSi switchable iwram
 	@-------------------------------------------------------------------------
-	ldr	r0,=( PAGE_32K | 0xFFFF0000 | 1)	
-	mcr	p15, 0, r0, c6, c6, 0
+	mcr	p15, 0, r1, c6, c5, 0
+
+	@-------------------------------------------------------------------------
+	@ Region 6 - Main Memory
+	@-------------------------------------------------------------------------
+	mcr	p15, 0, r2, c6, c6, 0
 
 	@-------------------------------------------------------------------------
 	@ Region 7 - non cacheable main ram
 	@-------------------------------------------------------------------------
-	ldr	r0,=( PAGE_4M  | 0x02400000 | 1)	
-	mcr	p15, 0, r0, c6, c7, 0
+	mcr	p15, 0, r3, c6, c7, 0
+
 
 	@-------------------------------------------------------------------------
 	@ Write buffer enable
@@ -211,9 +240,6 @@ _start:
 	sub	r1, r1, r0
 	bl	ClearMem
 	
-	ldr	r1, =fake_heap_end	@ set heap end
-	ldr	r0, =__eheap_end
-	str	r0, [r1]
 
 	ldr	r0, =_libnds_argv
 
@@ -221,6 +247,10 @@ _start:
 	ldr	r2, [r0,#20]		@ newheap base
 	ldr	r1,=fake_heap_start
 	str	r2,[r1]
+
+	ldr	r1, =fake_heap_end	@ set heap end
+	sub	r8,r8,#0x8000
+	str	r8, [r1]
 
 	push	{r0}
 	ldr	r3, =initSystem
@@ -240,7 +270,7 @@ _start:
 	@ If the user ever returns, go back to passme loop
 	ldr	r0, =ILoop
 	ldr	r0, [r0]
-	ldr	r1, =0x027FFE78
+	ldr	r1, =0x02FFFE78
 	str	r0, [r1]
 	bx	r1
 ILoop:
@@ -256,9 +286,10 @@ checkARGV:
 	str	r1, [r0,#12]		@ clear argc
 	str	r1, [r0,#16]		@ clear argv
 	
-	ldr	r1, [r0]		@ argv magic number
+	ldr	r3, [r0]		@ argv magic number
 	ldr	r2, =0x5f617267		@ '_arg'
-	cmp	r1, r2
+	cmp	r3, r2
+	strne	r1,[r0,#20]
 	bxne	lr			@ bail out if no magic
 	
 	ldr	r1, [r0, #4]		@ command line address
