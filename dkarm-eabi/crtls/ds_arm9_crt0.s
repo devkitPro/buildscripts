@@ -102,7 +102,6 @@ _start:
 	ldr	r0,=( PAGE_4K | 0x00000000 | 1)	
 	mcr	p15, 0, r0, c6, c2, 0
 
-
 	@-------------------------------------------------------------------------
 	@ Region 3 - DTCM
 	@-------------------------------------------------------------------------
@@ -127,16 +126,17 @@ _start:
 	ands	r0,r0,#0x8000
 	bne	dsi_mode
 
+	@ set sensible stacks to allow bios call
 	mov	r0, #0x13		@ Switch to SVC Mode
 	msr	cpsr, r0
-
-	mrc	p15, 0, r0, c1, c0, 0
-	orr	r0,r0,#DTCM_ENABLE
-	mcr	p15, 0, r0, c1, c0, 0
-
-	ldr	sp, =__sp_svc		@ Set SVC stack
+	mov	r1,#0x03000000
+	sub	r1,r1,#0x1000
+	mov	sp,r1
+	mov	r0, #0x1F		@ Switch to System Mode
+	msr	cpsr, r0
+	sub	r1,r1,#0x100
+	mov	sp,r1
 	
-	mov	r11,r11
 	swi	0xf0000
 
 	ldr	r1,=( PAGE_128M | 0x08000000 | 1)	
