@@ -11636,6 +11636,19 @@ diff -Nbaur newlib-1.17.1/newlib/libc/stdio/fopen.c newlib-1.17.1-ppc/newlib/lib
    fp->_file = f;
    fp->_flags = flags;
    fp->_cookie = (_PTR) fp;
+diff -Nbaur newlib-1.17.1/newlib/libc/stdio/fvwrite.c newlib-1.17.1-ppc/newlib/libc/stdio/fvwrite.c
+--- newlib-1.17.1/newlib/libc/stdio/fvwrite.c	2007-07-13 21:37:53.000000000 +0100
++++ newlib-1.17.1-ppc/newlib/libc/stdio/fvwrite.c	2009-10-06 23:07:41.000000000 +0100
+@@ -98,7 +98,8 @@
+       do
+ 	{
+ 	  GETIOV (;);
+-	  w = fp->_write (ptr, fp->_cookie, p, MIN (len, BUFSIZ));
++	  //w = fp->_write (ptr, fp->_cookie, p, MIN (len, BUFSIZ));
++	  w = fp->_write (ptr, fp->_cookie, p, len);
+ 	  if (w <= 0)
+ 	    goto err;
+ 	  p += w;
 diff -Nbaur newlib-1.17.1/newlib/libc/stdlib/mlock.c newlib-1.17.1-ppc/newlib/libc/stdlib/mlock.c
 --- newlib-1.17.1/newlib/libc/stdlib/mlock.c	2005-10-28 22:21:07.000000000 +0100
 +++ newlib-1.17.1-ppc/newlib/libc/stdlib/mlock.c	2009-06-16 23:32:46.000000000 +0100
