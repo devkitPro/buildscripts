@@ -170,7 +170,7 @@ fi
 if [ ! -f installed-gcc-stage2 ]
 then
   $MAKE install || { echo "Error installing gcc stage2"; exit 1; }
-  touch installed-gcc
+  touch installed-gcc-stage2
 fi
 
 
@@ -188,7 +188,7 @@ PLATFORM=`uname -s`
 if [ ! -f configured-gdb ]
 then
   CFLAGS="$cflags" LDFLAGS="$ldflags" ../../$GDB_SRCDIR/configure \
-  --disable-nls --prefix=$prefix --target=$target --disable-werror \
+  --disable-nls --prefix=$prefix --target=$target --disable-werror --disable-dependency-tracking\
   || { echo "Error configuring gdb"; exit 1; }
   touch configured-gdb
 fi
