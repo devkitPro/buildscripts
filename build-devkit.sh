@@ -1,7 +1,7 @@
 #!/bin/sh
 #---------------------------------------------------------------------------------
 # Build scripts for
-#	devkitARM release 26
+#	devkitARM release 27
 #	devkitPPC release 18
 #	devkitPSP release 13
 #---------------------------------------------------------------------------------
@@ -97,7 +97,7 @@ case "$VERSION" in
     GCC_VER=4.4.1
     BINUTILS_VER=2.19.1
     NEWLIB_VER=1.17.0
-    GDB_VER=6.8
+    GDB_VER=7.0
     basedir='dkarm-eabi'
     package=devkitARM
     builddir=arm-eabi
@@ -108,7 +108,7 @@ case "$VERSION" in
     GCC_VER=4.4.1
     BINUTILS_VER=2.19.1
     NEWLIB_VER=1.17.1
-    GDB_VER=6.8
+    GDB_VER=7.0
     basedir='dkppc'
     package=devkitPPC
     builddir=powerpc-eabi
