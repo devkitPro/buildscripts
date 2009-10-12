@@ -150,6 +150,7 @@ if [ ! -f configured-gdb ]
 then
   CFLAGS="$cflags" LDFLAGS="$ldflags" ../../$GDB_SRCDIR/configure \
   --disable-nls --prefix=$prefix --target=$target --disable-werror \
+  --disable-dependency-tracking \
   || { echo "Error configuring gdb"; exit 1; }
   touch configured-gdb
 fi
