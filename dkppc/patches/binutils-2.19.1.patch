@@ -1,18 +1,3 @@
-diff -Nbaur binutils-2.19.1/config.sub binutils-2.19.1-ppc/config.sub
---- binutils-2.19.1/config.sub	2008-04-14 10:28:35.000000000 +0100
-+++ binutils-2.19.1-ppc/config.sub	2009-05-09 12:24:54.000000000 +0100
-@@ -230,6 +230,10 @@
- 		basic_machine=m68k-atari
- 		os=-mint
- 		;;
-+	-gekko)
-+		basic_machine=powerpc-devkitpro
-+		os=-eabi
-+		;;
- esac
- 
- # Decode aliases for certain CPU-COMPANY combinations.
-diff -Nbaur binutils-2.19.1/gas/config/tc-ppc.c binutils-2.19.1-ppc/gas/config/tc-ppc.c
 --- binutils-2.19.1/gas/config/tc-ppc.c	2008-08-02 05:38:50.000000000 +0100
 +++ binutils-2.19.1-ppc/gas/config/tc-ppc.c	2009-05-09 12:26:17.000000000 +0100
 @@ -850,6 +850,9 @@
