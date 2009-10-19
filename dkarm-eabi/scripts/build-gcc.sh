@@ -27,7 +27,7 @@ cd $target/binutils
 if [ ! -f configured-binutils ]
 then
   CFLAGS=$cflags LDFLAGS=$ldflags ../../$BINUTILS_SRCDIR/configure \
-        --prefix=$prefix --target=$target --disable-nls \
+        --prefix=$prefix --target=$target --disable-nls --disable-dependency-tracking \
         || { echo "Error configuring binutils"; exit 1; }
   touch configured-binutils
 fi
@@ -60,6 +60,7 @@ then
         --with-cpu=arm7tdmi\
         --enable-interwork --enable-multilib\
         --with-gcc --with-gnu-ld --with-gnu-as \
+		--disable-dependency-tracking \
         --disable-shared --disable-threads --disable-win32-registry --disable-nls --disable-debug\
         --disable-libmudflap --disable-libssp --disable-libgomp \
         --disable-libstdcxx-pch \

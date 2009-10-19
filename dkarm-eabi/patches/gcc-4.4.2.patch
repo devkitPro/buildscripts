@@ -1,6 +1,6 @@
-diff -Nbaur gcc-4.4.0/gcc/config/arm/t-arm-elf gcc-4.4.0-arm/gcc/config/arm/t-arm-elf
---- gcc-4.4.0/gcc/config/arm/t-arm-elf	2008-06-12 18:29:47.000000000 +0100
-+++ gcc-4.4.0-arm/gcc/config/arm/t-arm-elf	2009-04-22 23:35:07.000000000 +0100
+diff -Nbaur gcc-4.4.2/gcc/config/arm/t-arm-elf gcc-4.4.2-arm/gcc/config/arm/t-arm-elf
+--- gcc-4.4.2/gcc/config/arm/t-arm-elf	2008-06-12 18:29:47.000000000 +0100
++++ gcc-4.4.2-arm/gcc/config/arm/t-arm-elf	2009-10-19 00:21:22.000000000 +0100
 @@ -18,23 +18,23 @@
  MULTILIB_EXCEPTIONS  = 
  MULTILIB_MATCHES     =
@@ -37,18 +37,18 @@ diff -Nbaur gcc-4.4.0/gcc/config/arm/t-arm-elf gcc-4.4.0-arm/gcc/config/arm/t-ar
  # 
  # MULTILIB_OPTIONS    += mhard-float/msoft-float
  # MULTILIB_DIRNAMES   += fpu soft
-diff -Nbaur gcc-4.4.0/gcc/config/arm/unknown-elf.h gcc-4.4.0-arm/gcc/config/arm/unknown-elf.h
---- gcc-4.4.0/gcc/config/arm/unknown-elf.h	2009-02-20 15:20:38.000000000 +0000
-+++ gcc-4.4.0-arm/gcc/config/arm/unknown-elf.h	2009-04-22 23:35:07.000000000 +0100
+diff -Nbaur gcc-4.4.2/gcc/config/arm/unknown-elf.h gcc-4.4.2-arm/gcc/config/arm/unknown-elf.h
+--- gcc-4.4.2/gcc/config/arm/unknown-elf.h	2009-02-20 15:20:38.000000000 +0000
++++ gcc-4.4.2-arm/gcc/config/arm/unknown-elf.h	2009-10-19 00:21:22.000000000 +0100
 @@ -97,4 +97,4 @@
     udivmoddi4, which will depend on the exception unwind routines,
     which will depend on abort, which is defined in libc.  */ 
  #undef LINK_GCC_C_SEQUENCE_SPEC
 -#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L --end-group"
 +#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
-diff -Nbaur gcc-4.4.0/gcc/gcc.c gcc-4.4.0-arm/gcc/gcc.c
---- gcc-4.4.0/gcc/gcc.c	2009-03-17 21:25:59.000000000 +0000
-+++ gcc-4.4.0-arm/gcc/gcc.c	2009-04-23 00:12:47.000000000 +0100
+diff -Nbaur gcc-4.4.2/gcc/gcc.c gcc-4.4.2-arm/gcc/gcc.c
+--- gcc-4.4.2/gcc/gcc.c	2009-03-17 21:25:59.000000000 +0000
++++ gcc-4.4.2-arm/gcc/gcc.c	2009-10-19 00:21:22.000000000 +0100
 @@ -643,6 +643,11 @@
  #endif
  #endif
@@ -105,9 +105,9 @@ diff -Nbaur gcc-4.4.0/gcc/gcc.c gcc-4.4.0-arm/gcc/gcc.c
    strcat (specs_file, just_machine_suffix);
    strcat (specs_file, "specs");
    if (access (specs_file, R_OK) == 0)
-diff -Nbaur gcc-4.4.0/gcc/prefix.c gcc-4.4.0-arm/gcc/prefix.c
---- gcc-4.4.0/gcc/prefix.c	2007-09-03 18:09:20.000000000 +0100
-+++ gcc-4.4.0-arm/gcc/prefix.c	2009-04-22 23:35:07.000000000 +0100
+diff -Nbaur gcc-4.4.2/gcc/prefix.c gcc-4.4.2-arm/gcc/prefix.c
+--- gcc-4.4.2/gcc/prefix.c	2007-09-03 18:09:20.000000000 +0100
++++ gcc-4.4.2-arm/gcc/prefix.c	2009-10-19 00:21:22.000000000 +0100
 @@ -245,13 +245,16 @@
     The returned string is always malloc-ed, and the caller is
     responsible for freeing it.  */
@@ -134,9 +134,9 @@ diff -Nbaur gcc-4.4.0/gcc/prefix.c gcc-4.4.0-arm/gcc/prefix.c
 +
 +	putenv (concat ("GCC_EXEC_PREFIX=", std_prefix, NULL));
  }
-diff -Nbaur gcc-4.4.0/gcc/toplev.c gcc-4.4.0-arm/gcc/toplev.c
---- gcc-4.4.0/gcc/toplev.c	2008-12-09 21:25:11.000000000 +0000
-+++ gcc-4.4.0-arm/gcc/toplev.c	2009-04-23 00:14:37.000000000 +0100
+diff -Nbaur gcc-4.4.2/gcc/toplev.c gcc-4.4.2-arm/gcc/toplev.c
+--- gcc-4.4.2/gcc/toplev.c	2009-04-29 05:57:17.000000000 +0100
++++ gcc-4.4.2-arm/gcc/toplev.c	2009-10-19 00:21:22.000000000 +0100
 @@ -84,6 +84,7 @@
  #include "tree-mudflap.h"
  #include "tree-pass.h"
@@ -145,7 +145,7 @@ diff -Nbaur gcc-4.4.0/gcc/toplev.c gcc-4.4.0-arm/gcc/toplev.c
  
  #if defined (DWARF2_UNWIND_INFO) || defined (DWARF2_DEBUGGING_INFO)
  #include "dwarf2out.h"
-@@ -1553,6 +1554,10 @@
+@@ -1557,6 +1558,10 @@
  
    xmalloc_set_program_name (progname);
  
@@ -156,9 +156,9 @@ diff -Nbaur gcc-4.4.0/gcc/toplev.c gcc-4.4.0-arm/gcc/toplev.c
    hex_init ();
  
    /* Unlock the stdio streams.  */
-diff -Nbaur gcc-4.4.0/libcpp/Makefile.in gcc-4.4.0-arm/libcpp/Makefile.in
---- gcc-4.4.0/libcpp/Makefile.in	2009-04-21 10:08:08.000000000 +0100
-+++ gcc-4.4.0-arm/libcpp/Makefile.in	2009-04-23 00:17:03.000000000 +0100
+diff -Nbaur gcc-4.4.2/libcpp/Makefile.in gcc-4.4.2-arm/libcpp/Makefile.in
+--- gcc-4.4.2/libcpp/Makefile.in	2009-10-15 08:55:16.000000000 +0100
++++ gcc-4.4.2-arm/libcpp/Makefile.in	2009-10-19 00:21:22.000000000 +0100
 @@ -201,8 +201,7 @@
  # Note that we put the dependencies into a .Tpo file, then move them
  # into place if the compile succeeds.  We need this because gcc does
