@@ -11635,6 +11635,18 @@ diff -Nbaur newlib-1.17.1/newlib/libc/stdio/fvwrite.c newlib-1.17.1-ppc/newlib/l
  	  if (w <= 0)
  	    goto err;
  	  p += w;
+diff -Nbaur newlib-1.17.1/newlib/libc/stdlib/mbtowc_r.c newlib-1.17.1-ppc/newlib/libc/stdlib/mbtowc_r.c
+--- newlib-1.17.1/newlib/libc/stdlib/mbtowc_r.c	2009-04-09 09:20:10.000000000 +0100
++++ newlib-1.17.1-ppc/newlib/libc/stdlib/mbtowc_r.c	2009-10-20 13:00:02.000000000 +0100
+@@ -9,7 +9,7 @@
+ 
+ int (*__mbtowc) (struct _reent *, wchar_t *, const char *, size_t,
+ 		 const char *, mbstate_t *)
+-   = __ascii_mbtowc;
++   = __utf8_mbtowc;
+ 
+ int
+ _DEFUN (_mbtowc_r, (r, pwc, s, n, state),
 diff -Nbaur newlib-1.17.1/newlib/libc/stdlib/mlock.c newlib-1.17.1-ppc/newlib/libc/stdlib/mlock.c
 --- newlib-1.17.1/newlib/libc/stdlib/mlock.c	2005-10-28 22:21:07.000000000 +0100
 +++ newlib-1.17.1-ppc/newlib/libc/stdlib/mlock.c	2009-06-16 23:32:46.000000000 +0100
