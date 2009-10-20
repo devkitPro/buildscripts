@@ -1,17 +1,3 @@
-diff -Nbaur newlib-1.17.1/config.sub newlib-1.17.1-ppc/config.sub
---- newlib-1.17.1/config.sub	2009-06-03 00:00:59.000000000 +0100
-+++ newlib-1.17.1-ppc/config.sub	2009-06-16 23:32:27.000000000 +0100
-@@ -231,6 +231,10 @@
- 		basic_machine=m68k-atari
- 		os=-mint
- 		;;
-+	-gekko)
-+		basic_machine=powerpc-devkitpro
-+		os=-eabi
-+		;;
- esac
- 
- # Decode aliases for certain CPU-COMPANY combinations.
 diff -Nbaur newlib-1.17.1/libgloss/configure newlib-1.17.1-ppc/libgloss/configure
 --- newlib-1.17.1/libgloss/configure	2009-05-13 22:38:25.000000000 +0100
 +++ newlib-1.17.1-ppc/libgloss/configure	2009-06-17 01:14:56.000000000 +0100
@@ -11667,6 +11653,18 @@ diff -Nbaur newlib-1.17.1/newlib/libc/stdlib/mlock.c newlib-1.17.1-ppc/newlib/li
 -
 +*/
  #endif
+diff -Nbaur newlib-1.17.1/newlib/libc/stdlib/wctomb_r.c newlib-1.17.1-ppc/newlib/libc/stdlib/wctomb_r.c
+--- newlib-1.17.1/newlib/libc/stdlib/wctomb_r.c	2009-04-09 09:20:10.000000000 +0100
++++ newlib-1.17.1-ppc/newlib/libc/stdlib/wctomb_r.c	2009-10-20 09:33:35.000000000 +0100
+@@ -8,7 +8,7 @@
+ 
+ int (*__wctomb) (struct _reent *, char *, wchar_t, const char *charset,
+ 		 mbstate_t *)
+-    = __ascii_wctomb;
++    = __utf8_wctomb;
+ 
+ int
+ _DEFUN (_wctomb_r, (r, s, wchar, state),
 diff -Nbaur newlib-1.17.1/newlib/libc/syscalls/Makefile.am newlib-1.17.1-ppc/newlib/libc/syscalls/Makefile.am
 --- newlib-1.17.1/newlib/libc/syscalls/Makefile.am	2008-01-03 22:33:37.000000000 +0000
 +++ newlib-1.17.1-ppc/newlib/libc/syscalls/Makefile.am	2009-06-16 23:32:46.000000000 +0100
