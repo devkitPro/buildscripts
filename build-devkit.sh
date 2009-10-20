@@ -2,7 +2,7 @@
 #---------------------------------------------------------------------------------
 # Build scripts for
 #	devkitARM release 27
-#	devkitPPC release 18
+#	devkitPPC release 19
 #	devkitPSP release 13
 #---------------------------------------------------------------------------------
 
@@ -105,8 +105,8 @@ case "$VERSION" in
     toolchain=DEVKITARM
   ;;
   "2" )
-    GCC_VER=4.4.1
-    BINUTILS_VER=2.19.1
+    GCC_VER=4.4.2
+    BINUTILS_VER=2.20
     NEWLIB_VER=1.17.1
     GDB_VER=7.0
     basedir='dkppc'
@@ -160,7 +160,7 @@ fi
 while [ $DOWNLOAD -eq 0 ]
 do
   echo
-  echo "The installation requires binutils-$BINUTILS_VER, gcc-$GCC_VER and newlib-$NEWLIB_VER.  Please select an option:"
+  echo "The installation requires binutils-$BINUTILS_VER, gcc-$GCC_VER, newlib-$NEWLIB_VER and gdb-$GDB_VER.  Please select an option:"
   echo
   echo "1: I have already downloaded the source packages"
   echo "2: Download the packages for me (requires curl or wget)"

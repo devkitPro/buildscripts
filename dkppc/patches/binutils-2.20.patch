@@ -1,0 +1,25 @@
+diff -Nbaur binutils-2.20/gas/config/tc-ppc.c binutils-2.20-ppc/gas/config/tc-ppc.c
+--- binutils-2.20/gas/config/tc-ppc.c	2009-10-06 11:57:55.000000000 +0100
++++ binutils-2.20-ppc/gas/config/tc-ppc.c	2009-10-20 09:15:36.000000000 +0100
+@@ -1191,7 +1191,8 @@
+ -m476			generate code for PowerPC 476\n\
+ -m7400, -m7410, -m7450, -m7455\n\
+ 			generate code for PowerPC 7400/7410/7450/7455\n\
+--m750cl			generate code for PowerPC 750cl\n"));
++-m750cl			generate code for PowerPC 750cl\n\
++-mgekko			generate code for PowerPC Gekko\n"));
+   fprintf (stream, _("\
+ -mppc64, -m620		generate code for PowerPC 620/625/630\n\
+ -mppc64bridge		generate code for PowerPC 64, including bridge insns\n\
+diff -Nbaur binutils-2.20/opcodes/ppc-dis.c binutils-2.20-ppc/opcodes/ppc-dis.c
+--- binutils-2.20/opcodes/ppc-dis.c	2009-10-06 11:57:55.000000000 +0100
++++ binutils-2.20-ppc/opcodes/ppc-dis.c	2009-10-20 04:00:33.000000000 +0100
+@@ -89,6 +89,8 @@
+     0 },
+   { "750cl",   (PPC_OPCODE_PPC | PPC_OPCODE_PPCPS)
+     , 0 },
++  { "gekko",   (PPC_OPCODE_PPC | PPC_OPCODE_PPCPS | PPC_OPCODE_32 | PPC_OPCODE_CLASSIC)
++    , 0 },
+   { "altivec", (PPC_OPCODE_PPC | PPC_OPCODE_CLASSIC),
+     PPC_OPCODE_ALTIVEC },
+   { "any",     0,

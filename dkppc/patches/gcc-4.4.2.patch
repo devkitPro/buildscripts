@@ -1,6 +1,6 @@
-diff -Nbaur gcc-4.4.0/gcc/config/rs6000/rs6000.h gcc-4.4.0-ppc/gcc/config/rs6000/rs6000.h
---- gcc-4.4.0/gcc/config/rs6000/rs6000.h	2009-04-10 00:23:07.000000000 +0100
-+++ gcc-4.4.0-ppc/gcc/config/rs6000/rs6000.h	2009-04-27 01:51:15.000000000 +0100
+diff -Nbaur gcc-4.4.2/gcc/config/rs6000/rs6000.h gcc-4.4.2-ppc/gcc/config/rs6000/rs6000.h
+--- gcc-4.4.2/gcc/config/rs6000/rs6000.h	2009-04-10 00:23:07.000000000 +0100
++++ gcc-4.4.2-ppc/gcc/config/rs6000/rs6000.h	2009-10-20 09:10:22.000000000 +0100
 @@ -180,12 +180,12 @@
     the condition in driver-rs6000.c.  */
  #if defined(__powerpc__) || defined(__POWERPC__) || defined(_AIX)
@@ -16,9 +16,9 @@ diff -Nbaur gcc-4.4.0/gcc/config/rs6000/rs6000.h gcc-4.4.0-ppc/gcc/config/rs6000
  #ifndef CC1_CPU_SPEC
  #ifdef HAVE_LOCAL_CPU_DETECT
  #define CC1_CPU_SPEC \
-diff -Nbaur gcc-4.4.0/gcc/config/rs6000/sysv4.h gcc-4.4.0-ppc/gcc/config/rs6000/sysv4.h
---- gcc-4.4.0/gcc/config/rs6000/sysv4.h	2009-04-10 00:23:07.000000000 +0100
-+++ gcc-4.4.0-ppc/gcc/config/rs6000/sysv4.h	2009-04-27 01:27:13.000000000 +0100
+diff -Nbaur gcc-4.4.2/gcc/config/rs6000/sysv4.h gcc-4.4.2-ppc/gcc/config/rs6000/sysv4.h
+--- gcc-4.4.2/gcc/config/rs6000/sysv4.h	2009-04-10 00:23:07.000000000 +0100
++++ gcc-4.4.2-ppc/gcc/config/rs6000/sysv4.h	2009-10-20 09:10:22.000000000 +0100
 @@ -664,7 +664,11 @@
  
  /* Default starting address if specified.  */
@@ -174,9 +174,9 @@ diff -Nbaur gcc-4.4.0/gcc/config/rs6000/sysv4.h gcc-4.4.0-ppc/gcc/config/rs6000/
    { "cpp_os_ads",		CPP_OS_ADS_SPEC },			\
    { "cpp_os_yellowknife",	CPP_OS_YELLOWKNIFE_SPEC },		\
    { "cpp_os_mvme",		CPP_OS_MVME_SPEC },			\
-diff -Nbaur gcc-4.4.0/gcc/config/rs6000/sysv4.opt gcc-4.4.0-ppc/gcc/config/rs6000/sysv4.opt
---- gcc-4.4.0/gcc/config/rs6000/sysv4.opt	2009-02-20 15:20:38.000000000 +0000
-+++ gcc-4.4.0-ppc/gcc/config/rs6000/sysv4.opt	2009-04-26 22:32:15.000000000 +0100
+diff -Nbaur gcc-4.4.2/gcc/config/rs6000/sysv4.opt gcc-4.4.2-ppc/gcc/config/rs6000/sysv4.opt
+--- gcc-4.4.2/gcc/config/rs6000/sysv4.opt	2009-02-20 15:20:38.000000000 +0000
++++ gcc-4.4.2-ppc/gcc/config/rs6000/sysv4.opt	2009-10-20 09:10:22.000000000 +0100
 @@ -107,6 +107,26 @@
  Target RejectNegative
  Link with libads.a, libc.a and crt0.o
@@ -204,9 +204,9 @@ diff -Nbaur gcc-4.4.0/gcc/config/rs6000/sysv4.opt gcc-4.4.0-ppc/gcc/config/rs600
  myellowknife
  Target RejectNegative
  Link with libyk.a, libc.a and crt0.o
-diff -Nbaur gcc-4.4.0/gcc/gcc.c gcc-4.4.0-ppc/gcc/gcc.c
---- gcc-4.4.0/gcc/gcc.c	2009-03-17 21:25:59.000000000 +0000
-+++ gcc-4.4.0-ppc/gcc/gcc.c	2009-06-17 02:15:34.000000000 +0100
+diff -Nbaur gcc-4.4.2/gcc/gcc.c gcc-4.4.2-ppc/gcc/gcc.c
+--- gcc-4.4.2/gcc/gcc.c	2009-03-17 21:25:59.000000000 +0000
++++ gcc-4.4.2-ppc/gcc/gcc.c	2009-10-20 09:10:23.000000000 +0100
 @@ -698,7 +698,7 @@
     -lgcc and -lc order specially, yet not require them to override all
     of LINK_COMMAND_SPEC.  */
@@ -245,9 +245,9 @@ diff -Nbaur gcc-4.4.0/gcc/gcc.c gcc-4.4.0-ppc/gcc/gcc.c
    strcat (specs_file, just_machine_suffix);
    strcat (specs_file, "specs");
    if (access (specs_file, R_OK) == 0)
-diff -Nbaur gcc-4.4.0/gcc/prefix.c gcc-4.4.0-ppc/gcc/prefix.c
---- gcc-4.4.0/gcc/prefix.c	2007-09-03 18:09:20.000000000 +0100
-+++ gcc-4.4.0-ppc/gcc/prefix.c	2009-04-26 22:32:15.000000000 +0100
+diff -Nbaur gcc-4.4.2/gcc/prefix.c gcc-4.4.2-ppc/gcc/prefix.c
+--- gcc-4.4.2/gcc/prefix.c	2007-09-03 18:09:20.000000000 +0100
++++ gcc-4.4.2-ppc/gcc/prefix.c	2009-10-20 09:10:23.000000000 +0100
 @@ -245,13 +245,16 @@
     The returned string is always malloc-ed, and the caller is
     responsible for freeing it.  */
@@ -274,9 +274,9 @@ diff -Nbaur gcc-4.4.0/gcc/prefix.c gcc-4.4.0-ppc/gcc/prefix.c
 +
 +	putenv (concat ("GCC_EXEC_PREFIX=", std_prefix, NULL));
  }
-diff -Nbaur gcc-4.4.0/gcc/toplev.c gcc-4.4.0-ppc/gcc/toplev.c
---- gcc-4.4.0/gcc/toplev.c	2008-12-09 21:25:11.000000000 +0000
-+++ gcc-4.4.0-ppc/gcc/toplev.c	2009-04-27 02:05:20.000000000 +0100
+diff -Nbaur gcc-4.4.2/gcc/toplev.c gcc-4.4.2-ppc/gcc/toplev.c
+--- gcc-4.4.2/gcc/toplev.c	2009-04-29 05:57:17.000000000 +0100
++++ gcc-4.4.2-ppc/gcc/toplev.c	2009-10-20 09:10:23.000000000 +0100
 @@ -84,6 +84,7 @@
  #include "tree-mudflap.h"
  #include "tree-pass.h"
@@ -285,7 +285,7 @@ diff -Nbaur gcc-4.4.0/gcc/toplev.c gcc-4.4.0-ppc/gcc/toplev.c
  
  #if defined (DWARF2_UNWIND_INFO) || defined (DWARF2_DEBUGGING_INFO)
  #include "dwarf2out.h"
-@@ -1553,6 +1554,10 @@
+@@ -1557,6 +1558,10 @@
  
    xmalloc_set_program_name (progname);
  
@@ -296,9 +296,9 @@ diff -Nbaur gcc-4.4.0/gcc/toplev.c gcc-4.4.0-ppc/gcc/toplev.c
    hex_init ();
  
    /* Unlock the stdio streams.  */
-diff -Nbaur gcc-4.4.0/libcpp/Makefile.in gcc-4.4.0-ppc/libcpp/Makefile.in
---- gcc-4.4.0/libcpp/Makefile.in	2009-04-21 10:08:08.000000000 +0100
-+++ gcc-4.4.0-ppc/libcpp/Makefile.in	2009-04-27 01:21:10.000000000 +0100
+diff -Nbaur gcc-4.4.2/libcpp/Makefile.in gcc-4.4.2-ppc/libcpp/Makefile.in
+--- gcc-4.4.2/libcpp/Makefile.in	2009-10-15 08:55:16.000000000 +0100
++++ gcc-4.4.2-ppc/libcpp/Makefile.in	2009-10-20 09:10:23.000000000 +0100
 @@ -201,8 +201,7 @@
  # Note that we put the dependencies into a .Tpo file, then move them
  # into place if the compile succeeds.  We need this because gcc does

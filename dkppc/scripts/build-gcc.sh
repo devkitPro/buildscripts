@@ -58,7 +58,7 @@ if [ ! -f configured-binutils ]
 then
   CFLAGS=$cflags LDFLAGS=$ldflags ../../$BINUTILS_SRCDIR/configure \
 	--prefix=$prefix --target=mn10200 --disable-nls --disable-shared --disable-debug \
-	--with-gcc --with-gnu-as --with-gnu-ld \
+	--disable-dependency-tracking --with-gcc --with-gnu-as --with-gnu-ld \
 	|| { echo "Error configuing mn10200 binutils"; exit 1; }
   touch configured-binutils
 fi
@@ -101,7 +101,7 @@ then
   --with-newlib \
   --prefix=$prefix\
   --disable-dependency-tracking \
-  --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 18" \
+  --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 19" \
   2>&1 | tee gcc_configure.log
   touch configured-gcc
 fi
