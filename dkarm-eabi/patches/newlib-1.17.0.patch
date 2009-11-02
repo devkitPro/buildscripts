@@ -710,7 +710,7 @@ diff -Nbaur newlib-1.17.0/libgloss/libsysbase/build_argv.c newlib-1.17.0-arm/lib
 +}
 diff -Nbaur newlib-1.17.0/libgloss/libsysbase/chdir.c newlib-1.17.0-arm/libgloss/libsysbase/chdir.c
 --- newlib-1.17.0/libgloss/libsysbase/chdir.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.17.0-arm/libgloss/libsysbase/chdir.c	2009-10-19 00:31:20.000000000 +0100
++++ newlib-1.17.0-arm/libgloss/libsysbase/chdir.c	2009-11-02 11:27:24.000000000 +0000
 @@ -0,0 +1,176 @@
 +#include <unistd.h>
 +#include <reent.h>
@@ -743,7 +743,6 @@ diff -Nbaur newlib-1.17.0/libgloss/libsysbase/chdir.c newlib-1.17.0-arm/libgloss
 +	if (pathEnd[-1] != DIRECTORY_SEPARATOR_CHAR) {
 +		pathEnd[0] = DIRECTORY_SEPARATOR_CHAR;
 +		pathEnd += 1;
-+		pathEnd[0] = '\0';
 +	}
 +	
 +	extraEnd = extra;
@@ -810,6 +809,7 @@ diff -Nbaur newlib-1.17.0/libgloss/libsysbase/chdir.c newlib-1.17.0-arm/libgloss
 +	
 +	if (pathEnd[-1] != DIRECTORY_SEPARATOR_CHAR) {
 +		pathEnd[0] = DIRECTORY_SEPARATOR_CHAR;
++		pathEnd[1] = 0;
 +		pathEnd += 1;
 +	}
 +
