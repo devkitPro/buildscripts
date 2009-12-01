@@ -70,7 +70,7 @@ _start:
 	str	r2,[r1]
 
 	ldr	r1, =fake_heap_end	@ set heap end
-	sub	r8,r8,#0x8000
+	sub	r8,r8,#0xc000
 	str	r8, [r1]
 
 	push	{r0}
