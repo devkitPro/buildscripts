@@ -15,15 +15,15 @@ fi
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=1.8.0
+LIBOGC_VER=1.8.1
 LIBGBA_VER=20081210
-LIBNDS_VER=1.3.8
-DEFAULT_ARM7_VER=0.5.2
-DSWIFI_VER=0.3.10
+LIBNDS_VER=1.4.0
+DEFAULT_ARM7_VER=0.5.8
+DSWIFI_VER=0.3.11
 LIBMIRKO_VER=0.9.7
 MAXMOD_VER=1.0.6
 FILESYSTEM_VER=0.9.2
-LIBFAT_VER=1.0.5
+LIBFAT_VER=1.0.6
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
