@@ -190,7 +190,12 @@ SECTIONS
 	__preinit_lma = __data_lma + SIZEOF(.data);
 
 	PROVIDE (__preinit_array_start = .);
-	.preinit_array     : AT (__preinit_lma) { KEEP (*(.preinit_array)) } >iwram
+	.preinit_array     : AT (__preinit_lma)
+	.init_array     : AT (__init_lma)
+	{
+		KEEP (*(SORT(.init_array.*)))
+		KEEP (*(.init_array))
+	} >iwram
 	PROVIDE (__preinit_array_end = .);
 
 	__init_lma = __preinit_lma + SIZEOF(.preinit_array);
@@ -202,8 +207,13 @@ SECTIONS
 
 	__fini_lma = __init_lma + SIZEOF(.init_array);
 
-	.fini_array     : AT (__fini_lma) { KEEP (*(.fini_array)) } >iwram
-  	PROVIDE (__fini_array_end = .);
+	.fini_array     : AT (__fini_lma)
+	{
+		KEEP (*(SORT(.fini_array.*)))
+		KEEP (*(.fini_array))
+	} >iwram
+ 
+ 	PROVIDE (__fini_array_end = .);
 
 	__jcr_lma = __fini_lma + SIZEOF(.fini_array);
 	.jcr            : AT (__jcr_lma) { KEEP (*(.jcr)) } >iwram
