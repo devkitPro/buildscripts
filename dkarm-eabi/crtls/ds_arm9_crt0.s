@@ -17,9 +17,11 @@
 _start:
 @---------------------------------------------------------------------------------
 	mov	r0, #0x04000000			@ IME = 0;
-	str	r0, [r0, #0x208]
-
-	ldr	r3,=__libnds_mpu_setup
+	mov	r1, #0
+	str	r1, [r0, #0x208]
+	
+	mov	sp, #0x0300000
+	ldr	r3, =__libnds_mpu_setup
 	blx	r3
 
 	mov	r0, #0x12		@ Switch to IRQ Mode
@@ -39,7 +41,7 @@ _start:
 	ldr	r4, =__itcm_end
 	bl	CopyMemCheck
 
-	ldr	r1, =__vectors_lma		@ Copy reserved vectors area (itcm section) from LMA to VMA
+	ldr	r1, =__vectors_lma	@ Copy reserved vectors area (itcm section) from LMA to VMA
 	ldr	r2, =__vectors_start
 	ldr	r4, =__vectors_end
 	bl	CopyMemCheck
@@ -70,7 +72,7 @@ _start:
 	str	r2,[r1]
 
 	ldr	r1, =fake_heap_end	@ set heap end
-	sub	r8,r8,#0xc000
+	sub	r8, r8,#0xc000
 	str	r8, [r1]
 
 	push	{r0}
@@ -86,7 +88,7 @@ _start:
 	ldr	r0, [r0,#12]		@ argc
 
 	ldr	r3, =main
-	ldr	lr,=__libnds_exit
+	ldr	lr, =__libnds_exit
 	bx	r3			@ jump to user code
 
 @---------------------------------------------------------------------------------
@@ -102,7 +104,7 @@ checkARGV:
 	ldr	r3, [r0]		@ argv magic number
 	ldr	r2, =0x5f617267		@ '_arg'
 	cmp	r3, r2
-	strne	r1,[r0,#20]
+	strne	r1, [r0,#20]
 	bxne	lr			@ bail out if no magic
 	
 	ldr	r1, [r0, #4]		@ command line address
@@ -179,7 +181,7 @@ CopyMem:
 @---------------------------------------------------------------------------------
 	mov	r0, #3			@ These commands are used in cases where
 	add	r3, r3, r0		@ the length is not a multiple of 4,
-	bics	r3, r3, r0	@ even though it should be.
+	bics	r3, r3, r0		@ even though it should be.
 	bxeq	lr			@ Length is zero, so exit
 CIDLoop:
 	ldmia	r1!, {r0}
