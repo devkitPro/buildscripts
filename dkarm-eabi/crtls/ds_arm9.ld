@@ -80,10 +80,18 @@ SECTIONS
   .preinit_array     : { KEEP (*(.preinit_array)) } >ewram = 0xff
   PROVIDE (__preinit_array_end = .);
   PROVIDE (__init_array_start = .);
-  .init_array     : { KEEP (*(.init_array)) } >ewram = 0xff
+  .init_array     :
+  {
+       KEEP (*(SORT(.init_array.*)))
+       KEEP (*(.init_array))
+  } >ewram = 0xff
   PROVIDE (__init_array_end = .);
   PROVIDE (__fini_array_start = .);
-  .fini_array     : { KEEP (*(.fini_array)) } >ewram = 0xff
+  .fini_array     :
+  {
+       KEEP (*(.fini_array))
+       KEEP (*(SORT(.fini_array.*)))
+  } >ewram = 0xff
   PROVIDE (__fini_array_end = .);
 
 	.ctors :
