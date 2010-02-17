@@ -17,10 +17,20 @@
 _start:
 @---------------------------------------------------------------------------------
 	mov	r0, #0x04000000			@ IME = 0;
-	mov	r1, #0
-	str	r1, [r0, #0x208]
+	str	r0, [r0, #0x208]
 	
-	mov	sp, #0x0300000
+	@ set sensible stacks to allow bios call
+
+	mov	r0, #0x13		@ Switch to SVC Mode
+	msr	cpsr, r0
+	mov	r1,#0x03000000
+	sub	r1,r1,#0x1000
+	mov	sp,r1
+	mov	r0, #0x1F		@ Switch to System Mode
+	msr	cpsr, r0
+	sub	r1,r1,#0x100
+	mov	sp,r1
+
 	ldr	r3, =__libnds_mpu_setup
 	blx	r3
 
@@ -41,7 +51,7 @@ _start:
 	ldr	r4, =__itcm_end
 	bl	CopyMemCheck
 
-	ldr	r1, =__vectors_lma	@ Copy reserved vectors area (itcm section) from LMA to VMA
+	ldr	r1, =__vectors_lma		@ Copy reserved vectors area (itcm section) from LMA to VMA
 	ldr	r2, =__vectors_start
 	ldr	r4, =__vectors_end
 	bl	CopyMemCheck
@@ -181,7 +191,7 @@ CopyMem:
 @---------------------------------------------------------------------------------
 	mov	r0, #3			@ These commands are used in cases where
 	add	r3, r3, r0		@ the length is not a multiple of 4,
-	bics	r3, r3, r0		@ even though it should be.
+	bics	r3, r3, r0	@ even though it should be.
 	bxeq	lr			@ Length is zero, so exit
 CIDLoop:
 	ldmia	r1!, {r0}
