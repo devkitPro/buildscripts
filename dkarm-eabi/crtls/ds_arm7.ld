@@ -10,12 +10,14 @@ MEMORY {
 
 __iwram_start	=	ORIGIN(iwram);
 __iwram_top	=	ORIGIN(iwram)+ LENGTH(iwram);
-__sp_irq	=	__iwram_top - 0x60;
+
+__sp_irq	=	__iwram_top - 0x100;
 __sp_svc	=	__sp_irq - 0x100;
 __sp_usr	=	__sp_svc - 0x100;
 
-__irq_flags	=	__iwram_top - 8;
-__irq_vector	=	__iwram_top - 4;
+__irq_flags	=	0x04000000 - 8;
+__irq_flags2	=	0x04000000 - 0x40;
+__irq_vector	=	0x04000000 - 4;
 
 SECTIONS
 {
