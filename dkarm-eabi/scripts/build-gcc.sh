@@ -112,7 +112,7 @@ fi
 
 if [ ! -f built-newlib ]
 then
-  $MAKE CFLAGS_FOR_TARGET=-DREENTRANT_SYSCALLS_PROVIDED || { echo "Error building newlib"; exit 1; }
+  $MAKE CFLAGS_FOR_TARGET="-DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__" || { echo "Error building newlib"; exit 1; }
   touch built-newlib
 fi
 
