@@ -9,8 +9,8 @@ PLATFORM=`uname -s`
 
 case $PLATFORM in
   Darwin )	
-    cflags="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
-	ldflags="-arch i386 -arch ppc"
+    cflags="-mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
+	ldflags="-mmacosx-version-min=10.4 -arch i386 -arch ppc -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk"
     ;;
   MINGW32* )
     cflags="-D__USE_MINGW_ACCESS"
@@ -72,7 +72,7 @@ then
         --target=$target \
         --with-newlib \
         --prefix=$prefix\
-        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 27" \
+        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 28" \
         || { echo "Error configuring gcc"; exit 1; }
   touch configured-gcc
 fi
