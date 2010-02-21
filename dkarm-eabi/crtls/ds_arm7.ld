@@ -16,7 +16,7 @@ __sp_svc	=	__sp_irq - 0x100;
 __sp_usr	=	__sp_svc - 0x100;
 
 __irq_flags	=	0x04000000 - 8;
-__irq_flags2	=	0x04000000 - 0x40;
+__irq_flagsaux	=	0x04000000 - 0x40;
 __irq_vector	=	0x04000000 - 4;
 
 SECTIONS
