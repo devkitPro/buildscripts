@@ -6570,6 +6570,30 @@ diff -Nbaur newlib-1.18.0/newlib/libc/stdio/fvwrite.c newlib-1.18.0-arm/newlib/l
  	  if (w <= 0)
  	    goto err;
  	  p += w;
+diff -Nbaur newlib-1.18.0/newlib/libc/stdlib/mbtowc_r.c newlib-1.18.0-arm/newlib/libc/stdlib/mbtowc_r.c
+--- newlib-1.18.0/newlib/libc/stdlib/mbtowc_r.c	2009-11-18 09:49:57.000000000 +0000
++++ newlib-1.18.0-arm/newlib/libc/stdlib/mbtowc_r.c	2010-02-21 16:40:54.000000000 +0000
+@@ -9,7 +9,7 @@
+ 
+ int (*__mbtowc) (struct _reent *, wchar_t *, const char *, size_t,
+ 		 const char *, mbstate_t *)
+-#ifdef __CYGWIN__
++#ifdef __DEFAULT_UTF8__
+    = __utf8_mbtowc;
+ #else
+    = __ascii_mbtowc;
+diff -Nbaur newlib-1.18.0/newlib/libc/stdlib/wctomb_r.c newlib-1.18.0-arm/newlib/libc/stdlib/wctomb_r.c
+--- newlib-1.18.0/newlib/libc/stdlib/wctomb_r.c	2009-10-03 09:51:07.000000000 +0100
++++ newlib-1.18.0-arm/newlib/libc/stdlib/wctomb_r.c	2010-02-21 16:40:36.000000000 +0000
+@@ -8,7 +8,7 @@
+ 
+ int (*__wctomb) (struct _reent *, char *, wchar_t, const char *charset,
+ 		 mbstate_t *)
+-#ifdef __CYGWIN__
++#ifdef __DEFAULT_UTF8__
+     = __utf8_wctomb;
+ #else
+     = __ascii_wctomb;
 diff -Nbaur newlib-1.18.0/newlib/libc/syscalls/Makefile.am newlib-1.18.0-arm/newlib/libc/syscalls/Makefile.am
 --- newlib-1.18.0/newlib/libc/syscalls/Makefile.am	2008-01-03 22:33:37.000000000 +0000
 +++ newlib-1.18.0-arm/newlib/libc/syscalls/Makefile.am	2009-12-21 11:08:45.000000000 +0000
