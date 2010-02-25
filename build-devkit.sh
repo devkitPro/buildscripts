@@ -15,7 +15,7 @@ fi
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=1.8.1
+LIBOGC_VER=1.8.2
 LIBGBA_VER=20081210
 LIBNDS_VER=1.4.1
 DEFAULT_ARM7_VER=0.5.10
