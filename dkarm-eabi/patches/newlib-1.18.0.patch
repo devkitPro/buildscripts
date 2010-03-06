@@ -6483,8 +6483,16 @@ diff -Nbaur newlib-1.18.0/newlib/libc/include/sys/unistd.h newlib-1.18.0-arm/new
  int	_EXFUN(getdtablesize, (void));
 diff -Nbaur newlib-1.18.0/newlib/libc/locale/locale.c newlib-1.18.0-arm/newlib/libc/locale/locale.c
 --- newlib-1.18.0/newlib/libc/locale/locale.c	2009-10-09 09:25:28.000000000 +0100
-+++ newlib-1.18.0-arm/newlib/libc/locale/locale.c	2010-02-18 21:21:57.000000000 +0000
-@@ -204,6 +204,10 @@
++++ newlib-1.18.0-arm/newlib/libc/locale/locale.c	2010-03-02 09:39:37.000000000 +0000
+@@ -175,7 +175,6 @@
+ #define _LC_LAST      7
+ #define ENCODING_LEN 31
+ 
+-int __EXPORT __mb_cur_max = 1;
+ 
+ int __nlocale_changed = 0;
+ int __mlocale_changed = 0;
+@@ -204,6 +203,10 @@
    "LC_MESSAGES",
  };
  
@@ -6495,7 +6503,7 @@ diff -Nbaur newlib-1.18.0/newlib/libc/locale/locale.c newlib-1.18.0-arm/newlib/l
  /*
   * Default locale per POSIX.  Can be overridden on a per-target base.
   */
-@@ -242,7 +246,7 @@
+@@ -242,12 +245,14 @@
  
  #endif
  
@@ -6503,8 +6511,15 @@ diff -Nbaur newlib-1.18.0/newlib/libc/locale/locale.c newlib-1.18.0-arm/newlib/l
 +#ifdef __DEFAULT_UTF8__
  static char lc_ctype_charset[ENCODING_LEN + 1] = "UTF-8";
  static char lc_message_charset[ENCODING_LEN + 1] = "UTF-8";
++int __EXPORT __mb_cur_max = 6;
  #else
-@@ -450,7 +454,7 @@
+ static char lc_ctype_charset[ENCODING_LEN + 1] = "ASCII";
+ static char lc_message_charset[ENCODING_LEN + 1] = "ASCII";
++int __EXPORT __mb_cur_max = 1;
+ #endif
+ static int lc_ctype_cjk_lang = 0;
+ 
+@@ -450,7 +455,7 @@
    if (!strcmp (locale, "POSIX"))
      strcpy (locale, "C");
    if (!strcmp (locale, "C"))				/* Default "C" locale */
