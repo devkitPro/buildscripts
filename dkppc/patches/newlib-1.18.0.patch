@@ -6551,37 +6551,51 @@ diff -Nbaur newlib-1.18.0/newlib/libc/include/sys/unistd.h newlib-1.18.0-ppc/new
  int	_EXFUN(getdtablesize, (void));
 diff -Nbaur newlib-1.18.0/newlib/libc/locale/locale.c newlib-1.18.0-ppc/newlib/libc/locale/locale.c
 --- newlib-1.18.0/newlib/libc/locale/locale.c	2009-10-09 09:25:28.000000000 +0100
-+++ newlib-1.18.0-ppc/newlib/libc/locale/locale.c	2010-02-21 16:36:36.000000000 +0000
-@@ -175,7 +175,7 @@
++++ newlib-1.18.0-ppc/newlib/libc/locale/locale.c	2010-03-05 03:20:30.000000000 +0000
+@@ -175,7 +175,6 @@
  #define _LC_LAST      7
  #define ENCODING_LEN 31
  
 -int __EXPORT __mb_cur_max = 1;
-+int __EXPORT __mb_cur_max = 6;
  
  int __nlocale_changed = 0;
  int __mlocale_changed = 0;
-@@ -220,13 +220,13 @@
-  * Current locales for each category
-  */
- static char current_categories[_LC_LAST][ENCODING_LEN + 1] = {
--    "C",
--    "C",
--    "C",
--    "C",
--    "C",
--    "C",
--    "C",
-+    "UTF-8",
-+    "UTF-8",
-+    "UTF-8",
-+    "UTF-8",
-+    "UTF-8",
-+    "UTF-8",
-+    "UTF-8",
+@@ -204,6 +203,10 @@
+   "LC_MESSAGES",
  };
  
++#ifdef __CYGWIN__
++#define __DEFAULT_UTF8__
++#endif
++
  /*
+  * Default locale per POSIX.  Can be overridden on a per-target base.
+  */
+@@ -242,12 +245,14 @@
+ 
+ #endif
+ 
+-#ifdef __CYGWIN__
++#ifdef __DEFAULT_UTF8__
+ static char lc_ctype_charset[ENCODING_LEN + 1] = "UTF-8";
+ static char lc_message_charset[ENCODING_LEN + 1] = "UTF-8";
++int __EXPORT __mb_cur_max = 6;
+ #else
+ static char lc_ctype_charset[ENCODING_LEN + 1] = "ASCII";
+ static char lc_message_charset[ENCODING_LEN + 1] = "ASCII";
++int __EXPORT __mb_cur_max = 1;
+ #endif
+ static int lc_ctype_cjk_lang = 0;
+ 
+@@ -450,7 +455,7 @@
+   if (!strcmp (locale, "POSIX"))
+     strcpy (locale, "C");
+   if (!strcmp (locale, "C"))				/* Default "C" locale */
+-#ifdef __CYGWIN__
++#ifdef __DEFAULT_UTF8__
+     strcpy (charset, "UTF-8");
+ #else
+     strcpy (charset, "ASCII");
 diff -Nbaur newlib-1.18.0/newlib/libc/machine/powerpc/machine/_types.h newlib-1.18.0-ppc/newlib/libc/machine/powerpc/machine/_types.h
 --- newlib-1.18.0/newlib/libc/machine/powerpc/machine/_types.h	1970-01-01 01:00:00.000000000 +0100
 +++ newlib-1.18.0-ppc/newlib/libc/machine/powerpc/machine/_types.h	2010-02-21 16:36:36.000000000 +0000
@@ -6740,7 +6754,7 @@ diff -Nbaur newlib-1.18.0/newlib/libc/stdio/fvwrite.c newlib-1.18.0-ppc/newlib/l
  	  p += w;
 diff -Nbaur newlib-1.18.0/newlib/libc/stdlib/mbtowc_r.c newlib-1.18.0-ppc/newlib/libc/stdlib/mbtowc_r.c
 --- newlib-1.18.0/newlib/libc/stdlib/mbtowc_r.c	2009-11-18 09:49:57.000000000 +0000
-+++ newlib-1.18.0-ppc/newlib/libc/stdlib/mbtowc_r.c	2010-02-21 16:39:34.000000000 +0000
++++ newlib-1.18.0-ppc/newlib/libc/stdlib/mbtowc_r.c	2010-03-06 14:40:13.000000000 +0000
 @@ -9,7 +9,7 @@
  
  int (*__mbtowc) (struct _reent *, wchar_t *, const char *, size_t,
@@ -6770,7 +6784,7 @@ diff -Nbaur newlib-1.18.0/newlib/libc/stdlib/mlock.c newlib-1.18.0-ppc/newlib/li
  #endif
 diff -Nbaur newlib-1.18.0/newlib/libc/stdlib/wctomb_r.c newlib-1.18.0-ppc/newlib/libc/stdlib/wctomb_r.c
 --- newlib-1.18.0/newlib/libc/stdlib/wctomb_r.c	2009-10-03 09:51:07.000000000 +0100
-+++ newlib-1.18.0-ppc/newlib/libc/stdlib/wctomb_r.c	2010-02-21 16:40:14.000000000 +0000
++++ newlib-1.18.0-ppc/newlib/libc/stdlib/wctomb_r.c	2010-03-06 14:40:37.000000000 +0000
 @@ -8,7 +8,7 @@
  
  int (*__wctomb) (struct _reent *, char *, wchar_t, const char *charset,
