@@ -6,8 +6,13 @@
 #	devkitPSP release 13
 #---------------------------------------------------------------------------------
 
-if [ 0 -eq 1 ] ; then 
-  echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support" 	 
+if [ 1 -eq 1 ] ; then 
+  echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support." 	 
+  echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
+  echo "http://sourceforge.net/projects/devkitpro/files/buildscripts/"
+  echo
+  echo "The scripts in svn are quite often dependent on things which currently only exist on developer"
+  echo "machines. This is not a bug, use stable releases."
   exit 1
 fi
 
@@ -15,15 +20,15 @@ fi
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=1.8.2
+LIBOGC_VER=1.8.3
 LIBGBA_VER=20081210
-LIBNDS_VER=1.4.1
+LIBNDS_VER=1.4.4
 DEFAULT_ARM7_VER=0.5.10
 DSWIFI_VER=0.3.12
 LIBMIRKO_VER=0.9.7
 MAXMOD_VER=1.0.6
-FILESYSTEM_VER=0.9.5
-LIBFAT_VER=1.0.7
+FILESYSTEM_VER=0.9.6
+LIBFAT_VER=1.0.8
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
@@ -97,7 +102,7 @@ case "$VERSION" in
     GCC_VER=4.4.3
     BINUTILS_VER=2.20
     NEWLIB_VER=1.18.0
-    GDB_VER=7.0.1
+    GDB_VER=7.1
     basedir='dkarm-eabi'
     package=devkitARM
     builddir=arm-eabi
@@ -108,7 +113,7 @@ case "$VERSION" in
     GCC_VER=4.4.3
     BINUTILS_VER=2.20
     NEWLIB_VER=1.18.0
-    GDB_VER=7.0.1
+    GDB_VER=7.1
     basedir='dkppc'
     package=devkitPPC
     builddir=powerpc-eabi
