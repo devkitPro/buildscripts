@@ -72,7 +72,7 @@ then
         --target=$target \
         --with-newlib \
         --prefix=$prefix\
-        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 29" \
+        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 30" \
         || { echo "Error configuring gcc"; exit 1; }
   touch configured-gcc
 fi
@@ -101,7 +101,7 @@ cd $target/newlib
 
 if [ ! -f configured-newlib ]
 then
- ../../$NEWLIB_SRCDIR/configure \
+ CFLAGS_FOR_TARGET="-DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__ -O2" ../../$NEWLIB_SRCDIR/configure \
         --disable-newlib-supplied-syscalls \
         --enable-newlib-mb \
         --target=$target \
@@ -112,7 +112,7 @@ fi
 
 if [ ! -f built-newlib ]
 then
-  $MAKE CFLAGS_FOR_TARGET="-DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__" || { echo "Error building newlib"; exit 1; }
+  $MAKE || { echo "Error building newlib"; exit 1; }
   touch built-newlib
 fi
 
