@@ -1,9 +1,9 @@
 #!/bin/sh
 #---------------------------------------------------------------------------------
 # Build scripts for
-#	devkitARM release 27
-#	devkitPPC release 19
-#	devkitPSP release 13
+#	devkitARM release 30
+#	devkitPPC release 21
+#	devkitPSP release 14
 #---------------------------------------------------------------------------------
 
 if [ 1 -eq 1 ] ; then 
@@ -121,7 +121,7 @@ case "$VERSION" in
     toolchain=DEVKITPPC
   ;;
   "3" )
-    GCC_VER=4.3.3
+    GCC_VER=4.3.5
     BINUTILS_VER=2.16.1
     NEWLIB_VER=1.17.0
     GDB_VER=6.8
