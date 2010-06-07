@@ -1,12 +1,12 @@
 #!/bin/sh
 #---------------------------------------------------------------------------------
 # Build scripts for
-#	devkitARM release 30
-#	devkitPPC release 21
+#	devkitARM release 31
+#	devkitPPC release 22
 #	devkitPSP release 14
 #---------------------------------------------------------------------------------
 
-if [ 0 -eq 1 ] ; then 
+if [ 1 -eq 1 ] ; then 
   echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support." 	 
   echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
   echo "http://sourceforge.net/projects/devkitpro/files/buildscripts/"
@@ -99,7 +99,7 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=4.4.3
+    GCC_VER=4.5.0
     BINUTILS_VER=2.20.1
     NEWLIB_VER=1.18.0
     GDB_VER=7.1
@@ -110,7 +110,7 @@ case "$VERSION" in
     toolchain=DEVKITARM
   ;;
   "2" )
-    GCC_VER=4.4.3
+    GCC_VER=4.5.0
     BINUTILS_VER=2.20
     NEWLIB_VER=1.18.0
     GDB_VER=7.1
