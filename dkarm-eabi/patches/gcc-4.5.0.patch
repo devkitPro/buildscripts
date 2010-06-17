@@ -1,6 +1,6 @@
 diff -Nbaur gcc-4.5.0/gcc/config/arm/t-arm-elf gcc-4.5.0-arm/gcc/config/arm/t-arm-elf
 --- gcc-4.5.0/gcc/config/arm/t-arm-elf	2009-08-06 15:27:45.000000000 +0100
-+++ gcc-4.5.0-arm/gcc/config/arm/t-arm-elf	2010-04-16 22:48:23.000000000 +0100
++++ gcc-4.5.0-arm/gcc/config/arm/t-arm-elf	2010-06-17 12:13:28.000000000 +0100
 @@ -36,30 +36,30 @@
  MULTILIB_EXCEPTIONS  = 
  MULTILIB_MATCHES     =
@@ -49,7 +49,7 @@ diff -Nbaur gcc-4.5.0/gcc/config/arm/t-arm-elf gcc-4.5.0-arm/gcc/config/arm/t-ar
  # MULTILIB_DIRNAMES   += fpu soft
 diff -Nbaur gcc-4.5.0/gcc/config/arm/unknown-elf.h gcc-4.5.0-arm/gcc/config/arm/unknown-elf.h
 --- gcc-4.5.0/gcc/config/arm/unknown-elf.h	2009-02-20 15:20:38.000000000 +0000
-+++ gcc-4.5.0-arm/gcc/config/arm/unknown-elf.h	2010-04-16 22:43:27.000000000 +0100
++++ gcc-4.5.0-arm/gcc/config/arm/unknown-elf.h	2010-06-17 12:13:28.000000000 +0100
 @@ -97,4 +97,4 @@
     udivmoddi4, which will depend on the exception unwind routines,
     which will depend on abort, which is defined in libc.  */ 
@@ -58,7 +58,7 @@ diff -Nbaur gcc-4.5.0/gcc/config/arm/unknown-elf.h gcc-4.5.0-arm/gcc/config/arm/
 +#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
 diff -Nbaur gcc-4.5.0/gcc/gcc.c gcc-4.5.0-arm/gcc/gcc.c
 --- gcc-4.5.0/gcc/gcc.c	2010-02-11 12:23:08.000000000 +0000
-+++ gcc-4.5.0-arm/gcc/gcc.c	2010-04-16 22:43:27.000000000 +0100
++++ gcc-4.5.0-arm/gcc/gcc.c	2010-06-17 12:19:01.000000000 +0100
 @@ -678,6 +678,11 @@
  #endif
  #endif
@@ -87,57 +87,9 @@ diff -Nbaur gcc-4.5.0/gcc/gcc.c gcc-4.5.0-arm/gcc/gcc.c
    INIT_STATIC_SPEC ("startfile",		&startfile_spec),
    INIT_STATIC_SPEC ("switches_need_spaces",	&switches_need_spaces),
    INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
-@@ -6940,10 +6947,18 @@
- 
-   /* We need to check standard_exec_prefix/just_machine_suffix/specs
-      for any override of as, ld and libraries.  */
-+   if ( gcc_exec_prefix )
-+   {
-+     specs_file = alloca (strlen (gcc_exec_prefix)
-+ 		         + strlen (just_machine_suffix) + sizeof ("specs"));
-+ 
-+     strcpy (specs_file, gcc_exec_prefix);
-+   } else {
-   specs_file = (char *) alloca (strlen (standard_exec_prefix)
- 		       + strlen (just_machine_suffix) + sizeof ("specs"));
- 
-   strcpy (specs_file, standard_exec_prefix);
-+	}
-   strcat (specs_file, just_machine_suffix);
-   strcat (specs_file, "specs");
-   if (access (specs_file, R_OK) == 0)
-diff -Nbaur gcc-4.5.0/gcc/prefix.c gcc-4.5.0-arm/gcc/prefix.c
---- gcc-4.5.0/gcc/prefix.c	2007-09-03 18:09:20.000000000 +0100
-+++ gcc-4.5.0-arm/gcc/prefix.c	2010-04-16 22:43:27.000000000 +0100
-@@ -245,13 +245,16 @@
-    The returned string is always malloc-ed, and the caller is
-    responsible for freeing it.  */
- 
-+
-+static const char *old_prefix = PREFIX;
-+
- char *
- update_path (const char *path, const char *key)
- {
-   char *result, *p;
--  const int len = strlen (std_prefix);
-+  const int len = strlen (old_prefix);
- 
--  if (! strncmp (path, std_prefix, len)
-+  if (! strncmp (path, old_prefix, len)
-       && (IS_DIR_SEPARATOR(path[len])
-           || path[len] == '\0')
-       && key != 0)
-@@ -353,4 +356,6 @@
- set_std_prefix (const char *prefix, int len)
- {
-   std_prefix = save_string (prefix, len);
-+
-+	putenv (concat ("GCC_EXEC_PREFIX=", std_prefix, NULL));
- }
 diff -Nbaur gcc-4.5.0/gcc/sched-deps.c gcc-4.5.0-arm/gcc/sched-deps.c
 --- gcc-4.5.0/gcc/sched-deps.c	2010-03-30 22:00:47.000000000 +0100
-+++ gcc-4.5.0-arm/gcc/sched-deps.c	2010-04-16 22:43:27.000000000 +0100
++++ gcc-4.5.0-arm/gcc/sched-deps.c	2010-06-17 12:13:28.000000000 +0100
 @@ -2274,6 +2274,12 @@
  			      FIRST_STACK_REG + nregs);
  	}
@@ -151,31 +103,9 @@ diff -Nbaur gcc-4.5.0/gcc/sched-deps.c gcc-4.5.0-arm/gcc/sched-deps.c
      }
    else if (MEM_P (dest))
      {
-diff -Nbaur gcc-4.5.0/gcc/toplev.c gcc-4.5.0-arm/gcc/toplev.c
---- gcc-4.5.0/gcc/toplev.c	2010-03-31 03:44:10.000000000 +0100
-+++ gcc-4.5.0-arm/gcc/toplev.c	2010-04-16 22:52:00.000000000 +0100
-@@ -86,6 +86,7 @@
- #include "gimple.h"
- #include "tree-ssa-alias.h"
- #include "plugin.h"
-+#include "prefix.h"
- 
- #if defined (DWARF2_UNWIND_INFO) || defined (DWARF2_DEBUGGING_INFO)
- #include "dwarf2out.h"
-@@ -1681,6 +1682,10 @@
- 
-   xmalloc_set_program_name (progname);
- 
-+  p = getenv("GCC_EXEC_PREFIX");
-+  if (p && strlen(p)) set_std_prefix (p, strlen(p));
-+
-+
-   hex_init ();
- 
-   /* Unlock the stdio streams.  */
 diff -Nbaur gcc-4.5.0/libcpp/Makefile.in gcc-4.5.0-arm/libcpp/Makefile.in
 --- gcc-4.5.0/libcpp/Makefile.in	2010-04-14 10:30:07.000000000 +0100
-+++ gcc-4.5.0-arm/libcpp/Makefile.in	2010-04-16 22:43:27.000000000 +0100
++++ gcc-4.5.0-arm/libcpp/Makefile.in	2010-06-17 12:13:28.000000000 +0100
 @@ -212,8 +212,7 @@
  # Note that we put the dependencies into a .Tpo file, then move them
  # into place if the compile succeeds.  We need this because gcc does
