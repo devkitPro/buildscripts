@@ -1,32 +1,25 @@
-diff -Nbaur gcc-4.5.0/gcc/config/rs6000/rs6000.h gcc-4.5.0-ppc/gcc/config/rs6000/rs6000.h
---- gcc-4.5.0/gcc/config/rs6000/rs6000.h	2009-12-07 15:34:21.000000000 +0000
-+++ gcc-4.5.0-ppc/gcc/config/rs6000/rs6000.h	2010-06-06 23:36:14.000000000 +0100
-@@ -193,17 +193,17 @@
+diff -Nbaur gcc-4.4.4/gcc/config/rs6000/rs6000.h gcc-4.4.4-ppc/gcc/config/rs6000/rs6000.h
+--- gcc-4.4.4/gcc/config/rs6000/rs6000.h	2009-04-10 00:23:07.000000000 +0100
++++ gcc-4.4.4-ppc/gcc/config/rs6000/rs6000.h	2010-07-01 01:34:08.000000000 +0100
+@@ -175,6 +175,7 @@
+   { "asm_cpu_power7",		ASM_CPU_POWER7_SPEC },			\
+   SUBTARGET_EXTRA_SPECS
+ 
++#if 0
  /* -mcpu=native handling only makes sense with compiler running on
     an PowerPC chip.  If changing this condition, also change
     the condition in driver-rs6000.c.  */
--#if defined(__powerpc__) || defined(__POWERPC__) || defined(_AIX)
-+//#if defined(__powerpc__) || defined(__POWERPC__) || defined(_AIX)
- /* In driver-rs6000.c.  */
--extern const char *host_detect_local_cpu (int argc, const char **argv);
-+/*extern const char *host_detect_local_cpu (int argc, const char **argv);
- #define EXTRA_SPEC_FUNCTIONS \
+@@ -185,6 +186,7 @@
    { "local_cpu_detect", host_detect_local_cpu },
  #define HAVE_LOCAL_CPU_DETECT
- #define ASM_CPU_NATIVE_SPEC "%:local_cpu_detect(asm)"
--
--#else
-+*/
-+//#else
- #define ASM_CPU_NATIVE_SPEC "%(asm_default)"
--#endif
-+//#endif
+ #endif
++#endif 
  
  #ifndef CC1_CPU_SPEC
  #ifdef HAVE_LOCAL_CPU_DETECT
-diff -Nbaur gcc-4.5.0/gcc/config/rs6000/sysv4.h gcc-4.5.0-ppc/gcc/config/rs6000/sysv4.h
---- gcc-4.5.0/gcc/config/rs6000/sysv4.h	2009-11-25 20:23:20.000000000 +0000
-+++ gcc-4.5.0-ppc/gcc/config/rs6000/sysv4.h	2010-06-06 22:26:44.000000000 +0100
+diff -Nbaur gcc-4.4.4/gcc/config/rs6000/sysv4.h gcc-4.4.4-ppc/gcc/config/rs6000/sysv4.h
+--- gcc-4.4.4/gcc/config/rs6000/sysv4.h	2009-04-10 00:23:07.000000000 +0100
++++ gcc-4.4.4-ppc/gcc/config/rs6000/sysv4.h	2010-07-01 01:30:17.000000000 +0100
 @@ -664,7 +664,11 @@
  
  /* Default starting address if specified.  */
@@ -182,10 +175,10 @@ diff -Nbaur gcc-4.5.0/gcc/config/rs6000/sysv4.h gcc-4.5.0-ppc/gcc/config/rs6000/
    { "cpp_os_ads",		CPP_OS_ADS_SPEC },			\
    { "cpp_os_yellowknife",	CPP_OS_YELLOWKNIFE_SPEC },		\
    { "cpp_os_mvme",		CPP_OS_MVME_SPEC },			\
-diff -Nbaur gcc-4.5.0/gcc/config/rs6000/sysv4.opt gcc-4.5.0-ppc/gcc/config/rs6000/sysv4.opt
---- gcc-4.5.0/gcc/config/rs6000/sysv4.opt	2009-11-25 20:23:20.000000000 +0000
-+++ gcc-4.5.0-ppc/gcc/config/rs6000/sysv4.opt	2010-06-06 22:26:44.000000000 +0100
-@@ -108,6 +108,26 @@
+diff -Nbaur gcc-4.4.4/gcc/config/rs6000/sysv4.opt gcc-4.4.4-ppc/gcc/config/rs6000/sysv4.opt
+--- gcc-4.4.4/gcc/config/rs6000/sysv4.opt	2009-02-20 15:20:38.000000000 +0000
++++ gcc-4.4.4-ppc/gcc/config/rs6000/sysv4.opt	2010-07-01 01:30:17.000000000 +0100
+@@ -107,6 +107,26 @@
  Target RejectNegative
  Link with libads.a, libc.a and crt0.o
  
@@ -212,10 +205,10 @@ diff -Nbaur gcc-4.5.0/gcc/config/rs6000/sysv4.opt gcc-4.5.0-ppc/gcc/config/rs600
  myellowknife
  Target RejectNegative
  Link with libyk.a, libc.a and crt0.o
-diff -Nbaur gcc-4.5.0/libcpp/Makefile.in gcc-4.5.0-ppc/libcpp/Makefile.in
---- gcc-4.5.0/libcpp/Makefile.in	2010-04-14 10:30:07.000000000 +0100
-+++ gcc-4.5.0-ppc/libcpp/Makefile.in	2010-06-06 22:26:44.000000000 +0100
-@@ -212,8 +212,7 @@
+diff -Nbaur gcc-4.4.4/libcpp/Makefile.in gcc-4.4.4-ppc/libcpp/Makefile.in
+--- gcc-4.4.4/libcpp/Makefile.in	2010-04-29 09:26:54.000000000 +0100
++++ gcc-4.4.4-ppc/libcpp/Makefile.in	2010-07-01 01:30:17.000000000 +0100
+@@ -201,8 +201,7 @@
  # Note that we put the dependencies into a .Tpo file, then move them
  # into place if the compile succeeds.  We need this because gcc does
  # not atomically write the dependency output file.
