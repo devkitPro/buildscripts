@@ -22,8 +22,8 @@ fi
 #---------------------------------------------------------------------------------
 LIBOGC_VER=1.8.3
 LIBGBA_VER=20081210
-LIBNDS_VER=1.4.3
-DEFAULT_ARM7_VER=0.5.12
+LIBNDS_VER=1.4.5
+DEFAULT_ARM7_VER=0.5.15
 DSWIFI_VER=0.3.12
 LIBMIRKO_VER=0.9.7
 MAXMOD_VER=1.0.6
