@@ -2,15 +2,6 @@ OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 OUTPUT_ARCH(arm)
 ENTRY(_start)
 
-MEMORY {
-
-	rom	: ORIGIN = 0x08000000, LENGTH = 32M
-	ewram	: ORIGIN = 0x02000000, LENGTH = 4M - 4k
-	dtcm	: ORIGIN = 0x0b000000, LENGTH = 16K
-	vectors	: ORIGIN = 0x01000000, LENGTH = 256
-	itcm	: ORIGIN = 0x01000100, LENGTH = 32K - 256
-}
-
 __vectors_start	=	ORIGIN(vectors);
 __itcm_start	=	ORIGIN(itcm);
 __ewram_end	=	ORIGIN(ewram) + LENGTH(ewram);
