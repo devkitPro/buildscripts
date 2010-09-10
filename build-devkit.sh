@@ -102,7 +102,7 @@ case "$VERSION" in
     GCC_VER=4.5.1
     BINUTILS_VER=2.20.1
     NEWLIB_VER=1.18.0
-    GDB_VER=7.1
+    GDB_VER=7.2
     basedir='dkarm-eabi'
     package=devkitARM
     builddir=arm-eabi
@@ -113,7 +113,7 @@ case "$VERSION" in
     GCC_VER=4.4.4
     BINUTILS_VER=2.20.1
     NEWLIB_VER=1.18.0
-    GDB_VER=7.1
+    GDB_VER=7.2
     basedir='dkppc'
     package=devkitPPC
     builddir=powerpc-eabi
