@@ -1,0 +1,48 @@
+diff -Nbaur binutils-2.20.1/gold/i386.cc binutils-2.20.1-ppc/gold/i386.cc
+--- binutils-2.20.1/gold/i386.cc	2010-01-14 10:48:42.000000000 +0000
++++ binutils-2.20.1-ppc/gold/i386.cc	2010-10-01 21:06:06.000000000 +0100
+@@ -2729,7 +2729,7 @@
+       if (!object->has_no_split_stack())
+ 	object->error(_("failed to match split-stack sequence at "
+ 			"section %u offset %0zx"),
+-		      shndx, fnoffset);
++		      shndx, (size_t)fnoffset);
+       return;
+     }
+ 
+diff -Nbaur binutils-2.20.1/gold/incremental.cc binutils-2.20.1-ppc/gold/incremental.cc
+--- binutils-2.20.1/gold/incremental.cc	2009-10-16 08:42:50.000000000 +0100
++++ binutils-2.20.1-ppc/gold/incremental.cc	2010-10-01 21:06:06.000000000 +0100
+@@ -389,7 +389,7 @@
+     }
+ 
+   int size;
+-  bool big_endian;
++  bool big_endian = false;
+   std::string error;
+   if (!elfcpp::Elf_recognizer::is_valid_header(p, want, &size, &big_endian,
+                                                &error))
+diff -Nbaur binutils-2.20.1/gold/object.cc binutils-2.20.1-ppc/gold/object.cc
+--- binutils-2.20.1/gold/object.cc	2010-01-14 10:48:42.000000000 +0000
++++ binutils-2.20.1-ppc/gold/object.cc	2010-10-01 21:06:06.000000000 +0100
+@@ -2323,7 +2323,7 @@
+     *punconfigured = false;
+ 
+   std::string error;
+-  bool big_endian;
++  bool big_endian=false;
+   int size;
+   if (!elfcpp::Elf_recognizer::is_valid_header(p, bytes, &size,
+                                                &big_endian, &error))
+diff -Nbaur binutils-2.20.1/gold/x86_64.cc binutils-2.20.1-ppc/gold/x86_64.cc
+--- binutils-2.20.1/gold/x86_64.cc	2010-01-14 10:48:43.000000000 +0000
++++ binutils-2.20.1-ppc/gold/x86_64.cc	2010-10-01 21:06:07.000000000 +0100
+@@ -2718,7 +2718,7 @@
+       if (!object->has_no_split_stack())
+ 	object->error(_("failed to match split-stack sequence at "
+ 			"section %u offset %0zx"),
+-		      shndx, fnoffset);
++		      shndx, (size_t)fnoffset);
+       return;
+     }
+ 
