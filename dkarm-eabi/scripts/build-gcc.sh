@@ -10,7 +10,7 @@ PLATFORM=`uname -s`
 case $PLATFORM in
   Darwin )	
     cflags="-mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
-	ldflags="-mmacosx-version-min=10.4 -arch i386 -arch ppc -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk"
+    ldflags="-mmacosx-version-min=10.4 -arch i386 -arch ppc -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk"
     ;;
   MINGW32* )
     cflags="-D__USE_MINGW_ACCESS"
@@ -65,13 +65,14 @@ then
         --with-cpu=arm7tdmi\
         --enable-interwork --enable-multilib\
         --with-gcc --with-gnu-ld --with-gnu-as \
-		--disable-dependency-tracking \
+        --disable-dependency-tracking \
         --disable-shared --disable-threads --disable-win32-registry --disable-nls --disable-debug\
         --disable-libmudflap --disable-libssp --disable-libgomp \
         --disable-libstdcxx-pch \
         --target=$target \
         --with-newlib \
         --prefix=$prefix\
+        --enable-lto \
         --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 32" \
         || { echo "Error configuring gcc"; exit 1; }
   touch configured-gcc
