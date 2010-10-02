@@ -15,7 +15,9 @@ export AS	:=	$(PREFIX)as
 export AR	:=	$(PREFIX)ar
 export OBJCOPY	:=	$(PREFIX)objcopy
 
-ifneq (,$(VCBUILDHELPER_COMMAND))
+ISVC=$(or $(VCBUILDHELPER_COMMAND),$(MSBUILDEXTENSIONSPATH32),$(MSBUILDEXTENSIONSPATH))
+
+ifneq (,$(ISVC))
 	ERROR_FILTER	:=	2>&1 | sed -e 's/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/g'
 endif
 
