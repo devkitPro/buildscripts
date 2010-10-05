@@ -9,8 +9,8 @@ PLATFORM=`uname -s`
 
 case $PLATFORM in
   Darwin )	
-    cflags="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
-	ldflags="-arch i386 -arch ppc"
+    cflags="-mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
+	ldflags="-mmacosx-version-min=10.4 -arch i386 -arch ppc -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk"
     ;;
   MINGW32* )
     cflags="-D__USE_MINGW_ACCESS"
@@ -93,6 +93,7 @@ then
   cp -r $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/newlib/libc/include $INSTALLDIR/devkitPPC/$target/sys-include
   CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../$GCC_SRCDIR/configure \
   --enable-languages=c,c++,objc \
+  --enable-lto \
   --with-cpu=750 \
   --disable-nls --disable-shared --enable-threads --disable-multilib \
   --disable-win32-registry \
