@@ -105,6 +105,7 @@ then
  CFLAGS_FOR_TARGET="-DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__ -O2" ../../$NEWLIB_SRCDIR/configure \
         --disable-newlib-supplied-syscalls \
         --enable-newlib-mb \
+        --enable-newlib-io-long-long \
         --target=$target \
         --prefix=$prefix \
         || { echo "Error configuring newlib"; exit 1; }
