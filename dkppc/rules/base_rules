@@ -2,23 +2,25 @@
 # path to tools 
 #---------------------------------------------------------------------------------
 export PORTLIBS	:=	$(DEVKITPRO)/portlibs/ppc
-export PATH		:=	$(DEVKITPPC)/bin:$(PORTLIBS)/bin:$(PATH)
-
-ifneq (,$(VCBUILDHELPER_COMMAND))
-	ERROR_FILTER	:=	2>&1 | sed -e 's/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/g'
-endif
+export PATH	:=	$(DEVKITPPC)/bin:$(PORTLIBS)/bin:$(PATH)
 
 #---------------------------------------------------------------------------------
 # the prefix on the compiler executables
 #---------------------------------------------------------------------------------
 PREFIX	:=	powerpc-eabi-
 
-export AS		:=	$(PREFIX)as
-export CC		:=	$(PREFIX)gcc
-export CXX		:=	$(PREFIX)g++
-export AR		:=	$(PREFIX)ar
+export AS	:=	$(PREFIX)as
+export CC	:=	$(PREFIX)gcc
+export CXX	:=	$(PREFIX)g++
+export AR	:=	$(PREFIX)ar
 export OBJCOPY	:=	$(PREFIX)objcopy
 
+
+ISVC=$(or $(VCBUILDHELPER_COMMAND),$(MSBUILDEXTENSIONSPATH32),$(MSBUILDEXTENSIONSPATH))
+
+ifneq (,$(ISVC))
+	ERROR_FILTER	:=	2>&1 | sed -e 's/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/g'
+endif
 
 #---------------------------------------------------------------------------------
 %.a:

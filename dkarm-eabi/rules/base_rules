@@ -2,7 +2,7 @@
 # path to tools
 #---------------------------------------------------------------------------------
 export PORTLIBS	:=	$(DEVKITPRO)/portlibs/arm
-export PATH		:=	$(DEVKITARM)/bin:$(PORTLIBS)/bin:$(PATH)
+export PATH	:=	$(DEVKITARM)/bin:$(PORTLIBS)/bin:$(PATH)
 
 #---------------------------------------------------------------------------------
 # the prefix on the compiler executables
