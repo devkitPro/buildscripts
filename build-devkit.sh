@@ -6,7 +6,7 @@
 #	devkitPSP release 14
 #---------------------------------------------------------------------------------
 
-if [ 1 -eq 1 ] ; then 
+if [ 1 -eq 0 ] ; then 
   echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support." 	 
   echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
   echo "http://sourceforge.net/projects/devkitpro/files/buildscripts/"
@@ -20,7 +20,7 @@ fi
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=1.8.4
+LIBOGC_VER=1.8.5
 LIBGBA_VER=20081210
 LIBNDS_VER=1.4.8
 DEFAULT_ARM7_VER=0.5.17
