@@ -6206,8 +6206,8 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/warning.h newlib-1.19.0-arm/libglo
 +#endif /* __WARNING_H__ */
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/write.c newlib-1.19.0-arm/libgloss/libsysbase/write.c
 --- newlib-1.19.0/libgloss/libsysbase/write.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/write.c	2010-12-18 14:40:27.000000000 +0000
-@@ -0,0 +1,48 @@
++++ newlib-1.19.0-arm/libgloss/libsysbase/write.c	2011-01-13 16:28:45.000000000 +0000
+@@ -0,0 +1,49 @@
 +#include "config.h"
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -6243,6 +6243,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/write.c newlib-1.19.0-arm/libgloss
 +	if(fileDesc!=-1) {
 +		if ( fileDesc < 3) {
 +			dev = fileDesc;
++			ret = len;
 +		} else {
 +			handle = __get_handle(fileDesc);
 +
