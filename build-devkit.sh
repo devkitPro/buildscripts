@@ -22,7 +22,7 @@ fi
 #---------------------------------------------------------------------------------
 LIBOGC_VER=1.8.5
 LIBGBA_VER=20081210
-LIBNDS_VER=1.4.8
+LIBNDS_VER=1.4.9
 DEFAULT_ARM7_VER=0.5.17
 DSWIFI_VER=0.3.13
 LIBMIRKO_VER=0.9.7
@@ -99,9 +99,9 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=4.5.1
+    GCC_VER=4.5.2
     BINUTILS_VER=2.20.1
-    NEWLIB_VER=1.18.0
+    NEWLIB_VER=1.19.0
     GDB_VER=7.2
     basedir='dkarm-eabi'
     package=devkitARM
@@ -110,9 +110,9 @@ case "$VERSION" in
     toolchain=DEVKITARM
   ;;
   "2" )
-    GCC_VER=4.5.1
+    GCC_VER=4.5.2
     BINUTILS_VER=2.20.1
-    NEWLIB_VER=1.18.0
+    NEWLIB_VER=1.19.0
     GDB_VER=7.2
     basedir='dkppc'
     package=devkitPPC

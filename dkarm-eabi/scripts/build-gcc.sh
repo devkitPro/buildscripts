@@ -27,7 +27,7 @@ cd $target/binutils
 if [ ! -f configured-binutils ]
 then
   CFLAGS=$cflags LDFLAGS=$ldflags ../../$BINUTILS_SRCDIR/configure \
-        --prefix=$prefix --target=$target --disable-nls --disable-dependency-tracking \
+        --prefix=$prefix --target=$target --disable-nls --disable-dependency-tracking --disable-werror \
         || { echo "Error configuring binutils"; exit 1; }
   touch configured-binutils
 fi
@@ -73,7 +73,7 @@ then
         --with-newlib \
         --prefix=$prefix\
         --enable-lto \
-        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 32" \
+        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 33" \
         || { echo "Error configuring gcc"; exit 1; }
   touch configured-gcc
 fi
