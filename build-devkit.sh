@@ -1,8 +1,8 @@
 #!/bin/sh
 #---------------------------------------------------------------------------------
 # Build scripts for
-#	devkitARM release 32
-#	devkitPPC release 22
+#	devkitARM release 33
+#	devkitPPC release 23
 #	devkitPSP release 14
 #---------------------------------------------------------------------------------
 
@@ -20,7 +20,7 @@ fi
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=1.8.5
+LIBOGC_VER=1.8.6
 LIBGBA_VER=20081210
 LIBNDS_VER=1.4.9
 DEFAULT_ARM7_VER=0.5.17
@@ -100,7 +100,7 @@ done
 case "$VERSION" in
   "1" )
     GCC_VER=4.5.2
-    BINUTILS_VER=2.20.1
+    BINUTILS_VER=2.21
     NEWLIB_VER=1.19.0
     GDB_VER=7.2
     basedir='dkarm-eabi'
@@ -111,7 +111,7 @@ case "$VERSION" in
   ;;
   "2" )
     GCC_VER=4.5.2
-    BINUTILS_VER=2.20.1
+    BINUTILS_VER=2.21
     NEWLIB_VER=1.19.0
     GDB_VER=7.2
     basedir='dkppc'
