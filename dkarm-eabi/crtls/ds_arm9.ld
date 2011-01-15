@@ -22,7 +22,7 @@ SECTIONS
 		__text_start = . ;
 		KEEP (*(.init))
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
-		} >ewram = 0xff
+	} >ewram = 0xff
 
 	.plt : { *(.plt) } >ewram = 0xff
 
@@ -58,36 +58,40 @@ SECTIONS
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >ewram = 0xff
 
-  .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >ewram
-   __exidx_start = .;
-  .ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) } >ewram
-   __exidx_end = .;
-  /* Ensure the __preinit_array_start label is properly aligned.  We
-     could instead move the label definition inside the section, but
-     the linker would then create the section even if it turns out to
-     be empty, which isn't pretty.  */
-  . = ALIGN(32 / 8);
-  PROVIDE (__preinit_array_start = .);
-  .preinit_array     : { KEEP (*(.preinit_array)) } >ewram = 0xff
-  PROVIDE (__preinit_array_end = .);
-  PROVIDE (__init_array_start = .);
-  .init_array     :
-  {
-       KEEP (*(SORT(.init_array.*)))
-       KEEP (*(.init_array))
-  } >ewram = 0xff
-  PROVIDE (__init_array_end = .);
-  PROVIDE (__fini_array_start = .);
-  .fini_array     :
-  {
-       KEEP (*(.fini_array))
-       KEEP (*(SORT(.fini_array.*)))
-  } >ewram = 0xff
-  PROVIDE (__fini_array_end = .);
+	.ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >ewram
+ 	__exidx_start = .;
+	ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) } >ewram
+ 	__exidx_end = .;
+
+	/*	Ensure the __preinit_array_start label is properly aligned.  We
+		could instead move the label definition inside the section, but
+		the linker would then create the section even if it turns out to
+		be empty, which isn't pretty.  */
+
+	. = ALIGN(32 / 8);
+
+	PROVIDE (__preinit_array_start = .);
+	.preinit_array     : { KEEP (*(.preinit_array)) } >ewram = 0xff
+	PROVIDE (__preinit_array_end = .);
+	PROVIDE (__init_array_start = .);
+	.init_array     :
+	{
+		KEEP (*(SORT(.init_array.*)))
+		KEEP (*(.init_array))
+	} >ewram = 0xff
+	PROVIDE (__init_array_end = .);
+	PROVIDE (__fini_array_start = .);
+	.fini_array     :
+	{
+		KEEP (*(.fini_array))
+		KEEP (*(SORT(.fini_array.*)))
+	} >ewram = 0xff
+
+	PROVIDE (__fini_array_end = .);
 
 	.ctors :
 	{
-	/* gcc uses crtbegin.o to find the start of the constructors, so
+	/*	gcc uses crtbegin.o to find the start of the constructors, so
 		we make sure it is first.  Because this is a wildcard, it
 		doesn't matter if the user does not actually link against
 		crtbegin.o; the linker won't look for a file to match a
@@ -194,13 +198,13 @@ SECTIONS
 		*(.bss*)
 		*(COMMON)
 		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
-		__bss_end = ABSOLUTE(.) ;
-		__bss_end__ = __bss_end ;
+		__bss_end__ = ABSOLUTE(.) ;
+		__bss_end = __bss_end__ ;
+		_end = __bss_end__ ;
+		__end__ = __bss_end__ ;
 	} AT>ewram 
 
 
-	_end = __bss_end__ ;
-	__end__ = __bss_end__ ;
 
 	/* Stabs debugging sections.  */
 	.stab 0 : { *(.stab) }
