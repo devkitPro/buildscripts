@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #---------------------------------------------------------------------------------
 # Build scripts for
 #	devkitARM release 33
@@ -27,7 +27,7 @@ DEFAULT_ARM7_VER=0.5.17
 DSWIFI_VER=0.3.13
 LIBMIRKO_VER=0.9.7
 MAXMOD_VER=1.0.6
-FILESYSTEM_VER=0.9.6
+FILESYSTEM_VER=0.9.7
 LIBFAT_VER=1.0.8
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
@@ -445,12 +445,12 @@ TOOLPATH=$(echo $INSTALLDIR | sed -e 's/^\([a-zA-Z]\):/\/\1/')
 export PATH=$PATH:$TOOLPATH/$package/bin
 
 if [ "$BUILD_DKPRO_AUTOMATED" != "1" ] ; then
-	
+
 	echo
 	echo 'Ready to install '$package' in '$INSTALLDIR
 	echo
 	echo 'press return to continue'
-	
+
 	read dummy
 fi
 
@@ -578,7 +578,7 @@ for f in $INSTALLDIR/$package/bin/* \
          $INSTALLDIR/$package/libexec/gcc/$target/$GCC_VER/*
 do
   # exclude dll for windows, directories & the gccbug text file
-  if  ! [[ "$f" == *.dll || -d $f || "$f" == *-gccbug ]] 
+  if  ! [[ "$f" == *.dll || -d $f || "$f" == *-gccbug ]]
   then
     strip $f
   fi
@@ -595,19 +595,18 @@ find $INSTALLDIR/$package/$target -name *.a -exec $target-strip -d {} \;
 #---------------------------------------------------------------------------------
 
 if [ "$BUILD_DKPRO_AUTOMATED" != "1" ] ; then
-	
   echo
   echo "Would you like to delete the build folders and patched sources? [Y/n]"
   read answer
 else
   answer=y
 fi
-	
+
 if [ "$answer" != "n" -a "$answer" != "N" ]
   then
-	
+
   echo "Removing patched sources and build directories"
-	
+
   rm -fr $target
   rm -fr $BINUTILS_SRCDIR
   rm -fr $NEWLIB_SRCDIR
@@ -616,7 +615,7 @@ if [ "$answer" != "n" -a "$answer" != "N" ]
   rm -fr mn10200
   rm -fr pspsdk
   rm -fr extracted_archives patched_sources checkout-psp-sdk
-	
+
 fi
 
 if [ "$BUILD_DKPRO_AUTOMATED" != "1" ] ; then
@@ -625,8 +624,8 @@ if [ "$BUILD_DKPRO_AUTOMATED" != "1" ] ; then
   read answer
 else
   answer=n
-fi 
-	
+fi
+
 if [ "$answer" = "y" -o "$answer" = "Y" ]
 then
   echo "removing archives"
