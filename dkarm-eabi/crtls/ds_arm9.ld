@@ -199,9 +199,7 @@ SECTIONS
 		*(COMMON)
 		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
 		__bss_end__ = ABSOLUTE(.) ;
-		__bss_end = __bss_end__ ;
-		_end = __bss_end__ ;
-		__end__ = __bss_end__ ;
+		__end__ = ABSOLUTE(.) ;
 	} AT>ewram 
 
 
