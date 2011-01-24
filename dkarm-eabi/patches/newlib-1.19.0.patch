@@ -4725,8 +4725,8 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/configure.in newlib-1.19.0-arm/lib
 +
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/dirent.c newlib-1.19.0-arm/libgloss/libsysbase/dirent.c
 --- newlib-1.19.0/libgloss/libsysbase/dirent.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/dirent.c	2011-01-19 22:13:21.000000000 +0000
-@@ -0,0 +1,246 @@
++++ newlib-1.19.0-arm/libgloss/libsysbase/dirent.c	2011-01-21 21:53:22.000000000 +0000
+@@ -0,0 +1,247 @@
 +#include <sys/dirent.h>
 +#include <sys/iosupport.h>
 +#include <malloc.h>
@@ -4890,6 +4890,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/dirent.c newlib-1.19.0-arm/libglos
 +	
 +	strncpy (dirp->fileData.d_name, filename, sizeof(dirp->fileData.d_name));
 +	dirp->fileData.d_ino = st.st_ino;
++	dirp->fileData.d_type = S_ISDIR(st.st_mode)?DT_DIR:DT_REG;
 +	
 +	return &(dirp->fileData);
 +}
@@ -6649,8 +6650,8 @@ diff -Nbaur newlib-1.19.0/newlib/libc/include/sys/_types.h newlib-1.19.0-arm/new
  
 diff -Nbaur newlib-1.19.0/newlib/libc/include/sys/dirent.h newlib-1.19.0-arm/newlib/libc/include/sys/dirent.h
 --- newlib-1.19.0/newlib/libc/include/sys/dirent.h	2005-10-04 21:47:39.000000000 +0100
-+++ newlib-1.19.0-arm/newlib/libc/include/sys/dirent.h	2010-12-18 16:49:59.000000000 +0000
-@@ -4,10 +4,39 @@
++++ newlib-1.19.0-arm/newlib/libc/include/sys/dirent.h	2011-01-21 21:52:14.000000000 +0000
+@@ -4,10 +4,49 @@
     not support <dirent.h>, we will get this file which uses #error to force
     an error.  */
  
@@ -6661,6 +6662,15 @@ diff -Nbaur newlib-1.19.0/newlib/libc/include/sys/dirent.h newlib-1.19.0-arm/new
 +#include <sys/types.h>
 +#include <sys/syslimits.h>
 +
++#define	DT_UNKNOWN	 0
++#define	DT_FIFO		 1
++#define	DT_CHR		 2
++#define	DT_DIR		 4
++#define	DT_BLK		 6
++#define	DT_REG		 8
++#define	DT_LNK		10
++#define	DT_SOCK		12
++#define	DT_WHT		14
 +
  #ifdef __cplusplus
  extern "C" {
@@ -6669,6 +6679,7 @@ diff -Nbaur newlib-1.19.0/newlib/libc/include/sys/dirent.h newlib-1.19.0-arm/new
 +	
 +	struct dirent {
 +		ino_t	d_ino;
++		unsigned char  d_type;
 +		char	d_name[NAME_MAX+1];
 +	};
 +	
