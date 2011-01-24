@@ -171,10 +171,9 @@ SECTIONS
 		*(.bss*)
 		*(COMMON)
 		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
+		__bss_end__ = ABSOLUTE(.);
+		__end__ = ABSOLUTE(.);
 	} >iwram
-
-	__bss_end = . ;
-	__bss_end__ = . ;
 
 	/* Stabs debugging sections.  */
 	.stab 0 : { *(.stab) }

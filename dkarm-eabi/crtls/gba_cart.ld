@@ -107,10 +107,10 @@ SECTIONS
 		SORT(CONSTRUCTORS)
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >rom = 0xff
-  .ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >rom
-   __exidx_start = .;
-  .ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) } >rom
-   __exidx_end = .;
+	.ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >rom
+	__exidx_start = .;
+	.ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) } >rom
+	__exidx_end = .;
 
 	.ctors :
 	{
@@ -153,11 +153,11 @@ SECTIONS
 
 	.iwram __iwram_start : AT (__iwram_lma)
 	{
-		__iwram_start = ABSOLUTE(.) ;
+		__iwram_start__ = ABSOLUTE(.) ;
 		*(.iwram)
 		*iwram.*(.text)
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-		__iwram_end = ABSOLUTE(.) ;
+		__iwram_end__ = ABSOLUTE(.) ;
 	} >iwram = 0xff
 
 	__data_lma = __iwram_lma + SIZEOF(.iwram) ;
@@ -171,15 +171,13 @@ SECTIONS
 		*(.bss*)
 		*(COMMON)
 		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
-		__bss_end = ABSOLUTE(.) ;
+		__bss_end__ = ABSOLUTE(.);
 
 	} AT>iwram
 
-	__bss_end__ = __bss_end ;
-
 	.data ALIGN(4) : AT (__data_lma)
 	{
-		__data_start = ABSOLUTE(.);
+		__data_start__ = ABSOLUTE(.);
 		*(.data)
 		*(.data.*)
 		*(.gnu.linkonce.d*)
@@ -216,7 +214,7 @@ SECTIONS
 	__jcr_lma = __fini_lma + SIZEOF(.fini_array);
 	.jcr            : AT (__jcr_lma) { KEEP (*(.jcr)) } >iwram
 
-	__data_end  =  ABSOLUTE(.);
+	__data_end__  =  ABSOLUTE(.);
 	__iwram_overlay_lma = __jcr_lma + SIZEOF(.jcr);
 
 	__iwram_overlay_start = . ;
@@ -236,7 +234,7 @@ SECTIONS
 	}>iwram = 0xff
 
 	__iwram_overlay_end = . ;
-  __ewram_lma = __iwram_overlay_lma + (__iwram_overlay_end - __iwram_overlay_start) ;
+	__ewram_lma = __iwram_overlay_lma + (__iwram_overlay_end - __iwram_overlay_start) ;
 
 	__iheap_start = . ;
 
@@ -251,15 +249,14 @@ SECTIONS
 
 	.sbss ALIGN(4)(NOLOAD):
  	{
-		__sbss_start = ABSOLUTE(.);
+		__sbss_start__ = ABSOLUTE(.);
  		*(.sbss)
  		. = ALIGN(4);
-		__sbss_end  = ABSOLUTE(.);
+		__sbss_end__  = ABSOLUTE(.);
+		__end__ = ABSOLUTE(.);
+		__ewram_end = ABSOLUTE(.);
+		__eheap_start = ABSOLUTE(.);
  	} AT>ewram
-
-	__ewram_end = __sbss_end ;
-	__eheap_start = __sbss_end;
-	__end__ = __sbss_end;
 
 	/* EZF Advance strips trailing 0xff bytes, add a pad section so nothing important is removed */
 	.pad ALIGN(4) : AT (__pad_lma)

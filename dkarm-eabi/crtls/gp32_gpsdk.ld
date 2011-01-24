@@ -169,9 +169,9 @@ SECTIONS
    *(.bss*)
    . = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
     __bss_end = ABSOLUTE(.);
+  __end__ = ABSOLUTE(.);
   } > ram
 
-  __end__ = __bss_end;
 
   __eheap_end = . ;
 

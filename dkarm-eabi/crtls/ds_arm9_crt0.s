@@ -63,8 +63,8 @@ _start:
 
 	bl	checkARGV		@ check and process argv trickery
 
-	ldr	r0, =__bss_start	@ Clear BSS section
-	ldr	r1, =__bss_end
+	ldr	r0, =__bss_start__	@ Clear BSS section
+	ldr	r1, =__bss_end__
 	sub	r1, r1, r0
 	bl	ClearMem
 

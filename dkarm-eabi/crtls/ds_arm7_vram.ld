@@ -138,14 +138,9 @@ SECTIONS
 		*(.bss*)
 		*(COMMON)
 		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
+		__bss_end__ = ABSOLUTE(.);
+		__end__ = ABSOLUTE(.);
 	} >vram
-
-	__bss_end = . ;
-	__bss_end__ = . ;
-
-	_end = . ;
-	__end__ = . ;
-	PROVIDE (end = _end);
 
 	/* Stabs debugging sections.  */
 	.stab 0 : { *(.stab) }

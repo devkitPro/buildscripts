@@ -110,9 +110,9 @@ SECTIONS
     *(.gnu.linkonce.d*)
     CONSTRUCTORS
     . = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
+  __data_end  =  ABSOLUTE(.);
   } >ram = 0xff
 
-  __data_end  =  . ;
 
   .bss ALIGN(4) :
   {
@@ -124,9 +124,8 @@ SECTIONS
    *(COMMON)
    . = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
   __bss_end = ABSOLUTE(.) ;
+  __end__ = ABSOLUTE(.) ;
   } > ram
-
-  __end__ = __bss_end;
 
   /* Stabs debugging sections.  */
   .stab 0 : { *(.stab) }

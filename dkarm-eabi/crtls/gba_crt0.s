@@ -104,16 +104,16 @@ SkipEWRAMClear:					@ Clear Internal WRAM to 0x00
 @---------------------------------------------------------------------------------
 @ Clear BSS section to 0x00
 @---------------------------------------------------------------------------------
-	ldr	r0, =__bss_start
-	ldr	r1, =__bss_end
+	ldr	r0, =__bss_start__
+	ldr	r1, =__bss_end__
 	sub	r1, r0
 	bl	ClearMem
 
 @---------------------------------------------------------------------------------
 @ Clear SBSS section to 0x00
 @---------------------------------------------------------------------------------
-	ldr	r0, =__sbss_start
-	ldr	r1, =__sbss_end
+	ldr	r0, =__sbss_start__
+	ldr	r1, =__sbss_end__
 	sub	r1, r0
 	bl	ClearMem
 
@@ -121,16 +121,16 @@ SkipEWRAMClear:					@ Clear Internal WRAM to 0x00
 @ Copy initialized data (data section) from LMA to VMA (ROM to RAM)
 @---------------------------------------------------------------------------------
 	ldr	r1, =__data_lma
-	ldr	r2, =__data_start
-	ldr	r4, =__data_end
+	ldr	r2, =__data_start__
+	ldr	r4, =__data_end__
 	bl	CopyMemChk
 
 @---------------------------------------------------------------------------------
 @ Copy internal work ram (iwram section) from LMA to VMA (ROM to RAM)
 @---------------------------------------------------------------------------------
 	ldr	r1,= __iwram_lma
-	ldr	r2,= __iwram_start
-	ldr	r4,= __iwram_end
+	ldr	r2,= __iwram_start__
+	ldr	r4,= __iwram_end__
 	bl	CopyMemChk
 
 @---------------------------------------------------------------------------------

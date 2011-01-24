@@ -42,9 +42,8 @@ SECTIONS
 		__bss_start = .;
 		*(.bss)
 		. = ALIGN(4);
+		__bss_end__ = ABSOLUTE(.);
+		__end__ = ABSOLUTE(.);
 	}
-	__bss_end = .;
-
-	__end = .;
 }
 

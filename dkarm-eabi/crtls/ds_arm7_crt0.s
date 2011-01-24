@@ -23,8 +23,8 @@ _start:
 	msr	cpsr, r0
 	ldr	sp, =__sp_usr		@ Set user stack
 
-	ldr	r0, =__bss_start	@ Clear BSS section to 0x00
-	ldr	r1, =__bss_end
+	ldr	r0, =__bss_start__	@ Clear BSS section to 0x00
+	ldr	r1, =__bss_end__
 	sub	r1, r1, r0
 	bl	ClearMem
 

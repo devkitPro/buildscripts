@@ -161,28 +161,25 @@ SECTIONS
 
 	.iwram __iwram_start : AT (__iwram_lma)
 	{
-		__iwram_start = ABSOLUTE(.) ;
+		__iwram_start__ = ABSOLUTE(.) ;
 		*(.iwram)
 		*iwram.*(.text)
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-		__iwram_end = ABSOLUTE(.) ;
+		__iwram_end__ = ABSOLUTE(.) ;
 	} >iwram = 0xff
 
 	__data_lma = __iwram_lma + SIZEOF(.iwram) ;
 
 	.bss ALIGN(4) (NOLOAD):
 	{
-		__bss_start = ABSOLUTE(.);
 		__bss_start__ = ABSOLUTE(.);
 		*(.dynbss)
 		*(.gnu.linkonce.b*)
 		*(.bss*)
 		*(COMMON)
 		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
-		__bss_end = ABSOLUTE(.) ;
+		__bss_end__ = ABSOLUTE(.) ;
 	}
-
-	__bss_end__ = __bss_end ;
 
 	.data ALIGN(4) : AT (__data_lma)
 	{
@@ -231,15 +228,14 @@ SECTIONS
 
 	.sbss ALIGN(4)(NOLOAD):
  	{
-		__sbss_start = ABSOLUTE(.);
+		__sbss_start__ = ABSOLUTE(.);
 		*(.sbss)
 		. = ALIGN(4);
-		__sbss_end  = ABSOLUTE(.);
+		__sbss_end__  = ABSOLUTE(.);
+		__end__ = ABSOLUTE(.);
+		__ewram_end = ABSOLUTE(.);
+		__eheap_start = ABSOLUTE(.);
 	}
-	__ewram_end = __sbss_end ;
-	__ewram_overlay_start = __sbss_end ;
-
-
 
 	OVERLAY ALIGN(4): NOCROSSREFS AT (__ewram_overlay_lma)
 	{
