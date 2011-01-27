@@ -28,6 +28,7 @@ if [ ! -f configured-binutils ]
 then
   CFLAGS=$cflags LDFLAGS=$ldflags ../../$BINUTILS_SRCDIR/configure \
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
+	--disable-werror \
 	--with-gcc --with-gnu-as --with-gnu-ld --disable-dependency-tracking \
 	--disable-werror \
 	|| { echo "Error configuing ppc binutils"; exit 1; }
@@ -59,6 +60,7 @@ if [ ! -f configured-binutils ]
 then
   CFLAGS=$cflags LDFLAGS=$ldflags ../../$BINUTILS_SRCDIR/configure \
 	--prefix=$prefix --target=mn10200 --disable-nls --disable-shared --disable-debug \
+	--disable-werror \
 	--disable-dependency-tracking --with-gcc --with-gnu-as --with-gnu-ld \
 	--disable-werror \
 	|| { echo "Error configuing mn10200 binutils"; exit 1; }
