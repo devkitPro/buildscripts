@@ -1,6 +1,6 @@
 diff -Nbaur gcc-4.5.2/gcc/config/rs6000/rs6000.h gcc-4.5.2-ppc/gcc/config/rs6000/rs6000.h
 --- gcc-4.5.2/gcc/config/rs6000/rs6000.h	2009-12-07 15:34:21.000000000 +0000
-+++ gcc-4.5.2-ppc/gcc/config/rs6000/rs6000.h	2011-01-13 14:28:52.000000000 +0000
++++ gcc-4.5.2-ppc/gcc/config/rs6000/rs6000.h	2011-02-05 20:20:21.000000000 +0000
 @@ -190,6 +190,7 @@
    { "asm_cpu_476",		ASM_CPU_476_SPEC },			\
    SUBTARGET_EXTRA_SPECS
@@ -20,7 +20,7 @@ diff -Nbaur gcc-4.5.2/gcc/config/rs6000/rs6000.h gcc-4.5.2-ppc/gcc/config/rs6000
  #ifdef HAVE_LOCAL_CPU_DETECT
 diff -Nbaur gcc-4.5.2/gcc/config/rs6000/sysv4.h gcc-4.5.2-ppc/gcc/config/rs6000/sysv4.h
 --- gcc-4.5.2/gcc/config/rs6000/sysv4.h	2010-11-03 13:55:26.000000000 +0000
-+++ gcc-4.5.2-ppc/gcc/config/rs6000/sysv4.h	2011-01-13 14:28:52.000000000 +0000
++++ gcc-4.5.2-ppc/gcc/config/rs6000/sysv4.h	2011-02-08 13:18:04.000000000 +0000
 @@ -662,7 +662,11 @@
  
  /* Default starting address if specified.  */
@@ -68,7 +68,13 @@ diff -Nbaur gcc-4.5.2/gcc/config/rs6000/sysv4.h gcc-4.5.2-ppc/gcc/config/rs6000/
    myellowknife : %(startfile_yellowknife) ; \
    mmvme        : %(startfile_mvme)        ; \
    msim         : %(startfile_sim)         ; \
-@@ -770,7 +781,8 @@
+@@ -765,12 +776,13 @@
+   mcall-openbsd: %(startfile_openbsd)     ; \
+                : %(startfile_default)     }"
+ 
+-#define	STARTFILE_DEFAULT_SPEC "ecrti.o%s crtbegin.o%s"
++#define	STARTFILE_DEFAULT_SPEC "crt0.o%s ecrti.o%s crtbegin.o%s"
+ 
  /* Override svr4.h definition.  */
  #undef	LIB_SPEC
  #define	LIB_SPEC "\
@@ -178,7 +184,7 @@ diff -Nbaur gcc-4.5.2/gcc/config/rs6000/sysv4.h gcc-4.5.2-ppc/gcc/config/rs6000/
    { "cpp_os_mvme",		CPP_OS_MVME_SPEC },			\
 diff -Nbaur gcc-4.5.2/gcc/config/rs6000/sysv4.opt gcc-4.5.2-ppc/gcc/config/rs6000/sysv4.opt
 --- gcc-4.5.2/gcc/config/rs6000/sysv4.opt	2009-11-25 20:23:20.000000000 +0000
-+++ gcc-4.5.2-ppc/gcc/config/rs6000/sysv4.opt	2011-01-13 14:28:52.000000000 +0000
++++ gcc-4.5.2-ppc/gcc/config/rs6000/sysv4.opt	2011-02-05 20:20:21.000000000 +0000
 @@ -108,6 +108,26 @@
  Target RejectNegative
  Link with libads.a, libc.a and crt0.o
@@ -208,7 +214,7 @@ diff -Nbaur gcc-4.5.2/gcc/config/rs6000/sysv4.opt gcc-4.5.2-ppc/gcc/config/rs600
  Link with libyk.a, libc.a and crt0.o
 diff -Nbaur gcc-4.5.2/gcc/config.gcc gcc-4.5.2-ppc/gcc/config.gcc
 --- gcc-4.5.2/gcc/config.gcc	2010-10-09 10:35:53.000000000 +0100
-+++ gcc-4.5.2-ppc/gcc/config.gcc	2011-01-13 14:28:52.000000000 +0000
++++ gcc-4.5.2-ppc/gcc/config.gcc	2011-02-05 20:20:21.000000000 +0000
 @@ -1989,7 +1989,7 @@
  	use_gcc_stdint=wrap
  	;;
@@ -220,7 +226,7 @@ diff -Nbaur gcc-4.5.2/gcc/config.gcc gcc-4.5.2-ppc/gcc/config.gcc
  	use_gcc_stdint=wrap
 diff -Nbaur gcc-4.5.2/libcpp/Makefile.in gcc-4.5.2-ppc/libcpp/Makefile.in
 --- gcc-4.5.2/libcpp/Makefile.in	2010-12-16 12:49:03.000000000 +0000
-+++ gcc-4.5.2-ppc/libcpp/Makefile.in	2011-01-13 14:28:52.000000000 +0000
++++ gcc-4.5.2-ppc/libcpp/Makefile.in	2011-02-05 20:20:21.000000000 +0000
 @@ -212,8 +212,7 @@
  # Note that we put the dependencies into a .Tpo file, then move them
  # into place if the compile succeeds.  We need this because gcc does
@@ -233,7 +239,7 @@ diff -Nbaur gcc-4.5.2/libcpp/Makefile.in gcc-4.5.2-ppc/libcpp/Makefile.in
  	  $(depcomp) $(COMPILE.base)
 diff -Nbaur gcc-4.5.2/libgcc/config/rs6000/t-ppccomm gcc-4.5.2-ppc/libgcc/config/rs6000/t-ppccomm
 --- gcc-4.5.2/libgcc/config/rs6000/t-ppccomm	2008-06-26 15:15:49.000000000 +0100
-+++ gcc-4.5.2-ppc/libgcc/config/rs6000/t-ppccomm	2011-01-13 14:28:52.000000000 +0000
++++ gcc-4.5.2-ppc/libgcc/config/rs6000/t-ppccomm	2011-02-05 20:20:21.000000000 +0000
 @@ -15,7 +15,9 @@
    e500crtsavg64gpr.S \
    e500crtsavg64gprctr.S
@@ -247,7 +253,7 @@ diff -Nbaur gcc-4.5.2/libgcc/config/rs6000/t-ppccomm gcc-4.5.2-ppc/libgcc/config
  # end labels to all of the special sections used when we link using gcc.
 diff -Nbaur gcc-4.5.2/libgcc/config.host gcc-4.5.2-ppc/libgcc/config.host
 --- gcc-4.5.2/libgcc/config.host	2010-09-12 04:27:09.000000000 +0100
-+++ gcc-4.5.2-ppc/libgcc/config.host	2011-01-13 14:28:52.000000000 +0000
++++ gcc-4.5.2-ppc/libgcc/config.host	2011-02-05 20:20:21.000000000 +0000
 @@ -466,6 +466,7 @@
  powerpc-*-eabialtivec*)
  	;;
