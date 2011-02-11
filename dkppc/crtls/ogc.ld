@@ -13,6 +13,7 @@ PHDRS
   stub PT_LOAD FLAGS(5);
   text PT_LOAD FLAGS(5);
   data PT_LOAD FLAGS(6);
+  bss  PT_LOAD;
 }
 
 SECTIONS
@@ -196,7 +197,7 @@ SECTIONS
 		PROVIDE (___sbss_end = .);
 		. = ALIGN(32);   /* REQUIRED. LD is flaky without it. */
 		__sbss_end = .;
-	}
+	} :bss
 
 	.bss       :
 	{
