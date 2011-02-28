@@ -21,7 +21,7 @@ fi
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
 LIBOGC_VER=1.8.6
-LIBGBA_VER=20081210
+LIBGBA_VER=20090222
 LIBNDS_VER=1.4.9
 DEFAULT_ARM7_VER=0.5.17
 DSWIFI_VER=0.3.13
@@ -642,7 +642,6 @@ then
   fi
   rm -f downloaded_sources
 fi
-
 
 echo
 echo "note: Add the following to your environment;  DEVKITPRO=$TOOLPATH $toolchain=$TOOLPATH/$package"
