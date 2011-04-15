@@ -1,0 +1,237 @@
+diff -Nbaur gcc-4.6.0/gcc/config/rs6000/rs6000.h gcc-4.6.0-ppc/gcc/config/rs6000/rs6000.h
+--- gcc-4.6.0/gcc/config/rs6000/rs6000.h	2011-03-07 19:27:09.000000000 +0000
++++ gcc-4.6.0-ppc/gcc/config/rs6000/rs6000.h	2011-04-14 04:02:56.000000000 +0100
+@@ -200,6 +200,7 @@
+   { "asm_cpu_476",		ASM_CPU_476_SPEC },			\
+   SUBTARGET_EXTRA_SPECS
+ 
++#if 0
+ /* -mcpu=native handling only makes sense with compiler running on
+    an PowerPC chip.  If changing this condition, also change
+    the condition in driver-rs6000.c.  */
+@@ -214,6 +215,8 @@
+ #else
+ #define ASM_CPU_NATIVE_SPEC "%(asm_default)"
+ #endif
++#endif 
++#define ASM_CPU_NATIVE_SPEC "%(asm_default)"
+ 
+ #ifndef CC1_CPU_SPEC
+ #ifdef HAVE_LOCAL_CPU_DETECT
+diff -Nbaur gcc-4.6.0/gcc/config/rs6000/sysv4.h gcc-4.6.0-ppc/gcc/config/rs6000/sysv4.h
+--- gcc-4.6.0/gcc/config/rs6000/sysv4.h	2011-03-07 07:50:23.000000000 +0000
++++ gcc-4.6.0-ppc/gcc/config/rs6000/sysv4.h	2011-04-14 04:12:48.000000000 +0100
+@@ -603,7 +603,11 @@
+ 
+ /* Default starting address if specified.  */
+ #define LINK_START_SPEC "\
+-%{mads         : %(link_start_ads)         ; \
++%{mgcn|mogc         : %(link_start_ogc)         ; \
++  mvgc         : %(link_start_vgc)         ; \
++  mgcbios         : %(link_start_gcb)         ; \
++  mrvl         : %(link_start_rvl)         ; \
++  mads         : %(link_start_ads)         ; \
+   myellowknife : %(link_start_yellowknife) ; \
+   mmvme        : %(link_start_mvme)        ; \
+   msim         : %(link_start_sim)         ; \
+@@ -641,7 +645,8 @@
+ 
+ /* Any specific OS flags.  */
+ #define LINK_OS_SPEC "\
+-%{mads         : %(link_os_ads)         ; \
++%{mgcn|mogc|mvgc|mgcbios|mrvl         : %(link_os_ogc)         ; \
++  mads         : %(link_os_ads)         ; \
+   myellowknife : %(link_os_yellowknife) ; \
+   mmvme        : %(link_os_mvme)        ; \
+   msim         : %(link_os_sim)         ; \
+@@ -660,7 +665,10 @@
+ /* Override rs6000.h definition.  */
+ #undef	CPP_SPEC
+ #define	CPP_SPEC "%{posix: -D_POSIX_SOURCE} \
+-%{mads         : %(cpp_os_ads)         ; \
++%{mgcn         : %(cpp_os_gcn)         ; \
++  mogc|mvgc|mgcbios         : %(cpp_os_ogc)         ; \
++  mrvl         : %(cpp_os_rvl)         ; \
++  mads         : %(cpp_os_ads)         ; \
+   myellowknife : %(cpp_os_yellowknife) ; \
+   mmvme        : %(cpp_os_mvme)        ; \
+   msim         : %(cpp_os_sim)         ; \
+@@ -675,7 +683,10 @@
+ 
+ #undef	STARTFILE_SPEC
+ #define	STARTFILE_SPEC "\
+-%{mads         : %(startfile_ads)         ; \
++%{mgcn         : %(startfile_gcn)         ; \
++  mogc|mvgc|mgcbios         : %(startfile_ogc)         ; \
++  mrvl         : %(startfile_ogc)         ; \
++  mads         : %(startfile_ads)         ; \
+   myellowknife : %(startfile_yellowknife) ; \
+   mmvme        : %(startfile_mvme)        ; \
+   msim         : %(startfile_sim)         ; \
+@@ -686,11 +697,12 @@
+   mcall-openbsd: %(startfile_openbsd)     ; \
+                : %(startfile_default)     }"
+ 
+-#define	STARTFILE_DEFAULT_SPEC "ecrti.o%s crtbegin.o%s"
++#define	STARTFILE_DEFAULT_SPEC "crt0.o%s ecrti.o%s crtbegin.o%s"
+ 
+ #undef	LIB_SPEC
+ #define	LIB_SPEC "\
+-%{mads         : %(lib_ads)         ; \
++%{mgcn|mogc|mvgc|mgcbios|mrvl        : %(lib_ogc)         ; \
++  mads         : %(lib_ads)         ; \
+   myellowknife : %(lib_yellowknife) ; \
+   mmvme        : %(lib_mvme)        ; \
+   msim         : %(lib_sim)         ; \
+@@ -701,11 +713,12 @@
+   mcall-openbsd: %(lib_openbsd)     ; \
+                : %(lib_default)     }"
+ 
+-#define LIB_DEFAULT_SPEC "-lc"
++#define LIB_DEFAULT_SPEC "--start-group -lsysbase -lc --end-group"
+ 
+ #undef	ENDFILE_SPEC
+ #define	ENDFILE_SPEC "\
+-%{mads         : %(endfile_ads)         ; \
++%{mgcn|mogc|mvgc|mgcbios|mrvl         : %(endfile_ogc)         ; \
++  mads         : %(endfile_ads)         ; \
+   myellowknife : %(endfile_yellowknife) ; \
+   mmvme        : %(endfile_mvme)        ; \
+   msim         : %(endfile_sim)         ; \
+@@ -722,16 +735,27 @@
+ 
+ /* Motorola ADS support.  */
+ #define LIB_ADS_SPEC "--start-group -lads -lc --end-group"
++#define LIB_OGC_SPEC "--start-group -lsysbase -lc --end-group"
+ 
+ #define	STARTFILE_ADS_SPEC "ecrti.o%s crt0.o%s crtbegin.o%s"
++#define	STARTFILE_OGC_SPEC "ecrti.o%s crtbegin.o%s crtmain.o%s"
+ 
+ #define	ENDFILE_ADS_SPEC "crtend.o%s ecrtn.o%s"
++#define	ENDFILE_OGC_SPEC "crtend.o%s ecrtn.o%s"
+ 
+ #define LINK_START_ADS_SPEC "-T ads.ld%s"
++#define LINK_START_OGC_SPEC "-T ogc.ld%s"
++#define LINK_START_RVL_SPEC "-T rvl.ld%s"
++#define LINK_START_VGC_SPEC "-T vgcogc.ld%s"
++#define LINK_START_GCB_SPEC "-T gcbogc.ld%s"
+ 
+ #define LINK_OS_ADS_SPEC ""
++#define LINK_OS_OGC_SPEC "--gc-sections"
+ 
+ #define CPP_OS_ADS_SPEC ""
++#define CPP_OS_GCN_SPEC "-D__gamecube__ -ffunction-sections -fdata-sections"
++#define CPP_OS_OGC_SPEC "-D__gamecube__ -DHW_DOL -ffunction-sections -fdata-sections"
++#define CPP_OS_RVL_SPEC "-D__wii__ -DHW_RVL -ffunction-sections -fdata-sections"
+ 
+ /* Motorola Yellowknife support.  */
+ #define LIB_YELLOWKNIFE_SPEC "--start-group -lyk -lc --end-group"
+@@ -926,6 +950,7 @@
+ #undef	SUBTARGET_EXTRA_SPECS
+ #define	SUBTARGET_EXTRA_SPECS						\
+   { "crtsavres_default",	CRTSAVRES_DEFAULT_SPEC },		\
++  { "lib_ogc",			LIB_OGC_SPEC },				\
+   { "lib_ads",			LIB_ADS_SPEC },				\
+   { "lib_yellowknife",		LIB_YELLOWKNIFE_SPEC },			\
+   { "lib_mvme",			LIB_MVME_SPEC },			\
+@@ -936,6 +961,7 @@
+   { "lib_netbsd",		LIB_NETBSD_SPEC },			\
+   { "lib_openbsd",		LIB_OPENBSD_SPEC },			\
+   { "lib_default",		LIB_DEFAULT_SPEC },			\
++  { "startfile_ogc",		STARTFILE_OGC_SPEC },			\
+   { "startfile_ads",		STARTFILE_ADS_SPEC },			\
+   { "startfile_yellowknife",	STARTFILE_YELLOWKNIFE_SPEC },		\
+   { "startfile_mvme",		STARTFILE_MVME_SPEC },			\
+@@ -946,6 +972,7 @@
+   { "startfile_netbsd",		STARTFILE_NETBSD_SPEC },		\
+   { "startfile_openbsd",	STARTFILE_OPENBSD_SPEC },		\
+   { "startfile_default",	STARTFILE_DEFAULT_SPEC },		\
++  { "endfile_ogc",		ENDFILE_OGC_SPEC },			\
+   { "endfile_ads",		ENDFILE_ADS_SPEC },			\
+   { "endfile_yellowknife",	ENDFILE_YELLOWKNIFE_SPEC },		\
+   { "endfile_mvme",		ENDFILE_MVME_SPEC },			\
+@@ -959,7 +986,11 @@
+   { "link_shlib",		LINK_SHLIB_SPEC },			\
+   { "link_target",		LINK_TARGET_SPEC },			\
+   { "link_start",		LINK_START_SPEC },			\
++  { "link_start_vgc",		LINK_START_VGC_SPEC },			\
++  { "link_start_gcb",		LINK_START_GCB_SPEC },			\
++  { "link_start_rvl",		LINK_START_RVL_SPEC },			\
+   { "link_start_ads",		LINK_START_ADS_SPEC },			\
++  { "link_start_ogc",		LINK_START_OGC_SPEC },			\
+   { "link_start_yellowknife",	LINK_START_YELLOWKNIFE_SPEC },		\
+   { "link_start_mvme",		LINK_START_MVME_SPEC },			\
+   { "link_start_sim",		LINK_START_SIM_SPEC },			\
+@@ -970,6 +1001,7 @@
+   { "link_start_openbsd",	LINK_START_OPENBSD_SPEC },		\
+   { "link_start_default",	LINK_START_DEFAULT_SPEC },		\
+   { "link_os",			LINK_OS_SPEC },				\
++  { "link_os_ogc",		LINK_OS_OGC_SPEC },			\
+   { "link_os_ads",		LINK_OS_ADS_SPEC },			\
+   { "link_os_yellowknife",	LINK_OS_YELLOWKNIFE_SPEC },		\
+   { "link_os_mvme",		LINK_OS_MVME_SPEC },			\
+@@ -984,6 +1016,9 @@
+   { "cc1_endian_little",	CC1_ENDIAN_LITTLE_SPEC },		\
+   { "cc1_endian_default",	CC1_ENDIAN_DEFAULT_SPEC },		\
+   { "cc1_secure_plt_default",	CC1_SECURE_PLT_DEFAULT_SPEC },		\
++  { "cpp_os_gcn",		CPP_OS_GCN_SPEC },			\
++  { "cpp_os_ogc",		CPP_OS_OGC_SPEC },			\
++  { "cpp_os_rvl",		CPP_OS_RVL_SPEC },			\
+   { "cpp_os_ads",		CPP_OS_ADS_SPEC },			\
+   { "cpp_os_yellowknife",	CPP_OS_YELLOWKNIFE_SPEC },		\
+   { "cpp_os_mvme",		CPP_OS_MVME_SPEC },			\
+diff -Nbaur gcc-4.6.0/gcc/config/rs6000/sysv4.opt gcc-4.6.0-ppc/gcc/config/rs6000/sysv4.opt
+--- gcc-4.6.0/gcc/config/rs6000/sysv4.opt	2011-01-03 20:52:22.000000000 +0000
++++ gcc-4.6.0-ppc/gcc/config/rs6000/sysv4.opt	2011-04-14 04:02:56.000000000 +0100
+@@ -108,6 +108,26 @@
+ Target RejectNegative
+ Link with libads.a, libc.a and crt0.o
+ 
++mgcn
++Target RejectNegative
++Link with libsysbase.a and libc.a, use ogc linker script 
++
++mogc
++Target RejectNegative
++Link with libsysbase.a and libc.a, use ogc linker script 
++
++mgcbios
++Target RejectNegative
++Link with libsysbase.a and libc.a, use gcbogc linker script 
++
++mvgc
++Target RejectNegative
++Link with libsysbase.a and libc.a, use gcbogc linker script 
++
++mrvl
++Target RejectNegative
++Link with libsysbase.a and libc.a, use rvl linker script 
++
+ myellowknife
+ Target RejectNegative
+ Link with libyk.a, libc.a and crt0.o
+diff -Nbaur gcc-4.6.0/gcc/config.gcc gcc-4.6.0-ppc/gcc/config.gcc
+--- gcc-4.6.0/gcc/config.gcc	2011-03-14 06:05:29.000000000 +0000
++++ gcc-4.6.0-ppc/gcc/config.gcc	2011-04-14 04:08:25.000000000 +0100
+@@ -2119,7 +2119,7 @@
+ 	use_gcc_stdint=wrap
+ 	;;
+ powerpc-*-eabi*)
+-	tm_file="${tm_file} dbxelf.h elfos.h usegas.h freebsd-spec.h newlib-stdint.h rs6000/sysv4.h rs6000/eabi.h rs6000/e500.h"
++	tm_file="${tm_file} dbxelf.h elfos.h usegas.h freebsd-spec.h newlib-stdint.h rs6000/sysv4.h rs6000/eabi.h rs6000/e500.h rs6000/750cl.h"
+ 	extra_options="${extra_options} rs6000/sysv4.opt"
+ 	tmake_file="rs6000/t-fprules rs6000/t-fprules-fpbit rs6000/t-ppcgas rs6000/t-ppccomm"
+ 	use_gcc_stdint=wrap
+diff -Nbaur gcc-4.6.0/libcpp/Makefile.in gcc-4.6.0-ppc/libcpp/Makefile.in
+--- gcc-4.6.0/libcpp/Makefile.in	2011-03-25 17:07:00.000000000 +0000
++++ gcc-4.6.0-ppc/libcpp/Makefile.in	2011-04-14 04:02:56.000000000 +0100
+@@ -212,8 +212,7 @@
+ # Note that we put the dependencies into a .Tpo file, then move them
+ # into place if the compile succeeds.  We need this because gcc does
+ # not atomically write the dependency output file.
+-COMPILE = $(COMPILE.base) -o $@ -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Tpo
+-POSTCOMPILE = @mv $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
++COMPILE = $(COMPILE.base) -o $@
+ else
+ COMPILE = source='$<' object='$@' libtool=no DEPDIR=$(DEPDIR) $(DEPMODE) \
+ 	  $(depcomp) $(COMPILE.base)

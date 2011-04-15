@@ -22,7 +22,7 @@ fi
 #---------------------------------------------------------------------------------
 LIBOGC_VER=1.8.6
 LIBGBA_VER=20090222
-LIBNDS_VER=1.4.9
+LIBNDS_VER=1.5.0
 DEFAULT_ARM7_VER=0.5.17
 DSWIFI_VER=0.3.13
 LIBMIRKO_VER=0.9.7
@@ -99,7 +99,7 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=4.5.2
+    GCC_VER=4.6.0
     BINUTILS_VER=2.21
     NEWLIB_VER=1.19.0
     GDB_VER=7.2
@@ -110,7 +110,7 @@ case "$VERSION" in
     toolchain=DEVKITARM
   ;;
   "2" )
-    GCC_VER=4.5.2
+    GCC_VER=4.6.0
     BINUTILS_VER=2.21
     NEWLIB_VER=1.19.0
     GDB_VER=7.2
