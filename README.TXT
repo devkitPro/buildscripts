@@ -19,10 +19,11 @@ required packages for building on debian/*buntu
 
 sudo apt-get install build-essential autoconf automake bison flex libncurses5-dev libreadline-dev texinfo
 
-for building gcc 4.3.3 libgmp and libmpfr are required
+for building gcc libgmp, libmpfr and libmpc are required
 
 http://gmplib.org/
 http://www.mpfr.org/
+http://www.multiprecision.org/
 
 Some of the tools for devkitARM and devkitPPC also require FreeImage
 
