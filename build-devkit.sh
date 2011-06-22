@@ -6,8 +6,8 @@
 #	devkitPSP release 14
 #---------------------------------------------------------------------------------
 
-if [ 1 -eq 1 ] ; then 
-  echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support." 	 
+if [ 1 -eq 1 ] ; then
+  echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support."
   echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
   echo "http://sourceforge.net/projects/devkitpro/files/buildscripts/"
   echo
@@ -23,7 +23,7 @@ fi
 LIBOGC_VER=1.8.7
 LIBGBA_VER=20090222
 LIBNDS_VER=1.5.0
-DEFAULT_ARM7_VER=0.5.19
+DEFAULT_ARM7_VER=0.5.20
 DSWIFI_VER=0.3.13
 LIBMIRKO_VER=0.9.7
 MAXMOD_VER=1.0.6
@@ -181,7 +181,7 @@ if [ "$DOWNLOAD" -eq 2 ]; then
   if test "`curl -V`"; then
     FETCH="curl -f -L -O"
   elif test "`wget -V`"; then
-    FETCH=wget  
+    FETCH=wget
   else
     echo "ERROR: Please make sure you have wget or curl installed."
     exit 1
@@ -200,7 +200,7 @@ else
 	echo "Please enter the directory where you would like '$package' to be installed:"
 	echo "for mingw/msys you must use <drive>:/<install path> or you will have include path problems"
 	echo "this is the top level directory for devkitpro, i.e. e:/devkitPro"
-	
+
 	read INSTALLDIR
 	echo
 fi
