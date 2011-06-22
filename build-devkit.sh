@@ -20,7 +20,7 @@ fi
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=1.8.6
+LIBOGC_VER=1.8.7
 LIBGBA_VER=20090222
 LIBNDS_VER=1.5.0
 DEFAULT_ARM7_VER=0.5.19
@@ -577,8 +577,8 @@ for f in $INSTALLDIR/$package/bin/* \
          $INSTALLDIR/$package/$target/bin/* \
          $INSTALLDIR/$package/libexec/gcc/$target/$GCC_VER/*
 do
-  # exclude dll for windows, directories & the gccbug text file
-  if  ! [[ "$f" == *.dll || -d $f || "$f" == *-gccbug ]]
+  # exclude dll for windows, so for linux/osx, directories .la files, embedspu script & the gccbug text file
+  if  ! [[ "$f" == *.dll || "$f" == *.so || -d $f || "$f" == *.la || "$f" == *-embedspu || "$f" == *-gccbug ]]
   then
     strip $f
   fi
