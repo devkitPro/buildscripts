@@ -25,10 +25,10 @@ http://gmplib.org/
 http://www.mpfr.org/
 http://www.multiprecision.org/
 
-Some of the tools for devkitARM and devkitPPC also require FreeImage
+Some of the tools for devkitARM and devkitPPC also require FreeImage and zlib
 
 http://freeimage.sourceforge.net/
-
+http://www.zlib.net
  
 Downloading the source packages
 -------------------------------
