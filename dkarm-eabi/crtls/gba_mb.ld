@@ -183,13 +183,13 @@ SECTIONS
 
 	.data ALIGN(4) : AT (__data_lma)
 	{
-		__data_start = ABSOLUTE(.);
+		__data_start__ = ABSOLUTE(.);
 		*(.data)
 		*(.data.*)
 		*(.gnu.linkonce.d*)
 		CONSTRUCTORS
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
-		__data_end  =  ABSOLUTE(.);
+		__data_end__  =  ABSOLUTE(.);
 	} >iwram = 0xff
 
 	__iwram_overlay_lma = __data_lma + SIZEOF(.data);
