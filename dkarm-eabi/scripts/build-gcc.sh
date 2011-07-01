@@ -62,7 +62,7 @@ then
   cp -r $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/newlib/libc/include $INSTALLDIR/devkitARM/$target/sys-include
   CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../$GCC_SRCDIR/configure \
         --enable-languages=c,c++,objc \
-        --with-cpu=arm7tdmi\
+        --with-march=armv4t\
         --enable-interwork --enable-multilib\
         --with-gcc --with-gnu-ld --with-gnu-as \
         --disable-dependency-tracking \
@@ -73,7 +73,7 @@ then
         --with-newlib \
         --prefix=$prefix\
         --enable-lto \
-        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 33" \
+        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 34" \
         || { echo "Error configuring gcc"; exit 1; }
   touch configured-gcc
 fi

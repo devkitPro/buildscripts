@@ -1,7 +1,7 @@
 #!/bin/bash
 #---------------------------------------------------------------------------------
 # Build scripts for
-#	devkitARM release 33
+#	devkitARM release 34
 #	devkitPPC release 23
 #	devkitPSP release 14
 #---------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=4.6.0
+    GCC_VER=4.6.1
     BINUTILS_VER=2.21
     NEWLIB_VER=1.19.0
     GDB_VER=7.2
