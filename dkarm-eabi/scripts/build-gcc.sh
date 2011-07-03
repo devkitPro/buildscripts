@@ -14,8 +14,11 @@ case $PLATFORM in
     ;;
   MINGW32* )
     cflags="-D__USE_MINGW_ACCESS"
+# horrid hack to get -flto to work on windows
+    plugin_ld="--with-plugin-ld=ld"
     ;;
 esac
+
 
 #---------------------------------------------------------------------------------
 # build and install binutils
@@ -72,7 +75,7 @@ then
         --target=$target \
         --with-newlib \
         --prefix=$prefix\
-        --enable-lto \
+        --enable-lto $plugin_ld\
         --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 34" \
         || { echo "Error configuring gcc"; exit 1; }
   touch configured-gcc
