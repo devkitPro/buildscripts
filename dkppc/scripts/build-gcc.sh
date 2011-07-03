@@ -14,6 +14,8 @@ case $PLATFORM in
     ;;
   MINGW32* )
     cflags="-D__USE_MINGW_ACCESS"
+# horrid hack to get -flto to work on windows
+    plugin_ld="--with-plugin-ld=ld"
     ;;
 esac
 
@@ -97,7 +99,7 @@ then
   cp -r $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/newlib/libc/include $INSTALLDIR/devkitPPC/$target/sys-include
   CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../$GCC_SRCDIR/configure \
   --enable-languages=c,c++,objc \
-  --enable-lto \
+  --enable-lto $plugin_ld\
   --with-cpu=750 \
   --disable-nls --disable-shared --enable-threads --disable-multilib \
   --disable-win32-registry \
@@ -106,7 +108,7 @@ then
   --with-newlib \
   --prefix=$prefix\
   --disable-dependency-tracking \
-  --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 23" \
+  --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 24" \
   2>&1 | tee gcc_configure.log
   touch configured-gcc
 fi
