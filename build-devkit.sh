@@ -2,7 +2,7 @@
 #---------------------------------------------------------------------------------
 # Build scripts for
 #	devkitARM release 34
-#	devkitPPC release 23
+#	devkitPPC release 24
 #	devkitPSP release 14
 #---------------------------------------------------------------------------------
 
@@ -22,8 +22,8 @@ fi
 #---------------------------------------------------------------------------------
 LIBOGC_VER=1.8.7
 LIBGBA_VER=20090222
-LIBNDS_VER=1.5.0
-DEFAULT_ARM7_VER=0.5.20
+LIBNDS_VER=1.5.1
+DEFAULT_ARM7_VER=0.5.21
 DSWIFI_VER=0.3.13
 LIBMIRKO_VER=0.9.7
 MAXMOD_VER=1.0.6
@@ -110,7 +110,7 @@ case "$VERSION" in
     toolchain=DEVKITARM
   ;;
   "2" )
-    GCC_VER=4.6.0
+    GCC_VER=4.6.1
     BINUTILS_VER=2.21
     NEWLIB_VER=1.19.0
     GDB_VER=7.2
