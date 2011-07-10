@@ -22,13 +22,13 @@ fi
 #---------------------------------------------------------------------------------
 LIBOGC_VER=1.8.7
 LIBGBA_VER=20090222
-LIBNDS_VER=1.5.1
+LIBNDS_VER=1.5.2
 DEFAULT_ARM7_VER=0.5.21
 DSWIFI_VER=0.3.13
 LIBMIRKO_VER=0.9.7
 MAXMOD_VER=1.0.6
 FILESYSTEM_VER=0.9.9
-LIBFAT_VER=1.0.9
+LIBFAT_VER=1.0.10
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
