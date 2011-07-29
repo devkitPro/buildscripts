@@ -3,7 +3,7 @@
 # Build scripts for
 #	devkitARM release 34
 #	devkitPPC release 24
-#	devkitPSP release 14
+#	devkitPSP release 15
 #---------------------------------------------------------------------------------
 
 if [ 1 -eq 1 ] ; then
@@ -121,9 +121,9 @@ case "$VERSION" in
     toolchain=DEVKITPPC
   ;;
   "3" )
-    GCC_VER=4.3.5
+    GCC_VER=4.3.6
     BINUTILS_VER=2.16.1
-    NEWLIB_VER=1.17.0
+    NEWLIB_VER=1.19.0
     GDB_VER=6.8
     basedir='dkpsp'
     package=devkitPSP

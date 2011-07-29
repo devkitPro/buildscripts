@@ -1,0 +1,2391 @@
+diff -Nbaur pspsdk/src/atrac3/pspatrac3.h pspsdk.new/src/atrac3/pspatrac3.h
+--- pspsdk/src/atrac3/pspatrac3.h	2011-07-29 15:56:36.000000000 +0100
++++ pspsdk.new/src/atrac3/pspatrac3.h	2011-07-29 14:56:08.000000000 +0100
+@@ -18,6 +18,57 @@
+ extern "C" {
+ #endif
+ 
++/* Error code definition */
++#define PSP_ATRAC_SUCCESS                       SCE_OK
++
++#define PSP_ATRAC_ERROR_PARAM_FAIL              (0x80630001)
++#define PSP_ATRAC_ERROR_API_FAIL                (0x80630002)
++#define PSP_ATRAC_ERROR_NO_ATRACID              (0x80630003)
++#define PSP_ATRAC_ERROR_BAD_CODECTYPE           (0x80630004)
++#define PSP_ATRAC_ERROR_BAD_ATRACID             (0x80630005)
++#define PSP_ATRAC_ERROR_UNKNOWN_FORMAT          (0x80630006)
++#define PSP_ATRAC_ERROR_UNMATCH_FORMAT          (0x80630007)
++#define PSP_ATRAC_ERROR_BAD_DATA                (0x80630008)
++#define PSP_ATRAC_ERROR_ALLDATA_IS_ONMEMORY     (0x80630009)
++#define PSP_ATRAC_ERROR_UNSET_DATA              (0x80630010)
++
++#define PSP_ATRAC_ERROR_READSIZE_IS_TOO_SMALL   (0x80630011)
++#define PSP_ATRAC_ERROR_NEED_SECOND_BUFFER      (0x80630012)
++#define PSP_ATRAC_ERROR_READSIZE_OVER_BUFFER    (0x80630013)
++#define PSP_ATRAC_ERROR_NOT_4BYTE_ALIGNMENT     (0x80630014)
++#define PSP_ATRAC_ERROR_BAD_SAMPLE              (0x80630015)
++#define PSP_ATRAC_ERROR_WRITEBYTE_FIRST_BUFFER  (0x80630016)
++#define PSP_ATRAC_ERROR_WRITEBYTE_SECOND_BUFFER (0x80630017)
++#define PSP_ATRAC_ERROR_ADD_DATA_IS_TOO_BIG     (0x80630018)
++
++#define PSP_ATRAC_ERROR_UNSET_PARAM             (0x80630021)
++#define PSP_ATRAC_ERROR_NONEED_SECOND_BUFFER    (0x80630022)
++#define PSP_ATRAC_ERROR_NODATA_IN_BUFFER        (0x80630023)
++#define PSP_ATRAC_ERROR_ALLDATA_WAS_DECODED     (0x80630024)
++
++/* Audio Codec ID */
++#define PSP_ATRAC_AT3PLUS        (0x00001000)
++#define PSP_ATRAC_AT3            (0x00001001)
++
++/* Remain Frame typical Status */
++#define PSP_ATRAC_ALLDATA_IS_ON_MEMORY             (-1)
++#define PSP_ATRAC_NONLOOP_STREAM_DATA_IS_ON_MEMORY (-2)
++#define PSP_ATRAC_LOOP_STREAM_DATA_IS_ON_MEMORY    (-3)
++
++typedef struct {
++	u8 *pucWritePositionFirstBuf;
++	u32 uiWritableByteFirstBuf;
++	u32 uiMinWriteByteFirstBuf;
++	u32 uiReadPositionFirstBuf;
++
++	u8 *pucWritePositionSecondBuf;
++	u32 uiWritableByteSecondBuf;
++	u32 uiMinWriteByteSecondBuf;
++	u32 uiReadPositionSecondBuf;
++} PspBufferInfo;
++
++int sceAtracGetAtracID(uint  uiCodecType);
++
+ /**
+  * Creates a new Atrac ID from the specified data
+  *
+@@ -132,6 +183,30 @@
+  */
+ int sceAtracGetMaxSample(int atracID, int *outMax); 
+ 
++int sceAtracGetBufferInfoForReseting(int atracID, u32 uiSample, PspBufferInfo *pBufferInfo);
++
++int sceAtracGetChannel(int atracID, u32 *puiChannel);
++
++int sceAtracGetInternalErrorInfo(int atracID, int *piResult);
++
++int sceAtracGetLoopStatus(int atracID, int *piLoopNum, u32 *puiLoopStatus);
++
++int sceAtracGetNextDecodePosition(int atracID, u32 *puiSamplePosition);
++
++int sceAtracGetSecondBufferInfo(int atracID, u32 *puiPosition, u32 *puiDataByte);
++
++int sceAtracGetSoundSample(int atracID, int *piEndSample, int *piLoopStartSample, int *piLoopEndSample);
++
++int sceAtracResetPlayPosition(int atracID, u32 uiSample, u32 uiWriteByteFirstBuf, u32 uiWriteByteSecondBuf);
++
++int sceAtracSetData(int atracID, u8 *pucBufferAddr, u32 uiBufferByte);
++
++int sceAtracSetHalfwayBuffer(int atracID, u8 *pucBufferAddr, u32 uiReadByte, u32 uiBufferByte);
++
++int sceAtracSetHalfwayBufferAndGetID(u8 *pucBufferAddr, u32 uiReadByte, u32 uiBufferByte);
++
++int sceAtracSetSecondBuffer(int atracID, u8 *pucSecondBufferAddr, u32 uiSecondBufferByte);
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff -Nbaur pspsdk/src/base/build.mak pspsdk.new/src/base/build.mak
+--- pspsdk/src/base/build.mak	2011-07-29 15:56:34.000000000 +0100
++++ pspsdk.new/src/base/build.mak	2011-07-29 14:58:45.000000000 +0100
+@@ -45,6 +45,11 @@
+ CFLAGS += -D_PSP_FW_VERSION=$(PSP_FW_VERSION)
+ CXXFLAGS += -D_PSP_FW_VERSION=$(PSP_FW_VERSION)
+ 
++# Objective-C selection. All Objective C code must be linked against libobjc.a
++ifeq ($(USE_OBJC),1)
++LIBS     := $(LIBS) -lobjc
++endif
++
+ ifeq ($(BUILD_PRX),1)
+ LDFLAGS  := $(addprefix -L,$(LIBDIR)) -specs=$(PSPSDK)/lib/prxspecs -Wl,-q,-T$(PSPSDK)/lib/linkfile.prx $(LDFLAGS)
+ EXTRA_CLEAN += $(TARGET).elf
+@@ -198,6 +203,12 @@
+ %.c: %.exp
+ 	psp-build-exports -b $< > $@
+ 
++%.o: %.m
++	$(CC) $(CFLAGS) -c -o $@ $<
++
++%.o: %.mm
++	$(CXX) $(CXXFLAGS) -c -o $@ $<
++
+ clean: 
+ 	-rm -f $(FINAL_TARGET) $(EXTRA_CLEAN) $(OBJS) $(PSP_EBOOT_SFO) $(PSP_EBOOT) $(EXTRA_TARGETS)
+ 
+diff -Nbaur pspsdk/src/base/build_prx.mak pspsdk.new/src/base/build_prx.mak
+--- pspsdk/src/base/build_prx.mak	2011-07-29 15:56:34.000000000 +0100
++++ pspsdk.new/src/base/build_prx.mak	2011-07-29 14:59:19.000000000 +0100
+@@ -37,6 +37,11 @@
+ 
+ CFLAGS += -D_PSP_FW_VERSION=$(PSP_FW_VERSION)
+ 
++# Objective-C selection. All Objective C code must be linked against libobjc.a
++ifeq ($(USE_OBJC),1)
++LIBS     := $(LIBS) -lobjc
++endif
++
+ # Library selection.  By default we link with Newlib's libc.  Allow the
+ # user to link with PSPSDK's libc if USE_PSPSDK_LIBC is set to 1.
+ 
+@@ -80,6 +85,12 @@
+ %.c: %.exp
+ 	psp-build-exports -b $< > $@
+ 
++%.o: %.m
++	$(CC) $(CFLAGS) -c -o $@ $<
++
++%.o: %.mm
++	$(CXX) $(CXXFLAGS) -c -o $@ $<
++
+ clean: $(EXTRA_CLEAN)
+ 	-rm -f $(FINAL_TARGET) $(TARGET).elf $(OBJS)
+ 
+diff -Nbaur pspsdk/src/display/pspdisplay.h pspsdk.new/src/display/pspdisplay.h
+--- pspsdk/src/display/pspdisplay.h	2011-07-29 15:56:33.000000000 +0100
++++ pspsdk.new/src/display/pspdisplay.h	2011-07-29 14:56:08.000000000 +0100
+@@ -122,6 +122,31 @@
+  */
+ int sceDisplayWaitVblankCB(void);
+ 
++/**
++ * Get accumlated HSYNC count
++ */
++int sceDisplayGetAccumulatedHcount(void);
++
++/**
++ * Get current HSYNC count
++ */
++int sceDisplayGetCurrentHcount(void);
++
++/**
++ * Get number of frames per second 
++ */
++float sceDisplayGetFramePerSec(void);
++
++/**
++ * Get whether or not frame buffer is being displayed
++ */
++int sceDisplayIsForeground(void);
++
++/**
++ * Test whether VBLANK is active
++ */
++int sceDisplayIsVblank(void);
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff -Nbaur pspsdk/src/fpu/Makefile.am pspsdk.new/src/fpu/Makefile.am
+--- pspsdk/src/fpu/Makefile.am	2011-07-29 15:56:23.000000000 +0100
++++ pspsdk.new/src/fpu/Makefile.am	2011-07-29 14:56:08.000000000 +0100
+@@ -14,5 +14,5 @@
+ libpspfpuinclude_HEADERS = pspfpu.h
+ 
+ lib_LIBRARIES = libpspfpu.a
+-libpspfpu_a_SOURCES = pspfpu.c
++libpspfpu_a_SOURCES = pspfpu.c double.S
+ libpspfpu_a_LIBADD  = 
+diff -Nbaur pspsdk/src/fpu/double.S pspsdk.new/src/fpu/double.S
+--- pspsdk/src/fpu/double.S	1970-01-01 01:00:00.000000000 +0100
++++ pspsdk.new/src/fpu/double.S	2011-07-29 14:56:08.000000000 +0100
+@@ -0,0 +1,196 @@
++#define zero	$0	/* wired zero */
++#define at	$1	/* assembler temp */
++#define v0	$2	/* return value */
++#define v1	$3
++#define a0	$4	/* argument registers */
++#define a1	$5
++#define a2	$6
++#define a3	$7
++#define t0	$8	/* caller saved */
++#define t1	$9
++#define t2	$10
++#define t3	$11
++#define t4	$12
++#define t5	$13
++#define t6	$14
++#define t7	$15
++#define s0	$16	/* callee saved */
++#define s1	$17
++#define s2	$18
++#define s3	$19
++#define s4	$20
++#define s5	$21
++#define s6	$22
++#define s7	$23
++#define t8	$24	/* code generator */
++#define t9	$25
++#define k0	$26	/* kernel temporary */
++#define k1	$27
++#define gp	$28	/* global pointer */
++#define sp	$29	/* stack pointer */
++#define fp	$30	/* frame pointer */
++#define ra	$31	/* return address */
++
++#define fv0	$f0
++#define fv1	$f1
++#define ft0	$f2
++#define ft1	$f3
++#define ft2	$f4
++#define ft3	$f5
++#define ft4	$f6
++#define ft5	$f7
++#define ft6	$f8
++#define ft7	$f9
++#define ft8	$f10
++#define ft9	$f11
++#define fa0	$f12
++#define fa1	$f13
++#define fa2	$f14
++#define fa3	$f15
++#define fa4	$f16
++#define fa5	$f17
++#define fa6	$f18
++#define fa7	$f19
++#define fs0	$f20
++#define fs1	$f21
++#define fs2	$f22
++#define fs3	$f23
++#define fs4	$f24
++#define fs5	$f25
++#define fs6	$f26
++#define fs7	$f27
++#define fs8	$f28
++#define fs9	$f29
++#define fs10	$f30
++#define fs11	$f31
++
++.set	noreorder
++.set	noat
++
++.text
++.align	4
++
++.global	pspFpuFloatToDouble
++.global	pspFpuDoubleToFloat
++
++/**
++ * convert float to double
++ * double pspFpuFloatToDouble(float a);
++ *
++ * input: fa0
++ * output: v0,v1
++ * clobber: t0,t1
++ */
++.ent	pspFpuFloatToDouble
++pspFpuFloatToDouble:
++	mfc1	t0, fa0				/* t0 = fa0 */
++	ext	t1, t0, 23, 8			/* t1 = (t0 >> 23) & 0xFF */
++	beq	t1, zero, ftod_denormal		/* if (t1==0) goto ftod_denormal */
++	addiu	v0, t1, (-0x7F+0x3FF)		/* v0 = t1 - 0x7F + 0x3FF */
++	xori	t1, t1, 0xFF			/* t1 = t1 ^ 0xFF */
++	li	v1, 0x7FF			/* v1 = 0x7FF */
++	movz	v0, v1, t1			/* v0 = (t1==0) ? v1 : v0 */
++	ext	v1, t0,  3, 20			/* v1 = (t0 >> 3 ) & 0x00FFFFF */
++	ins	v1, v0, 20, 11			/* v1 = (v1 & 0x800FFFFF) | ((v0<<20) & 0x7FF00000) */
++	sll	v0, t0, 29			/* v0 = (t0 << 29) */
++	srl	t0, t0, 31			/* t0 = (t0 >> 31) & 1 */
++	jr	ra				/* return */
++	ins	v1, t0, 31, 1			/* v1 = (v1 & 0x7FFFFFFF) | ((t0<<31) & 0x80000000) */
++
++ftod_denormal:
++	sll	v0, t0, 9			/* v0 = t0 << 9 */
++	beql	v0, zero, ftod_zero		/* if (v0==0) goto ftod_zero */
++	move	v1, zero			/* v1 = 0 */
++	li	v1, 0x380			/* v1 = 0x380 */
++	clz	t1, v0				/* t1 = clz(v0) */
++	subu	v0, v1, t1			/* v0 = v1 - v0 = 0x380 - clz(t1) */
++	sllv	t1, t0, t1			/* t1 = t0 << t1 */
++	ext	v1, t1,  2, 20			/* v1 = (t1 >> 2 ) & 0x00FFFFF */
++	ins	v1, v0, 20, 11			/* v1 = (v1 & 0x800FFFFF) | ((v0<<20) & 0x7FF00000) */
++	sll	v0, t1, 30			/* v0 = (t1 << 30) */
++ftod_zero:
++	srl	t0, t0, 31			/* t0 = (t0 >> 31) & 1 */
++	jr	ra				/* return */
++	ins	v1, t0, 31, 1			/* v1 = (v1 & 0x7FFFFFFF) | ((t0<<31) & 0x80000000) */
++.end	pspFpuFloatToDouble
++
++/**
++ * convert double to float
++ * float pspFpuDoubleToFloat(double a);
++ * input: a0,a1
++ * output: fv0
++ * clobber: t0,t1,t2,v0
++ */
++.ent	pspFpuDoubleToFloat
++pspFpuDoubleToFloat:
++	ext	t0, a1, 20, 11		/* t0 = (a1>>20) & 0x000007FF */
++	beq	t0, zero, dtof_zero	/* if (t0==0) goto dtof_zero */
++	xori	t1, t0, 0x7FF		/* t1 = t0 ^ 0x7FF */
++	beq	t1, zero, dtof_naninf	/* if (t1==0) goto dtof_naninf */
++	addiu	t1, t0, (+0x7F-0x3FF)	/* t1 = t0 + 0x7F - 0x3FF */
++	blez	t1, dtof_denormal	/* if (t1<=0) goto dtof_denormal */
++	addiu	t2, t1, -0xFE		/* t2 = t1 - 0xFE */
++	bgtz	t2, dtof_inf		/* if (t2 > 0) goto dtof_inf */
++	move	v0, zero		/* v0 = 0 */
++
++	srl	v0, a0, 29			/* v0 = (a0>>29) & 0x00000007 */
++	ins	v0, a1, 3, 20			/* v0 = (v0 & 0xFF800007) | ((a1 & 0FFFFF)<<3) */
++	beq	t2, zero, dtof_inf_normal	/* if (t2==0) goto dtof_inf_normal */
++dtof_normal:
++	srl	t2, a1, 31		/* t2 = (a1>>31) & 1 */
++	ins	v0, t2, 31, 1		/* v0 = (v0 & 0x7FFFFFFF) | (t2 << 31) */
++	ins	v0, t1, 23, 8		/* v0 = (v0 & 0x8007FFFF) | (t1 << 23) */
++	jr	ra			/* return */
++	mtc1	v0, fv0			/* fv0 = v0 */
++dtof_denormal:
++	sll	t0, a1, 12		/* t0 = a1 << 12 */
++	srl	v0, t0, 10		/* v0 = t0 >> 10 */
++	srl	t0, a0, 30		/* t0 = t0 >> 30 */
++	or	v0, v0, t0		/* v0 = v0 | t0 */
++	li	t0, 0x00400000		/* t0 = 0x00400000 */
++	or	v0, v0, t0		/* v0 = v0 | t0 */
++	subu	t0, zero, t1		/* t0 = zero - t1 */
++	sltiu	t1, t0, 22		/* t1 = (t0 < 22) */
++	beq	t1, zero, dtof_min	/* if (t1==0) goto dtof_min */
++	srlv	v0, v0, t0		/* v0 = v0 >> t0 */
++	srl	t2, a1, 31		/* t2 = (a1>>31) & 1 */
++	ins	v0, t2, 31, 1		/* v0 = (v0 & 0x7FFFFFFF) | (t2 << 31) */
++	jr	ra			/* return */
++	mtc1	v0, fv0			/* fv0 = v0 */
++dtof_zero:
++	sll	t0, a1, 12		/* t0 = a1 << 12 */
++	or	t0, t0, a0		/* t0 = t0 | a0 */
++dtof_min:
++	li	v0, 0x00000001		/* v0 = 0x00000001 */
++	movz	v0, zero, t0		/* v0 = (t0==0) ? zero : v0 */
++	srl	t0, a1, 31		/* t0 = (a1 >> 31) & 1 */
++	ins	v0, t0, 31, 1		/* v0 = (v0 & 0x7FFFFFFF) | ((t0<<31) & 0x80000000) */
++	jr	ra			/* return */
++	mtc1	v0, fv0			/* fv0 = v0 */
++dtof_inf_normal:
++	nor	t0, zero, a1		/* t0 = ~a1 */
++	sll	t0, t0, 12		/* t0 = t0 << 12 */
++	bne	t0, zero, dtof_normal	/* if (t0!=0) goto dtof_normal */
++	srl	t0, a0, 28		/* t0 = a0 >> 28 */
++	sltiu	t0, t0, 0xF		/* t0 = (t0 < 0xF) */
++	bne	t0, zero, dtof_normal	/* if (t0!=0) goto dtof_normal */
++	nop				/* waste delay slot */
++	j	dtof_inf		/* goto dtof_inf */
++	move	v0, zero		/* v0 = 0 */
++dtof_naninf:
++	sll	t0, a1, 12		/* t0 = a1 << 12 */
++	or	t1, t0, a0		/* t1 = t0 | a0 */
++	srl	v0, t0, 9		/* v0 = t0 >> 9 */
++	srl	t0, a0, 29		/* t0 = t0 >> 29 */
++	or	v0, v0, t0		/* v0 = v0 | t0 */
++	sltiu	t0, v0, 1		/* t0 = (v0 < 1) */
++	or	v0, v0, t0		/* v0 = v0 | t0 */
++	movz	v0, zero, t1		/* v0 = (t1==0) ? zero : v0 */
++dtof_inf:
++	li	t0, 0x7F800000		/* t0 = 0x7F800000 */
++	or	v0, v0, t0		/* v0 = v0 | t0 */
++	srl	t0, a1, 31		/* t0 = (a1 >> 31) & 1 */
++	ins	v0, t0, 31, 1		/* v0 = (v0 & 0x7FFFFFFF) | ((t0<<31) & 0x80000000) */
++	jr	ra			/* return */
++	mtc1	v0, fv0			/* fv0 = v0 */
++.end	pspFpuDoubleToFloat
+diff -Nbaur pspsdk/src/fpu/pspfpu.c pspsdk.new/src/fpu/pspfpu.c
+--- pspsdk/src/fpu/pspfpu.c	2011-07-29 15:56:23.000000000 +0100
++++ pspsdk.new/src/fpu/pspfpu.c	2011-07-29 15:49:37.000000000 +0100
+@@ -5,13 +5,42 @@
+  *
+  * pspfpu.h - PSP FPU library
+  *
++ * Copyright (c) 2009 JetCube
+  * Copyright (c) 2006 TyRaNiD (James F.) 
+  *
+- * $Id: pspfpu.c 1781 2006-02-04 12:53:40Z tyranid $
+  */
+ #include "pspfpu.h"
+ 
+-uint32_t pspfpu_get_fcr31(void)
++#define PSP_MATH_PI             3.14159265358979323846
++#define PSP_MATH_TWOPI          (PSP_MATH_PI * 2.0)
++#define PSP_MATH_SQRT2          1.41421356237309504880
++#define PSP_MATH_LN2            0.69314718055994530942
++#define PSP_MATH_LOG2E          1.4426950408889634074
++#define COS_SIN_DIV             0.208
++
++static const float logPoly[] = {
++	 4194305.0 / (1024.0 * 1024.0 *  2.0), /* arround 2.0 */
++	 5590817.0 / (1024.0 * 1024.0 *  8.0), /* arround 2.0/3.0 */
++	13890687.0 / (1024.0 * 1024.0 * 32.0), /* arround 2.0/5.0 */
++};
++
++static const float triPoly[] = {
++	(float)(2.0*PSP_MATH_PI),
++	(float)(1.0),
++	(float)(-0xAAAA98/(1024.0*1024*64)),
++	(float)( 0x88801C/(1024.0*1024*1024)),
++	(float)(-0xCB9F27/(1024.0*1024*1024*64)),
++
++	(float)(-0xFFFFF9/(1024.0*1024*32)),
++	(float)( 0xAAA6FB/(1024.0*1024*256)),
++	(float)(-0xB3D431/(1024.0*1024*1024*8)),
++
++	(float)(-0xAAAAAA/(1024.0*1024*32)),
++	(float)( 0xCCCCCD/(1024.0*1024*64)),
++	(float)(-0x8F5C29/(1024.0*1024*64)),
++};
++
++uint32_t pspFpuGetFCR31(void)
+ {
+ 	uint32_t ret;
+ 
+@@ -23,7 +52,7 @@
+ 	return ret;
+ }
+ 
+-void pspfpu_set_fcr31(uint32_t var)
++void pspFpuSetFCR31(uint32_t var)
+ {
+ 	asm (
+ 			"ctc1 %0, $31\n"
+@@ -32,120 +61,883 @@
+ 		);
+ }
+ 
+-void pspfpu_set_roundmode(enum FpuRoundMode mode)
++void pspFpuSetRoundmode(enum PspFpuRoundMode mode)
+ {
+ 	uint32_t fcr;
+ 
+-	fcr = pspfpu_get_fcr31();
+-	fcr &= ~FPU_RM_MASK;
+-	fcr |= (mode & FPU_RM_MASK);
+-	pspfpu_set_fcr31(fcr);
++	fcr = pspFpuGetFCR31();
++	fcr &= ~PSP_FPU_RM_MASK;
++	fcr |= (mode & PSP_FPU_RM_MASK);
++	pspFpuSetFCR31(fcr);
+ }
+ 
+-enum FpuRoundMode pspfpu_get_roundmode(void)
++enum PspFpuRoundMode pspFpuGetRoundmode(void)
+ {
+-	return pspfpu_get_fcr31() & FPU_RM_MASK;
++	return pspFpuGetFCR31() & PSP_FPU_RM_MASK;
+ }
+ 
+-uint32_t pspfpu_get_flags(void)
++uint32_t pspFpuGetFlags(void)
+ {
+ 	uint32_t fcr;
+ 
+-	fcr = pspfpu_get_fcr31();
++	fcr = pspFpuGetFCR31();
+ 	
+-	return (fcr & FPU_FLAGS_MASK) >> FPU_FLAGS_POS;
++	return (fcr & PSP_FPU_FLAGS_MASK) >> PSP_FPU_FLAGS_POS;
+ }
+ 
+-void pspfpu_clear_flags(uint32_t clear)
++void pspFpuClearFlags(uint32_t clear)
+ {
+ 	uint32_t fcr;
+ 
+ 	clear &= 0x1F;
+-	fcr = pspfpu_get_fcr31();
+-	fcr &= ~(clear << FPU_FLAGS_POS);
+-	pspfpu_set_fcr31(fcr);
++	fcr = pspFpuGetFCR31();
++	fcr &= ~(clear << PSP_FPU_FLAGS_POS);
++	pspFpuSetFCR31(fcr);
+ }
+ 
+-uint32_t pspfpu_get_enable(void)
++uint32_t pspFpuGetEnable(void)
+ {
+ 	uint32_t fcr;
+ 
+-	fcr = pspfpu_get_fcr31();
++	fcr = pspFpuGetFCR31();
+ 	
+-	return (fcr & FPU_ENABLE_MASK) >> FPU_ENABLE_POS;
++	return (fcr & PSP_FPU_ENABLE_MASK) >> PSP_FPU_ENABLE_POS;
+ }
+ 
+-void pspfpu_set_enable(uint32_t enable)
++void pspFpuSetEnable(uint32_t enable)
+ {
+ 	uint32_t fcr;
+ 
+ 	enable &= 0x1F;
+-	fcr = pspfpu_get_fcr31() & ~FPU_ENABLE_MASK;
+-	fcr |= enable << FPU_ENABLE_POS;
+-	pspfpu_set_fcr31(fcr);
++	fcr = pspFpuGetFCR31() & ~PSP_FPU_ENABLE_MASK;
++	fcr |= enable << PSP_FPU_ENABLE_POS;
++	pspFpuSetFCR31(fcr);
+ }
+ 
+-uint32_t pspfpu_get_cause(void)
++uint32_t pspFpuGetCause(void)
+ {
+ 	uint32_t fcr;
+ 
+-	fcr = pspfpu_get_fcr31();
++	fcr = pspFpuGetFCR31();
+ 	
+-	return (fcr & FPU_CAUSE_MASK) >> FPU_CAUSE_POS;
++	return (fcr & PSP_FPU_CAUSE_MASK) >> PSP_FPU_CAUSE_POS;
+ }
+ 
+-void pspfpu_clear_cause(uint32_t clear)
++void pspFpuClearCause(uint32_t clear)
+ {
+ 	uint32_t fcr;
+ 
+ 	clear &= 0x3F;
+-	fcr = pspfpu_get_fcr31();
+-	fcr &= ~(clear << FPU_CAUSE_POS);
+-	pspfpu_set_fcr31(fcr);
++	fcr = pspFpuGetFCR31();
++	fcr &= ~(clear << PSP_FPU_CAUSE_POS);
++	pspFpuSetFCR31(fcr);
+ }
+ 
+-uint32_t pspfpu_get_fs(void)
++uint32_t pspFpuGetFS(void)
+ {
+ 	uint32_t fcr;
+ 
+-	fcr = pspfpu_get_fcr31();
++	fcr = pspFpuGetFCR31();
+ 	
+-	return (fcr & FPU_FS_MASK) >> FPU_FS_POS;
++	return (fcr & PSP_FPU_FS_MASK) >> PSP_FPU_FS_POS;
+ }
+ 
+-void pspfpu_set_fs(uint32_t fs)
++void pspFpuSetFS(uint32_t fs)
+ {
+ 	uint32_t fcr;
+ 
+-	fcr = pspfpu_get_fcr31();
+-	fcr &= ~FPU_FS_MASK;
++	fcr = pspFpuGetFCR31();
++	fcr &= ~PSP_FPU_FS_MASK;
+ 
+-	fcr |= ((fs & 1) << FPU_FS_POS);
++	fcr |= ((fs & 1) << PSP_FPU_FS_POS);
+ 
+-	pspfpu_set_fcr31(fcr);
++	pspFpuSetFCR31(fcr);
+ }
+ 
+-uint32_t pspfpu_get_condbits(void)
++uint32_t pspFpuGetCondbits(void)
+ {
+ 	uint32_t fcr;
+ 	uint32_t cond;
+ 
+-	fcr = pspfpu_get_fcr31();
+-	cond = (fcr & FPU_CC0_MASK) >> FPU_CC0_POS;
+-	cond |= (fcr & FPU_CC17_MASK) >> (FPU_CC17_POS-1);
++	fcr = pspFpuGetFCR31();
++	cond = (fcr & PSP_FPU_CC0_MASK) >> PSP_FPU_CC0_POS;
++	cond |= (fcr & PSP_FPU_CC17_MASK) >> (PSP_FPU_CC17_POS-1);
+ 
+ 	return cond;
+ }
+ 
+-void pspfpu_clear_condbits(uint32_t clear)
++void pspFpuClearCondbits(uint32_t clear)
+ {
+ 	uint32_t fcr;
+ 
+ 	clear &= 0xFF;
+ 
+-	fcr = pspfpu_get_fcr31();
+-	fcr &= ~((clear & 1) << FPU_CC0_POS);
+-	fcr &= ~((clear & 0xFE) << (FPU_CC17_POS-1));
++	fcr = pspFpuGetFCR31();
++	fcr &= ~((clear & 1) << PSP_FPU_CC0_POS);
++	fcr &= ~((clear & 0xFE) << (PSP_FPU_CC17_POS-1));
++
++	pspFpuSetFCR31(fcr);
++}
++
++float pspFpuAbs(float fs)
++{
++	register float fd;
++	asm (
++		"abs.s %0, %1\n"
++		: "=f"(fd)
++		: "f"(fs)
++	);
++	return (fd);
++}
++
++int pspFpuCeil(float fs)
++{
++	return (__builtin_allegrex_ceil_w_s(fs));
++}
++
++int pspFpuFloor(float fs)
++{
++	return (__builtin_allegrex_floor_w_s(fs));
++}
++
++float pspFpuMax(float fs1, float fs2)
++{
++	register float fd;
++	fd = (fs1 > fs2) ? fs1 : fs2;
++	return (fd);
++}
++
++float pspFpuMin(float fs1, float fs2)
++{
++	register float fd;
++	fd = (fs1 < fs2) ? fs1 : fs2;
++	return (fd);
++}
++
++float pspFpuNeg(float fs)
++{
++	register float fd;
++	asm (
++		"neg.s %0, %1\n"
++		: "=f"(fd)
++		: "f"(fs)
++	);
++	return (fd);
++}
++
++int pspFpuRound(float fs)
++{
++	return (__builtin_allegrex_round_w_s(fs));
++}
++
++float pspFpuRsqrt(float fs)
++{
++	return (1.0f / __builtin_allegrex_sqrt_s(fs));
++}
++
++float pspFpuSqrt(float fs)
++{
++	return (__builtin_allegrex_sqrt_s(fs));
++}
++
++int pspFpuTrunc(float fs)
++{
++	return (__builtin_allegrex_trunc_w_s(fs));
++}
++
++float pspFpuFmod(float fs, float fd)
++{
++	float v;
++	asm (
++		".set push\n"
++		".set noreorder\n"
++		"div.s %0, %1, %2\n"		// v = fs / fd
++		"trunc.w.s %0, %0\n"		// v = trunc(v)
++		"cvt.s.w %0, %0\n"		// v = (float)v = (float)trunc(v)
++		"mul.s %0, %0, %2\n"		// v = v * fd
++		"sub.s %0, %1, %0\n"		// v = fs - v*fd = fs - trunc(fs / fd)*fd
++		".set pop\n"
++		: "=&f"(v)
++		: "f"(fs), "f"(fd)
++	);
++	return (v);
++}
++
++float pspFpuFrac(float fs)
++{
++	float v;
++	asm (
++		".set push\n"
++		".set noreorder\n"
++		"trunc.w.s %0, %1\n"		// v = trunc(fs)
++		"cvt.s.w %0, %0\n"		// v = (float)v = (float)trunc(fs)
++		"sub.s %0, %1, %0\n"		// v = fs - v
++		".set pop\n"
++		: "=&f"(v)
++		: "f"(fs)
++	);
++	return (v);
++}
++
++float pspFpuReinterpretFloat(uint32_t ui)
++{
++	float v;
++	asm (
++		"mtc1 %1, %0\n"
++		: "=f"(v)
++		: "r"(ui)
++	);
++	return (v);
++}
++
++uint32_t pspFpuReinterpretUint(float fs)
++{
++	unsigned int v;
++	asm (
++		"mfc1 %0, %1\n"
++		: "=r"(v)
++		: "f"(fs)
++	);
++	return (v);
++}
++
++int   pspFpuIsEqual(float fs1, float fs2)
++{
++	int v;
++	asm (
++		".set push\n"
++		".set noreorder\n"
++		"c.eq.s %2, %1\n"		// compare fs1 to fs2
++		"move %0, $0\n"			// v = 0
++		"bc1tl 0f\n"			// if (fs1==fs2) goto 0f
++		"addiu %0, $0, 1\n"		// if (fs1==fs2) v = 1
++		"0:\n"
++		".set pop\n"
++		: "=r"(v)
++		: "f"(fs1), "f"(fs2)
++	);
++	return (v);
++}
++
++float pspFpuSignFloat(float fs)
++{
++	float fv;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"mfc1 $8, %1\n"			// t0 = fs
++		"lui $10, 0x3F80\n"		// t2 = 0x3F800000(1.0f)
++		"srl $9, $8, 23\n"		// t1 = t0>>23
++		"srl $8, $8, 31\n"		// t0 = t0>>31
++		"andi $9, $9, 0x00FF\n"		// t1 = t1 & 0x00FF
++		"sll $8, $8, 31\n"		// t0 = t0<<31 = (fs>=0) ? 0 : 0x80000000
++		"movz $10, $0, $9\n"		// t2 = (t1==0) ? 0 : t2
++		"or $10, $10, $8\n"		// t2 = t2 | t0
++		"mtc1 $10, %0\n"		// fv = t2
++		".set pop\n"		
++		: "=f"(fv)
++		: "f"(fs)
++		: "$8", "$9", "$10"
++	);
++	return (fv);
++}
++
++int pspFpuSignInt(float fs)
++{
++	int v;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"mfc1 %0, %1\n"			// v = fs
++		"lui $8, 0x7F80\n"		// t0 = 0x7F800000(binary representaion 1.0 * 2^(255-127))
++		"and $8, $8, %0\n"		// t0 = at & v
++		"sra %0, %0, 30\n"		// v  = fs>>30 = (fs>=0) ? 0or1 : -1or-2
++		"or %0, %0, 1\n"		// v  = v | 1  = (fs>=0) ? 1 : -1
++		"movz %0, $0, $8\n"		// v  = (t0==0) ? 0 : v
++		".set pop\n"		
++		: "=r"(v)
++		: "f"(fs)
++		: "$8"
++	);
++	return (v);
++}
++
++float pspFpuPositiveZero(void)
++{
++	float v;
++	asm (
++		"mtc1 $0, %0\n"			// v = 0.0f
++		: "=f"(v)
++	);
++	return (v);
++}
++
++float pspFpuNegativeZero(void)
++{
++	float v;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"lui $8, 0x8000\n"		// t0 = 0x80000000
++		"mtc1 $8, %0\n"			// v = -0.0f
++		".set pop\n"		
++		: "=f"(v)
++		:
++		: "$8"
++	);
++	return (v);
++}
++
++int pspFpuIsZero(float f)
++{
++	int v;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"mfc1 $8, %1\n"			// t0 = f
++		"sra %0, $8, 30\n"		// v  = t0>>30
++		"sll $8, $8, 1\n"		// t0 = t0<<1
++		"ori %0, %0, 0x0001\n"		// v  = v | 1 = (f>=0) ? +1 : -1
++		"movn %0, $0, $8\n"		// v  = (t0!=0) ? 0 : v
++		".set pop\n"		
++		: "=r"(v)
++		: "f"(f)
++		: "$8"
++	);
++	return (v);
++}
++
++int pspFpuIsPositiveZero(float f)
++{
++	int v;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"mfc1 %0, %1\n"			// v  = f
++		"sltiu %0, %0, 1\n"		// v  = (v < 1)
++		".set pop\n"
++		: "=r"(v)
++		: "f"(f)
++	);
++	return (v);
++}
++
++int pspFpuIsNegativeZero(float f)
++{
++	int v;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"mfc1 %0, %1\n"			// v  = f
++		"lui $8, 0x8000\n"		// t0 = 0x80000000
++		"xor %0, %0, $8\n"		// v  = v ^ t0
++		"sltiu %0, %0, 1\n"		// v  = (v < 1)
++		".set pop\n"
++		: "=r"(v)
++		: "f"(f)
++		: "$8"
++	);
++	return (v);
++}
++
++int pspFpuIsDenormal(float f)
++{
++	int v;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"mfc1 $8, %1\n"			// t0 = f
++		"lui $9, 0x7F80\n"		// t1 = 0x7F800000
++		"or %0, $8, $9\n"		// v  = t0 | t1 = t0 | 0x7F800000
++		"and $9, $8, $9\n"		// t1 = t0 & t1 = t0 & 0x7F800000
++		"sra %0, %0, 30\n"		// v  = v>>30   = (t0>=0) ? +1 : -1
++		"sll $8, $8, 9\n"		// t0 = t0<<9
++		"movn %0, $0, $9\n"		// v  = (t1!=0) ? 0 : v		if (exp!=0) is not denormal number
++		"movz %0, $0, $8\n"		// v  = (t0==0) ? 0 : v		if (frac==0) is not decnormal number
++		".set pop\n"
++		: "=r"(v)
++		: "f"(f)
++		: "$8", "$9"
++	);
++	return (v);
++}
++
++int   pspFpuIsZeroOrDenormal(float f)
++{
++	int v;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"mfc1 $8, %1\n"			// t0 = f
++		"lui $9, 0x7F80\n"		// t1 = 0x7F800000
++		"or %0, $8, $9\n"		// v  = t0 | t1 = t0 | 0x7F800000
++		"and $9, $8, $9\n"		// t1 = t0 & t1 = t0 & 0x7F800000
++		"sra %0, %0, 30\n"		// v  = v>>30   = (t0>=0) ? +1 : -1
++		"movn %0, $0, $9\n"		// v  = (t1!=0) ? 0 : v		if (exp!=0) is not denormal number
++		".set pop\n"
++		: "=r"(v)
++		: "f"(f)
++		: "$8", "$9"
++	);
++	return (v);
++}
++
++float pspFpuPositiveInf(void)
++{
++	float v;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"lui $8, 0x7F80\n"		// t0 = 0x7F800000
++		"mtc1 $8, %0\n"			// v  = t0 = +Infinity
++		".set pop\n"		
++		: "=f"(v)
++		:
++		: "$8"
++	);
++	return (v);
++}
++
++float pspFpuNegativeInf(void)
++{
++	float v;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"lui $8, 0xFF80\n"		// t0 = 0xFF800000
++		"mtc1 $8, %0\n"			// v  = t0 = -Infinity
++		".set pop\n"		
++		: "=f"(v)
++	);
++	return (v);
++}
++
++int pspFpuIsInf(float f)
++{
++	int v;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"mfc1 $8, %1\n"			// t0 = f
++		"sll $9, $8, 1\n"		// t1 = t0<<1
++		"sra %0, $8, 30\n"		// v  = t0>>30
++		"srl $9, $9, 24\n"		// t1 = t1>>24
++		"sll $8, $8, 9\n"		// t0 = t0<<9
++		"ori %0, %0, 0x0001\n"		// v  = v | 0x00000001 = (f>=0) ? +1 : -1
++		"sltiu $9, $9, 0x00FF\n"	// t1 = (t1<0xFF)
++		"movn %0, $0, $8\n"		// v  = (t0!=0) ? 0 : v		if (frac!=0) is not Infinity
++		"movn %0, $0, $9\n"		// v  = (t1!=0) ? 0 : v		if (exp!=0xFF) is not Infinity
++		".set pop\n"		
++		: "=r"(v)
++		: "f"(f)
++		: "$8", "$9"
++	);
++	return (v);
++}
++
++float pspFpuPositiveNaN(void)
++{
++	float v;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"lui $8, 0x7F80\n"
++		"ori $8, $8, 0x0001\n"		// t0 = 0x7F800001
++		"mtc1 $8, %0\n"			// v = t0 = +SNaN(0x000001)
++		".set pop\n"		
++		: "=f"(v)
++		:
++		: "$8"
++	);
++	return (v);
++}
++
++float pspFpuNegativeNaN(void)
++{
++	float v;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"lui $8, 0xFF80\n"
++		"ori $8, $8, 0x0001\n"		// t0 = 0xFF800001
++		"mtc1 $8, %0\n"			// v = t0 = -SNaN(0x000001)
++		".set pop\n"		
++		: "=f"(v)
++		:
++		: "$8"
++	);
++	return (v);
++}
++
++float pspFpuPositiveQNaN(void)
++{
++	float v;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"lui $8, 0x7FC0\n"		// t0 = 0x7FC00000
++		"mtc1 $8, %0\n"			// v = t0 = +QNaN
++		".set pop\n"		
++		: "=f"(v)
++		:
++		: "$8"
++	);
++	return (v);
++}
++
++float pspFpuNegativeQNaN(void)
++{
++	float v;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"lui $8, 0xFFC0\n"		// t0 = 0xFFC00000
++		"mtc1 $8, %0\n"			// v = t0 = -QNaN
++		".set pop\n"		
++		: "=f"(v)
++		:
++		: "$8"
++	);
++	return (v);
++}
++
++float pspFpuPositiveSNaN(unsigned int uiSignal)
++{
++	float v;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"addiu $9, $0, 1\n"		// t1 = 0x00000001
++		"ext $8, %1, 0, 22\n"		// t0 = uiSignal & 0x003FFFFF
++		"movn $9, $8, $8\n"		// t1 = (t0!=0) ? t0 : t1
++		"lui $8, 0x7F80\n"		// t0 = 0x7F800000
++		"or $9, $9, $8\n"		// t1 = t1 | t0
++		"mtc1 $9, %0\n"			// v  = t1
++		".set pop\n"		
++		: "=f"(v)
++		: "r"(uiSignal)
++		: "$8", "$9"
++	);
++	return (v);
++}
++
++float pspFpuNegativeSNaN(unsigned int uiSignal)
++{
++	float v;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"addiu $9, $0, 1\n"		// t1 = 0x00000001
++		"ext $8, %1, 0, 22\n"		// t0 = uiSignal & 0x003FFFFF
++		"movn $9, $8, $8\n"		// t1 = (t0!=0) ? t0 : t1
++		"lui $8, 0xFF80\n"		// t0 = 0xFF800000
++		"or $9, $9, $8\n"		// t1 = t1 | t0
++		"mtc1 $9, %0\n"			// v  = t1
++		".set pop\n"
++		: "=f"(v)
++		: "r"(uiSignal)
++		: "$8", "$9"
++	);
++	return (v);
++}
++
++int pspFpuIsNaN(float f)
++{
++	int v;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"lui %0, 0x807F\n"		//
++		"mfc1 $8, %1\n"			// t0 = f
++		"ori %0, %0, 0xFFFF\n"		// v  = 0x807FFFFF
++		"sll $9, $8, 1\n"		// t1 = t0<<1
++		"and %0, %0, $8\n"		// v  = v & t0
++		"srl $9, $9, 24\n"		// t1 = t1>>24
++		"sll $8, $8, 9\n"		// t0 = t0<<9
++		"sltiu $9, $9, 0x00FF\n"	// t1 = (t1<0xFF)
++		"movz %0, $0, $8\n"		// v  = (t0==0) ? 0 : v		if (frac==0) is not NaN
++		"movn %0, $0, $9\n"		// v  = (t1!=0) ? 0 : v		if (exp!=0xFF) is not NAN
++		".set pop\n"		
++		: "=r"(v)
++		: "f"(f)
++		: "$8", "$9"
++	);
++	return (v);
++}
++
++int pspFpuIsInfOrNaN(float f)
++{
++	int v;
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"mfc1 %0, %1\n"			// v  = f
++		"sll $8, %0, 1\n"		// t0 = v<<1
++		"sra %0, %0, 30\n"		// v  = v>>30
++		"srl $8, $8, 24\n"		// t0 = t0>>24
++		"ori %0, %0, 0x0001\n"		// v  = v | 0x00000001 = (f>=0) ? +1 : -1
++		"sltiu $8, $8, 0x00FF\n"	// t0 = (t0<0xFF)
++		"movn %0, $0, $8\n"		// v  = (t0!=0) ? 0 : v		if (exp!=0xFF) is neither NAN nor Infinity
++		".set pop\n"		
++		: "=r"(v)
++		: "f"(f)
++		: "$8"
++	);
++	return (v);
++}
++
++float pspFpuNormalizePhase(float fs)
++{
++	const float f2pi = PSP_MATH_TWOPI;
++	float fd;
++
++	asm (
++		".set push\n"		
++		".set noreorder\n"	
++		"mfc1 $9,  %1\n"		// t1 = f0
++		"div.s $f0, $f0, %2\n"		// f0 = f0 / f2pi = fs / 2PI
++		"round.w.s $f0, $f0\n"		// f0 = (int)(f0+0.5)
++		"cvt.s.w $f0, $f0\n"		// f0 = float(f0)
++		"mul.s $f0, $f0, %2\n"		// f0 = f0 * f2pi = fd * 2PI
++		"sub.s %0,  %1,  $f0\n"		// fd = fs - f0   = fs - (fd * 2PI)
++		".set pop\n"		
++		: "=f"(fd)
++		: "f"(fs), "f"(f2pi)
++		: "$f0", "$8", "$9"
++	);
++	return (fd);
++}
++
++float pspFpuLog(float x)
++{
++	union {
++		float f;
++		int i;
++	} fi;
++	int a, b, exponent;
++	float y, z;
++	fi.f = x;
++	if (fi.i <= 0) {
++		if ((fi.i & 0x7fffffff) == 0) {
++			fi.i = 0xff800000; /* -INF */
++			return fi.f;
++		}
++		fi.i = 0xff80ffff; /* Quiet NaN */
++		return fi.f;
++	}
++
++	b = (fi.i & 0x007fffff);
++	a = b - (1<<23);
++	exponent = fi.i;
++	if (b <= 0x3504F3) {
++		a = b;
++		b = b - (1 << 23);
++		exponent -= (1<<23);
++	}
++	b = b - (1 << 23) + (1<<25);
++
++	x = (float)(a) / (float)(b);
++	z = (((exponent>>23)-126) * 0xB17218) * (float)(1.0/(1<<24));
++	y = x * x;
++	return z + x * (((logPoly[2] * y + logPoly[1]) * y) + logPoly[0]);
++}
++
++float pspFpuExp(float x)
++{
++	/*
++	 * exp(x)=e^x=e^(y * log2)=2^Y
++	 *  =2^z * 2^y
++	 *  =2^z * (2^(y/2))^2
++	 *  =2^z * (e^(f/2))^2
++	 *  =2^z * (e^(f/4))^4
++	 * where y=x/log 2
++	 * z=nearest(y) , -0.5 <= f=y-z < 0.5
++	 */
++	union {
++		float f;
++		int i;
++	} fi;
++	float z, f;
++
++	fi.f = x;
++	fi.i &= 0x7fffffff;
++	if (fi.i >= 0x42b00f34) {/* arround 88.03 */
++		/* overflow */
++		if (x != x) {
++			return x; /* NaN */
++		}
++		if (fi.i < 0) {
++			return 0.0; /* underflow */
++		}
++		fi.i = 0x7f800000;
++		return fi.f; /* +INF */
++	}
++
++	f = fi.f * (float)PSP_MATH_LOG2E;
++
++	z = __builtin_allegrex_round_w_s(f);
++	f = f-z;
++	fi.i = z;
++	if (x < 0)
++		fi.i = -fi.i;
++	fi.i = (fi.i+127) << 23;
++
++	/* use Pade aprox. */
++	f = (6.0f + (float)(4.0*PSP_MATH_LN2 * 0.25)*f
++	     + (float)(0.9996*PSP_MATH_LN2*0.25*PSP_MATH_LN2*0.25)*f*f)
++	    / (6.0f - (float)(2.0*PSP_MATH_LN2 * 0.25)*f);
++	f *= f;
++	fi.f *= f*f;
++	return fi.f;
++}
++
++static float _pspFpuSinMain(float x)
++{
++	float y = x*x;
++	return x * (((triPoly[4] * y
++				+ triPoly[3]) * y
++				+ triPoly[2]) * y
++				+ triPoly[1]);
++}
++
++static float _pspFpuCosMain(float x)
++{
++	float y = x*x;
++	return ((triPoly[7] * y
++			+ triPoly[6]) * y
++			+ triPoly[5]) * y
++			+ triPoly[1];
++}
++
++static float _pspFpuAtanMain(float x)
++{
++	float y = x*x;
++	return x * (((triPoly[10] * y
++				+ triPoly[9]) * y
++				+ triPoly[8]) * y
++				+ triPoly[1]);
++}
++
++
++float pspFpuSin(float x)
++{
++	float pi2;
++	int sign = 1;
++
++	/* NaN */
++	if (x != x) {
++		return x;
++	}
++
++	pi2 = triPoly[0];
++	if (x < 0.0f) {
++		sign = -1;
++		x = -x;
++	}
+ 
+-	pspfpu_set_fcr31(fcr);
++	if (x > pi2) {
++		float y = x / pi2;
++		x -= (float)((int)y) * pi2;
++	}
++
++	pi2 *= 0.5f;
++	if (x > pi2) {
++		x -= pi2;
++		sign = -sign;
++	}
++
++	if (x > pi2*0.5f) {
++		x = pi2 - x;
++	}
++	if (x > (float)(PSP_MATH_PI * (0.5 - COS_SIN_DIV))) {
++		return _pspFpuCosMain(pi2*0.5f - x) * sign;
++	}
++
++	return _pspFpuSinMain(x) * sign;
++}
++
++
++float pspFpuCos(float x)
++{
++	float pi2;
++	int sign = 1;
++
++	/* NaN */
++	if (x != x) {
++		return x;
++	}
++
++	pi2 = triPoly[0];
++	if (x < 0.0f) {
++		x = -x;
++	}
++
++	if (x > pi2) {
++		float y = x / pi2;
++		x -= (float)((int)y) * pi2;
++	}
++
++	pi2 *= 0.5f; // pi2 = PI
++	if (x > pi2) {
++		x -= pi2;
++		sign = -1;
++	}
++
++	if (x > pi2*0.5f) {
++		sign = -sign;
++		x = pi2 - x;
++	}
++	if (x > (float) (PSP_MATH_PI * COS_SIN_DIV)) {
++		return _pspFpuSinMain(pi2*0.5f - x) * sign;
++	}
++
++	return _pspFpuCosMain(x) * sign;
++}
++
++static float _atanf(float x)
++{
++	if (x < 0.19890f) {
++		return _pspFpuAtanMain(x);
++	}
++	if (x < 0.668106f) {
++		return (float)(PSP_MATH_PI / 8)
++			+ _pspFpuAtanMain((x - (float)(PSP_MATH_SQRT2 - 1)) / (1.0f + ((float)(PSP_MATH_SQRT2 - 1)*x)));
++	}
++	return ((float)PSP_MATH_PI / 4) + _pspFpuAtanMain((x - 1.0f) / (x + 1.0f));
++}
++
++
++float pspFpuAtan(float x)
++{
++	int sign = 1;
++
++	/* NaN */
++	if (x != x) {
++		return x;
++	}
++
++	if (x < 0.0f) {
++		x = -x;
++		sign = -1;
++	}
++	if (x >= 1.0f) {
++		/*J atan(x) = pi/2 - atan(1/x) */
++		x = 1.0f / x;
++		x = ((float)(PSP_MATH_PI / 2)) - _atanf(x);
++	} else {
++		x = _atanf(x);
++	}
++	return x * (float)sign;
++}
++
++float pspFpuAsin(float x)
++{
++	x = x*x;
++	return pspFpuAtan(__builtin_allegrex_sqrt_s(x/(1.0f-x)));
++}
++
++float pspFpuAcos(float x)
++{
++	x = x*x;
++	return pspFpuAtan(__builtin_allegrex_sqrt_s((1.0f-x)/x));
+ }
+diff -Nbaur pspsdk/src/fpu/pspfpu.h pspsdk.new/src/fpu/pspfpu.h
+--- pspsdk/src/fpu/pspfpu.h	2011-07-29 15:56:23.000000000 +0100
++++ pspsdk.new/src/fpu/pspfpu.h	2011-07-29 14:56:08.000000000 +0100
+@@ -5,6 +5,7 @@
+  *
+  * pspfpu.h - Prototypes for the FPU library
+  *
++ * Copyright (c) 2009 JetCube
+  * Copyright (c) 2006 TyRaNiD (James F.) 
+  *
+  * $Id: pspfpu.h 1782 2006-02-04 12:57:05Z tyranid $
+@@ -23,131 +24,131 @@
+ #endif
+ 
+ /** Enumeration for FPU rounding modes */
+-enum FpuRoundMode
++enum PspFpuRoundMode
+ {
+ 	/** Round to nearest representable value */
+-	FPU_RN = 0,
++	PSP_FPU_RN = 0,
+ 	/** Round towards zero */
+-	FPU_RZ = 1,
++	PSP_FPU_RZ = 1,
+ 	/** Round towards plus infinity */
+-	FPU_RP = 2,
++	PSP_FPU_RP = 2,
+ 	/** Round towards minus infinity */ 
+-	FPU_RM = 3,
++	PSP_FPU_RM = 3,
+ };
+ 
+ /** Mask value for rounding mode */
+-#define FPU_RM_MASK 0x03 
++#define PSP_FPU_RM_MASK 0x03 
+ 
+ /** Enumeration for FPU exceptions */
+-enum FpuExceptions
++enum PspFpuExceptions
+ {
+ 	/** Inexact operation exception */
+-	FPU_EXCEPTION_INEXACT   = 0x01,
++	PSP_FPU_EXCEPTION_INEXACT   = 0x01,
+ 	/** Underflow exception */
+-	FPU_EXCEPTION_UNDERFLOW = 0x02,
++	PSP_FPU_EXCEPTION_UNDERFLOW = 0x02,
+ 	/** Overflow exception */
+-	FPU_EXCEPTION_OVERFLOW  = 0x04,
++	PSP_FPU_EXCEPTION_OVERFLOW  = 0x04,
+ 	/** Division by zero exception */
+-	FPU_EXCEPTION_DIVBYZERO = 0x08,
++	PSP_FPU_EXCEPTION_DIVBYZERO = 0x08,
+ 	/** Invalid operation exception */
+-	FPU_EXCEPTION_INVALIDOP = 0x10,
++	PSP_FPU_EXCEPTION_INVALIDOP = 0x10,
+ 	/** Unimplemented operation exception (only supported in the cause bits) */
+-	FPU_EXCEPTION_UNIMPOP   = 0x20,
++	PSP_FPU_EXCEPTION_UNIMPOP   = 0x20,
+ 	/** All exceptions */
+-	FPU_EXCEPTION_ALL       = 0x3F
++	PSP_FPU_EXCEPTION_ALL       = 0x3F
+ };
+ 
+ /** Bit position of the flag bits */
+-#define FPU_FLAGS_POS   2
++#define PSP_FPU_FLAGS_POS   2
+ /** Bit position of the enable bits */
+-#define FPU_ENABLE_POS 7
++#define PSP_FPU_ENABLE_POS 7
+ /** Bit position of the cause bits */
+-#define FPU_CAUSE_POS  12
++#define PSP_FPU_CAUSE_POS  12
+ /** Bit position of the cc0 bit */
+-#define FPU_CC0_POS    23
++#define PSP_FPU_CC0_POS    23
+ /** Bit position of the fs bit */
+-#define FPU_FS_POS     24
++#define PSP_FPU_FS_POS     24
+ /** Bit position of the cc1->7 bits */
+-#define FPU_CC17_POS   25
++#define PSP_FPU_CC17_POS   25
+ 
+-#define FPU_FLAGS_MASK  (0x1F << FPU_FLAGS_POS)
+-#define FPU_ENABLE_MASK (0x1F << FPU_ENABLE_POS)
+-#define FPU_CAUSE_MASK  (0x3F << FPU_CAUSE_POS)
+-#define FPU_CC0_MASK    (1 << FPU_CC0_POS)
+-#define FPU_FS_MASK     (1 << FPU_FS_POS)
+-#define FPU_CC17_MASK   (0x7F << FPU_CC17_POS)
++#define PSP_FPU_FLAGS_MASK  (0x1F << PSP_FPU_FLAGS_POS)
++#define PSP_FPU_ENABLE_MASK (0x1F << PSP_FPU_ENABLE_POS)
++#define PSP_FPU_CAUSE_MASK  (0x3F << PSP_FPU_CAUSE_POS)
++#define PSP_FPU_CC0_MASK    (1 << PSP_FPU_CC0_POS)
++#define PSP_FPU_FS_MASK     (1 << PSP_FPU_FS_POS)
++#define PSP_FPU_CC17_MASK   (0x7F << PSP_FPU_CC17_POS)
+ 
+ /**
+  * Get the current value of the control/status register
+  *
+  * @return The value of the control/status register
+  */
+-uint32_t pspfpu_get_fcr31(void);
++uint32_t pspFpuGetFCR31(void);
+ 
+ /**
+  * Set the current value of the control/status register
+  *
+  * @param var - The value to set.
+  */
+-void pspfpu_set_fcr31(uint32_t var);
++void pspFpuSetFCR31(uint32_t var);
+ 
+ /**
+  * Set the current round mode
+  *
+- * @param mode - The rounding mode to set, one of ::FpuRoundMode
++ * @param mode - The rounding mode to set, one of ::PspFpuRoundMode
+  */
+-void pspfpu_set_roundmode(enum FpuRoundMode mode);
++void pspFpuSetRoundmode(enum PspFpuRoundMode mode);
+ 
+ /**
+  * Get the current round mode
+  *
+- * @return The round mode, one of ::FpuRoundMode
++ * @return The round mode, one of ::PspFpuRoundMode
+  */
+-enum FpuRoundMode pspfpu_get_roundmode(void);
++enum PspFpuRoundMode pspFpuGetRoundmode(void);
+ 
+ /**
+  * Get the exception flags (set when an exception occurs but
+  * the actual exception bit is not enabled)
+  *
+- * @return Bitmask of the flags, zero or more of ::FpuExceptions
++ * @return Bitmask of the flags, zero or more of ::PspFpuExceptions
+  */
+-uint32_t pspfpu_get_flags(void);
++uint32_t pspFpuGetFlags(void);
+ 
+ /** 
+  * Clear the flags bits
+  *
+- * @param clear - Bitmask of the bits to clear, one or more of ::FpuExceptions
++ * @param clear - Bitmask of the bits to clear, one or more of ::PspFpuExceptions
+  */
+-void pspfpu_clear_flags(uint32_t clear);
++void pspFpuClearFlags(uint32_t clear);
+ 
+ /**
+  * Get the exception enable flags
+  *
+- * @return Bitmask of the flags, zero or more of ::FpuExceptions
++ * @return Bitmask of the flags, zero or more of ::PspFpuExceptions
+  */
+-uint32_t pspfpu_get_enable(void);
++uint32_t pspFpuGetEnable(void);
+ 
+ /** 
+  * Set the enable flags bits
+  *
+- * @param enable - Bitmask of exceptions to enable, zero or more of ::FpuExceptions
++ * @param enable - Bitmask of exceptions to enable, zero or more of ::PspFpuExceptions
+  */
+-void pspfpu_set_enable(uint32_t enable);
++void pspFpuSetEnable(uint32_t enable);
+ 
+ /**
+  * Get the cause bits (only useful if you installed your own exception handler)
+  *
+- * @return Bitmask of flags, zero or more of ::FpuExceptions
++ * @return Bitmask of flags, zero or more of ::PspFpuExceptions
+  */
+-uint32_t pspfpu_get_cause(void);
++uint32_t pspFpuGetCause(void);
+ 
+ /**
+  * Clear the cause bits
+  *
+- * @param clear - Bitmask of the bits to clear, one or more of ::FpuExceptions
++ * @param clear - Bitmask of the bits to clear, one or more of ::PspFpuExceptions
+  *
+  */
+-void pspfpu_clear_cause(uint32_t clear);
++void pspFpuClearCause(uint32_t clear);
+ 
+ /**
+  * Get the current value of the FS bit (if FS is 0 then an exception occurs with
+@@ -155,28 +156,253 @@
+  *
+  * @return The current state of the FS bit (0 or 1)
+  */
+-uint32_t pspfpu_get_fs(void);
++uint32_t pspFpuGetFS(void);
+ 
+ /**
+  * Set the FS bit
+  *
+  * @param fs - 0 or 1 to unset or set fs
+  */
+-void pspfpu_set_fs(uint32_t fs);
++void pspFpuSetFS(uint32_t fs);
+ 
+ /**
+  * Get the condition flags (8 bits)
+  *
+  * @return The current condition flags
+  */
+-uint32_t pspfpu_get_condbits(void);
++uint32_t pspFpuGetCondbits(void);
+ 
+ /**
+  * Clear the condition bits
+  *
+  * @param clear - Bitmask of the bits to clear
+  */
+-void pspfpu_clear_condbits(uint32_t clear);
++void pspFpuClearCondbits(uint32_t clear);
++
++/**
++ * returns absolute value
++ */
++float pspFpuAbs(float f);
++
++/**
++ * Round up 
++ */
++int   pspFpuCeil(float f);
++
++/**
++ * Truncate 
++ */
++int   pspFpuFloor(float f);
++
++/**
++ * select maximum value
++ */
++float pspFpuMax(float f1, float f2);
++
++/**
++ * select minimum value 
++ */
++float pspFpuMin(float f1, float f2);
++
++/**
++ * Sign reversal 
++ */
++float pspFpuNeg(float f);
++
++/**
++ * Round to nearest 
++ */
++int pspFpuRound(float f);
++
++/*
++ * Reciprocal of square root
++ */
++float pspFpuRsqrt(float f);
++
++/**
++ * Square root
++ */
++float pspFpuSqrt(float f);
++
++/**
++ * Round towards zero
++ */
++int pspFpuTrunc(float f);
++
++/**
++ * 
++ */
++float pspFpuFmod(float fs, float fd);
++
++/**
++ * 
++ */
++float pspFpuFrac(float f);
++
++/**
++ * 
++ */
++float pspFpuReinterpretFloat(uint32_t ui);
++
++/**
++ * 
++ */
++uint32_t pspFpuReinterpretUint(float f);
++
++/**
++ * 
++ */
++int pspFpuIsEqual(float f1, float f2);
++
++/**
++ * 
++ */
++float pspFpuSignFloat(float f);
++
++/**
++ *
++ */
++int pspFpuSignInt(float f);
++
++/**
++ * Positive zero
++ */
++float pspFpuPositiveZero(void);
++
++/**
++ * Negative zero
++ */
++float pspFpuNegativeZero(void);
++
++/**
++ * Test for zero value
++ */
++int pspFpuIsZero(float f);
++
++/**
++ * Test for positive zero
++ */
++int pspFpuIsPositiveZero(float f);
++
++/**
++ * Test for negative zero
++ */
++int pspFpuIsNegativeZero(float f);
++
++/**
++ * Test for denormalized number
++ */
++int pspFpuIsDenormal(float f);
++
++/**
++ * Test for zero or denormalized number
++ */
++int pspFpuIsZeroOrDenormal(float f);
++
++/**
++ * Positive infinity
++ */
++float pspFpuPositiveInf(void);
++
++/**
++ * Negative infinity
++ */
++float pspFpuNegativeInf(void);
++
++/**
++ * Test for infinity
++ */
++int pspFpuIsInf(float f);
++
++/** 
++ * NaN (positive SNaN)
++ */
++float pspFpuPositiveNaN(void);
++
++/**
++ * NaN (negative SNaN)
++ */
++float pspFpuNegativeNaN(void);
++
++/**
++ * Quiet NaN (positive QNaN)
++ */
++float pspFpuPositiveQNaN(void);
++
++/**
++ * Quiet NaN (positive QNaN)
++ */
++float pspFpuNegativeQNaN(void);
++
++/**
++ * Signaling NaN (positive SNaN)
++ */
++float pspFpuPositiveSNaN(unsigned int uiSignal);
++
++/**
++ * Signaling NaN (negative SNaN)
++ */
++float pspFpuNegativeSNaN(unsigned int uiSignal);
++
++/**
++ * Test for NaN
++ */
++int pspFpuIsNaN(float f);
++
++/**
++ * Test for infinity or NaN
++ */
++int pspFpuIsInfOrNaN(float f);
++
++/**
++ *
++ */
++float pspFpuNormalizePhase(float f);
++
++/**
++ * Sine
++ */
++float pspFpuSin(float x);
++
++/**
++ * Cosine
++ */
++float pspFpuCos(float x);
++
++/**
++ * Arc tangent
++ */
++float pspFpuAtan(float x);
++
++/**
++ * Natural Logarithm
++ */
++float pspFpuLog(float x);
++
++/**
++ * Exponential
++ */
++float pspFpuExp(float x);
++
++/**
++ * ArcSin
++ */
++float pspFpuAsin(float x);
++
++/**
++ * ArcCos
++ */
++float pspFpuAcos(float x);
++
++/**
++ * convert float to double
++ */
++double pspFpuFloatToDouble(float a);
++
++/**
++ * convert double to float
++ */
++float  pspFpuDoubleToFloat(double a);
+ 
+ #ifdef __cplusplus
+ }
+diff -Nbaur pspsdk/src/ge/pspge.h pspsdk.new/src/ge/pspge.h
+--- pspsdk/src/ge/pspge.h	2011-07-29 15:56:26.000000000 +0100
++++ pspsdk.new/src/ge/pspge.h	2011-07-29 14:56:08.000000000 +0100
+@@ -46,6 +46,13 @@
+ } PspGeListArgs;
+ 
+ /**
++ * Drawing queue interruption parameter
++ */
++typedef struct PspGeBreakParam {
++	unsigned int	buf[4];
++} PspGeBreakParam;
++
++/**
+  * Get the size of VRAM.
+  *
+  * @return The size of VRAM (in bytes).
+@@ -206,6 +213,22 @@
+   */
+ int sceGeUnsetCallback(int cbid);
+ 
++/**
++ * Interrupt drawing queue
++ */
++int sceGeBreak(int mode, PspGeBreakParam *pParam);
++
++/**
++ * Restart drawing queue 
++ */
++int sceGeContinue(void);
++
++/**
++ * Set Graphics Engine eDRAM address translation mode
++ */
++int sceGeEdramSetAddrTranslation(int width);
++
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff -Nbaur pspsdk/src/kernel/Makefile.am pspsdk.new/src/kernel/Makefile.am
+--- pspsdk/src/kernel/Makefile.am	2011-07-29 15:56:22.000000000 +0100
++++ pspsdk.new/src/kernel/Makefile.am	2011-07-29 14:56:08.000000000 +0100
+@@ -34,7 +34,7 @@
+ 
+ LOADEXEC_OBJS = LoadExecForKernel_0000.o LoadExecForKernel_0001.o LoadExecForKernel_0002.o LoadExecForKernel_0003.o LoadExecForKernel_0004.o LoadExecForKernel_0005.o LoadExecForKernel_0006.o LoadExecForKernel_0007.o LoadExecForKernel_0008.o LoadExecForKernel_0009.o LoadExecForKernel_0010.o LoadExecForKernel_0011.o LoadExecForKernel_0012.o LoadExecForKernel_0013.o LoadExecForKernel_0014.o LoadExecForKernel_0015.o LoadExecForKernel_0016.o LoadExecForKernel_0017.o LoadExecForKernel_0018.o LoadExecForKernel_0019.o LoadExecForKernel_0020.o LoadExecForKernel_0021.o LoadExecForKernel_0022.o LoadExecForKernel_0023.o LoadExecForKernel_0024.o LoadExecForKernel_0025.o LoadExecForKernel_0026.o 
+ 
+-SYSMEM_OBJS = SysMemForKernel_0000.o SysMemForKernel_0001.o SysMemForKernel_0002.o SysMemForKernel_0003.o SysMemForKernel_0004.o SysMemForKernel_0005.o SysMemForKernel_0006.o SysMemForKernel_0007.o SysMemForKernel_0008.o SysMemForKernel_0009.o SysMemForKernel_0010.o SysMemForKernel_0011.o SysMemForKernel_0012.o SysMemForKernel_0013.o SysMemForKernel_0014.o SysMemForKernel_0015.o SysMemForKernel_0016.o SysMemForKernel_0017.o SysMemForKernel_0018.o SysMemForKernel_0019.o SysMemForKernel_0020.o SysMemForKernel_0021.o SysMemForKernel_0022.o SysMemForKernel_0023.o SysMemForKernel_0024.o SysMemForKernel_0025.o SysMemForKernel_0026.o SysMemForKernel_0027.o SysMemForKernel_0028.o SysMemForKernel_0029.o SysMemForKernel_0030.o SysMemForKernel_0031.o SysMemForKernel_0032.o SysMemForKernel_0033.o SysMemForKernel_0034.o SysMemForKernel_0035.o SysMemForKernel_0036.o SysMemForKernel_0037.o SysMemForKernel_0038.o SysMemForKernel_0039.o SysMemForKernel_0040.o SysMemForKernel_0041.o SysMemForKernel_0042.o SysMemForKernel_0043.o SysMemForKernel_0044.o SysMemForKernel_0045.o SysMemForKernel_0046.o SysMemForKernel_0047.o SysMemForKernel_0048.o SysMemForKernel_0049.o SysMemForKernel_0050.o SysMemForKernel_0051.o SysMemForKernel_0052.o SysMemForKernel_0053.o SysMemForKernel_0054.o SysMemForKernel_0055.o SysMemForKernel_0056.o SysMemForKernel_0057.o SysMemForKernel_0058.o SysMemForKernel_0059.o SysMemForKernel_0060.o SysMemForKernel_0061.o SysMemForKernel_0062.o SysMemForKernel_0063.o SysMemForKernel_0064.o SysMemForKernel_0065.o SysMemForKernel_0066.o SysMemForKernel_0067.o SysMemForKernel_0068.o
++SYSMEM_OBJS = SysMemForKernel_0000.o SysMemForKernel_0001.o SysMemForKernel_0002.o SysMemForKernel_0003.o SysMemForKernel_0004.o SysMemForKernel_0005.o SysMemForKernel_0006.o SysMemForKernel_0007.o SysMemForKernel_0008.o SysMemForKernel_0009.o SysMemForKernel_0010.o SysMemForKernel_0011.o SysMemForKernel_0012.o SysMemForKernel_0013.o SysMemForKernel_0014.o SysMemForKernel_0015.o SysMemForKernel_0016.o SysMemForKernel_0017.o SysMemForKernel_0018.o SysMemForKernel_0019.o SysMemForKernel_0020.o SysMemForKernel_0021.o SysMemForKernel_0022.o SysMemForKernel_0023.o SysMemForKernel_0024.o SysMemForKernel_0025.o SysMemForKernel_0026.o SysMemForKernel_0027.o SysMemForKernel_0028.o SysMemForKernel_0029.o SysMemForKernel_0030.o SysMemForKernel_0031.o SysMemForKernel_0032.o SysMemForKernel_0033.o SysMemForKernel_0034.o SysMemForKernel_0035.o SysMemForKernel_0036.o SysMemForKernel_0037.o SysMemForKernel_0038.o SysMemForKernel_0039.o SysMemForKernel_0040.o SysMemForKernel_0041.o SysMemForKernel_0042.o SysMemForKernel_0043.o SysMemForKernel_0044.o SysMemForKernel_0045.o SysMemForKernel_0046.o SysMemForKernel_0047.o SysMemForKernel_0048.o SysMemForKernel_0049.o SysMemForKernel_0050.o SysMemForKernel_0051.o SysMemForKernel_0052.o SysMemForKernel_0053.o SysMemForKernel_0054.o SysMemForKernel_0055.o SysMemForKernel_0056.o SysMemForKernel_0057.o SysMemForKernel_0058.o SysMemForKernel_0059.o SysMemForKernel_0060.o SysMemForKernel_0061.o SysMemForKernel_0062.o SysMemForKernel_0063.o SysMemForKernel_0064.o SysMemForKernel_0065.o SysMemForKernel_0066.o SysMemForKernel_0067.o SysMemForKernel_0068.o SysMemForKernel_0069.o SysMemForKernel_0070.o
+ 
+ MODULE_OBJS = ModuleMgrForKernel_0000.o ModuleMgrForKernel_0001.o ModuleMgrForKernel_0002.o ModuleMgrForKernel_0003.o ModuleMgrForKernel_0004.o ModuleMgrForKernel_0005.o ModuleMgrForKernel_0006.o ModuleMgrForKernel_0007.o ModuleMgrForKernel_0008.o ModuleMgrForKernel_0009.o ModuleMgrForKernel_0010.o ModuleMgrForKernel_0011.o ModuleMgrForKernel_0012.o ModuleMgrForKernel_0013.o ModuleMgrForKernel_0014.o ModuleMgrForKernel_0015.o ModuleMgrForKernel_0016.o ModuleMgrForKernel_0017.o ModuleMgrForKernel_0018.o ModuleMgrForKernel_0019.o ModuleMgrForKernel_0020.o ModuleMgrForKernel_0021.o ModuleMgrForKernel_0022.o 
+ 
+diff -Nbaur pspsdk/src/kernel/SysMemForKernel.S pspsdk.new/src/kernel/SysMemForKernel.S
+--- pspsdk/src/kernel/SysMemForKernel.S	2011-07-29 15:56:22.000000000 +0100
++++ pspsdk.new/src/kernel/SysMemForKernel.S	2011-07-29 14:56:08.000000000 +0100
+@@ -211,3 +211,9 @@
+ #ifdef F_SysMemForKernel_0068
+ 	IMPORT_FUNC "SysMemForKernel",0x6373995D,sceKernelGetModel
+ #endif
++#ifdef F_SysMemForKernel_0069
++	IMPORT_FUNC	"SysMemForKernel",0x7591C7DB,sceKernelSetCompiledSdkVersion
++#endif
++#ifdef F_SysMemForKernel_0070
++	IMPORT_FUNC	"SysMemForKernel",0xFC114573,sceKernelGetCompiledSdkVersion
++#endif
+diff -Nbaur pspsdk/src/kernel/psploadcore.h pspsdk.new/src/kernel/psploadcore.h
+--- pspsdk/src/kernel/psploadcore.h	2011-07-29 15:56:22.000000000 +0100
++++ pspsdk.new/src/kernel/psploadcore.h	2011-07-29 14:56:08.000000000 +0100
+@@ -52,7 +52,7 @@
+ 	unsigned int		nsegment;
+ 	unsigned int		segmentaddr[4];
+ 	unsigned int		segmentsize[4];
+-} SceModule;
++} __attribute__((packed)) SceModule;
+ 
+ /** Defines a library and its exported functions and variables.  Use the len
+     member to determine the real size of the table (size = len * 4). */
+diff -Nbaur pspsdk/src/kernel/pspsysmem_kernel.h pspsdk.new/src/kernel/pspsysmem_kernel.h
+--- pspsdk/src/kernel/pspsysmem_kernel.h	2011-07-29 15:56:22.000000000 +0100
++++ pspsdk.new/src/kernel/pspsysmem_kernel.h	2011-07-29 14:56:08.000000000 +0100
+@@ -201,6 +201,21 @@
+  */
+ int sceKernelGetModel(void);
+ 
++/**
++ * Set the version of the SDK with which the caller was compiled.
++ * Version numbers are as for sceKernelDevkitVersion().
++ *
++ * @return 0 on success, < 0 on error.
++ */
++int sceKernelSetCompiledSdkVersion(int version);
++
++/**
++ * Get the SDK version set with sceKernelSetCompiledSdkVersion().
++ *
++ * @return Version number, or 0 if unset.
++ */
++int sceKernelGetCompiledSdkVersion(void);
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff -Nbaur pspsdk/src/libc/stdio.h pspsdk.new/src/libc/stdio.h
+--- pspsdk/src/libc/stdio.h	2011-07-29 15:56:25.000000000 +0100
++++ pspsdk.new/src/libc/stdio.h	2011-07-29 14:56:08.000000000 +0100
+@@ -18,6 +18,10 @@
+ 
+ #include <pspkernel.h>
+ #include <stdarg.h>
++#include <sys/types.h>
++#define STDIN_FILENO  0
++#define STDOUT_FILENO 1
++#define STDERR_FILENO 2
+ 
+ #ifdef __cplusplus
+ extern "C" {
+diff -Nbaur pspsdk/src/libc/terminate.c pspsdk.new/src/libc/terminate.c
+--- pspsdk/src/libc/terminate.c	2011-07-29 15:56:25.000000000 +0100
++++ pspsdk.new/src/libc/terminate.c	2011-07-29 14:56:08.000000000 +0100
+@@ -20,8 +20,6 @@
+ __attribute__((weak))
+ void abort()
+ {
+-	printf("Program aborted.\n");
+-
+ 	while (1)
+ 		_exit(1);
+ }
+diff -Nbaur pspsdk/src/net/psphttp.h pspsdk.new/src/net/psphttp.h
+--- pspsdk/src/net/psphttp.h	2011-07-29 15:56:25.000000000 +0100
++++ pspsdk.new/src/net/psphttp.h	2011-07-29 14:56:08.000000000 +0100
+@@ -19,12 +19,53 @@
+ 
+ typedef enum
+ {
++	PSP_HTTP_VERSION_1_0,
++	PSP_HTTP_VERSION_1_1
++} PspHttpHttpVersion;
++
++typedef enum
++{
+ 	PSP_HTTP_METHOD_GET,
+ 	PSP_HTTP_METHOD_POST,
+ 	PSP_HTTP_METHOD_HEAD
+ 	
+ } PspHttpMethod;
+ 
++typedef enum
++{
++	PSP_HTTP_AUTH_BASIC,
++	PSP_HTTP_AUTH_DIGEST
++} PspHttpAuthType;
++
++
++typedef enum
++{
++	PSP_HTTP_PROXY_AUTO,
++	PSP_HTTP_PROXY_MANUAL
++} PspHttpProxyMode;
++
++typedef enum
++{
++	PSP_HTTP_HEADER_OVERWRITE,
++	PSP_HTTP_HEADER_ADD
++} PspHttpAddHeaderMode;
++
++/* Memory function types */
++typedef void *(*PspHttpMallocFunction)(SceSize size);
++typedef void *(*PspHttpReallocFunction)(void *p, SceSize size);
++typedef void (*PspHttpFreeFunction)(void *p);
++
++typedef int (*PspHttpPasswordCB)(
++	int request,
++	PspHttpAuthType auth_type,
++	const unsigned char *realm,
++	unsigned char *username,
++	unsigned char *password,
++	SceBool need_entity,
++	unsigned char **entity_body,
++	SceSize *entity_size,
++	SceBool *save);
++
+ /**
+  * Init the http library.
+  *
+@@ -319,6 +360,32 @@
+ */
+ int sceHttpsLoadDefaultCert(int unknown1, int unknown2);
+ 
++int sceHttpDisableAuth(int id);
++
++int sceHttpDisableCache(int id);
++
++int sceHttpEnableAuth(int id);
++
++int sceHttpEnableCache(int id);
++
++int sceHttpEndCache(void);
++
++int sceHttpGetAllHeader(int request, unsigned char **header, unsigned int *header_size);
++
++int sceHttpGetNetworkErrno(int request, int *err_num);
++
++int sceHttpGetProxy(int id, int *activate_flag, int *mode, unsigned char *proxy_host, SceSize len, unsigned short *proxy_port);
++
++int sceHttpInitCache(SceSize max_size);
++
++int sceHttpSetAuthInfoCB(int id, PspHttpPasswordCB cbfunc);
++
++int sceHttpSetProxy(int id, int activate_flag, int mode, const unsigned char *new_proxy_host, unsigned short new_proxy_port);
++
++int sceHttpSetResHeaderMaxSize(int id, unsigned int header_size);
++
++int sceHttpSetMallocFunction(PspHttpMallocFunction malloc_func, PspHttpFreeFunction free_func, PspHttpReallocFunction realloc_func);
++
+ #if defined(__cplusplus)
+ };
+ #endif
+diff -Nbaur pspsdk/src/rtc/psprtc.h pspsdk.new/src/rtc/psprtc.h
+--- pspsdk/src/rtc/psprtc.h	2011-07-29 15:56:23.000000000 +0100
++++ pspsdk.new/src/rtc/psprtc.h	2011-07-29 14:56:08.000000000 +0100
+@@ -249,14 +249,31 @@
+ int sceRtcGetWin32FileTime(pspTime* date, u64* win32Time);
+ 
+ int sceRtcParseDateTime(u64 *destTick, const char *dateString);
+-/*
+-sceRtcFormatRFC2822
+-sceRtcFormatRFC2822LocalTime
+-sceRtcFormatRFC3339
+-sceRtcFormatRFC3339LocalTime
+ 
+-sceRtcParseRFC3339
+-*/
++/**
++ * Format Tick-representation UTC time in RFC2822 format
++ */
++int sceRtcFormatRFC2822(char *pszDateTime, const u64 *pUtc, int iTimeZoneMinutes);
++
++/**
++ * Format Tick-representation UTC time in RFC2822 format
++ */
++int sceRtcFormatRFC2822LocalTime(char *pszDateTime, const u64 *pUtc);
++
++/**
++ * Format Tick-representation UTC time in RFC3339(ISO8601) format
++ */
++int sceRtcFormatRFC3339(char *pszDateTime, const u64 *pUtc, int iTimeZoneMinutes);
++
++/**
++ * Format Tick-representation UTC time in RFC3339(ISO8601) format
++ */
++int sceRtcFormatRFC3339LocalTime(char *pszDateTime, const u64 *pUtc);
++
++/**
++ * Parse time information represented in RFC3339 format
++ */
++int sceRtcParseRFC3339(u64 *pUtc, const char *pszDateTime);
+ 
+ #ifdef __cplusplus
+ }
+diff -Nbaur pspsdk/src/samples/Makefile.am pspsdk.new/src/samples/Makefile.am
+--- pspsdk/src/samples/Makefile.am	2011-07-29 15:56:33.000000000 +0100
++++ pspsdk.new/src/samples/Makefile.am	2011-07-29 14:57:09.000000000 +0100
+@@ -81,7 +81,9 @@
+ 	utility/systemparam \
+ 	utility/osk \
+ 	me/basic \
+-	wlan
++	wlan \
++	obj-c \
++	exceptions
+ 
+ all:
+ 
+diff -Nbaur pspsdk/src/samples/Makefile.am.rej pspsdk.new/src/samples/Makefile.am.rej
+--- pspsdk/src/samples/Makefile.am.rej	1970-01-01 01:00:00.000000000 +0100
++++ pspsdk.new/src/samples/Makefile.am.rej	2011-07-29 14:56:08.000000000 +0100
+@@ -0,0 +1,20 @@
++***************
++*** 81,87 ****
++  	utility/systemparam \
++  	utility/osk \
++  	me/basic \
++- 	wlan
++  
++  all:
++  
++--- 81,90 ----
++  	utility/systemparam \
++  	utility/osk \
++  	me/basic \
+++ 	wlan \
+++ 	obj-c \
+++ 	exceptions \
+++ 	d
++  
++  all:
++  
+diff -Nbaur pspsdk/src/samples/exceptions/Makefile.sample pspsdk.new/src/samples/exceptions/Makefile.sample
+--- pspsdk/src/samples/exceptions/Makefile.sample	1970-01-01 01:00:00.000000000 +0100
++++ pspsdk.new/src/samples/exceptions/Makefile.sample	2011-07-29 14:56:08.000000000 +0100
+@@ -0,0 +1,18 @@
++TARGET = CppException
++OBJS = main.o
++LIBS = -lstdc++
++
++INCDIR =
++CFLAGS = -G0 -Wall -O2
++CXXFLAGS = $(CFLAGS) -fno-rtti -fexceptions
++ASFLAGS = $(CFLAGS)
++
++LIBDIR =
++LDFLAGS =
++
++EXTRA_TARGETS = EBOOT.PBP
++PSP_EBOOT_TITLE = C++ Exception Sample
++
++PSPSDK=$(shell psp-config --pspsdk-path)
++include $(PSPSDK)/lib/build.mak
++
+diff -Nbaur pspsdk/src/samples/exceptions/main.cpp pspsdk.new/src/samples/exceptions/main.cpp
+--- pspsdk/src/samples/exceptions/main.cpp	1970-01-01 01:00:00.000000000 +0100
++++ pspsdk.new/src/samples/exceptions/main.cpp	2011-07-29 14:56:08.000000000 +0100
+@@ -0,0 +1,51 @@
++#include <pspkernel.h>
++#include <pspdebug.h>
++#include <pspctrl.h>
++
++/* Define printf, just to make typing easier */
++#define printf  pspDebugScreenPrintf
++
++/* Define the module info section */
++PSP_MODULE_INFO("cppException", 0, 1, 1);
++
++/* Define the main thread's attribute value (optional) */
++PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
++
++#include <exception>
++using namespace std;
++
++class myexception: public exception
++{
++	virtual const char* what() const throw()
++	{
++		return "My exception happened";
++	}
++} myex;
++
++int main (void)
++{
++	pspDebugScreenInit();
++	SceCtrlData pad;
++	
++	try
++	{
++		throw myex;
++	}
++	catch (exception& e)
++	{
++		printf("%s\n", e.what());
++	}
++	
++	printf("\nPress X to quit.\n");
++
++	for (;;)
++	{
++		sceCtrlReadBufferPositive(&pad, 1);
++		if (pad.Buttons & PSP_CTRL_CROSS)
++			break;
++	}
++	sceKernelExitGame();
++
++	return 0;
++}
++
+diff -Nbaur pspsdk/src/samples/obj-c/Makefile.sample pspsdk.new/src/samples/obj-c/Makefile.sample
+--- pspsdk/src/samples/obj-c/Makefile.sample	1970-01-01 01:00:00.000000000 +0100
++++ pspsdk.new/src/samples/obj-c/Makefile.sample	2011-07-29 14:56:08.000000000 +0100
+@@ -0,0 +1,19 @@
++TARGET = ObjC
++OBJS = main.o
++
++USE_OBJC=1
++
++INCDIR =
++CFLAGS = -G0 -Wall -O2
++CXXFLAGS = $(CFLAGS) -fno-exceptions -fno-rtti
++ASFLAGS = $(CFLAGS)
++
++LIBDIR =
++LDFLAGS =
++
++EXTRA_TARGETS = EBOOT.PBP
++PSP_EBOOT_TITLE = ObjC Sample
++
++PSPSDK=$(shell psp-config --pspsdk-path)
++include $(PSPSDK)/lib/build.mak
++
+diff -Nbaur pspsdk/src/samples/obj-c/main.m pspsdk.new/src/samples/obj-c/main.m
+--- pspsdk/src/samples/obj-c/main.m	1970-01-01 01:00:00.000000000 +0100
++++ pspsdk.new/src/samples/obj-c/main.m	2011-07-29 14:56:08.000000000 +0100
+@@ -0,0 +1,62 @@
++#include <objc/Object.h>
++
++@interface Greeter:Object
++{
++ /* This is left empty on purpose:
++  ** Normally instance variables would be declared here,
++  ** but these are not used in our example.
++  */
++}
++
++- (void)greet;
++
++@end
++
++
++#include <pspkernel.h>
++#include <pspdebug.h>
++#include <pspctrl.h>
++
++/* Define printf, just to make typing easier */
++#define printf  pspDebugScreenPrintf
++
++@implementation Greeter
++
++- (void)greet
++{
++	printf("Hello, World from Obj-C!\n");
++}
++
++@end
++
++/* Define the module info section */
++PSP_MODULE_INFO("template", 0, 1, 1);
++
++/* Define the main thread's attribute value (optional) */
++PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
++
++int main(void)
++{
++	/* Non Objective-C code to allow the app to end */
++	pspDebugScreenInit();
++	SceCtrlData pad;
++	
++	/* Objective-C code */
++	id myGreeter;
++	myGreeter=[Greeter new];
++
++	[myGreeter greet];
++	[myGreeter free];
++
++	printf("\nPress X to quit.\n");
++	for (;;)
++	{
++		sceCtrlReadBufferPositive(&pad, 1);
++		if (pad.Buttons & PSP_CTRL_CROSS)
++			break;
++	}
++	sceKernelExitGame();
++	
++	return 0;
++}
++
+diff -Nbaur pspsdk/src/user/Makefile.am pspsdk.new/src/user/Makefile.am
+--- pspsdk/src/user/Makefile.am	2011-07-29 15:56:36.000000000 +0100
++++ pspsdk.new/src/user/Makefile.am	2011-07-29 14:56:08.000000000 +0100
+@@ -20,11 +20,11 @@
+ 
+ SUSPEND_OBJS = sceSuspendForUser_0000.o sceSuspendForUser_0001.o sceSuspendForUser_0002.o sceSuspendForUser_0003.o sceSuspendForUser_0004.o sceSuspendForUser_005.o sceSuspendForUser_0006.o
+ 
+-SYSMEM_OBJS = SysMemUserForUser_0000.o SysMemUserForUser_0001.o SysMemUserForUser_0002.o SysMemUserForUser_0003.o SysMemUserForUser_0004.o SysMemUserForUser_0005.o SysMemUserForUser_0006.o SysMemUserForUser_0007.o
++SYSMEM_OBJS = SysMemUserForUser_0000.o SysMemUserForUser_0001.o SysMemUserForUser_0002.o SysMemUserForUser_0003.o SysMemUserForUser_0004.o SysMemUserForUser_0005.o SysMemUserForUser_0006.o SysMemUserForUser_0007.o SysMemUserForUser_0008.o SysMemUserForUser_0009.o
+ 
+ THREADMAN_OBJS = ThreadManForUser_0000.o ThreadManForUser_0001.o ThreadManForUser_0002.o ThreadManForUser_0003.o ThreadManForUser_0004.o ThreadManForUser_0005.o ThreadManForUser_0006.o ThreadManForUser_0007.o ThreadManForUser_0008.o ThreadManForUser_0009.o ThreadManForUser_0010.o ThreadManForUser_0011.o ThreadManForUser_0012.o ThreadManForUser_0013.o ThreadManForUser_0014.o ThreadManForUser_0015.o ThreadManForUser_0016.o ThreadManForUser_0017.o ThreadManForUser_0018.o ThreadManForUser_0019.o ThreadManForUser_0020.o ThreadManForUser_0021.o ThreadManForUser_0022.o ThreadManForUser_0023.o ThreadManForUser_0024.o ThreadManForUser_0025.o ThreadManForUser_0026.o ThreadManForUser_0027.o ThreadManForUser_0028.o ThreadManForUser_0029.o ThreadManForUser_0030.o ThreadManForUser_0031.o ThreadManForUser_0032.o ThreadManForUser_0033.o ThreadManForUser_0034.o ThreadManForUser_0035.o ThreadManForUser_0036.o ThreadManForUser_0037.o ThreadManForUser_0038.o ThreadManForUser_0039.o ThreadManForUser_0040.o ThreadManForUser_0041.o ThreadManForUser_0042.o ThreadManForUser_0043.o ThreadManForUser_0044.o ThreadManForUser_0045.o ThreadManForUser_0046.o ThreadManForUser_0047.o ThreadManForUser_0048.o ThreadManForUser_0049.o ThreadManForUser_0050.o ThreadManForUser_0051.o ThreadManForUser_0052.o ThreadManForUser_0053.o ThreadManForUser_0054.o ThreadManForUser_0055.o ThreadManForUser_0056.o ThreadManForUser_0057.o ThreadManForUser_0058.o ThreadManForUser_0059.o ThreadManForUser_0060.o ThreadManForUser_0061.o ThreadManForUser_0062.o ThreadManForUser_0063.o ThreadManForUser_0064.o ThreadManForUser_0065.o ThreadManForUser_0066.o ThreadManForUser_0067.o ThreadManForUser_0068.o ThreadManForUser_0069.o ThreadManForUser_0070.o ThreadManForUser_0071.o ThreadManForUser_0072.o ThreadManForUser_0073.o ThreadManForUser_0074.o ThreadManForUser_0075.o ThreadManForUser_0076.o ThreadManForUser_0077.o ThreadManForUser_0078.o ThreadManForUser_0079.o ThreadManForUser_0080.o ThreadManForUser_0081.o ThreadManForUser_0082.o ThreadManForUser_0083.o ThreadManForUser_0084.o ThreadManForUser_0085.o ThreadManForUser_0086.o ThreadManForUser_0087.o ThreadManForUser_0088.o ThreadManForUser_0089.o ThreadManForUser_0090.o ThreadManForUser_0091.o ThreadManForUser_0092.o ThreadManForUser_0093.o ThreadManForUser_0094.o ThreadManForUser_0095.o ThreadManForUser_0096.o ThreadManForUser_0097.o ThreadManForUser_0098.o ThreadManForUser_0099.o ThreadManForUser_0100.o ThreadManForUser_0101.o ThreadManForUser_0102.o ThreadManForUser_0103.o ThreadManForUser_0104.o ThreadManForUser_0105.o ThreadManForUser_0106.o ThreadManForUser_0107.o ThreadManForUser_0108.o ThreadManForUser_0109.o ThreadManForUser_0110.o ThreadManForUser_0111.o ThreadManForUser_0112.o ThreadManForUser_0113.o ThreadManForUser_0114.o ThreadManForUser_0115.o ThreadManForUser_0116.o ThreadManForUser_0117.o ThreadManForUser_0118.o ThreadManForUser_0119.o ThreadManForUser_0120.o ThreadManForUser_0121.o ThreadManForUser_0122.o ThreadManForUser_0123.o ThreadManForUser_0124.o ThreadManForUser_0125.o ThreadManForUser_0126.o 
+ 
+-UTILS_OBJS = UtilsForUser_0000.o UtilsForUser_0001.o UtilsForUser_0002.o UtilsForUser_0003.o UtilsForUser_0004.o UtilsForUser_0005.o UtilsForUser_0006.o UtilsForUser_0007.o UtilsForUser_0008.o UtilsForUser_0009.o UtilsForUser_0010.o UtilsForUser_0011.o UtilsForUser_0012.o UtilsForUser_0013.o UtilsForUser_0014.o UtilsForUser_0015.o UtilsForUser_0016.o UtilsForUser_0017.o UtilsForUser_0018.o UtilsForUser_0019.o UtilsForUser_0020.o UtilsForUser_0021.o UtilsForUser_0022.o UtilsForUser_0023.o UtilsForUser_0024.o 
++UTILS_OBJS = UtilsForUser_0000.o UtilsForUser_0001.o UtilsForUser_0002.o UtilsForUser_0003.o UtilsForUser_0004.o UtilsForUser_0005.o UtilsForUser_0006.o UtilsForUser_0007.o UtilsForUser_0008.o UtilsForUser_0009.o UtilsForUser_0010.o UtilsForUser_0011.o UtilsForUser_0012.o UtilsForUser_0013.o UtilsForUser_0014.o UtilsForUser_0015.o UtilsForUser_0016.o UtilsForUser_0017.o UtilsForUser_0018.o UtilsForUser_0019.o UtilsForUser_0020.o UtilsForUser_0021.o UtilsForUser_0022.o UtilsForUser_0023.o UtilsForUser_0024.o UtilsForUser_0025.o UtilsForUser_0026.o 
+ 
+ INTERRUPT_OBJS = InterruptManager_0000.o InterruptManager_0001.o InterruptManager_0002.o InterruptManager_0003.o InterruptManager_0004.o InterruptManager_0005.o InterruptManager_0006.o InterruptManager_0007.o InterruptManager_0008.o InterruptManager_0009.o 
+ 
+diff -Nbaur pspsdk/src/user/SysMemUserForUser.S pspsdk.new/src/user/SysMemUserForUser.S
+--- pspsdk/src/user/SysMemUserForUser.S	2011-07-29 15:56:36.000000000 +0100
++++ pspsdk.new/src/user/SysMemUserForUser.S	2011-07-29 14:56:08.000000000 +0100
+@@ -26,3 +26,9 @@
+ #ifdef F_SysMemUserForUser_0007
+ 	IMPORT_FUNC	"SysMemUserForUser",0x13A5ABEF,sceKernelPrintf
+ #endif
++#ifdef F_SysMemUserForUser_0008
++	IMPORT_FUNC	"SysMemUserForUser",0x7591C7DB,sceKernelSetCompiledSdkVersion
++#endif
++#ifdef F_SysMemUserForUser_0009
++	IMPORT_FUNC	"SysMemUserForUser",0xFC114573,sceKernelGetCompiledSdkVersion
++#endif
+diff -Nbaur pspsdk/src/user/UtilsForUser.S pspsdk.new/src/user/UtilsForUser.S
+--- pspsdk/src/user/UtilsForUser.S	2011-07-29 15:56:36.000000000 +0100
++++ pspsdk.new/src/user/UtilsForUser.S	2011-07-29 14:56:08.000000000 +0100
+@@ -77,3 +77,9 @@
+ #ifdef F_UtilsForUser_0024
+ 	IMPORT_FUNC	"UtilsForUser",0xFB05FAD0,sceKernelIcacheReadTag
+ #endif
++#ifdef F_UtilsForUser_0025
++	IMPORT_FUNC	"UtilsForUser",0x920F104A,sceKernelIcacheInvalidateAll
++#endif
++#ifdef F_UtilsForUser_0026
++	IMPORT_FUNC	"UtilsForUser",0xC2DF770E,sceKernelIcacheInvalidateRange
++#endif
+diff -Nbaur pspsdk/src/user/pspsysmem.h pspsdk.new/src/user/pspsysmem.h
+--- pspsdk/src/user/pspsysmem.h	2011-07-29 15:56:36.000000000 +0100
++++ pspsdk.new/src/user/pspsysmem.h	2011-07-29 14:56:08.000000000 +0100
+@@ -115,6 +115,21 @@
+ 
+ #endif
+ 
++/**
++ * Set the version of the SDK with which the caller was compiled.
++ * Version numbers are as for sceKernelDevkitVersion().
++ *
++ * @return 0 on success, < 0 on error.
++ */
++int sceKernelSetCompiledSdkVersion(int version);
++
++/**
++ * Get the SDK version set with sceKernelSetCompiledSdkVersion().
++ *
++ * @return Version number, or 0 if unset.
++ */
++int sceKernelGetCompiledSdkVersion(void);
++
+ #ifdef __cplusplus
+ }
+ #endif
+diff -Nbaur pspsdk/src/user/psputils.h pspsdk.new/src/user/psputils.h
+--- pspsdk/src/user/psputils.h	2011-07-29 15:56:36.000000000 +0100
++++ pspsdk.new/src/user/psputils.h	2011-07-29 14:56:08.000000000 +0100
+@@ -58,12 +58,12 @@
+ void sceKernelDcacheWritebackInvalidateAll(void);
+ 
+ /**
+-  * Write back a range of addresses from data cache to memory
++  * Write back a range of addresses from the data cache to memory
+   */
+ void sceKernelDcacheWritebackRange(const void *p, unsigned int size);
+ 
+ /**
+-  * Write back and invalidate a range of addresses in data cache
++  * Write back and invalidate a range of addresses in the data cache
+   */
+ void sceKernelDcacheWritebackInvalidateRange(const void *p, unsigned int size);
+ 
+@@ -72,6 +72,16 @@
+   */
+ void sceKernelDcacheInvalidateRange(const void *p, unsigned int size);
+ 
++/** 
++  * Invalidate the instruction cache
++  */
++void sceKernelIcacheInvalidateAll(void);
++
++/**
++  * Invalidate a range of addresses in the instruction cache
++  */
++void sceKernelIcacheInvalidateRange(const void *p, unsigned int size);
++
+ /** Structure for holding a mersenne twister context */
+ typedef struct _SceKernelUtilsMt19937Context {
+ 	unsigned int 	count;

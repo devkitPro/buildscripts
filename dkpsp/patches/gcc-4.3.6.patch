@@ -1,6 +1,6 @@
-diff -Nbaur gcc-4.3.5/Makefile.in gcc-4.3.5-psp/Makefile.in
---- gcc-4.3.5/Makefile.in	2009-04-25 06:55:24.000000000 +0100
-+++ gcc-4.3.5-psp/Makefile.in	2010-06-04 10:59:11.000000000 +0100
+diff -Nbaur gcc-4.3.6/Makefile.in gcc-4.3.6-psp/Makefile.in
+--- gcc-4.3.6/Makefile.in	2009-04-25 06:55:24.000000000 +0100
++++ gcc-4.3.6-psp/Makefile.in	2011-07-29 15:21:37.000000000 +0100
 @@ -380,7 +380,7 @@
  # We want to ensure that TARGET libraries (which we know are built with
  # gcc) are built with "-O2 -g", so prepend those options when setting
@@ -10,9 +10,9 @@ diff -Nbaur gcc-4.3.5/Makefile.in gcc-4.3.5-psp/Makefile.in
  	$(DEBUG_PREFIX_CFLAGS_FOR_TARGET)
  SYSROOT_CFLAGS_FOR_TARGET = @SYSROOT_CFLAGS_FOR_TARGET@
  DEBUG_PREFIX_CFLAGS_FOR_TARGET = @DEBUG_PREFIX_CFLAGS_FOR_TARGET@
-diff -Nbaur gcc-4.3.5/config.sub gcc-4.3.5-psp/config.sub
---- gcc-4.3.5/config.sub	2008-01-23 02:37:40.000000000 +0000
-+++ gcc-4.3.5-psp/config.sub	2010-06-04 10:59:12.000000000 +0100
+diff -Nbaur gcc-4.3.6/config.sub gcc-4.3.6-psp/config.sub
+--- gcc-4.3.6/config.sub	2008-01-23 02:37:40.000000000 +0000
++++ gcc-4.3.6-psp/config.sub	2011-07-29 15:21:37.000000000 +0100
 @@ -267,6 +267,7 @@
  	| mipsisa64sb1 | mipsisa64sb1el \
  	| mipsisa64sr71k | mipsisa64sr71kel \
@@ -40,9 +40,9 @@ diff -Nbaur gcc-4.3.5/config.sub gcc-4.3.5-psp/config.sub
  	mips3*-*)
  		basic_machine=`echo $basic_machine | sed -e 's/mips3/mips64/'`
  		;;
-diff -Nbaur gcc-4.3.5/gcc/config/mips/allegrex.md gcc-4.3.5-psp/gcc/config/mips/allegrex.md
---- gcc-4.3.5/gcc/config/mips/allegrex.md	1970-01-01 01:00:00.000000000 +0100
-+++ gcc-4.3.5-psp/gcc/config/mips/allegrex.md	2010-06-04 10:59:12.000000000 +0100
+diff -Nbaur gcc-4.3.6/gcc/config/mips/allegrex.md gcc-4.3.6-psp/gcc/config/mips/allegrex.md
+--- gcc-4.3.6/gcc/config/mips/allegrex.md	1970-01-01 01:00:00.000000000 +0100
++++ gcc-4.3.6-psp/gcc/config/mips/allegrex.md	2011-07-29 15:21:37.000000000 +0100
 @@ -0,0 +1,183 @@
 +;; Sony ALLEGREX instructions.
 +;; Copyright (C) 2005 Free Software Foundation, Inc.
@@ -227,9 +227,9 @@ diff -Nbaur gcc-4.3.5/gcc/config/mips/allegrex.md gcc-4.3.5-psp/gcc/config/mips/
 +  "round.w.s\t%0,%1"
 +  [(set_attr "type"	"fcvt")
 +   (set_attr "mode"	"SF")])
-diff -Nbaur gcc-4.3.5/gcc/config/mips/mips-ftypes.def gcc-4.3.5-psp/gcc/config/mips/mips-ftypes.def
---- gcc-4.3.5/gcc/config/mips/mips-ftypes.def	2007-10-18 20:12:17.000000000 +0100
-+++ gcc-4.3.5-psp/gcc/config/mips/mips-ftypes.def	2010-06-04 10:59:12.000000000 +0100
+diff -Nbaur gcc-4.3.6/gcc/config/mips/mips-ftypes.def gcc-4.3.6-psp/gcc/config/mips/mips-ftypes.def
+--- gcc-4.3.6/gcc/config/mips/mips-ftypes.def	2007-10-18 20:12:17.000000000 +0100
++++ gcc-4.3.6-psp/gcc/config/mips/mips-ftypes.def	2011-07-29 15:21:37.000000000 +0100
 @@ -53,9 +53,12 @@
  
  DEF_MIPS_FTYPE (2, (SI, DI, SI))
@@ -248,9 +248,9 @@ diff -Nbaur gcc-4.3.5/gcc/config/mips/mips-ftypes.def gcc-4.3.5-psp/gcc/config/m
  DEF_MIPS_FTYPE (2, (VOID, V2HI, V2HI))
  DEF_MIPS_FTYPE (2, (VOID, V4QI, V4QI))
 +DEF_MIPS_FTYPE (1, (VOID, VOID))
-diff -Nbaur gcc-4.3.5/gcc/config/mips/mips.c gcc-4.3.5-psp/gcc/config/mips/mips.c
---- gcc-4.3.5/gcc/config/mips/mips.c	2009-03-02 20:42:24.000000000 +0000
-+++ gcc-4.3.5-psp/gcc/config/mips/mips.c	2010-06-04 10:59:12.000000000 +0100
+diff -Nbaur gcc-4.3.6/gcc/config/mips/mips.c gcc-4.3.6-psp/gcc/config/mips/mips.c
+--- gcc-4.3.6/gcc/config/mips/mips.c	2009-03-02 20:42:24.000000000 +0000
++++ gcc-4.3.6-psp/gcc/config/mips/mips.c	2011-07-29 15:21:37.000000000 +0100
 @@ -197,6 +197,12 @@
    /* As above, but the instruction only sets a single $fcc register.  */
    MIPS_BUILTIN_CMP_SINGLE,
@@ -442,9 +442,9 @@ diff -Nbaur gcc-4.3.5/gcc/config/mips/mips.c gcc-4.3.5-psp/gcc/config/mips/mips.
  }
  
  /* Swap the register information for registers I and I + 1, which
-diff -Nbaur gcc-4.3.5/gcc/config/mips/mips.h gcc-4.3.5-psp/gcc/config/mips/mips.h
---- gcc-4.3.5/gcc/config/mips/mips.h	2008-07-12 09:00:46.000000000 +0100
-+++ gcc-4.3.5-psp/gcc/config/mips/mips.h	2010-06-04 10:59:12.000000000 +0100
+diff -Nbaur gcc-4.3.6/gcc/config/mips/mips.h gcc-4.3.6-psp/gcc/config/mips/mips.h
+--- gcc-4.3.6/gcc/config/mips/mips.h	2008-07-12 09:00:46.000000000 +0100
++++ gcc-4.3.6-psp/gcc/config/mips/mips.h	2011-07-29 15:21:37.000000000 +0100
 @@ -67,6 +67,7 @@
    PROCESSOR_SB1,
    PROCESSOR_SB1A,
@@ -558,9 +558,9 @@ diff -Nbaur gcc-4.3.5/gcc/config/mips/mips.h gcc-4.3.5-psp/gcc/config/mips/mips.
  #ifndef HAVE_AS_TLS
  #define HAVE_AS_TLS 0
  #endif
-diff -Nbaur gcc-4.3.5/gcc/config/mips/mips.md gcc-4.3.5-psp/gcc/config/mips/mips.md
---- gcc-4.3.5/gcc/config/mips/mips.md	2008-07-09 21:06:20.000000000 +0100
-+++ gcc-4.3.5-psp/gcc/config/mips/mips.md	2010-06-04 10:59:12.000000000 +0100
+diff -Nbaur gcc-4.3.6/gcc/config/mips/mips.md gcc-4.3.6-psp/gcc/config/mips/mips.md
+--- gcc-4.3.6/gcc/config/mips/mips.md	2008-07-09 21:06:20.000000000 +0100
++++ gcc-4.3.6-psp/gcc/config/mips/mips.md	2011-07-29 15:21:37.000000000 +0100
 @@ -210,6 +210,19 @@
     (UNSPEC_DPAQX_SA_W_PH	446)
     (UNSPEC_DPSQX_S_W_PH		447)
@@ -701,9 +701,9 @@ diff -Nbaur gcc-4.3.5/gcc/config/mips/mips.md gcc-4.3.5-psp/gcc/config/mips/mips
 +
 +; Sony ALLEGREX instructions.
 +(include "allegrex.md")
-diff -Nbaur gcc-4.3.5/gcc/config/mips/mips.opt gcc-4.3.5-psp/gcc/config/mips/mips.opt
---- gcc-4.3.5/gcc/config/mips/mips.opt	2008-10-22 23:31:03.000000000 +0100
-+++ gcc-4.3.5-psp/gcc/config/mips/mips.opt	2010-06-04 10:59:12.000000000 +0100
+diff -Nbaur gcc-4.3.6/gcc/config/mips/mips.opt gcc-4.3.6-psp/gcc/config/mips/mips.opt
+--- gcc-4.3.6/gcc/config/mips/mips.opt	2008-10-22 23:31:03.000000000 +0100
++++ gcc-4.3.6-psp/gcc/config/mips/mips.opt	2011-07-29 15:21:37.000000000 +0100
 @@ -271,3 +271,7 @@
  mxgot
  Target Report Var(TARGET_XGOT)
@@ -712,9 +712,9 @@ diff -Nbaur gcc-4.3.5/gcc/config/mips/mips.opt gcc-4.3.5-psp/gcc/config/mips/mip
 +mpreferred-stack-boundary=
 +Target RejectNegative Joined Var(mips_preferred_stack_boundary_string)
 +Attempt to keep stack aligned to this power of 2
-diff -Nbaur gcc-4.3.5/gcc/config/mips/psp.h gcc-4.3.5-psp/gcc/config/mips/psp.h
---- gcc-4.3.5/gcc/config/mips/psp.h	1970-01-01 01:00:00.000000000 +0100
-+++ gcc-4.3.5-psp/gcc/config/mips/psp.h	2010-06-04 10:59:12.000000000 +0100
+diff -Nbaur gcc-4.3.6/gcc/config/mips/psp.h gcc-4.3.6-psp/gcc/config/mips/psp.h
+--- gcc-4.3.6/gcc/config/mips/psp.h	1970-01-01 01:00:00.000000000 +0100
++++ gcc-4.3.6-psp/gcc/config/mips/psp.h	2011-07-29 15:21:37.000000000 +0100
 @@ -0,0 +1,31 @@
 +/* Support for Sony's Playstation Portable (PSP).
 +   Copyright (C) 2005 Free Software Foundation, Inc.
@@ -747,9 +747,9 @@ diff -Nbaur gcc-4.3.5/gcc/config/mips/psp.h gcc-4.3.5-psp/gcc/config/mips/psp.h
 +/* Get rid of the .pdr section. */
 +#undef SUBTARGET_ASM_SPEC
 +#define SUBTARGET_ASM_SPEC "-mno-pdr"
-diff -Nbaur gcc-4.3.5/gcc/config/mips/t-allegrex gcc-4.3.5-psp/gcc/config/mips/t-allegrex
---- gcc-4.3.5/gcc/config/mips/t-allegrex	1970-01-01 01:00:00.000000000 +0100
-+++ gcc-4.3.5-psp/gcc/config/mips/t-allegrex	2010-06-04 10:59:12.000000000 +0100
+diff -Nbaur gcc-4.3.6/gcc/config/mips/t-allegrex gcc-4.3.6-psp/gcc/config/mips/t-allegrex
+--- gcc-4.3.6/gcc/config/mips/t-allegrex	1970-01-01 01:00:00.000000000 +0100
++++ gcc-4.3.6-psp/gcc/config/mips/t-allegrex	2011-07-29 15:21:37.000000000 +0100
 @@ -0,0 +1,29 @@
 +# Suppress building libgcc1.a, since the MIPS compiler port is complete
 +# and does not need anything from libgcc1.a.
@@ -780,10 +780,10 @@ diff -Nbaur gcc-4.3.5/gcc/config/mips/t-allegrex gcc-4.3.5-psp/gcc/config/mips/t
 +
 +LIBGCC = stmp-multilib
 +INSTALL_LIBGCC = install-multilib
-diff -Nbaur gcc-4.3.5/gcc/config.gcc gcc-4.3.5-psp/gcc/config.gcc
---- gcc-4.3.5/gcc/config.gcc	2010-02-18 03:49:04.000000000 +0000
-+++ gcc-4.3.5-psp/gcc/config.gcc	2010-06-04 10:59:12.000000000 +0100
-@@ -1822,6 +1822,18 @@
+diff -Nbaur gcc-4.3.6/gcc/config.gcc gcc-4.3.6-psp/gcc/config.gcc
+--- gcc-4.3.6/gcc/config.gcc	2011-02-24 23:02:14.000000000 +0000
++++ gcc-4.3.6-psp/gcc/config.gcc	2011-07-29 15:21:37.000000000 +0100
+@@ -1823,6 +1823,18 @@
  	tmake_file="mips/t-r3900 mips/t-libgcc-mips16"
  	use_fixproto=yes
  	;;
@@ -802,9 +802,9 @@ diff -Nbaur gcc-4.3.5/gcc/config.gcc gcc-4.3.5-psp/gcc/config.gcc
  mmix-knuth-mmixware)
  	need_64bit_hwint=yes
  	;;
-diff -Nbaur gcc-4.3.5/gcc/gcc.c gcc-4.3.5-psp/gcc/gcc.c
---- gcc-4.3.5/gcc/gcc.c	2008-03-02 22:55:19.000000000 +0000
-+++ gcc-4.3.5-psp/gcc/gcc.c	2010-06-04 10:59:12.000000000 +0100
+diff -Nbaur gcc-4.3.6/gcc/gcc.c gcc-4.3.6-psp/gcc/gcc.c
+--- gcc-4.3.6/gcc/gcc.c	2008-03-02 22:55:19.000000000 +0000
++++ gcc-4.3.6-psp/gcc/gcc.c	2011-07-29 15:21:37.000000000 +0100
 @@ -635,6 +635,7 @@
  #endif
  #endif
@@ -844,9 +844,9 @@ diff -Nbaur gcc-4.3.5/gcc/gcc.c gcc-4.3.5-psp/gcc/gcc.c
    strcat (specs_file, just_machine_suffix);
    strcat (specs_file, "specs");
    if (access (specs_file, R_OK) == 0)
-diff -Nbaur gcc-4.3.5/gcc/prefix.c gcc-4.3.5-psp/gcc/prefix.c
---- gcc-4.3.5/gcc/prefix.c	2007-09-03 18:09:20.000000000 +0100
-+++ gcc-4.3.5-psp/gcc/prefix.c	2010-06-04 10:59:12.000000000 +0100
+diff -Nbaur gcc-4.3.6/gcc/prefix.c gcc-4.3.6-psp/gcc/prefix.c
+--- gcc-4.3.6/gcc/prefix.c	2007-09-03 18:09:20.000000000 +0100
++++ gcc-4.3.6-psp/gcc/prefix.c	2011-07-29 15:21:37.000000000 +0100
 @@ -245,13 +245,16 @@
     The returned string is always malloc-ed, and the caller is
     responsible for freeing it.  */
@@ -873,9 +873,9 @@ diff -Nbaur gcc-4.3.5/gcc/prefix.c gcc-4.3.5-psp/gcc/prefix.c
 +
 +	putenv (concat ("GCC_EXEC_PREFIX=", std_prefix, NULL));
  }
-diff -Nbaur gcc-4.3.5/gcc/toplev.c gcc-4.3.5-psp/gcc/toplev.c
---- gcc-4.3.5/gcc/toplev.c	2009-04-29 07:24:21.000000000 +0100
-+++ gcc-4.3.5-psp/gcc/toplev.c	2010-06-04 10:59:12.000000000 +0100
+diff -Nbaur gcc-4.3.6/gcc/toplev.c gcc-4.3.6-psp/gcc/toplev.c
+--- gcc-4.3.6/gcc/toplev.c	2009-04-29 07:24:21.000000000 +0100
++++ gcc-4.3.6-psp/gcc/toplev.c	2011-07-29 15:21:37.000000000 +0100
 @@ -82,6 +82,7 @@
  #include "alloc-pool.h"
  #include "tree-mudflap.h"
@@ -895,9 +895,9 @@ diff -Nbaur gcc-4.3.5/gcc/toplev.c gcc-4.3.5-psp/gcc/toplev.c
    hex_init ();
  
    /* Unlock the stdio streams.  */
-diff -Nbaur gcc-4.3.5/libcpp/Makefile.in gcc-4.3.5-psp/libcpp/Makefile.in
---- gcc-4.3.5/libcpp/Makefile.in	2010-05-22 19:02:44.000000000 +0100
-+++ gcc-4.3.5-psp/libcpp/Makefile.in	2010-06-04 10:59:12.000000000 +0100
+diff -Nbaur gcc-4.3.6/libcpp/Makefile.in gcc-4.3.6-psp/libcpp/Makefile.in
+--- gcc-4.3.6/libcpp/Makefile.in	2011-06-27 12:28:31.000000000 +0100
++++ gcc-4.3.6-psp/libcpp/Makefile.in	2011-07-29 15:21:37.000000000 +0100
 @@ -197,7 +197,7 @@
  # Dependency rule.
  COMPILE.base = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(ALL_CFLAGS) -c
@@ -907,9 +907,9 @@ diff -Nbaur gcc-4.3.5/libcpp/Makefile.in gcc-4.3.5-psp/libcpp/Makefile.in
  else
  COMPILE = source='$<' object='$@' libtool=no DEPDIR=$(DEPDIR) $(DEPMODE) \
  	  $(depcomp) $(COMPILE.base)
-diff -Nbaur gcc-4.3.5/libgcc/config.host gcc-4.3.5-psp/libgcc/config.host
---- gcc-4.3.5/libgcc/config.host	2008-11-20 17:09:53.000000000 +0000
-+++ gcc-4.3.5-psp/libgcc/config.host	2010-06-04 10:59:12.000000000 +0100
+diff -Nbaur gcc-4.3.6/libgcc/config.host gcc-4.3.6-psp/libgcc/config.host
+--- gcc-4.3.6/libgcc/config.host	2008-11-20 17:09:53.000000000 +0000
++++ gcc-4.3.6-psp/libgcc/config.host	2011-07-29 15:21:37.000000000 +0100
 @@ -469,6 +469,8 @@
  	;;
  mipstx39-*-elf* | mipstx39el-*-elf*)

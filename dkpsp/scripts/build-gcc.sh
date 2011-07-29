@@ -63,7 +63,7 @@ then
 	--target=$target \
 	--with-newlib \
 	--prefix=$prefix \
-	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPSP release 14" \
+	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPSP release 15" \
 	|| { echo "Error configuring gcc"; exit 1; }
   touch configured-gcc
 fi
@@ -86,11 +86,20 @@ cd $BUILDSCRIPTDIR
 
 if [ ! -f checkout-psp-sdk ]
 then
-  svn checkout svn://svn.pspdev.org/psp/trunk/pspsdk || { echo "ERROR GETTING PSPSDK"; exit 1; }
+  svn checkout http://psp.jim.sh/svn/psp/trunk/pspsdk || { echo "ERROR GETTING PSPSDK"; exit 1; }
   touch checkout-psp-sdk
 fi
 
 cd pspsdk
+if [ ! -f patch-psp-sdk ]
+then
+  if [ -f $patchdir/pspsdk.patch ]
+  then
+    patch -p1 -i $patchdir/pspsdk.patch || { echo "ERROR PATCHING PSPSDK"; exit 1; }
+  fi
+  touch patch-psp-sdk
+fi
+
 if [ ! -f bootstrap-sdk ]
 then
   ./bootstrap || { echo "ERROR RUNNING PSPSDK BOOTSTRAP"; exit 1; }
