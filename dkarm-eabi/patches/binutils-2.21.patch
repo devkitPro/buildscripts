@@ -1,0 +1,15 @@
+diff -Nbaur binutils-2.21/ld/ldlang.c binutils-2.21-arm/ld/ldlang.c
+--- binutils-2.21/ld/ldlang.c	2010-11-05 05:56:53.000000000 +0000
++++ binutils-2.21-arm/ld/ldlang.c	2011-09-13 01:04:17.000000000 +0100
+@@ -5740,6 +5740,11 @@
+ 
+   for (file = file_chain.head; file != NULL; file = file->input_statement.next)
+     {
++#ifdef ENABLE_PLUGINS
++      /* Don't check format of files claimed by plugin.  */
++      if (file->input_statement.claimed)
++	continue;
++#endif /* ENABLE_PLUGINS */
+       input_bfd = file->input_statement.the_bfd;
+       compatible
+ 	= bfd_arch_get_compatible (input_bfd, link_info.output_bfd,
