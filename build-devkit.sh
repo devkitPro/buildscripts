@@ -20,10 +20,10 @@ fi
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=1.8.7
+LIBOGC_VER=1.8.8
 LIBGBA_VER=20090222
-LIBNDS_VER=1.5.2
-DEFAULT_ARM7_VER=0.5.21
+LIBNDS_VER=1.5.4
+DEFAULT_ARM7_VER=0.5.23
 DSWIFI_VER=0.3.13
 LIBMIRKO_VER=0.9.7
 MAXMOD_VER=1.0.6
