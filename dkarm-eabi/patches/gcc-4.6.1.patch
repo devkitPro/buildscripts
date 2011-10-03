@@ -1,6 +1,6 @@
-diff -Nbaur gcc-4.6.0/gcc/config/arm/t-arm-elf gcc-4.6.0-arm/gcc/config/arm/t-arm-elf
---- gcc-4.6.0/gcc/config/arm/t-arm-elf	2011-01-03 20:52:22.000000000 +0000
-+++ gcc-4.6.0-arm/gcc/config/arm/t-arm-elf	2011-04-06 00:05:22.000000000 +0100
+diff -Nbaur gcc-4.6.1/gcc/config/arm/t-arm-elf gcc-4.6.1-arm/gcc/config/arm/t-arm-elf
+--- gcc-4.6.1/gcc/config/arm/t-arm-elf	2011-01-03 20:52:22.000000000 +0000
++++ gcc-4.6.1-arm/gcc/config/arm/t-arm-elf	2011-10-03 14:58:38.000000000 +0100
 @@ -40,22 +40,22 @@
  #MULTILIB_DIRNAMES    += fa526 fa626 fa606te fa626te fmp626 fa726te
  #MULTILIB_EXCEPTIONS  += *mthumb*/*mcpu=fa526 *mthumb*/*mcpu=fa626
@@ -49,18 +49,18 @@ diff -Nbaur gcc-4.6.0/gcc/config/arm/t-arm-elf gcc-4.6.0-arm/gcc/config/arm/t-ar
  # 
  # MULTILIB_OPTIONS    += mhard-float/msoft-float
  # MULTILIB_DIRNAMES   += fpu soft
-diff -Nbaur gcc-4.6.0/gcc/config/arm/unknown-elf.h gcc-4.6.0-arm/gcc/config/arm/unknown-elf.h
---- gcc-4.6.0/gcc/config/arm/unknown-elf.h	2011-01-03 20:52:22.000000000 +0000
-+++ gcc-4.6.0-arm/gcc/config/arm/unknown-elf.h	2011-04-06 00:00:19.000000000 +0100
+diff -Nbaur gcc-4.6.1/gcc/config/arm/unknown-elf.h gcc-4.6.1-arm/gcc/config/arm/unknown-elf.h
+--- gcc-4.6.1/gcc/config/arm/unknown-elf.h	2011-01-03 20:52:22.000000000 +0000
++++ gcc-4.6.1-arm/gcc/config/arm/unknown-elf.h	2011-10-03 14:58:38.000000000 +0100
 @@ -97,4 +97,4 @@
     udivmoddi4, which will depend on the exception unwind routines,
     which will depend on abort, which is defined in libc.  */ 
  #undef LINK_GCC_C_SEQUENCE_SPEC
 -#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L --end-group"
 +#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
-diff -Nbaur gcc-4.6.0/gcc/gcc.c gcc-4.6.0-arm/gcc/gcc.c
---- gcc-4.6.0/gcc/gcc.c	2011-02-23 02:04:43.000000000 +0000
-+++ gcc-4.6.0-arm/gcc/gcc.c	2011-04-06 00:00:19.000000000 +0100
+diff -Nbaur gcc-4.6.1/gcc/gcc.c gcc-4.6.1-arm/gcc/gcc.c
+--- gcc-4.6.1/gcc/gcc.c	2011-02-23 02:04:43.000000000 +0000
++++ gcc-4.6.1-arm/gcc/gcc.c	2011-10-03 14:58:38.000000000 +0100
 @@ -547,6 +547,11 @@
  #endif
  #endif
@@ -89,9 +89,9 @@ diff -Nbaur gcc-4.6.0/gcc/gcc.c gcc-4.6.0-arm/gcc/gcc.c
    INIT_STATIC_SPEC ("startfile",		&startfile_spec),
    INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
    INIT_STATIC_SPEC ("version",			&compiler_version),
-diff -Nbaur gcc-4.6.0/gcc/sched-deps.c gcc-4.6.0-arm/gcc/sched-deps.c
---- gcc-4.6.0/gcc/sched-deps.c	2011-02-03 06:04:04.000000000 +0000
-+++ gcc-4.6.0-arm/gcc/sched-deps.c	2011-04-06 00:00:19.000000000 +0100
+diff -Nbaur gcc-4.6.1/gcc/sched-deps.c gcc-4.6.1-arm/gcc/sched-deps.c
+--- gcc-4.6.1/gcc/sched-deps.c	2011-02-03 06:04:04.000000000 +0000
++++ gcc-4.6.1-arm/gcc/sched-deps.c	2011-10-03 14:58:38.000000000 +0100
 @@ -2271,6 +2271,12 @@
  			      FIRST_STACK_REG + nregs);
  	}
@@ -105,9 +105,9 @@ diff -Nbaur gcc-4.6.0/gcc/sched-deps.c gcc-4.6.0-arm/gcc/sched-deps.c
      }
    else if (MEM_P (dest))
      {
-diff -Nbaur gcc-4.6.0/libcpp/Makefile.in gcc-4.6.0-arm/libcpp/Makefile.in
---- gcc-4.6.0/libcpp/Makefile.in	2011-03-25 17:07:00.000000000 +0000
-+++ gcc-4.6.0-arm/libcpp/Makefile.in	2011-04-06 00:00:29.000000000 +0100
+diff -Nbaur gcc-4.6.1/libcpp/Makefile.in gcc-4.6.1-arm/libcpp/Makefile.in
+--- gcc-4.6.1/libcpp/Makefile.in	2011-06-27 11:13:01.000000000 +0100
++++ gcc-4.6.1-arm/libcpp/Makefile.in	2011-10-03 14:58:38.000000000 +0100
 @@ -212,8 +212,7 @@
  # Note that we put the dependencies into a .Tpo file, then move them
  # into place if the compile succeeds.  We need this because gcc does
@@ -118,3 +118,41 @@ diff -Nbaur gcc-4.6.0/libcpp/Makefile.in gcc-4.6.0-arm/libcpp/Makefile.in
  else
  COMPILE = source='$<' object='$@' libtool=no DEPDIR=$(DEPDIR) $(DEPMODE) \
  	  $(depcomp) $(COMPILE.base)
+diff -Nbaur gcc-4.6.1/libgcc/Makefile.in gcc-4.6.1-arm/libgcc/Makefile.in
+--- gcc-4.6.1/libgcc/Makefile.in	2011-01-26 04:19:58.000000000 +0000
++++ gcc-4.6.1-arm/libgcc/Makefile.in	2011-10-03 15:00:22.000000000 +0100
+@@ -411,14 +411,14 @@
+ lib2-divmod-o = $(patsubst %,%$(objext),$(LIB2_DIVMOD_FUNCS))
+ $(lib2-divmod-o): %$(objext): $(gcc_srcdir)/libgcc2.c
+ 	$(gcc_compile) -DL$* -c $(gcc_srcdir)/libgcc2.c \
+-	  -fexceptions -fnon-call-exceptions $(vis_hide)
++	  -fno-exceptions -fno-non-call-exceptions $(vis_hide)
+ libgcc-objects += $(lib2-divmod-o)
+ 
+ ifeq ($(enable_shared),yes)
+ lib2-divmod-s-o = $(patsubst %,%_s$(objext),$(LIB2_DIVMOD_FUNCS))
+ $(lib2-divmod-s-o): %_s$(objext): $(gcc_srcdir)/libgcc2.c
+ 	$(gcc_s_compile) -DL$* -c $(gcc_srcdir)/libgcc2.c \
+-	  -fexceptions -fnon-call-exceptions
++	  -fno-exceptions -fno-non-call-exceptions
+ libgcc-s-objects += $(lib2-divmod-s-o)
+ endif
+ 
+@@ -706,7 +706,7 @@
+ # libgcc_eh.a, only LIB2ADDEH matters.  If we do, only LIB2ADDEHSTATIC and
+ # LIB2ADDEHSHARED matter.  (Usually all three are identical.)
+ 
+-c_flags := -fexceptions
++c_flags := -fno-exceptions
+ 
+ ifeq ($(enable_shared),yes)
+ 
+@@ -728,7 +728,7 @@
+ 
+ # Build LIBUNWIND.
+ 
+-c_flags := -fexceptions
++c_flags := -fno-exceptions
+ 
+ libunwind-objects += $(addsuffix $(objext),$(basename $(notdir $(LIBUNWIND))))
+ 
