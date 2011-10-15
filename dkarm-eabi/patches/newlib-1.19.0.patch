@@ -1,7 +1,222 @@
+diff -Nbaur newlib-1.19.0/libgloss/arm/_kill.c newlib-1.19.0-arm/libgloss/arm/_kill.c
+--- newlib-1.19.0/libgloss/arm/_kill.c	2007-01-03 16:55:25.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/arm/_kill.c	2011-10-15 15:40:15.000000000 +0100
+@@ -1,6 +1,7 @@
+ #include <_ansi.h>
+ #include <signal.h>
+ #include "swi.h"
++#include "arm.h"
+ 
+ int _kill _PARAMS ((int, int));
+ 
+@@ -20,6 +21,10 @@
+ 			  (void *) ADP_Stopped_ApplicationExit);
+     }
+ #else
++#ifdef __ARM_ARCH_6M__
++  asm ("bkpt %a0" :: "i" (SWI_Exit));
++#else
+   asm ("swi %a0" :: "i" (SWI_Exit));
+ #endif
++#endif
+ }
+diff -Nbaur newlib-1.19.0/libgloss/arm/arm.h newlib-1.19.0-arm/libgloss/arm/arm.h
+--- newlib-1.19.0/libgloss/arm/arm.h	1970-01-01 01:00:00.000000000 +0100
++++ newlib-1.19.0-arm/libgloss/arm/arm.h	2011-10-15 11:59:12.000000000 +0100
+@@ -0,0 +1,53 @@
++/*
++ * Copyright (c) 2011 ARM Ltd
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ * 3. The name of the company may not be used to endorse or promote
++ *    products derived from this software without specific prior written
++ *    permission.
++ *
++ * THIS SOFTWARE IS PROVIDED BY ARM LTD ``AS IS'' AND ANY EXPRESS OR IMPLIED
++ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
++ * IN NO EVENT SHALL ARM LTD BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
++ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
++ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
++ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
++ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
++ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++#ifndef _LIBGLOSS_ARM_H
++#define _LIBGLOSS_ARM_H
++
++/* __thumb2__ stands for thumb on armva7(A/R/M/EM) architectures,
++   __ARM_ARCH_6M__ stands for armv6-M(thumb only) architecture,
++   __ARM_ARCH_7M__ stands for armv7-M(thumb only) architecture.
++   __ARM_ARCH_7EM__ stands for armv7e-M(thumb only) architecture.
++   There are some macro combinations used many times in libgloss/arm,
++   like (__thumb2__ || (__thumb__ && __ARM_ARCH_6M__)), so factor
++   it out and use THUMB_V7_V6M instead, which stands for thumb on
++   v6-m/v7 arch as the combination does.  */
++#if defined(__thumb2__) || (defined(__thumb__) && defined(__ARM_ARCH_6M__))
++# define THUMB_V7_V6M
++#endif
++
++/* The (__ARM_ARCH_7EM__ || __ARM_ARCH_7M__ || __ARM_ARCH_6M__) combination
++   stands for cortex-M profile architectures, which don't support ARM state.
++   Factor it out and use THUMB_V7M_V6M instead.  */
++#if defined(__ARM_ARCH_7M__)     \
++    || defined(__ARM_ARCH_7EM__) \
++    || defined(__ARM_ARCH_6M__)
++# define THUMB_V7M_V6M
++#endif
++
++#endif /* _LIBGLOSS_ARM_H */
 diff -Nbaur newlib-1.19.0/libgloss/arm/crt0.S newlib-1.19.0-arm/libgloss/arm/crt0.S
 --- newlib-1.19.0/libgloss/arm/crt0.S	2008-10-06 21:55:19.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/arm/crt0.S	2010-12-18 14:40:27.000000000 +0000
-@@ -167,7 +167,7 @@
++++ newlib-1.19.0-arm/libgloss/arm/crt0.S	2011-10-15 11:59:12.000000000 +0100
+@@ -1,4 +1,5 @@
+ #include "newlib.h"
++#include "arm.h"
+ #include "swi.h"
+ 
+ /* ANSI concatenation macros.  */
+@@ -18,8 +19,8 @@
+ 
+ /* .text is used instead of .section .text so it works with arm-aout too.  */
+ 	.text
+-#if defined(__thumb2__)
+ 	.syntax unified
++#ifdef THUMB_V7_V6M
+ 	.thumb
+ .macro FUNC_START name
+ 	.global \name
+@@ -48,25 +49,57 @@
+ 	/*  Issue Demon SWI to read stack info */
+ 	swi	SWI_GetEnv	/*  Returns command line in r0 */
+ 	mov	sp,r1		/*  and the highest memory address in r1 */
+-	ldr	sl, .LC2	/*  stack limit is at end of data */
+-	add	sl, sl, #256	/*  allow slop for stack overflow handling */
+-				/*  and small frames */
++
++	/*  stack limit is at end of data */
++	/*  allow slop for stack overflow handling and small frames */
++#ifdef __ARM_ARCH_6M__
++	ldr	r0, .LC2
++	adds	r0, #128
++	adds	r0, #128
++	mov	sl, r0
++#else
++	ldr	sl, .LC2
++	add	sl, sl, #256
++#endif
+ #else
+ #ifdef ARM_RDI_MONITOR
+ 	/*  Issue Angel SWI to read stack info */
+-	mov	r0, #AngelSWI_Reason_HeapInfo
++	movs	r0, #AngelSWI_Reason_HeapInfo
+ 	adr	r1, .LC0	/*  point at ptr to 4 words to receive data */
+-#if defined(__thumb2__)
++#ifdef THUMB_V7M_V6M
+ 	bkpt	AngelSWI
++#elif defined(__thumb2__)
++	/*  We are in thumb mode for startup on armv7 architectures. */
++	AngelSWIAsm	AngelSWI
+ #else
+-	/*  We are always in ARM mode for startup */
++	/*  We are always in ARM mode for startup on pre armv7 archs. */
+ 	AngelSWIAsm	AngelSWI_ARM
+ #endif
+ 	ldr	r0, .LC0	/*  point at values read */
+-	ldr	sp, [r0, #8]
+-	ldr	sl, [r0, #12]
+-	add	sl, sl, #256	/*  allow slop for stack overflow handling */
+-				/*  and small frames */
++	ldr	r1, [r0, #8]
++	ldr	r2, [r0, #12]
++	/*  We skip setting sp/sl if 0 returned from semihosting. 
++	    - According to semihosting docs, if 0 returned from semihosting,
++	      the system was unable to calculate the real value, so it's ok
++	      to skip setting sp/sl to 0 here.
++	    - Considering M-profile processors, We might want to initialize
++	      sp by the first entry of vector table and return 0 to SYS_HEAPINFO
++	      semihosting call, which will be skipped here. */
++	cmp	r1, #0
++	beq	.LC26
++	mov	sp, r1
++.LC26:
++	cmp	r2, #0
++	beq	.LC27
++	/*  allow slop for stack overflow handling and small frames */
++#ifdef __ARM_ARCH_6M__
++	adds	r2, #128
++	adds	r2, #128
++	mov	sl, r2
++#else
++	add	sl, r2, #256
++#endif
++.LC27:
+ #else
+ 	/*  Set up the stack pointer to a fixed value */
+ 	/*  Changes by toralf:
+@@ -85,13 +118,19 @@
+ #ifdef __thumb2__
+ 	it	eq
+ #endif	
++#ifdef __ARM_ARCH_6M__
++	bne	.LC28
++	ldr	r3, .LC0
++.LC28:
++#else
+ 	ldreq	r3, .LC0
++#endif
+ 	/* Note: This 'mov' is essential when starting in User, and ensures we
+ 		 always get *some* sp value for the initial mode, even if we 
+ 		 have somehow missed it below (in which case it gets the same
+ 		 value as FIQ - not ideal, but better than nothing.) */
+ 	mov	sp, r3
+-#ifdef __thumb2__
++#ifdef THUMB_V7_V6M
+ 	/* XXX Fill in stack assignments for interrupt modes.  */
+ #else
+ 	mrs	r2, CPSR
+@@ -134,20 +173,27 @@
+ 	   this default 64k is enough for the program being executed.
+ 	   However, it ensures that this simple crt0 world will not
+ 	   immediately cause an overflow event:  */
++#ifdef __ARM_ARCH_6M__
++	movs	r2, #64
++	lsls	r2, r2, #10
++	subs	r2, r3, r2
++	mov	sl, r2
++#else
+ 	sub	sl, r3, #64 << 10	/* Still assumes 256bytes below sl */
+ #endif
+ #endif
++#endif
+ 	/* Zero the memory in the .bss section.  */
+-	mov 	a2, #0			/* Second arg: fill value */
++	movs 	a2, #0			/* Second arg: fill value */
+ 	mov	fp, a2			/* Null frame pointer */
+ 	mov	r7, a2			/* Null frame pointer for Thumb */
+ 	
+ 	ldr	a1, .LC1		/* First arg: start of memory block */
+ 	ldr	a3, .LC2	
+-	sub	a3, a3, a1		/* Third arg: length of block */
++	subs	a3, a3, a1		/* Third arg: length of block */
+ 	
+ 
+-#if defined(__thumb__) && !defined(__thumb2__)
++#if defined(__thumb__) && !defined(THUMB_V7_V6M)
+ 	/* Enter Thumb mode.... */
+ 	add	a4, pc, #1	/* Get the address of the Thumb block */
+ 	bx	a4		/* Go there and start Thumb decoding  */
+@@ -167,7 +213,7 @@
  	ldr	r3, .Lhwinit
  	cmp	r3, #0
  	beq	.LC24
@@ -10,7 +225,7 @@ diff -Nbaur newlib-1.19.0/libgloss/arm/crt0.S newlib-1.19.0-arm/libgloss/arm/crt
  	blx   r3
  #else
  	mov	lr, pc
-@@ -177,7 +177,7 @@
+@@ -177,7 +223,7 @@
  	ldr	r3, .Lswinit
  	cmp	r3, #0
  	beq	.LC25
@@ -19,9 +234,597 @@ diff -Nbaur newlib-1.19.0/libgloss/arm/crt0.S newlib-1.19.0-arm/libgloss/arm/crt
  	blx   r3
  #else
  	mov	lr, pc
+@@ -185,8 +231,8 @@
+ #endif
+ 
+ .LC25:	
+-	mov	r0, #0		/*  no arguments  */
+-	mov	r1, #0		/*  no argv either */
++	movs	r0, #0		/*  no arguments  */
++	movs	r1, #0		/*  no argv either */
+ #else
+ 	/* Need to set up standard file handles */
+ 	bl	FUNCTION (initialise_monitor_handles)
+@@ -195,13 +241,13 @@
+ 	swi	SWI_GetEnv	/*  sets r0 to point to the command line */
+ 	mov	r1, r0
+ #else
+-	mov	r0, #AngelSWI_Reason_GetCmdLine
++	movs	r0, #AngelSWI_Reason_GetCmdLine
+ 	adr	r1, .LC30	/*  Space for command line */
+ 	AngelSWIAsm	AngelSWI
+ 	ldr	r1, .LC30
+ #endif
+ 	/*  Parse string at r1 */
+-	mov	r0, #0		/*  count of arguments so far */
++	movs	r0, #0		/*  count of arguments so far */
+ 	/* Push a NULL argument onto the end of the list.  */
+ #ifdef __thumb__
+ 	push	{r0}
+@@ -212,7 +258,7 @@
+ /*  Skip leading blanks */
+ #ifdef __thumb__
+ 	ldrb	r3, [r1]
+-	add	r1, #1
++	adds	r1, #1
+ #else
+ 	ldrb	r3, [r1], #1
+ #endif
+@@ -232,8 +278,8 @@
+ 	b	.LC22
+ 
+ .LC21:
+-	mov	r2, #' '	/*  terminator type */
+-	sub	r1, r1, #1	/*  adjust back to point at start char */
++	movs	r2, #' '	/*  terminator type */
++	subs	r1, r1, #1	/*  adjust back to point at start char */
+ .LC22:
+ #else
+ 	cmpne	r3, #'\''
+@@ -248,11 +294,11 @@
+ #else
+ 	stmfd	sp!, {r1}
+ #endif
+-	add	r0, r0, #1
++	adds	r0, r0, #1
+ .LC11:
+ #ifdef __thumb__
+ 	ldrb	r3, [r1]
+-	add	r1, #1
++	adds	r1, #1
+ #else
+ 	ldrb	r3, [r1], #1
+ #endif
+@@ -260,8 +306,8 @@
+ 	beq	.LC12
+ 	cmp	r2, r3		/*  reached terminator? */
+ 	bne	.LC11
+-	mov	r2, #0
+-	sub	r3, r1, #1
++	movs	r2, #0
++	subs	r3, r1, #1
+ 	strb	r2, [r3]	/*  terminate the arg string */
+ 	b	.LC10
+ 
+@@ -270,23 +316,23 @@
+ 	/* We've now got the stacked args in order reverse the */
+ #ifdef __thumb__
+ 	mov	r2, r0
+-	lsl	r2, #2
++	lsls	r2, #2
+ 	add	r2, sp
+ 	mov	r3, sp
+ .LC15:	cmp	r2, r3
+ 	bls	.LC14
+-	sub	r2, #4
++	subs	r2, #4
+ 	ldr	r4, [r2]
+ 	ldr	r5, [r3]
+ 	str	r5, [r2]
+ 	str	r4, [r3]
+-	add	r3, #4
++	adds	r3, #4
+ 	b	.LC15
+ .LC14:	
+ 	/* Ensure doubleword stack alignment.  */
+ 	mov	r4, sp
+-	mov	r5, #7
+-	bic	r4, r5
++	movs	r5, #7
++	bics	r4, r5
+ 	mov	sp, r4
+ #else
+ 	add	r2, sp, r0, LSL #2	/* End of args */
+@@ -319,7 +365,7 @@
+ 
+ 	bl	FUNCTION (exit)		/* Should not return.  */
+ 
+-#if defined(__thumb__) && !defined(__thumb2__)
++#if defined(__thumb__) && !defined(THUMB_V7_V6M)
+ 	/* Come out of Thumb mode.  This code should be redundant.  */
+ 
+ 	mov	a4, pc
+diff -Nbaur newlib-1.19.0/libgloss/arm/linux-crt0.c newlib-1.19.0-arm/libgloss/arm/linux-crt0.c
+--- newlib-1.19.0/libgloss/arm/linux-crt0.c	2006-08-25 00:07:15.000000000 +0100
++++ newlib-1.19.0-arm/libgloss/arm/linux-crt0.c	2011-10-15 11:59:12.000000000 +0100
+@@ -8,10 +8,11 @@
+ 
+ #include <stdlib.h>
+ #include <unistd.h>
++#include "arm.h"
+ 
+ static int _main(int argc, char *argv[]) __attribute__((noreturn));
+ 
+-#if __thumb__ && !__thumb2__
++#if defined(__thumb__) && !defined(THUMB_V7_V6M)
+ asm("\n"
+ 	".code 32\n"
+ 	".global _start\n"
+diff -Nbaur newlib-1.19.0/libgloss/arm/linux-syscalls0.S newlib-1.19.0-arm/libgloss/arm/linux-syscalls0.S
+--- newlib-1.19.0/libgloss/arm/linux-syscalls0.S	2009-10-26 10:00:41.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/arm/linux-syscalls0.S	2011-10-15 12:13:33.000000000 +0100
+@@ -7,6 +7,7 @@
+  */
+ 
+ #include "linux-syscall.h"
++#include "arm.h"
+ 
+ #if __thumb__
+ # define FUNC(name) .type name, %function; .thumb_func; name:
+@@ -19,6 +20,26 @@
+ #define GLOBAL(name) .global name; FUNC(name)
+ #define SIZE(name) .size name, .-name
+ 
++#ifdef THUMB_V7M_V6M
++
++# define SYSCALL4(name) \
++	GLOBAL(_ ## name); \
++	bkpt #SYS_ ## name; \
++	b _set_errno; \
++	SIZE(_ ## name)
++
++# define SYSCALL6(name) \
++	GLOBAL(_ ## name); \
++	push { r4 - r5 }; \
++	ldr r4, [sp, #8]; \
++	ldr r5, [sp, #12]; \
++	bkpt #SYS_ ## name; \
++	pop { r4 - r5 }; \
++	b _set_errno; \
++	SIZE(_ ## name)
++
++#else
++
+ # define SYSCALL4(name) \
+ 	GLOBAL(_ ## name); \
+ 	swi #SYS_ ## name; \
+@@ -34,6 +55,7 @@
+ 	pop { r4 - r5 }; \
+ 	b _set_errno; \
+ 	SIZE(_ ## name)
++#endif
+ 
+ #define SYSCALL0(name) SYSCALL3(name)
+ #define SYSCALL3(name) SYSCALL4(name)
+diff -Nbaur newlib-1.19.0/libgloss/arm/redboot-crt0.S newlib-1.19.0-arm/libgloss/arm/redboot-crt0.S
+--- newlib-1.19.0/libgloss/arm/redboot-crt0.S	2006-02-24 20:43:19.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/arm/redboot-crt0.S	2011-10-15 11:59:12.000000000 +0100
+@@ -1,3 +1,4 @@
++#include "arm.h"
+ 	
+     .file   "crt0.S"
+ 	
+@@ -11,14 +12,14 @@
+ #endif
+ 
+     .text
++	.syntax unified
+      /* Setup the assembly entry point.  */
+-#ifdef __thumb2__
++#ifdef THUMB_V7_V6M
+ .macro FUNC_START name
+ 	.global \name
+ 	.thumb_func
+ \name:
+ .endm
+-	.syntax unified
+ 	.thumb
+ #else
+ .macro FUNC_START name
+@@ -29,11 +30,15 @@
+ #endif
+ 	FUNC_START SYM_NAME(start)
+ 	FUNC_START SYM_NAME(_start)
++    /* Unnecessary to set fp for v6-m/v7-m, which don't support
++       ARM state.  */
++#ifndef THUMB_V7M_V6M
+ 	mov	fp, #0	/* Null frame pointer.  */
+-	mov	r7, #0	/* Null frame pointer for Thumb.  */
++#endif
++	movs	r7, #0	/* Null frame pointer for Thumb.  */
+ 
+ 	/* Enable interrupts for gdb debugging.  */
+-#ifdef __thumb2__
++#ifdef THUMB_V7_V6M
+ 	cpsie if
+ #else
+ 	mrs    r0, cpsr
+@@ -41,10 +46,10 @@
+ 	msr    cpsr, r0
+ #endif
+ 	
+-	mov 	a2, #0			/* Second arg: fill value.  */
++	movs 	a2, #0			/* Second arg: fill value.  */
+ 	ldr	a1, .LC1		/* First arg: start of memory block.  */
+ 	ldr	a3, .LC2	
+-	sub	a3, a3, a1		/* Third arg: length of block.  */
++	subs	a3, a3, a1		/* Third arg: length of block.  */
+ 
+ #ifdef	GCRT0
+ 	/* Zero out the bss without using memset. 
+@@ -62,7 +67,8 @@
+ 	/* Nothing to left to clear.  */
+ #endif
+ 
+-#if defined(__thumb__) && !defined(__thumb2__)	/* Enter Thumb mode. */
++#if defined(__thumb__) && !defined(THUMB_V7_V6M)
++	/* Enter Thumb mode. */
+ 	add	a4, pc, #1	/* Get the address of the Thumb block.  */
+ 	bx	a4		/* Go there and start Thumb decoding.   */
+ 
+@@ -76,7 +82,7 @@
+ 	bl	SYM_NAME(memset)
+ #endif
+ 	bl	SYM_NAME(__get_memtop)
+-	sub	r0, r0, #32
++	subs	r0, r0, #32
+ 	mov	sp, r0
+ 
+ #ifdef __USES_INITFINI__
+@@ -89,7 +95,7 @@
+ 	bl	SYM_NAME (_init)
+ #endif	
+ 
+-	mov 	a1, #0
++	movs 	a1, #0
+ 	ldr	a2, .LC3
+ 	mov	a3, a2
+ 	bl	SYM_NAME(main)
+diff -Nbaur newlib-1.19.0/libgloss/arm/redboot-syscalls.c newlib-1.19.0-arm/libgloss/arm/redboot-syscalls.c
+--- newlib-1.19.0/libgloss/arm/redboot-syscalls.c	2008-01-03 22:38:30.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/arm/redboot-syscalls.c	2011-10-15 12:16:02.000000000 +0100
+@@ -20,13 +20,18 @@
+ #include <sys/times.h>
+ #include <errno.h>
+ #include "syscall.h"
++#include "arm.h"
+ 
+ // Use "naked" attribute to suppress C prologue/epilogue
+ static int __attribute__ ((naked)) __syscall(int func_no, ...)
+ {
+     asm ("mov	r12, lr\n");
+ #ifdef __thumb__
++#ifdef THUMB_V7M_V6M
++    asm ("bkpt 0x18\n");
++#else
+     asm ("swi 0x18\n");
++#endif
+ #else
+     asm ("swi 0x180001\n");
+ #endif
+diff -Nbaur newlib-1.19.0/libgloss/arm/swi.h newlib-1.19.0-arm/libgloss/arm/swi.h
+--- newlib-1.19.0/libgloss/arm/swi.h	2006-12-25 23:05:24.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/arm/swi.h	2011-10-15 11:59:12.000000000 +0100
+@@ -1,3 +1,5 @@
++#include "arm.h"
++
+ /* SWI numbers for RDP (Demon) monitor.  */
+ #define SWI_WriteC                 0x0
+ #define SWI_Write0                 0x2
+@@ -33,8 +35,8 @@
+ #else
+ #define AngelSWI 			AngelSWI_ARM
+ #endif
+-/* For Thumb-2 code use the BKPT instruction instead of SWI.  */
+-#ifdef __thumb2__
++/* For thumb only architectures use the BKPT instruction instead of SWI.  */
++#ifdef THUMB_V7M_V6M
+ #define AngelSWIInsn			"bkpt"
+ #define AngelSWIAsm			bkpt
+ #else
+diff -Nbaur newlib-1.19.0/libgloss/arm/syscalls.c newlib-1.19.0-arm/libgloss/arm/syscalls.c
+--- newlib-1.19.0/libgloss/arm/syscalls.c	2010-08-27 12:55:36.000000000 +0100
++++ newlib-1.19.0-arm/libgloss/arm/syscalls.c	2011-10-15 16:02:22.000000000 +0100
+@@ -16,6 +16,7 @@
+ #include <unistd.h>
+ #include <sys/wait.h>
+ #include "swi.h"
++#include "arm.h"
+ 
+ /* Forward prototypes.  */
+ int     _system     _PARAMS ((const char *));
+@@ -168,24 +169,45 @@
+   const char * name;
+ 
+   name = ":tt";
++#ifdef __ARM_ARCH_6M__
++  asm ("mov r0,%2; mov r1, #0; bkpt %a1; mov %0, r0"
++       : "=r"(fh)
++       : "i" (SWI_Open),"r"(name)
++       : "r0","r1");
++#else
+   asm ("mov r0,%2; mov r1, #0; swi %a1; mov %0, r0"
+        : "=r"(fh)
+        : "i" (SWI_Open),"r"(name)
+        : "r0","r1");
++#endif
+   monitor_stdin = fh;
+ 
+   name = ":tt";
++#ifdef __ARM_ARCH_6M__
++  asm ("mov r0,%2; mov r1, #4; bkpt %a1; mov %0, r0"
++       : "=r"(fh)
++       : "i" (SWI_Open),"r"(name)
++       : "r0","r1");
++#else
+   asm ("mov r0,%2; mov r1, #4; swi %a1; mov %0, r0"
+        : "=r"(fh)
+        : "i" (SWI_Open),"r"(name)
+        : "r0","r1");
++#endif
+   monitor_stdout = fh;
+ 
+   name = ":tt";
++#ifdef __ARM_ARCH_6M__
++  asm ("mov r0,%2; mov r1, #8; bkpt %a1; mov %0, r0"
++       : "=r"(fh)
++       : "i" (SWI_Open),"r"(name)
++       : "r0","r1");
++#else
+   asm ("mov r0,%2; mov r1, #8; swi %a1; mov %0, r0"
+        : "=r"(fh)
+        : "i" (SWI_Open),"r"(name)
+        : "r0","r1");
++#endif
+   monitor_stderr = fh;
+ #endif
+ 
+@@ -211,7 +233,11 @@
+   return do_AngelSWI (AngelSWI_Reason_Errno, NULL);
+ #else
+   register r0 asm("r0");
++#ifdef __ARM_ARCH_6M__
++  asm ("bkpt %a1" : "=r"(r0) : "i" (SWI_GetErrno));
++#else
+   asm ("swi %a1" : "=r"(r0) : "i" (SWI_GetErrno));
++#endif
+   return r0;
+ #endif
+ }
+@@ -257,9 +283,15 @@
+   r0 = fh;
+   r1 = (int)ptr;
+   r2 = len;
++#ifdef __ARM_ARCH_6M__
++  asm ("bkpt %a4"
++       : "=r" (r0)
++       : "0"(r0), "r"(r1), "r"(r2), "i"(SWI_Read));
++#else
+   asm ("swi %a4"
+        : "=r" (r0)
+        : "0"(r0), "r"(r1), "r"(r2), "i"(SWI_Read));
++#endif
+   return checkerror (r0);
+ #endif
+ }
+@@ -353,10 +385,17 @@
+ #else
+   if (dir == SEEK_END)
+     {
++#ifdef __ARM_ARCH_6M__
++      asm ("mov r0, %2; bkpt %a1; mov %0, r0"
++	   : "=r" (res)
++	   : "i" (SWI_Flen), "r" (pfd->handle)
++	   : "r0");
++#else
+       asm ("mov r0, %2; swi %a1; mov %0, r0"
+ 	   : "=r" (res)
+ 	   : "i" (SWI_Flen), "r" (pfd->handle)
+ 	   : "r0");
++#endif
+       checkerror (res);
+       if (res == -1)
+         return -1;
+@@ -364,10 +403,17 @@
+     }
+ 
+   /* This code only does absolute seeks.  */
++#ifdef __ARM_ARCH_6M__
++  asm ("mov r0, %2; mov r1, %3; bkpt %a1; mov %0, r0"
++       : "=r" (res)
++       : "i" (SWI_Seek), "r" (pfd->handle), "r" (ptr)
++       : "r0", "r1");
++#else
+   asm ("mov r0, %2; mov r1, %3; swi %a1; mov %0, r0"
+        : "=r" (res)
+        : "i" (SWI_Seek), "r" (pfd->handle), "r" (ptr)
+        : "r0", "r1");
++#endif
+   checkerror (res);
+ #endif
+   /* At this point ptr is the current file position. */
+@@ -410,9 +456,15 @@
+   r0 = fh;
+   r1 = (int)ptr;
+   r2 = len;
++#ifdef __ARM_ARCH_6M__
++  asm ("bkpt %a4"
++       : "=r" (r0)
++       : "0"(r0), "r"(r1), "r"(r2), "i"(SWI_Write));
++#else
+   asm ("swi %a4"
+        : "=r" (r0)
+        : "0"(r0), "r"(r1), "r"(r2), "i"(SWI_Write));
++#endif
+   return checkerror (r0);
+ #endif
+ }
+@@ -510,11 +562,18 @@
+   fh = do_AngelSWI (AngelSWI_Reason_Open, block);
+   
+ #else
++#ifdef __ARM_ARCH_6M__
++  asm ("mov r0,%2; mov r1, %3; bkpt %a1; mov %0, r0"
++       : "=r"(fh)
++       : "i" (SWI_Open),"r"(path),"r"(aflags)
++       : "r0","r1");
++#else
+   asm ("mov r0,%2; mov r1, %3; swi %a1; mov %0, r0"
+        : "=r"(fh)
+        : "i" (SWI_Open),"r"(path),"r"(aflags)
+        : "r0","r1");
+ #endif
++#endif
+   
+   /* Return a user file descriptor or an error. */
+   if (fh >= 0)
+@@ -542,9 +601,15 @@
+ #else
+   register r0 asm("r0");
+   r0 = fh;
++#ifdef __ARM_ARCH_6M__
++  asm ("bkpt %a2" 
++       : "=r"(r0) 
++       : "0"(r0), "i" (SWI_Close));
++#else
+   asm ("swi %a2" 
+        : "=r"(r0) 
+        : "0"(r0), "i" (SWI_Close));
++#endif
+   return checkerror (r0);
+ #endif
+ }
+@@ -640,10 +705,17 @@
+ #ifdef ARM_RDI_MONITOR
+   res = checkerror (do_AngelSWI (AngelSWI_Reason_FLen, &pfd->handle));
+ #else
++#ifdef __ARM_ARCH_6M__
++  asm ("mov r0, %2; bkpt %a1; mov %0, r0"
++       : "=r" (res)
++       : "i" (SWI_Flen), "r" (pfd->handle)
++       : "r0");
++#else
+   asm ("mov r0, %2; swi %a1; mov %0, r0"
+        : "=r" (res)
+        : "i" (SWI_Flen), "r" (pfd->handle)
+        : "r0");
++#endif
+   checkerror (res);
+ #endif
+   if (res == -1)
+@@ -695,9 +767,15 @@
+ #else
+   register r0 asm("r0");
+   r0 = (int)path;
++#ifdef __ARM_ARCH_6M__
++  asm ("bkpt %a2" 
++       : "=r"(r0)
++       : "0"(r0), "i" (SWI_Remove));
++#else
+   asm ("swi %a2" 
+        : "=r"(r0)
+        : "0"(r0), "i" (SWI_Remove));
++#endif
+   res = r0;
+ #endif
+   if (res == -1) 
+@@ -717,7 +795,11 @@
+ #else
+       {
+         int value;
++#ifdef __ARM_ARCH_6M__
++        asm ("bkpt %a1; mov %0, r0" : "=r" (value): "i" (SWI_Time) : "r0");
++#else
+         asm ("swi %a1; mov %0, r0" : "=r" (value): "i" (SWI_Time) : "r0");
++#endif
+         tp->tv_sec = value;
+       }
+ #endif
+@@ -743,8 +825,12 @@
+ #ifdef ARM_RDI_MONITOR
+   timeval = do_AngelSWI (AngelSWI_Reason_Clock,NULL);
+ #else
++#ifdef __ARM_ARCH_6M__
++  asm ("bkpt %a1; mov %0, r0" : "=r" (timeval): "i" (SWI_Clock) : "r0");
++#else
+   asm ("swi %a1; mov %0, r0" : "=r" (timeval): "i" (SWI_Clock) : "r0");
+ #endif
++#endif
+   return timeval;
+ }
+ 
+@@ -784,9 +870,15 @@
+ #else
+   register r0 asm("r0");
+   r0 = pfd->handle;
++#ifdef __ARM_ARCH_6M__
++  asm ("bkpt %a2" 
++       : "=r" (r0)
++       : "0"(r0), "i" (SWI_CLI));
++#else
+   asm ("swi %a2"
+        : "=r" (r0)
+        : "0"(r0), "i" (SWI_IsTTY));
++#endif
+   tty = r0;
+ #endif
+ 
+@@ -825,9 +917,15 @@
+ #else
+   register r0 asm("r0");
+   r0 = (int)s;
++#ifdef __ARM_ARCH_6M__
++  asm ("bkpt %a2" 
++       : "=r" (r0)
++       : "0"(r0), "i" (SWI_CLI));
++#else
+   asm ("swi %a2" 
+        : "=r" (r0)
+        : "0"(r0), "i" (SWI_CLI));
++#endif
+   return checkerror (r0);
+ #endif
+ }
+@@ -847,9 +945,15 @@
+   register r1 asm("r1");
+   r0 = (int)oldpath;
+   r1 = (int)newpath;
++#ifdef __ARM_ARCH_6M__
++  asm ("bkpt %a3" 
++       : "=r" (r0)
++       : "0" (r0), "r" (r1), "i" (SWI_Rename));
++#else
+   asm ("swi %a3" 
+        : "=r" (r0)
+        : "0" (r0), "r" (r1), "i" (SWI_Rename));
++#endif
+   return checkerror (r0);
+ #endif
+ }
+diff -Nbaur newlib-1.19.0/libgloss/arm/trap.S newlib-1.19.0-arm/libgloss/arm/trap.S
+--- newlib-1.19.0/libgloss/arm/trap.S	2006-02-07 18:46:23.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/arm/trap.S	2011-10-15 11:59:12.000000000 +0100
+@@ -1,5 +1,6 @@
++#include "arm.h"
+         /* Run-time exception support */
+-#if !defined(__thumb2__)
++#ifndef THUMB_V7_V6M
+ #include "swi.h"
+ 
+ /* .text is used instead of .section .text so it works with arm-aout too.  */
 diff -Nbaur newlib-1.19.0/libgloss/configure newlib-1.19.0-arm/libgloss/configure
 --- newlib-1.19.0/libgloss/configure	2010-12-02 19:35:47.000000000 +0000
-+++ newlib-1.19.0-arm/libgloss/configure	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/configure	2011-10-14 22:25:54.000000000 +0100
 @@ -1822,6 +1822,7 @@
  
  
@@ -51,7 +854,7 @@ diff -Nbaur newlib-1.19.0/libgloss/configure newlib-1.19.0-arm/libgloss/configur
    ac_cs_awk_cr='\\r'
 diff -Nbaur newlib-1.19.0/libgloss/configure.in newlib-1.19.0-arm/libgloss/configure.in
 --- newlib-1.19.0/libgloss/configure.in	2010-12-02 19:35:47.000000000 +0000
-+++ newlib-1.19.0-arm/libgloss/configure.in	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/configure.in	2011-10-14 22:25:54.000000000 +0100
 @@ -2,6 +2,7 @@
  AC_PREREQ(2.59)
  AC_INIT([libgloss],[LIBGLOSS_VERSION])
@@ -70,7 +873,7 @@ diff -Nbaur newlib-1.19.0/libgloss/configure.in newlib-1.19.0-arm/libgloss/confi
  AS=${AS-as}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/Makefile.in newlib-1.19.0-arm/libgloss/libsysbase/Makefile.in
 --- newlib-1.19.0/libgloss/libsysbase/Makefile.in	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/Makefile.in	2011-01-19 20:38:50.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/Makefile.in	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,148 @@
 +# Copyright (c) 1998 Cygnus Support
 +#
@@ -222,7 +1025,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/Makefile.in newlib-1.19.0-arm/libg
 +	$(SHELL) config.status --recheck
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/_exit.c newlib-1.19.0-arm/libgloss/libsysbase/_exit.c
 --- newlib-1.19.0/libgloss/libsysbase/_exit.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/_exit.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/_exit.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,19 @@
 +/* Stub version of _exit.  */
 +
@@ -245,7 +1048,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/_exit.c newlib-1.19.0-arm/libgloss
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/abort.c newlib-1.19.0-arm/libgloss/libsysbase/abort.c
 --- newlib-1.19.0/libgloss/libsysbase/abort.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/abort.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/abort.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,8 @@
 +#include <stdlib.h>
 +#include <unistd.h>
@@ -257,7 +1060,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/abort.c newlib-1.19.0-arm/libgloss
 +
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/acconfig.h newlib-1.19.0-arm/libgloss/libsysbase/acconfig.h
 --- newlib-1.19.0/libgloss/libsysbase/acconfig.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/acconfig.h	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/acconfig.h	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,29 @@
 +/* Name of package.  */
 +#undef PACKAGE
@@ -290,7 +1093,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/acconfig.h newlib-1.19.0-arm/libgl
 +#undef __SYMBOL_PREFIX
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/aclocal.m4 newlib-1.19.0-arm/libgloss/libsysbase/aclocal.m4
 --- newlib-1.19.0/libgloss/libsysbase/aclocal.m4	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/aclocal.m4	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/aclocal.m4	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,344 @@
 +# generated automatically by aclocal 1.9.5 -*- Autoconf -*-
 +
@@ -638,7 +1441,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/aclocal.m4 newlib-1.19.0-arm/libgl
 +m4_include([../acinclude.m4])
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/build_argv.c newlib-1.19.0-arm/libgloss/libsysbase/build_argv.c
 --- newlib-1.19.0/libgloss/libsysbase/build_argv.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/build_argv.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/build_argv.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,31 @@
 +struct __argv {
 +	int argvMagic;
@@ -673,7 +1476,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/build_argv.c newlib-1.19.0-arm/lib
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/chdir.c newlib-1.19.0-arm/libgloss/libsysbase/chdir.c
 --- newlib-1.19.0/libgloss/libsysbase/chdir.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/chdir.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/chdir.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,176 @@
 +#include <unistd.h>
 +#include <reent.h>
@@ -853,7 +1656,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/chdir.c newlib-1.19.0-arm/libgloss
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/chmod.c newlib-1.19.0-arm/libgloss/libsysbase/chmod.c
 --- newlib-1.19.0/libgloss/libsysbase/chmod.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/chmod.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/chmod.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,25 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -882,7 +1685,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/chmod.c newlib-1.19.0-arm/libgloss
 +
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/close.c newlib-1.19.0-arm/libgloss/libsysbase/close.c
 --- newlib-1.19.0/libgloss/libsysbase/close.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/close.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/close.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,41 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -927,7 +1730,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/close.c newlib-1.19.0-arm/libgloss
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/config.h.in newlib-1.19.0-arm/libgloss/libsysbase/config.h.in
 --- newlib-1.19.0/libgloss/libsysbase/config.h.in	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/config.h.in	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/config.h.in	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,25 @@
 +/* config.h.in.  Generated automatically from configure.in by autoheader.  */
 +
@@ -956,7 +1759,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/config.h.in newlib-1.19.0-arm/libg
 +#undef __SYMBOL_PREFIX
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/configure newlib-1.19.0-arm/libgloss/libsysbase/configure
 --- newlib-1.19.0/libgloss/libsysbase/configure	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/configure	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/configure	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,3553 @@
 +#! /bin/sh
 +# Guess values for system-dependent variables and create Makefiles.
@@ -4513,7 +5316,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/configure newlib-1.19.0-arm/libglo
 +
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/configure.in newlib-1.19.0-arm/libgloss/libsysbase/configure.in
 --- newlib-1.19.0/libgloss/libsysbase/configure.in	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/configure.in	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/configure.in	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,208 @@
 +# Copyright (c) 1995, 1996 Cygnus Support
 +#
@@ -4725,7 +5528,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/configure.in newlib-1.19.0-arm/lib
 +
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/dirent.c newlib-1.19.0-arm/libgloss/libsysbase/dirent.c
 --- newlib-1.19.0/libgloss/libsysbase/dirent.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/dirent.c	2011-01-21 21:53:22.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/dirent.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,247 @@
 +#include <sys/dirent.h>
 +#include <sys/iosupport.h>
@@ -4976,7 +5779,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/dirent.c newlib-1.19.0-arm/libglos
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/environ.c newlib-1.19.0-arm/libgloss/libsysbase/environ.c
 --- newlib-1.19.0/libgloss/libsysbase/environ.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/environ.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/environ.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,6 @@
 +/*
 + * Version of environ for no OS.
@@ -4986,7 +5789,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/environ.c newlib-1.19.0-arm/libglo
 +char **environ = __env;
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/execve.c newlib-1.19.0-arm/libgloss/libsysbase/execve.c
 --- newlib-1.19.0/libgloss/libsysbase/execve.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/execve.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/execve.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,31 @@
 +/*
 + * Stub version of execve.
@@ -5021,7 +5824,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/execve.c newlib-1.19.0-arm/libglos
 +
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/fchmod.c newlib-1.19.0-arm/libgloss/libsysbase/fchmod.c
 --- newlib-1.19.0/libgloss/libsysbase/fchmod.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/fchmod.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/fchmod.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,30 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5055,7 +5858,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/fchmod.c newlib-1.19.0-arm/libglos
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/flock.c newlib-1.19.0-arm/libgloss/libsysbase/flock.c
 --- newlib-1.19.0/libgloss/libsysbase/flock.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/flock.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/flock.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,21 @@
 +#include <config.h>
 +#include <_ansi.h>
@@ -5080,7 +5883,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/flock.c newlib-1.19.0-arm/libgloss
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/fork.c newlib-1.19.0-arm/libgloss/libsysbase/fork.c
 --- newlib-1.19.0/libgloss/libsysbase/fork.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/fork.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/fork.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,25 @@
 +/*
 + * Stub version of fork.
@@ -5109,7 +5912,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/fork.c newlib-1.19.0-arm/libgloss/
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/fstat.c newlib-1.19.0-arm/libgloss/libsysbase/fstat.c
 --- newlib-1.19.0/libgloss/libsysbase/fstat.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/fstat.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/fstat.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,48 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5161,7 +5964,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/fstat.c newlib-1.19.0-arm/libgloss
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/fsync.c newlib-1.19.0-arm/libgloss/libsysbase/fsync.c
 --- newlib-1.19.0/libgloss/libsysbase/fsync.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/fsync.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/fsync.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,36 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5201,7 +6004,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/fsync.c newlib-1.19.0-arm/libgloss
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/ftruncate.c newlib-1.19.0-arm/libgloss/libsysbase/ftruncate.c
 --- newlib-1.19.0/libgloss/libsysbase/ftruncate.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/ftruncate.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/ftruncate.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,37 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5242,7 +6045,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/ftruncate.c newlib-1.19.0-arm/libg
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/getpid.c newlib-1.19.0-arm/libgloss/libsysbase/getpid.c
 --- newlib-1.19.0/libgloss/libsysbase/getpid.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/getpid.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/getpid.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,21 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5267,7 +6070,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/getpid.c newlib-1.19.0-arm/libglos
 +
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/gettod.c newlib-1.19.0-arm/libgloss/libsysbase/gettod.c
 --- newlib-1.19.0/libgloss/libsysbase/gettod.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/gettod.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/gettod.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,25 @@
 +/*
 + * Stub version of gettimeofday.
@@ -5296,7 +6099,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/gettod.c newlib-1.19.0-arm/libglos
 +stub_warning(_gettimeofday)
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/handle_manager.c newlib-1.19.0-arm/libgloss/libsysbase/handle_manager.c
 --- newlib-1.19.0/libgloss/libsysbase/handle_manager.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/handle_manager.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/handle_manager.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,47 @@
 +#include <stdlib.h>
 +#include <stdio.h>
@@ -5347,7 +6150,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/handle_manager.c newlib-1.19.0-arm
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/handle_manager.h newlib-1.19.0-arm/libgloss/libsysbase/handle_manager.h
 --- newlib-1.19.0/libgloss/libsysbase/handle_manager.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/handle_manager.h	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/handle_manager.h	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,10 @@
 +#ifndef __HANDLE_MANAGER_H__
 +#define __HANDLE_MANAGER_H__
@@ -5361,7 +6164,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/handle_manager.h newlib-1.19.0-arm
 +#endif
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/iosupport.c newlib-1.19.0-arm/libgloss/libsysbase/iosupport.c
 --- newlib-1.19.0/libgloss/libsysbase/iosupport.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/iosupport.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/iosupport.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,122 @@
 +#include <stdlib.h>
 +#include <string.h>
@@ -5487,7 +6290,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/iosupport.c newlib-1.19.0-arm/libg
 +
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/isatty.c newlib-1.19.0-arm/libgloss/libsysbase/isatty.c
 --- newlib-1.19.0/libgloss/libsysbase/isatty.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/isatty.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/isatty.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,20 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5511,7 +6314,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/isatty.c newlib-1.19.0-arm/libglos
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/kill.c newlib-1.19.0-arm/libgloss/libsysbase/kill.c
 --- newlib-1.19.0/libgloss/libsysbase/kill.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/kill.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/kill.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,23 @@
 +/*
 + * Stub version of kill.
@@ -5538,7 +6341,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/kill.c newlib-1.19.0-arm/libgloss/
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/link.c newlib-1.19.0-arm/libgloss/libsysbase/link.c
 --- newlib-1.19.0/libgloss/libsysbase/link.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/link.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/link.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,37 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5579,7 +6382,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/link.c newlib-1.19.0-arm/libgloss/
 +
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/lseek.c newlib-1.19.0-arm/libgloss/libsysbase/lseek.c
 --- newlib-1.19.0/libgloss/libsysbase/lseek.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/lseek.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/lseek.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,55 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5638,13 +6441,13 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/lseek.c newlib-1.19.0-arm/libgloss
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/malloc_vars.c newlib-1.19.0-arm/libgloss/libsysbase/malloc_vars.c
 --- newlib-1.19.0/libgloss/libsysbase/malloc_vars.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/malloc_vars.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/malloc_vars.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,2 @@
 +char *fake_heap_end = (char*)0;
 +char *fake_heap_start = (char*)0;
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/mkdir.c newlib-1.19.0-arm/libgloss/libsysbase/mkdir.c
 --- newlib-1.19.0/libgloss/libsysbase/mkdir.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/mkdir.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/mkdir.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,18 @@
 +#include <reent.h>
 +#include <sys/iosupport.h>
@@ -5666,7 +6469,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/mkdir.c newlib-1.19.0-arm/libgloss
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/open.c newlib-1.19.0-arm/libgloss/libsysbase/open.c
 --- newlib-1.19.0/libgloss/libsysbase/open.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/open.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/open.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,57 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5727,7 +6530,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/open.c newlib-1.19.0-arm/libgloss/
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/read.c newlib-1.19.0-arm/libgloss/libsysbase/read.c
 --- newlib-1.19.0/libgloss/libsysbase/read.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/read.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/read.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,48 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5779,7 +6582,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/read.c newlib-1.19.0-arm/libgloss/
 +
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/rename.c newlib-1.19.0-arm/libgloss/libsysbase/rename.c
 --- newlib-1.19.0/libgloss/libsysbase/rename.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/rename.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/rename.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,39 @@
 +#include <reent.h>
 +#include <sys/iosupport.h>
@@ -5822,7 +6625,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/rename.c newlib-1.19.0-arm/libglos
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/sbrk.c newlib-1.19.0-arm/libgloss/libsysbase/sbrk.c
 --- newlib-1.19.0/libgloss/libsysbase/sbrk.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/sbrk.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/sbrk.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,59 @@
 +#include <_ansi.h>
 +#include <sys/types.h>
@@ -5885,7 +6688,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/sbrk.c newlib-1.19.0-arm/libgloss/
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/stat.c newlib-1.19.0-arm/libgloss/libsysbase/stat.c
 --- newlib-1.19.0/libgloss/libsysbase/stat.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/stat.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/stat.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,39 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5928,7 +6731,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/stat.c newlib-1.19.0-arm/libgloss/
 +
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/statvfs.c newlib-1.19.0-arm/libgloss/libsysbase/statvfs.c
 --- newlib-1.19.0/libgloss/libsysbase/statvfs.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/statvfs.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/statvfs.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,23 @@
 +#include <reent.h>
 +#include <sys/iosupport.h>
@@ -5955,7 +6758,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/statvfs.c newlib-1.19.0-arm/libglo
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/syscall_support.c newlib-1.19.0-arm/libgloss/libsysbase/syscall_support.c
 --- newlib-1.19.0/libgloss/libsysbase/syscall_support.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/syscall_support.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/syscall_support.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,9 @@
 +#include <sys/iosupport.h>
 +
@@ -5968,7 +6771,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/syscall_support.c newlib-1.19.0-ar
 +
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/times.c newlib-1.19.0-arm/libgloss/libsysbase/times.c
 --- newlib-1.19.0/libgloss/libsysbase/times.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/times.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/times.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,47 @@
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -6020,7 +6823,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/times.c newlib-1.19.0-arm/libgloss
 \ No newline at end of file
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/truncate.c newlib-1.19.0-arm/libgloss/libsysbase/truncate.c
 --- newlib-1.19.0/libgloss/libsysbase/truncate.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/truncate.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/truncate.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,59 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -6083,7 +6886,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/truncate.c newlib-1.19.0-arm/libgl
 +}
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/unlink.c newlib-1.19.0-arm/libgloss/libsysbase/unlink.c
 --- newlib-1.19.0/libgloss/libsysbase/unlink.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/unlink.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/unlink.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,33 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -6120,7 +6923,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/unlink.c newlib-1.19.0-arm/libglos
 +
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/wait.c newlib-1.19.0-arm/libgloss/libsysbase/wait.c
 --- newlib-1.19.0/libgloss/libsysbase/wait.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/wait.c	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/wait.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,28 @@
 +/*
 + * Stub version of wait.
@@ -6152,7 +6955,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/wait.c newlib-1.19.0-arm/libgloss/
 +
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/warning.h newlib-1.19.0-arm/libgloss/libsysbase/warning.h
 --- newlib-1.19.0/libgloss/libsysbase/warning.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/warning.h	2010-12-18 14:40:27.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/warning.h	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,43 @@
 +#ifndef __WARNING_H__
 +#define __WARNING_H__
@@ -6199,7 +7002,7 @@ diff -Nbaur newlib-1.19.0/libgloss/libsysbase/warning.h newlib-1.19.0-arm/libglo
 +#endif /* __WARNING_H__ */
 diff -Nbaur newlib-1.19.0/libgloss/libsysbase/write.c newlib-1.19.0-arm/libgloss/libsysbase/write.c
 --- newlib-1.19.0/libgloss/libsysbase/write.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/libgloss/libsysbase/write.c	2011-01-13 16:28:45.000000000 +0000
++++ newlib-1.19.0-arm/libgloss/libsysbase/write.c	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,49 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -6615,7 +7418,7 @@ diff -Nbaur newlib-1.19.0/newlib/libc/include/pthread.h newlib-1.19.0-arm/newlib
 -/* end of include file */
 diff -Nbaur newlib-1.19.0/newlib/libc/include/stdint.h newlib-1.19.0-arm/newlib/libc/include/stdint.h
 --- newlib-1.19.0/newlib/libc/include/stdint.h	2009-04-24 22:55:07.000000000 +0100
-+++ newlib-1.19.0-arm/newlib/libc/include/stdint.h	2010-12-18 14:40:31.000000000 +0000
++++ newlib-1.19.0-arm/newlib/libc/include/stdint.h	2011-10-14 22:25:54.000000000 +0100
 @@ -75,14 +75,14 @@
  #endif
  #endif
@@ -6638,7 +7441,7 @@ diff -Nbaur newlib-1.19.0/newlib/libc/include/stdint.h newlib-1.19.0-arm/newlib/
  typedef unsigned short uint32_t;
 diff -Nbaur newlib-1.19.0/newlib/libc/include/sys/_types.h newlib-1.19.0-arm/newlib/libc/include/sys/_types.h
 --- newlib-1.19.0/newlib/libc/include/sys/_types.h	2007-09-18 21:05:17.000000000 +0100
-+++ newlib-1.19.0-arm/newlib/libc/include/sys/_types.h	2010-12-18 14:40:31.000000000 +0000
++++ newlib-1.19.0-arm/newlib/libc/include/sys/_types.h	2011-10-14 22:25:54.000000000 +0100
 @@ -21,7 +21,7 @@
  typedef unsigned long long __dev_t;
  #else
@@ -6650,7 +7453,7 @@ diff -Nbaur newlib-1.19.0/newlib/libc/include/sys/_types.h newlib-1.19.0-arm/new
  
 diff -Nbaur newlib-1.19.0/newlib/libc/include/sys/dirent.h newlib-1.19.0-arm/newlib/libc/include/sys/dirent.h
 --- newlib-1.19.0/newlib/libc/include/sys/dirent.h	2005-10-04 21:47:39.000000000 +0100
-+++ newlib-1.19.0-arm/newlib/libc/include/sys/dirent.h	2011-01-21 21:52:14.000000000 +0000
++++ newlib-1.19.0-arm/newlib/libc/include/sys/dirent.h	2011-10-14 22:25:54.000000000 +0100
 @@ -4,10 +4,49 @@
     not support <dirent.h>, we will get this file which uses #error to force
     an error.  */
@@ -6705,7 +7508,7 @@ diff -Nbaur newlib-1.19.0/newlib/libc/include/sys/dirent.h newlib-1.19.0-arm/new
 \ No newline at end of file
 diff -Nbaur newlib-1.19.0/newlib/libc/include/sys/iosupport.h newlib-1.19.0-arm/newlib/libc/include/sys/iosupport.h
 --- newlib-1.19.0/newlib/libc/include/sys/iosupport.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/newlib/libc/include/sys/iosupport.h	2011-01-19 20:42:05.000000000 +0000
++++ newlib-1.19.0-arm/newlib/libc/include/sys/iosupport.h	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,88 @@
 +//---------------------------------------------------------------------------------
 +#ifndef __iosupp_h__
@@ -6797,7 +7600,7 @@ diff -Nbaur newlib-1.19.0/newlib/libc/include/sys/iosupport.h newlib-1.19.0-arm/
 +//---------------------------------------------------------------------------------
 diff -Nbaur newlib-1.19.0/newlib/libc/include/sys/statvfs.h newlib-1.19.0-arm/newlib/libc/include/sys/statvfs.h
 --- newlib-1.19.0/newlib/libc/include/sys/statvfs.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-1.19.0-arm/newlib/libc/include/sys/statvfs.h	2010-12-18 14:40:35.000000000 +0000
++++ newlib-1.19.0-arm/newlib/libc/include/sys/statvfs.h	2011-10-14 22:25:54.000000000 +0100
 @@ -0,0 +1,35 @@
 +#ifndef _SYS_STATVFS_H
 +#define _SYS_STATVFS_H
@@ -6837,7 +7640,7 @@ diff -Nbaur newlib-1.19.0/newlib/libc/include/sys/statvfs.h newlib-1.19.0-arm/ne
 \ No newline at end of file
 diff -Nbaur newlib-1.19.0/newlib/libc/include/sys/syslimits.h newlib-1.19.0-arm/newlib/libc/include/sys/syslimits.h
 --- newlib-1.19.0/newlib/libc/include/sys/syslimits.h	2002-08-23 02:56:03.000000000 +0100
-+++ newlib-1.19.0-arm/newlib/libc/include/sys/syslimits.h	2010-12-18 14:40:35.000000000 +0000
++++ newlib-1.19.0-arm/newlib/libc/include/sys/syslimits.h	2011-10-14 22:25:54.000000000 +0100
 @@ -44,7 +44,7 @@
  #define	LINK_MAX		32767	/* max file link count */
  #define	MAX_CANON		  255	/* max bytes in term canon input line */
@@ -6849,7 +7652,7 @@ diff -Nbaur newlib-1.19.0/newlib/libc/include/sys/syslimits.h newlib-1.19.0-arm/
  #define	OPEN_MAX		   64	/* max open files per process */
 diff -Nbaur newlib-1.19.0/newlib/libc/include/sys/types.h newlib-1.19.0-arm/newlib/libc/include/sys/types.h
 --- newlib-1.19.0/newlib/libc/include/sys/types.h	2010-12-08 14:44:06.000000000 +0000
-+++ newlib-1.19.0-arm/newlib/libc/include/sys/types.h	2010-12-18 14:40:35.000000000 +0000
++++ newlib-1.19.0-arm/newlib/libc/include/sys/types.h	2011-10-14 22:25:54.000000000 +0100
 @@ -130,7 +130,7 @@
      defined(__sparc__) || defined(__SPU__)
  typedef	unsigned long	ino_t;
@@ -6871,7 +7674,7 @@ diff -Nbaur newlib-1.19.0/newlib/libc/include/sys/types.h newlib-1.19.0-arm/newl
  
 diff -Nbaur newlib-1.19.0/newlib/libc/include/sys/unistd.h newlib-1.19.0-arm/newlib/libc/include/sys/unistd.h
 --- newlib-1.19.0/newlib/libc/include/sys/unistd.h	2010-10-08 16:28:49.000000000 +0100
-+++ newlib-1.19.0-arm/newlib/libc/include/sys/unistd.h	2010-12-18 14:40:35.000000000 +0000
++++ newlib-1.19.0-arm/newlib/libc/include/sys/unistd.h	2011-10-14 22:25:54.000000000 +0100
 @@ -216,12 +216,10 @@
  int     _EXFUN(_execve, (const char *__path, char * const __argv[], char * const __envp[] ));
  #endif
@@ -6887,7 +7690,7 @@ diff -Nbaur newlib-1.19.0/newlib/libc/include/sys/unistd.h newlib-1.19.0-arm/new
  int	_EXFUN(getdtablesize, (void));
 diff -Nbaur newlib-1.19.0/newlib/libc/locale/locale.c newlib-1.19.0-arm/newlib/libc/locale/locale.c
 --- newlib-1.19.0/newlib/libc/locale/locale.c	2010-11-19 10:02:36.000000000 +0000
-+++ newlib-1.19.0-arm/newlib/libc/locale/locale.c	2010-12-18 14:50:38.000000000 +0000
++++ newlib-1.19.0-arm/newlib/libc/locale/locale.c	2011-10-14 22:25:54.000000000 +0100
 @@ -187,7 +187,6 @@
  #define _LC_LAST      7
  #define ENCODING_LEN 31
@@ -6934,7 +7737,7 @@ diff -Nbaur newlib-1.19.0/newlib/libc/locale/locale.c newlib-1.19.0-arm/newlib/l
      strcpy (charset, "ASCII");
 diff -Nbaur newlib-1.19.0/newlib/libc/misc/init.c newlib-1.19.0-arm/newlib/libc/misc/init.c
 --- newlib-1.19.0/newlib/libc/misc/init.c	2010-06-04 16:30:40.000000000 +0100
-+++ newlib-1.19.0-arm/newlib/libc/misc/init.c	2010-12-18 14:40:35.000000000 +0000
++++ newlib-1.19.0-arm/newlib/libc/misc/init.c	2011-10-14 22:25:54.000000000 +0100
 @@ -40,4 +40,8 @@
    for (i = 0; i < count; i++)
      __init_array_start[i] ();
@@ -6946,7 +7749,7 @@ diff -Nbaur newlib-1.19.0/newlib/libc/misc/init.c newlib-1.19.0-arm/newlib/libc/
  #endif
 diff -Nbaur newlib-1.19.0/newlib/libc/reent/gettimeofdayr.c newlib-1.19.0-arm/newlib/libc/reent/gettimeofdayr.c
 --- newlib-1.19.0/newlib/libc/reent/gettimeofdayr.c	2007-07-06 17:56:30.000000000 +0100
-+++ newlib-1.19.0-arm/newlib/libc/reent/gettimeofdayr.c	2010-12-18 14:40:35.000000000 +0000
++++ newlib-1.19.0-arm/newlib/libc/reent/gettimeofdayr.c	2011-10-14 22:25:54.000000000 +0100
 @@ -59,7 +59,7 @@
  	Check libc.a to see if its available on yours.
  */
@@ -6965,7 +7768,7 @@ diff -Nbaur newlib-1.19.0/newlib/libc/reent/gettimeofdayr.c newlib-1.19.0-arm/ne
  #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */
 diff -Nbaur newlib-1.19.0/newlib/libc/stdio/fopen.c newlib-1.19.0-arm/newlib/libc/stdio/fopen.c
 --- newlib-1.19.0/newlib/libc/stdio/fopen.c	2004-06-11 21:37:10.000000000 +0100
-+++ newlib-1.19.0-arm/newlib/libc/stdio/fopen.c	2010-12-18 14:40:35.000000000 +0000
++++ newlib-1.19.0-arm/newlib/libc/stdio/fopen.c	2011-10-14 22:25:54.000000000 +0100
 @@ -151,6 +151,9 @@
  
    _flockfile (fp);
@@ -6978,7 +7781,7 @@ diff -Nbaur newlib-1.19.0/newlib/libc/stdio/fopen.c newlib-1.19.0-arm/newlib/lib
    fp->_cookie = (_PTR) fp;
 diff -Nbaur newlib-1.19.0/newlib/libc/stdio/fvwrite.c newlib-1.19.0-arm/newlib/libc/stdio/fvwrite.c
 --- newlib-1.19.0/newlib/libc/stdio/fvwrite.c	2007-07-13 21:37:53.000000000 +0100
-+++ newlib-1.19.0-arm/newlib/libc/stdio/fvwrite.c	2010-12-18 14:40:35.000000000 +0000
++++ newlib-1.19.0-arm/newlib/libc/stdio/fvwrite.c	2011-10-14 22:25:54.000000000 +0100
 @@ -98,7 +98,8 @@
        do
  	{
@@ -6991,7 +7794,7 @@ diff -Nbaur newlib-1.19.0/newlib/libc/stdio/fvwrite.c newlib-1.19.0-arm/newlib/l
  	  p += w;
 diff -Nbaur newlib-1.19.0/newlib/libc/stdlib/mbtowc_r.c newlib-1.19.0-arm/newlib/libc/stdlib/mbtowc_r.c
 --- newlib-1.19.0/newlib/libc/stdlib/mbtowc_r.c	2010-01-17 09:39:06.000000000 +0000
-+++ newlib-1.19.0-arm/newlib/libc/stdlib/mbtowc_r.c	2010-12-18 15:25:18.000000000 +0000
++++ newlib-1.19.0-arm/newlib/libc/stdlib/mbtowc_r.c	2011-10-14 22:25:54.000000000 +0100
 @@ -9,7 +9,7 @@
  
  int (*__mbtowc) (struct _reent *, wchar_t *, const char *, size_t,
@@ -7003,7 +7806,7 @@ diff -Nbaur newlib-1.19.0/newlib/libc/stdlib/mbtowc_r.c newlib-1.19.0-arm/newlib
  #else
 diff -Nbaur newlib-1.19.0/newlib/libc/stdlib/wctomb_r.c newlib-1.19.0-arm/newlib/libc/stdlib/wctomb_r.c
 --- newlib-1.19.0/newlib/libc/stdlib/wctomb_r.c	2010-01-17 09:39:06.000000000 +0000
-+++ newlib-1.19.0-arm/newlib/libc/stdlib/wctomb_r.c	2010-12-18 15:25:33.000000000 +0000
++++ newlib-1.19.0-arm/newlib/libc/stdlib/wctomb_r.c	2011-10-14 22:25:54.000000000 +0100
 @@ -8,7 +8,7 @@
  
  int (*__wctomb) (struct _reent *, char *, wchar_t, const char *charset,
@@ -7015,7 +7818,7 @@ diff -Nbaur newlib-1.19.0/newlib/libc/stdlib/wctomb_r.c newlib-1.19.0-arm/newlib
  #else
 diff -Nbaur newlib-1.19.0/newlib/libc/syscalls/Makefile.am newlib-1.19.0-arm/newlib/libc/syscalls/Makefile.am
 --- newlib-1.19.0/newlib/libc/syscalls/Makefile.am	2008-01-03 22:33:37.000000000 +0000
-+++ newlib-1.19.0-arm/newlib/libc/syscalls/Makefile.am	2010-12-18 14:40:35.000000000 +0000
++++ newlib-1.19.0-arm/newlib/libc/syscalls/Makefile.am	2011-10-14 22:25:54.000000000 +0100
 @@ -20,8 +20,9 @@
  	sysstat.c	\
  	systimes.c	\
@@ -7030,7 +7833,7 @@ diff -Nbaur newlib-1.19.0/newlib/libc/syscalls/Makefile.am newlib-1.19.0-arm/new
  if ELIX_LEVEL_1
 diff -Nbaur newlib-1.19.0/newlib/libc/time/asctime_r.c newlib-1.19.0-arm/newlib/libc/time/asctime_r.c
 --- newlib-1.19.0/newlib/libc/time/asctime_r.c	2000-05-10 18:58:29.000000000 +0100
-+++ newlib-1.19.0-arm/newlib/libc/time/asctime_r.c	2010-12-18 14:40:35.000000000 +0000
++++ newlib-1.19.0-arm/newlib/libc/time/asctime_r.c	2011-10-14 22:25:54.000000000 +0100
 @@ -18,7 +18,7 @@
  	"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
    };
