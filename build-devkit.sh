@@ -1,7 +1,7 @@
 #!/bin/bash
 #---------------------------------------------------------------------------------
 # Build scripts for
-#	devkitARM release 35
+#	devkitARM release 36
 #	devkitPPC release 24
 #	devkitPSP release 15
 #---------------------------------------------------------------------------------
@@ -100,7 +100,7 @@ done
 case "$VERSION" in
   "1" )
     GCC_VER=4.6.1
-    BINUTILS_VER=2.21
+    BINUTILS_VER=2.21.1
     NEWLIB_VER=1.19.0
     GDB_VER=7.2
     basedir='dkarm-eabi'

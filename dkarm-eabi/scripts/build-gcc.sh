@@ -76,7 +76,7 @@ then
         --with-newlib \
         --prefix=$prefix\
         --enable-lto $plugin_ld\
-        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 35" \
+        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 36" \
         || { echo "Error configuring gcc"; exit 1; }
   touch configured-gcc
 fi
