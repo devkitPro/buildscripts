@@ -1,7 +1,7 @@
 diff -Nbaur gcc-4.6.1/gcc/config/arm/t-arm-elf gcc-4.6.1-arm/gcc/config/arm/t-arm-elf
 --- gcc-4.6.1/gcc/config/arm/t-arm-elf	2011-01-03 20:52:22.000000000 +0000
-+++ gcc-4.6.1-arm/gcc/config/arm/t-arm-elf	2011-10-03 14:58:38.000000000 +0100
-@@ -40,22 +40,22 @@
++++ gcc-4.6.1-arm/gcc/config/arm/t-arm-elf	2011-10-14 17:47:30.000000000 +0100
+@@ -40,22 +40,28 @@
  #MULTILIB_DIRNAMES    += fa526 fa626 fa606te fa626te fmp626 fa726te
  #MULTILIB_EXCEPTIONS  += *mthumb*/*mcpu=fa526 *mthumb*/*mcpu=fa626
  
@@ -14,9 +14,15 @@ diff -Nbaur gcc-4.6.1/gcc/config/arm/t-arm-elf gcc-4.6.1-arm/gcc/config/arm/t-ar
 -#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a8
 -#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-r4
 -#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m3
++MULTILIB_OPTIONS      += march=armv6-m
++MULTILIB_DIRNAMES     += armv6-m
++MULTILIB_EXCEPTIONS   += march=armv6-m* marm/*march=armv6-m*
++MULTILIB_MATCHES      += march?armv6-m=mcpu?cortex-m0
++MULTILIB_MATCHES      += march?armv6-m=mcpu?cortex-m1
++
 +MULTILIB_OPTIONS      += march=armv7
 +MULTILIB_DIRNAMES     += thumb2
-+MULTILIB_EXCEPTIONS   += march=armv7* marm/*march=armv7*
++MULTILIB_EXCEPTIONS   += march=armv7* marm/*march=armv7* *march=armv6-m*/*march=armv7*
 +MULTILIB_MATCHES      += march?armv7=march?armv7-a
 +MULTILIB_MATCHES      += march?armv7=march?armv7-r
 +MULTILIB_MATCHES      += march?armv7=march?armv7-m
@@ -36,7 +42,7 @@ diff -Nbaur gcc-4.6.1/gcc/config/arm/t-arm-elf gcc-4.6.1-arm/gcc/config/arm/t-ar
  #MULTILIB_EXCEPTIONS    += *mcpu=fa526/*mfloat-abi=hard*
  #MULTILIB_EXCEPTIONS    += *mcpu=fa626/*mfloat-abi=hard*
  
-@@ -63,9 +63,9 @@
+@@ -63,9 +69,9 @@
  # MULTILIB_DIRNAMES   += ep9312
  # MULTILIB_EXCEPTIONS += *mthumb/*mcpu=ep9312*
  # 	
