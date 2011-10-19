@@ -187,32 +187,35 @@ SECTIONS
 
 	__preinit_lma = __data_lma + SIZEOF(.data);
 
-	PROVIDE (__preinit_array_start = .);
-	.preinit_array     : AT (__preinit_lma) { KEEP (*(.preinit_array)) } >iwram
-	PROVIDE (__preinit_array_end = .);
+	.preinit_array ALIGN(4)    : AT (__preinit_lma)
+	{
+		__preinit_array_start = ABSOLUTE(.);
+		KEEP (*(.preinit_array))
+		__preinit_array_end = ABSOLUTE(.);
+	} >iwram
 
 	__init_lma = __preinit_lma + SIZEOF(.preinit_array);
 
-	PROVIDE (__init_array_start = .);
-	.init_array     : AT (__init_lma)
+	.init_array  ALIGN(4)   : AT (__init_lma)
 	{
+		__init_array_start = ABSOLUTE(.);
 		KEEP (*(SORT(.init_array.*)))
 		KEEP (*(.init_array))
+		__init_array_end = ABSOLUTE(.);
 	} >iwram
-	PROVIDE (__init_array_end = .);
-	PROVIDE (__fini_array_start = .);
 
 	__fini_lma = __init_lma + SIZEOF(.init_array);
 
-	.fini_array     : AT (__fini_lma)
+	.fini_array  ALIGN(4)   : AT (__fini_lma)
 	{
+		__fini_array_start = ABSOLUTE(.);
 		KEEP (*(SORT(.fini_array.*)))
 		KEEP (*(.fini_array))
+  		__fini_array_end = ABSOLUTE(.);
 	} >iwram
-  	PROVIDE (__fini_array_end = .);
 
 	__jcr_lma = __fini_lma + SIZEOF(.fini_array);
-	.jcr            : AT (__jcr_lma) { KEEP (*(.jcr)) } >iwram
+	.jcr        ALIGN(4)    : AT (__jcr_lma) { KEEP (*(.jcr)) } >iwram
 
 	__data_end__  =  ABSOLUTE(.);
 	__iwram_overlay_lma = __jcr_lma + SIZEOF(.jcr);
@@ -243,6 +246,7 @@ SECTIONS
 	{
 		*(.ewram)
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
+		__ewram_end = ABSOLUTE(.);
 	}>ewram = 0xff
 
 	__pad_lma = __ewram_lma + SIZEOF(.ewram);
@@ -254,7 +258,6 @@ SECTIONS
  		. = ALIGN(4);
 		__sbss_end__  = ABSOLUTE(.);
 		__end__ = ABSOLUTE(.);
-		__ewram_end = ABSOLUTE(.);
 		__eheap_start = ABSOLUTE(.);
  	} AT>ewram
 

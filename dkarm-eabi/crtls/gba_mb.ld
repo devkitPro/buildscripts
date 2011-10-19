@@ -222,6 +222,7 @@ SECTIONS
 	{
 		*(.ewram)
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
+		__ewram_end = ABSOLUTE(.);
 	} >ewram = 0xff
 
 	__ewram_overlay_lma = __ewram_lma + SIZEOF(.ewram);
@@ -233,7 +234,6 @@ SECTIONS
 		. = ALIGN(4);
 		__sbss_end__  = ABSOLUTE(.);
 		__end__ = ABSOLUTE(.);
-		__ewram_end = ABSOLUTE(.);
 		__eheap_start = ABSOLUTE(.);
 	}
 
