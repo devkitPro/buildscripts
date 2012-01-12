@@ -6,7 +6,7 @@
 #	devkitPSP release 15
 #---------------------------------------------------------------------------------
 
-if [ 0 -eq 1 ] ; then
+if [ 1 -eq 1 ] ; then
   echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support."
   echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
   echo "http://sourceforge.net/projects/devkitpro/files/buildscripts/"
@@ -100,8 +100,8 @@ done
 case "$VERSION" in
   "1" )
     GCC_VER=4.6.2
-    BINUTILS_VER=2.21.1
-    NEWLIB_VER=1.19.0
+    BINUTILS_VER=2.22
+    NEWLIB_VER=1.20.0
     GDB_VER=7.3
     basedir='dkarm-eabi'
     package=devkitARM
