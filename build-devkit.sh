@@ -100,9 +100,9 @@ done
 case "$VERSION" in
   "1" )
     GCC_VER=4.6.2
-    BINUTILS_VER=2.22
+    BINUTILS_VER=2.21
     NEWLIB_VER=1.20.0
-    GDB_VER=7.3
+    GDB_VER=7.4
     basedir='dkarm-eabi'
     package=devkitARM
     builddir=arm-eabi
