@@ -112,6 +112,21 @@ diff -Nbaur gdb-7.4/config.sub gdb-7.4-psp/config.sub
  	mips3*-*)
  		basic_machine=`echo $basic_machine | sed -e 's/mips3/mips64/'`
  		;;
+diff -Nbaur gdb-7.4/gdb/Makefile.in gdb-7.4-psp/gdb/Makefile.in
+--- gdb-7.4/gdb/Makefile.in	2012-01-06 04:43:01.000000000 +0000
++++ gdb-7.4-psp/gdb/Makefile.in	2012-02-25 17:03:11.000000000 +0000
+@@ -2195,10 +2195,7 @@
+ # Note that we put the dependencies into a .Tpo file, then move them
+ # into place if the compile succeeds.  We need this because gcc does
+ # not atomically write the dependency output file.
+-@GMAKE_TRUE@override COMPILE.post = -c -o $@ -MT $@ -MMD -MP \
+-@GMAKE_TRUE@	-MF $(DEPDIR)/$(basename $(@F)).Tpo
+-@GMAKE_TRUE@override POSTCOMPILE = @mv $(DEPDIR)/$(basename $(@F)).Tpo \
+-@GMAKE_TRUE@	$(DEPDIR)/$(basename $(@F)).Po
++@GMAKE_TRUE@override COMPILE.post = -c -o $@
+ @GMAKE_TRUE@else
+ @GMAKE_TRUE@override COMPILE.pre = source='$<' object='$@' libtool=no \
+ @GMAKE_TRUE@	DEPDIR=$(DEPDIR) $(DEPMODE) $(depcomp) $(CC)
 diff -Nbaur gdb-7.4/include/elf/common.h gdb-7.4-psp/include/elf/common.h
 --- gdb-7.4/include/elf/common.h	2011-12-06 14:09:12.000000000 +0000
 +++ gdb-7.4-psp/include/elf/common.h	2012-02-25 14:11:30.000000000 +0000
@@ -1489,6 +1504,21 @@ diff -Nbaur gdb-7.4/opcodes/mips-opc.c gdb-7.4-psp/opcodes/mips-opc.c
    /* Conflicts with the 4650's "mul" instruction.  Nobody's using the
       4010 any more, so move this insn out of the way.  If the object
       format gave us more info, we could do this right.  */
+diff -Nbaur gdb-7.4/sim/common/Make-common.in gdb-7.4-psp/sim/common/Make-common.in
+--- gdb-7.4/sim/common/Make-common.in	2012-01-06 04:54:38.000000000 +0000
++++ gdb-7.4-psp/sim/common/Make-common.in	2012-02-25 17:19:02.000000000 +0000
+@@ -417,10 +417,7 @@
+ # Note that we put the dependencies into a .Tpo file, then move them
+ # into place if the compile succeeds.  We need this because gcc does
+ # not atomically write the dependency output file.
+-@GMAKE_TRUE@override COMPILE.post = -c -o $@ -MT $@ -MMD -MP \
+-@GMAKE_TRUE@	-MF $(DEPDIR)/$(basename $(@F)).Tpo
+-@GMAKE_TRUE@override POSTCOMPILE = @mv $(DEPDIR)/$(basename $(@F)).Tpo \
+-@GMAKE_TRUE@	$(DEPDIR)/$(basename $(@F)).Po
++@GMAKE_TRUE@override COMPILE.post = -c -o $@
+ @GMAKE_TRUE@else
+ @GMAKE_TRUE@override COMPILE.pre = source='$<' object='$@' libtool=no \
+ @GMAKE_TRUE@	DEPDIR=$(DEPDIR) $(DEPMODE) $(depcomp) $(CC)
 diff -Nbaur gdb-7.4/sim/common/sim-signal.c gdb-7.4-psp/sim/common/sim-signal.c
 --- gdb-7.4/sim/common/sim-signal.c	2012-01-06 04:54:40.000000000 +0000
 +++ gdb-7.4-psp/sim/common/sim-signal.c	2012-02-25 14:11:30.000000000 +0000
