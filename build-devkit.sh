@@ -100,7 +100,7 @@ done
 case "$VERSION" in
   "1" )
     GCC_VER=4.6.2
-    BINUTILS_VER=2.21
+    BINUTILS_VER=2.21.1
     NEWLIB_VER=1.20.0
     GDB_VER=7.4
     basedir='dkarm-eabi'
@@ -110,10 +110,10 @@ case "$VERSION" in
     toolchain=DEVKITARM
   ;;
   "2" )
-    GCC_VER=4.6.1
-    BINUTILS_VER=2.21
-    NEWLIB_VER=1.19.0
-    GDB_VER=7.2
+    GCC_VER=4.6.2
+    BINUTILS_VER=2.22
+    NEWLIB_VER=1.20.0
+    GDB_VER=7.4
     basedir='dkppc'
     package=devkitPPC
     builddir=powerpc-eabi
