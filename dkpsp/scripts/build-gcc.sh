@@ -26,6 +26,7 @@ then
   CFLAGS=$cflags LDFLAGS=$ldflags ../../$BINUTILS_SRCDIR/configure \
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
 	--disable-threads --with-gcc --with-gnu-as --with-gnu-ld --with-stabs \
+	--disable-dependency-tracking  --disable-werror \
 	|| { echo "Error configuring binutils"; exit 1; }
   touch configured-binutils
 fi
@@ -63,7 +64,8 @@ then
 	--target=$target \
 	--with-newlib \
 	--prefix=$prefix \
-	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPSP release 15" \
+	--disable-dependency-tracking \
+	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPSP release 16" \
 	|| { echo "Error configuring gcc"; exit 1; }
   touch configured-gcc
 fi
@@ -84,22 +86,7 @@ fi
 unset CFLAGS
 cd $BUILDSCRIPTDIR
 
-if [ ! -f checkout-psp-sdk ]
-then
-  svn checkout http://psp.jim.sh/svn/psp/trunk/pspsdk || { echo "ERROR GETTING PSPSDK"; exit 1; }
-  touch checkout-psp-sdk
-fi
-
-cd pspsdk
-if [ ! -f patch-psp-sdk ]
-then
-  if [ -f $patchdir/pspsdk.patch ]
-  then
-    patch -p1 -i $patchdir/pspsdk.patch || { echo "ERROR PATCHING PSPSDK"; exit 1; }
-  fi
-  touch patch-psp-sdk
-fi
-
+cd $PSPSDK_SRCDIR
 if [ ! -f bootstrap-sdk ]
 then
   ./bootstrap || { echo "ERROR RUNNING PSPSDK BOOTSTRAP"; exit 1; }
@@ -131,6 +118,7 @@ then
   $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure \
 	--target=$target \
 	--prefix=$prefix \
+	--disable-dependency-tracking \
 	|| { echo "Error configuring newlib"; exit 1; }
   touch configured-newlib
 fi
@@ -174,7 +162,7 @@ cd $BUILDSCRIPTDIR
 # build and install the psp sdk
 #---------------------------------------------------------------------------------
 echo "building pspsdk ..."
-cd pspsdk
+cd $PSPSDK_SRCDIR
 
 if [ ! -f built-sdk ]
 then
@@ -202,6 +190,7 @@ if [ ! -f configured-gdb ]
 then
   CFLAGS=$cflags LDFLAGS=$ldflags ../../$GDB_SRCDIR/configure \
   --disable-nls --prefix=$prefix --target=$target --disable-werror \
+  --disable-dependency-tracking \
   || { echo "Error configuring gdb"; exit 1; }
   touch configured-gdb
 fi

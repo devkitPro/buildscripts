@@ -29,12 +29,14 @@ LIBMIRKO_VER=0.9.7
 MAXMOD_VER=1.0.6
 FILESYSTEM_VER=0.9.9
 LIBFAT_VER=1.0.10
+PSPSDK_VER=20120225
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
 LIBNDS="libnds-src-$LIBNDS_VER.tar.bz2"
 DSWIFI="dswifi-src-$DSWIFI_VER.tar.bz2"
 MAXMOD="maxmod-src-$MAXMOD_VER.tar.bz2"
+PSPSDK="pspsdk-$PSPSDK_VER.tar.bz2"
 FILESYSTEM="libfilesystem-src-$FILESYSTEM_VER.tar.bz2"
 LIBFAT="libfat-src-$LIBFAT_VER.tar.bz2"
 DEFAULT_ARM7="default_arm7-src-$DEFAULT_ARM7_VER.tar.bz2"
@@ -48,6 +50,7 @@ DSWIFI_URL="$DEVKITPRO_URL/$DSWIFI"
 LIBMIRKO_URL="$DEVKITPRO_URL/$LIBMIRKO"
 DEFAULT_ARM7_URL="$DEVKITPRO_URL/$DEFAULT_ARM7"
 MAXMOD_URL="$DEVKITPRO_URL/$MAXMOD"
+PSPSDK_URL="$DEVKITPRO_URL/$PSPSDK"
 FILESYSTEM_URL="$DEVKITPRO_URL/$FILESYSTEM"
 LIBFAT_URL="$DEVKITPRO_URL/$LIBFAT"
 
@@ -121,10 +124,10 @@ case "$VERSION" in
     toolchain=DEVKITPPC
   ;;
   "3" )
-    GCC_VER=4.3.6
-    BINUTILS_VER=2.16.1
-    NEWLIB_VER=1.19.0
-    GDB_VER=6.8
+    GCC_VER=4.6.2
+    BINUTILS_VER=2.22
+    NEWLIB_VER=1.20.0
+    GDB_VER=7.4
     basedir='dkpsp'
     package=devkitPSP
     builddir=psp
@@ -344,6 +347,16 @@ then
       fi
     fi
 
+    if [ $VERSION -eq 3 ]
+    then
+      if [ ! -f $SRCDIR/$PSPSDK ]
+      then
+        echo "Error: $PSPSDK not found in $SRCDIR"
+	      exit 1
+      else
+	      FOUND=1
+      fi
+    fi
 
 
     done
@@ -384,6 +397,11 @@ else
         $FETCH $MAXMOD_URL || { echo "Error: Failed to download "$MAXMOD; exit 1; }
         $FETCH $FILESYSTEM_URL || { echo "Error: Failed to download "$FILESYSTEM; exit 1; }
       fi
+      if [ $VERSION -eq 3 ]
+      then
+        $FETCH $PSPSDK_URL || { echo "Error: Failed to download "$PSPSDK; exit 1; }
+      fi
+
       SRCDIR=`pwd`
       touch downloaded_sources
     fi
@@ -399,6 +417,7 @@ LIBFAT_SRCDIR="libfat-$LIBFAT_VER"
 DSWIFI_SRCDIR="dswifi-$DSWIFI_VER"
 LIBNDS_SRCDIR="libnds-$LIBNDS_VER"
 MAXMOD_SRCDIR="maxmod-$MAXMOD_VER"
+PSPSDK_SRCDIR="pspsdk-$PSPSDK_VER"
 FILESYSTEM_SRCDIR="filesystem-$FILESYSTEM_VER"
 LIBMIRKO_SRCDIR="libmirko-$LIBMIRKO_VER"
 DEFAULT_ARM7_SRCDIR="default_arm7-$DEFAULT_ARM7_VER"
@@ -529,6 +548,12 @@ then
 
   fi
 
+  if [ $VERSION -eq 3 ]
+  then
+    echo "Extracting $PSPSDK"
+    mkdir -p $PSPSDK_SRCDIR
+    bzip2 -cd $SRCDIR/$PSPSDK | tar -xf - -C $PSPSDK_SRCDIR  || { echo "Error extracting "$PSPSDK; exit 1; }
+  fi
   touch extracted_archives
 
 fi
