@@ -5,7 +5,7 @@ prefix=$INSTALLDIR/devkitPSP
 PLATFORM=`uname -s`
 
 case $PLATFORM in
-  Darwin )	
+  Darwin )
     cflags="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
 	  ldflags="-arch i386 -arch ppc"
     ;;
@@ -62,7 +62,7 @@ then
 	--with-gcc --with-gnu-ld --with-gnu-as\
 	--disable-shared --disable-win32-registry --disable-nls\
 	--enable-cxx-flags="-G0" \
-    --disable-libstdcxx-pch \
+	--disable-libstdcxx-pch \
 	--target=$target \
 	--with-newlib \
 	--prefix=$prefix \
