@@ -2,8 +2,8 @@
 #---------------------------------------------------------------------------------
 # Build scripts for
 #	devkitARM release 37
-#	devkitPPC release 24
-#	devkitPSP release 15
+#	devkitPPC release 25
+#	devkitPSP release 16
 #---------------------------------------------------------------------------------
 
 if [ 1 -eq 1 ] ; then
@@ -638,8 +638,8 @@ if [ "$answer" != "n" -a "$answer" != "N" ]
   rm -fr $GCC_SRCDIR
   rm -fr $LIBOGC_SRCDIR $LIBGBA_SRCDIR $LIBNDS_SRCDIR $LIBMIRKO_SRCDIR $DSWIFI_SRCDIR $LIBFAT_SRCDIR $GDB_SRCDIR $DEFAULT_ARM7_SRCDIR $MAXMOD_SRCDIR $FILESYSTEM_SRCDIR
   rm -fr mn10200
-  rm -fr pspsdk
-  rm -fr extracted_archives patched_sources checkout-psp-sdk
+  rm -fr $PSPSDK_SRCDIR
+  rm -fr extracted_archives patched_sources
 
 fi
 
