@@ -7,10 +7,12 @@ PLATFORM=`uname -s`
 case $PLATFORM in
   Darwin )	
     cflags="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
-	ldflags="-arch i386 -arch ppc"
+	  ldflags="-arch i386 -arch ppc"
     ;;
   MINGW32* )
     cflags="-D__USE_MINGW_ACCESS"
+# horrid hack to get -flto to work on windows
+    plugin_ld="--with-plugin-ld=ld"
     ;;
 esac
 
