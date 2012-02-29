@@ -3,7 +3,7 @@
 # Build scripts for
 #	devkitARM release 37
 #	devkitPPC release 25
-#	devkitPSP release 16
+#	devkitPSP release 16-1
 #---------------------------------------------------------------------------------
 
 if [ 1 -eq 1 ] ; then
@@ -29,7 +29,7 @@ LIBMIRKO_VER=0.9.7
 MAXMOD_VER=1.0.6
 FILESYSTEM_VER=0.9.9
 LIBFAT_VER=1.0.10
-PSPSDK_VER=20120225
+PSPSDK_VER=20120229
 
 LIBOGC="libogc-src-$LIBOGC_VER.tar.bz2"
 LIBGBA="libgba-src-$LIBGBA_VER.tar.bz2"
@@ -84,65 +84,7 @@ if [ ! -z "$BUILD_DKPRO_PACKAGE" ] ; then
 	VERSION="$BUILD_DKPRO_PACKAGE"
 fi
 
-while [ $VERSION -eq 0 ]
-do
-  echo
-  echo "This script will build and install your devkit. Please select the one you require"
-  echo
-  echo "1: build devkitARM (gba gp32 ds)"
-  echo "2: build devkitPPC (gamecube wii)"
-  echo "3: build devkitPSP (PSP)"
-  read VERSION
-
-  if [ "$VERSION" -ne 1 -a "$VERSION" -ne 2 -a "$VERSION" -ne 3 ]
-  then
-      VERSION=0
-  fi
-done
-
-case "$VERSION" in
-  "1" )
-    GCC_VER=4.6.2
-    BINUTILS_VER=2.21.1
-    NEWLIB_VER=1.20.0
-    GDB_VER=7.4
-    basedir='dkarm-eabi'
-    package=devkitARM
-    builddir=arm-eabi
-    target=arm-eabi
-    toolchain=DEVKITARM
-  ;;
-  "2" )
-    GCC_VER=4.6.2
-    BINUTILS_VER=2.22
-    NEWLIB_VER=1.20.0
-    GDB_VER=7.4
-    basedir='dkppc'
-    package=devkitPPC
-    builddir=powerpc-eabi
-    target=powerpc-eabi
-    toolchain=DEVKITPPC
-  ;;
-  "3" )
-    GCC_VER=4.6.2
-    BINUTILS_VER=2.22
-    NEWLIB_VER=1.20.0
-    GDB_VER=7.4
-    basedir='dkpsp'
-    package=devkitPSP
-    builddir=psp
-    target=psp
-    toolchain=DEVKITPSP
-
-    if test "`svn help`"
-    then
-      SVN="svn"
-    else
-     echo "ERROR: Please make sure you have 'subversion (svn)' installed."
-     exit 1
-    fi
-  ;;
-esac
+. ./select_toolchain.sh
 
 GCC_CORE="gcc-core-$GCC_VER.tar.bz2"
 GCC_GPP="gcc-g++-$GCC_VER.tar.bz2"
@@ -594,26 +536,7 @@ if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh || { echo "Err
 if [ -f $scriptdir/build-crtls.sh ]; then . $scriptdir/build-crtls.sh || { echo "Error building crtls"; exit 1; }; cd $BUILDSCRIPTDIR; fi
 if [ -f $scriptdir/build-tools.sh ]; then . $scriptdir/build-tools.sh || { echo "Error building tools"; exit 1; }; cd $BUILDSCRIPTDIR; fi
 
-#---------------------------------------------------------------------------------
-# strip binaries
-# strip has trouble using wildcards so do it this way instead
-#---------------------------------------------------------------------------------
-for f in $INSTALLDIR/$package/bin/* \
-         $INSTALLDIR/$package/$target/bin/* \
-         $INSTALLDIR/$package/libexec/gcc/$target/$GCC_VER/*
-do
-  # exclude dll for windows, so for linux/osx, directories .la files, embedspu script & the gccbug text file
-  if  ! [[ "$f" == *.dll || "$f" == *.so || -d $f || "$f" == *.la || "$f" == *-embedspu || "$f" == *-gccbug ]]
-  then
-    strip $f
-  fi
-done
-
-#---------------------------------------------------------------------------------
-# strip debug info from libraries
-#---------------------------------------------------------------------------------
-find $INSTALLDIR/$package/lib/gcc/$target -name *.a -exec $target-strip -d {} \;
-find $INSTALLDIR/$package/$target -name *.a -exec $target-strip -d {} \;
+. ./strip_bins.sh
 
 #---------------------------------------------------------------------------------
 # Clean up temporary files and source directories
