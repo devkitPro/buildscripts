@@ -2,11 +2,11 @@
 #---------------------------------------------------------------------------------
 # Build scripts for
 #	devkitARM release 37
-#	devkitPPC release 25
+#	devkitPPC release 25-1
 #	devkitPSP release 16-1
 #---------------------------------------------------------------------------------
 
-if [ 1 -eq 1 ] ; then
+if [ 0 -eq 1 ] ; then
   echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support."
   echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
   echo "http://sourceforge.net/projects/devkitpro/files/buildscripts/"
@@ -20,7 +20,7 @@ fi
 #---------------------------------------------------------------------------------
 # specify some urls to download the source packages from
 #---------------------------------------------------------------------------------
-LIBOGC_VER=1.8.8
+LIBOGC_VER=1.8.9
 LIBGBA_VER=20090222
 LIBNDS_VER=1.5.4
 DEFAULT_ARM7_VER=0.5.23
