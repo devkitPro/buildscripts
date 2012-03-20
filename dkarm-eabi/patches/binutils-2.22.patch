@@ -1,0 +1,66 @@
+diff -Nbaur binutils-2.22/bfd/bfd-in2.h binutils-2.22-arm/bfd/bfd-in2.h
+--- binutils-2.22/bfd/bfd-in2.h	2011-09-16 02:15:18.000000000 +0100
++++ binutils-2.22-arm/bfd/bfd-in2.h	2012-03-05 14:29:26.000000000 +0000
+@@ -38,6 +38,8 @@
+ 
+ #include "ansidecl.h"
+ #include "symcat.h"
++#include <sys/stat.h>
++
+ #if defined (__STDC__) || defined (ALMOST_STDC) || defined (HAVE_STRINGIZE)
+ #ifndef SABER
+ /* This hack is to avoid a problem with some strict ANSI C preprocessors.
+@@ -308,8 +310,6 @@
+    && (sec)->sec_info_type != ELF_INFO_TYPE_MERGE		\
+    && (sec)->sec_info_type != ELF_INFO_TYPE_JUST_SYMS)
+ 
+-/* Forward define.  */
+-struct stat;
+ 
+ typedef enum bfd_print_symbol
+ {
+diff -Nbaur binutils-2.22/bfd/bfd-in.h binutils-2.22-arm/bfd/bfd-in.h
+--- binutils-2.22/bfd/bfd-in.h	2011-09-16 02:15:18.000000000 +0100
++++ binutils-2.22-arm/bfd/bfd-in.h	2012-03-05 14:28:11.000000000 +0000
+@@ -31,6 +31,8 @@
+ 
+ #include "ansidecl.h"
+ #include "symcat.h"
++#include <sys/stat.h>
++
+ #if defined (__STDC__) || defined (ALMOST_STDC) || defined (HAVE_STRINGIZE)
+ #ifndef SABER
+ /* This hack is to avoid a problem with some strict ANSI C preprocessors.
+@@ -301,8 +303,6 @@
+    && (sec)->sec_info_type != ELF_INFO_TYPE_MERGE		\
+    && (sec)->sec_info_type != ELF_INFO_TYPE_JUST_SYMS)
+ 
+-/* Forward define.  */
+-struct stat;
+ 
+ typedef enum bfd_print_symbol
+ {
+diff -Nbaur binutils-2.22/binutils/bucomm.c binutils-2.22-arm/binutils/bucomm.c
+--- binutils-2.22/binutils/bucomm.c	2011-03-25 17:51:10.000000000 +0000
++++ binutils-2.22-arm/binutils/bucomm.c	2012-03-05 00:55:04.000000000 +0000
+@@ -23,6 +23,7 @@
+ /* We might put this in a library someday so it could be dynamically
+    loaded, but for now it's not necessary.  */
+ 
++
+ #include "sysdep.h"
+ #include "bfd.h"
+ #include "libiberty.h"
+diff -Nbaur binutils-2.22/include/opcode/arm.h binutils-2.22-arm/include/opcode/arm.h
+--- binutils-2.22/include/opcode/arm.h	2011-05-31 15:12:55.000000000 +0100
++++ binutils-2.22-arm/include/opcode/arm.h	2012-03-19 17:41:15.000000000 +0000
+@@ -109,7 +109,8 @@
+ #define ARM_AEXT_V6KT2  (ARM_AEXT_V6T2 | ARM_EXT_V6K)
+ #define ARM_AEXT_V6ZT2  (ARM_AEXT_V6T2 | ARM_EXT_SEC)
+ #define ARM_AEXT_V6ZKT2 (ARM_AEXT_V6T2 | ARM_EXT_V6K | ARM_EXT_SEC)
+-#define ARM_AEXT_V7_ARM	(ARM_AEXT_V6KT2 | ARM_EXT_V7 | ARM_EXT_BARRIER)
++#define ARM_AEXT_V7_ARM	(ARM_AEXT_V6KT2 | ARM_EXT_V7 | ARM_EXT_BARRIER \
++    | ARM_EXT_OS )
+ #define ARM_AEXT_V7A	(ARM_AEXT_V7_ARM | ARM_EXT_V7A)
+ #define ARM_AEXT_V7R	(ARM_AEXT_V7_ARM | ARM_EXT_V7R | ARM_EXT_DIV)
+ #define ARM_AEXT_NOTM \
