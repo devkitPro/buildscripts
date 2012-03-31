@@ -1,4 +1,5 @@
 #!/bin/bash
+VERSION=0
 while [ $VERSION -eq 0 ]
 do
   echo
@@ -17,35 +18,32 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=4.6.3
+    GCC_VER=4.7.0
     BINUTILS_VER=2.22
     NEWLIB_VER=1.20.0
     GDB_VER=7.4
     basedir='dkarm-eabi'
     package=devkitARM
-    builddir=arm-eabi
     target=arm-eabi
     toolchain=DEVKITARM
   ;;
   "2" )
-    GCC_VER=4.6.2
+    GCC_VER=4.7.0
     BINUTILS_VER=2.22
     NEWLIB_VER=1.20.0
     GDB_VER=7.4
     basedir='dkppc'
     package=devkitPPC
-    builddir=powerpc-eabi
     target=powerpc-eabi
     toolchain=DEVKITPPC
   ;;
   "3" )
-    GCC_VER=4.6.2
+    GCC_VER=4.6.3
     BINUTILS_VER=2.22
     NEWLIB_VER=1.20.0
     GDB_VER=7.4
     basedir='dkpsp'
     package=devkitPSP
-    builddir=psp
     target=psp
     toolchain=DEVKITPSP
   ;;
