@@ -1,18 +1,15 @@
 #!/bin/sh
 
-export DEVKITARM=$TOOLPATH/devkitARM
-export DEVKITPRO=$TOOLPATH
-
 #---------------------------------------------------------------------------------
 # copy base rulesets
 #---------------------------------------------------------------------------------
-cp -v dkarm-eabi/rules/* $DEVKITARM
+cp -v $BUILDSCRIPTDIR/dkarm-eabi/rules/* $DEVKITARM
 
 #---------------------------------------------------------------------------------
 # Install and build the gba crt
 #---------------------------------------------------------------------------------
 
-cp -v $(pwd)/dkarm-eabi/crtls/* $DEVKITARM/arm-eabi/lib/
+cp -v $BUILDSCRIPTDIR/dkarm-eabi/crtls/* $DEVKITARM/arm-eabi/lib/
 cd $DEVKITARM/arm-eabi/lib/
 $MAKE CRT=gba
 $MAKE CRT=gp32
@@ -22,46 +19,26 @@ $MAKE CRT=ds_arm7
 $MAKE CRT=ds_arm9
 $MAKE CRT=ds_cart
 
-cd $BUILDSCRIPTDIR
+cd $BUILDDIR/libnds-$LIBNDS_VER
+$MAKE || { echo "error building libnds"; exit 1; }
+$MAKE install || { echo "error installing libnds"; exit 1; }
 
-$MAKE -C tools/general
-$MAKE -C tools/general install PREFIX=$DEVKITARM/bin
+cd $BUILDDIR/default-arm7-$DEFAULT_ARM7_VER
+$MAKE || { echo "error building default arm7"; exit 1; }
+$MAKE install || { echo "error installing default arm7"; exit 1; }
 
-$MAKE -C tools/gba
-$MAKE -C tools/gba install PREFIX=$DEVKITARM/bin
+cd $BUILDDIR/libfat-$LIBFAT_VER
+$MAKE nds-install || { echo "error building nds libfat"; exit 1; }
+$MAKE gba-install || { echo "error installing gba libfat"; exit 1; }
 
-echo "building libnds ..."
-cd $LIBNDS_SRCDIR
-$MAKE install INSTALLDIR=$TOOLPATH 
-cd $BUILDSCRIPTDIR
+cd $BUILDDIR/maxmod-$MAXMOD_VER
+$MAKE || { echo "error building maxmod"; exit 1; }
+$MAKE install || { echo "error installing maxmod"; exit 1; }
 
-echo "building libgba ..."
-cd $LIBGBA_SRCDIR
-$MAKE install INSTALLDIR=$TOOLPATH
-cd $BUILDSCRIPTDIR
+cd $BUILDDIR/libmirko-$LIBMIRKO_VER
+$MAKE || { echo "error building libmirko"; exit 1; }
+$MAKE install || { echo "error installing libmirko"; exit 1; }
 
-echo "building libfat ..."
-cd $LIBFAT_SRCDIR
-$MAKE nds-install INSTALLDIR=$TOOLPATH 
-$MAKE gba-install INSTALLDIR=$TOOLPATH 
-cd $BUILDSCRIPTDIR
-
-echo "building dswifi ..."
-cd $DSWIFI_SRCDIR
-$MAKE install INSTALLDIR=$TOOLPATH 
-cd $BUILDSCRIPTDIR
-
-echo "building maxmod ..."
-cd $MAXMOD_SRCDIR
-$MAKE install INSTALLDIR=$TOOLPATH 
-cd $BUILDSCRIPTDIR
-
-echo "building default arm7 ..."
-cd $DEFAULT_ARM7_SRCDIR
-$MAKE install INSTALLDIR=$TOOLPATH 
-cd $BUILDSCRIPTDIR
-
-echo "building libmirko ..."
-cd $LIBMIRKO_SRCDIR
-$MAKE install INSTALLDIR=$TOOLPATH
-cd $BUILDSCRIPTDIR
+cd $BUILDDIR/libfilesystem-$FILESYSTEM_VER
+$MAKE || { echo "error building libfilesystem"; exit 1; }
+$MAKE install || { echo "error installing libfilesystem"; exit 1; }

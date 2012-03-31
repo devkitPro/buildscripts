@@ -5,21 +5,6 @@
 
 prefix=$INSTALLDIR/devkitARM
 
-PLATFORM=`uname -s`
-
-case $PLATFORM in
-  Darwin )	
-    cflags="-mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
-    ldflags="-mmacosx-version-min=10.4 -arch i386 -arch ppc -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk"
-    ;;
-  MINGW32* )
-    cflags="-D__USE_MINGW_ACCESS"
-# horrid hack to get -flto to work on windows
-    plugin_ld="--with-plugin-ld=ld"
-    ;;
-esac
-
-
 #---------------------------------------------------------------------------------
 # build and install binutils
 #---------------------------------------------------------------------------------
@@ -29,7 +14,7 @@ cd $target/binutils
 
 if [ ! -f configured-binutils ]
 then
-  CFLAGS=$cflags LDFLAGS=$ldflags ../../$BINUTILS_SRCDIR/configure \
+  CFLAGS=$cflags LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
         --prefix=$prefix --target=$target --disable-nls --disable-dependency-tracking --disable-werror \
         || { echo "Error configuring binutils"; exit 1; }
   touch configured-binutils
@@ -46,7 +31,7 @@ then
   $MAKE install || { echo "Error installing binutils"; exit 1; }
   touch installed-binutils
 fi
-cd $BUILDSCRIPTDIR
+cd $BUILDDIR
 
 #---------------------------------------------------------------------------------
 # included zlib has issues with multilib toolchain
@@ -62,8 +47,7 @@ cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
-  cp -r $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/newlib/libc/include $INSTALLDIR/devkitARM/$target/sys-include
-  CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../$GCC_SRCDIR/configure \
+  CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../gcc-$GCC_VER/configure \
         --enable-languages=c,c++,objc \
         --with-march=armv4t\
         --enable-interwork --enable-multilib\
@@ -74,6 +58,7 @@ then
         --disable-libstdcxx-pch \
         --target=$target \
         --with-newlib \
+		--with-headers=$BUILDDIR/newlib-$NEWLIB_VER/newlib/libc/include \
         --prefix=$prefix\
         --enable-lto $plugin_ld\
         --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 38" \
@@ -91,11 +76,10 @@ if [ ! -f installed-gcc-stage1 ]
 then
   $MAKE install-gcc || { echo "Error installing gcc"; exit 1; }
   touch installed-gcc-stage1
-  rm -fr $INSTALLDIR/devkitARM/$target/sys-include
 fi
 
 unset CFLAGS
-cd $BUILDSCRIPTDIR
+cd $BUILDDIR
 
 #---------------------------------------------------------------------------------
 # build and install newlib
@@ -105,7 +89,7 @@ cd $target/newlib
 
 if [ ! -f configured-newlib ]
 then
- CFLAGS_FOR_TARGET="-DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__ -O2" ../../$NEWLIB_SRCDIR/configure \
+ CFLAGS_FOR_TARGET="-DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__ -O2" ../../newlib-$NEWLIB_VER/configure \
         --disable-newlib-supplied-syscalls \
         --enable-newlib-mb \
         --enable-newlib-io-long-long \
@@ -132,7 +116,7 @@ fi
 # build and install the final compiler
 #---------------------------------------------------------------------------------
 
-cd $BUILDSCRIPTDIR
+cd $BUILDDIR
 cd $target/gcc
 
 if [ ! -f built-gcc-stage2 ]
@@ -147,7 +131,7 @@ then
   touch installed-gcc-stage2
 fi
 
-cd $BUILDSCRIPTDIR
+cd $BUILDDIR
 
 #---------------------------------------------------------------------------------
 # build and install the debugger
@@ -159,7 +143,7 @@ PLATFORM=`uname -s`
 
 if [ ! -f configured-gdb ]
 then
-  CFLAGS="$cflags" LDFLAGS="$ldflags" ../../$GDB_SRCDIR/configure \
+  CFLAGS="$cflags" LDFLAGS="$ldflags" ../../gdb-$GDB_VER/configure \
   --disable-nls --prefix=$prefix --target=$target --disable-werror \
   --disable-dependency-tracking \
   || { echo "Error configuring gdb"; exit 1; }

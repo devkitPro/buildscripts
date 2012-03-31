@@ -2,20 +2,6 @@
 
 prefix=$INSTALLDIR/devkitPSP
 
-PLATFORM=`uname -s`
-
-case $PLATFORM in
-  Darwin )
-    cflags="-O -g -mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
-	  ldflags="-arch i386 -arch ppc"
-    ;;
-  MINGW32* )
-    cflags="-D__USE_MINGW_ACCESS"
-# horrid hack to get -flto to work on windows
-    plugin_ld="--with-plugin-ld=ld"
-    ;;
-esac
-
 #---------------------------------------------------------------------------------
 # build and install binutils
 #---------------------------------------------------------------------------------
@@ -25,7 +11,7 @@ cd $target/binutils
 
 if [ ! -f configured-binutils ]
 then
-  CFLAGS=$cflags LDFLAGS=$ldflags ../../$BINUTILS_SRCDIR/configure \
+  CFLAGS=$cflags LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
 	--disable-threads --with-gcc --with-gnu-as --with-gnu-ld --with-stabs \
 	--disable-dependency-tracking  --disable-werror \
@@ -45,7 +31,7 @@ then
   $MAKE install || { echo "Error installing binutils"; exit 1; }
   touch installed-binutils
 fi
-cd $BUILDSCRIPTDIR
+cd $BUILDDIR
 
 #---------------------------------------------------------------------------------
 # build and install just the c compiler
@@ -56,7 +42,7 @@ cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
-   CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../$GCC_SRCDIR/configure \
+   CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../gcc-$GCC_VER/configure \
 	--enable-languages=c,c++,objc \
 	--disable-multilib\
 	--with-gcc --with-gnu-ld --with-gnu-as\
@@ -65,9 +51,10 @@ then
 	--disable-libstdcxx-pch \
 	--target=$target \
 	--with-newlib \
+	--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 	--prefix=$prefix \
 	--disable-dependency-tracking \
-	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPSP release 16" \
+	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPSP release 17" \
 	|| { echo "Error configuring gcc"; exit 1; }
   touch configured-gcc
 fi
@@ -86,9 +73,8 @@ then
   touch installed-gcc
 fi
 unset CFLAGS
-cd $BUILDSCRIPTDIR
+cd $BUILDDIR/pspsdk-$PSPSDK_VER
 
-cd $PSPSDK_SRCDIR
 if [ ! -f bootstrap-sdk ]
 then
   ./bootstrap || { echo "ERROR RUNNING PSPSDK BOOTSTRAP"; exit 1; }
@@ -107,7 +93,7 @@ then
   touch install-sdk-data
 fi
 
-cd $BUILDSCRIPTDIR
+cd $BUILDDIR
 
 #---------------------------------------------------------------------------------
 # build and install newlib
@@ -117,7 +103,7 @@ cd $target/newlib
 
 if [ ! -f configured-newlib ]
 then
-  $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure \
+  ../../newlib-$NEWLIB_VER/configure \
 	--target=$target \
 	--prefix=$prefix \
 	--disable-dependency-tracking \
@@ -137,7 +123,7 @@ then
   touch installed-newlib
 fi
 
-cd $BUILDSCRIPTDIR
+cd $BUILDDIR
 
 
 #---------------------------------------------------------------------------------
@@ -158,13 +144,12 @@ then
   touch installed-g++
 fi
 
-cd $BUILDSCRIPTDIR
+cd $BUILDDIR/pspsdk-$PSPSDK_VER
 
 #---------------------------------------------------------------------------------
 # build and install the psp sdk
 #---------------------------------------------------------------------------------
 echo "building pspsdk ..."
-cd $PSPSDK_SRCDIR
 
 if [ ! -f built-sdk ]
 then
@@ -178,7 +163,7 @@ then
   touch installed-sdk
 fi
 
-cd $BUILDSCRIPTDIR
+cd $BUILDDIR
 
 #---------------------------------------------------------------------------------
 # build and install the debugger
@@ -186,11 +171,9 @@ cd $BUILDSCRIPTDIR
 mkdir -p $target/gdb
 cd $target/gdb
 
-PLATFORM=`uname -s`
-
 if [ ! -f configured-gdb ]
 then
-  CFLAGS=$cflags LDFLAGS=$ldflags ../../$GDB_SRCDIR/configure \
+  CFLAGS=$cflags LDFLAGS=$ldflags ../../gdb-$GDB_VER/configure \
   --disable-nls --prefix=$prefix --target=$target --disable-werror \
   --disable-dependency-tracking \
   || { echo "Error configuring gdb"; exit 1; }

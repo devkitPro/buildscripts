@@ -1,13 +1,20 @@
-#!/bin/sh
+#!/bin/bash
+cd $BUILDDIR
 
-
-export DEVKITARM=$TOOLPATH/devkitARM
-export DEVKITPRO=$TOOLPATH
-
-$MAKE -C tools/gp32
-$MAKE -C tools/gp32 install PREFIX=$DEVKITARM/bin
-
-$MAKE -C tools/nds/
-$MAKE -C tools/nds/ install PREFIX=$DEVKITARM/bin
-
-$MAKE -C tools clean
+for archive in $hostarchives
+do
+	dir=$(echo $archive | sed -e 's/\(.*\)\.tar\.bz2/\1/' )
+	cd $BUILDDIR/$dir
+	if [ ! -f configured ]; then
+		CXXFLAGS=$cflags CFLAGS=$cflags LDFLAGS=$ldflags ./configure --prefix=$prefix --disable-dependency-tracking || { echo "error configuring $archive"; exit 1; }
+		touch configured
+	fi
+	if [ ! -f built ]; then
+		$MAKE || { echo "error building $archive"; exit 1; }
+		touch built
+	fi
+	if [ ! -f installed ]; then
+		$MAKE install || { echo "error installing $archive"; exit 1; }
+		touch installed
+	fi
+done

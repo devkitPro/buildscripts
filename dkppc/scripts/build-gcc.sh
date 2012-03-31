@@ -28,7 +28,7 @@ cd $target/binutils
 
 if [ ! -f configured-binutils ]
 then
-  CFLAGS=$cflags LDFLAGS=$ldflags ../../$BINUTILS_SRCDIR/configure \
+  CFLAGS=$cflags LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
 	--disable-werror \
 	--with-gcc --with-gnu-as --with-gnu-ld --disable-dependency-tracking \
@@ -48,7 +48,7 @@ then
   $MAKE install || { echo "Error installing ppc binutils"; exit 1; }
   touch installed-binutils
 fi
-cd $BUILDSCRIPTDIR
+cd $BUILDDIR
 
 
 #---------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ cd mn10200/binutils
 
 if [ ! -f configured-binutils ]
 then
-  CFLAGS=$cflags LDFLAGS=$ldflags ../../$BINUTILS_SRCDIR/configure \
+  CFLAGS=$cflags LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
 	--prefix=$prefix --target=mn10200 --disable-nls --disable-shared --disable-debug \
 	--disable-werror \
 	--disable-dependency-tracking --with-gcc --with-gnu-as --with-gnu-ld \
@@ -86,7 +86,7 @@ do
 	strip $f
 done
 
-cd $BUILDSCRIPTDIR
+cd $BUILDDIR
 
 #---------------------------------------------------------------------------------
 # build and install just the c compiler
@@ -96,8 +96,7 @@ cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
-  cp -r $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/newlib/libc/include $INSTALLDIR/devkitPPC/$target/sys-include
-  CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../$GCC_SRCDIR/configure \
+  CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../gcc-$GCC_VER/configure \
   --enable-languages=c,c++,objc \
   --enable-lto $plugin_ld\
   --with-cpu=750 \
@@ -106,9 +105,10 @@ then
   --disable-libstdcxx-pch \
   --target=$target \
   --with-newlib \
+  --with-headers=$BUILDDIR/newlib-$NEWLIB_VER/newlib/libc/include \
   --prefix=$prefix\
   --disable-dependency-tracking \
-  --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 25" \
+  --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 26" \
   2>&1 | tee gcc_configure.log
   touch configured-gcc
 fi
@@ -129,7 +129,7 @@ fi
 #---------------------------------------------------------------------------------
 # build and install newlib
 #---------------------------------------------------------------------------------
-cd $BUILDSCRIPTDIR
+cd $BUILDDIR
 mkdir -p $target/newlib
 cd $target/newlib
 
@@ -138,7 +138,7 @@ unset LDFLAGS
 
 if [ ! -f configured-newlib ]
 then
-  $BUILDSCRIPTDIR/$NEWLIB_SRCDIR/configure \
+  ../../newlib-$NEWLIB_VER/configure \
   --target=$target \
   --prefix=$prefix \
   --enable-newlib-mb \
@@ -164,9 +164,7 @@ cd $BUILDSCRIPTDIR
 # build and install the final compiler
 #---------------------------------------------------------------------------------
 
-cd $BUILDSCRIPTDIR
-mkdir -p $target/gcc
-cd $target/gcc
+cd $BUILDDIR/$target/gcc
 
 if [ ! -f built-gcc-stage2 ]
 then
@@ -181,7 +179,7 @@ then
 fi
 
 
-cd $BUILDSCRIPTDIR
+cd $BUILDDIR
 
 #---------------------------------------------------------------------------------
 # build and install the debugger
@@ -189,12 +187,9 @@ cd $BUILDSCRIPTDIR
 mkdir -p $target/gdb
 cd $target/gdb
 
-PLATFORM=`uname -s`
-
-
 if [ ! -f configured-gdb ]
 then
-  CFLAGS="$cflags" LDFLAGS="$ldflags" ../../$GDB_SRCDIR/configure \
+  CFLAGS="$cflags" LDFLAGS="$ldflags" ../../gdb-$GDB_VER/configure \
   --disable-nls --prefix=$prefix --target=$target --disable-werror --disable-dependency-tracking\
   || { echo "Error configuring gdb"; exit 1; }
   touch configured-gdb
