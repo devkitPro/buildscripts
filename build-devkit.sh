@@ -3,10 +3,10 @@
 # Build scripts for
 #	devkitARM release 38
 #	devkitPPC release 26
-#	devkitPSP release 16-1
+#	devkitPSP release 17
 #---------------------------------------------------------------------------------
 
-if [ 0 -eq 1 ] ; then
+if [ 1 -eq 1 ] ; then
   echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support."
   echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
   echo "http://sourceforge.net/projects/devkitpro/files/buildscripts/"
