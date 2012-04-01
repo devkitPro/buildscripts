@@ -1,9 +1,5 @@
 #!/bin/sh
 #---------------------------------------------------------------------------------
-# Check Parameters
-#---------------------------------------------------------------------------------
-
-prefix=$INSTALLDIR/devkitARM
 
 #---------------------------------------------------------------------------------
 # build and install binutils
@@ -15,7 +11,7 @@ cd $target/binutils
 if [ ! -f configured-binutils ]
 then
   CFLAGS=$cflags LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
-        --prefix=$prefix --target=$target --disable-nls --disable-dependency-tracking --disable-werror \
+        --prefix=$prefix --target=$target --disable-nls --disable-dependency-tracking --disable-werror $CROSS_PARAMS \
         || { echo "Error configuring binutils"; exit 1; }
   touch configured-binutils
 fi
@@ -32,11 +28,6 @@ then
   touch installed-binutils
 fi
 cd $BUILDDIR
-
-#---------------------------------------------------------------------------------
-# included zlib has issues with multilib toolchain
-#---------------------------------------------------------------------------------
-rm -fr $GCC_SRCDIR/zlib
 
 #---------------------------------------------------------------------------------
 # build and install just the c compiler
@@ -61,7 +52,7 @@ then
 		--with-headers=$BUILDDIR/newlib-$NEWLIB_VER/newlib/libc/include \
         --prefix=$prefix\
         --enable-lto $plugin_ld\
-        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 38" \
+        --with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 38" $CROSS_PARAMS \
         || { echo "Error configuring gcc"; exit 1; }
   touch configured-gcc
 fi
@@ -145,7 +136,7 @@ if [ ! -f configured-gdb ]
 then
   CFLAGS="$cflags" LDFLAGS="$ldflags" ../../gdb-$GDB_VER/configure \
   --disable-nls --prefix=$prefix --target=$target --disable-werror \
-  --disable-dependency-tracking \
+  --disable-dependency-tracking $CROSS_PARAMS \
   || { echo "Error configuring gdb"; exit 1; }
   touch configured-gdb
 fi

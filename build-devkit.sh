@@ -6,7 +6,7 @@
 #	devkitPSP release 17
 #---------------------------------------------------------------------------------
 
-if [ 1 -eq 1 ] ; then
+if [ 0 -eq 1 ] ; then
   echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support."
   echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
   echo "http://sourceforge.net/projects/devkitpro/files/buildscripts/"
@@ -61,6 +61,12 @@ function extract_and_patch {
 	fi
 }
 
+if [ ! -z "$CROSSBUILD" ] ; then
+	if [ ! -x $(which $CROSSBUILD-gcc) ]; then
+		echo "error $CROSSBUILD-gcc not in PATH"
+		exit 1
+	fi
+fi
 
 #---------------------------------------------------------------------------------
 # Sane defaults for building toolchain
@@ -129,6 +135,13 @@ export MAKE
 TOOLPATH=$(echo $INSTALLDIR | sed -e 's/^\([a-zA-Z]\):/\/\1/')
 export PATH=$PATH:$TOOLPATH/$package/bin
 
+if [ ! -z $CROSSBUILD ]; then
+	prefix=$INSTALLDIR/$CROSSBUILD/$package
+	CROSS_PARAMS="--build=`./config.guess` --host=$CROSSBUILD"
+else
+	prefix=$INSTALLDIR/$package
+fi
+
 if [ "$BUILD_DKPRO_AUTOMATED" != "1" ] ; then
 
 	echo
@@ -154,6 +167,9 @@ esac
 
 BUILDSCRIPTDIR=$(pwd)
 BUILDDIR=$(pwd)/.$package
+if [ ! -z $CROSSBUILD ]; then
+	BUILDDIR=$BUILDDIR-$CROSSBUILD
+fi
 DEVKITPRO_URL="http://downloads.sourceforge.net/devkitpro"
 
 patchdir=$(pwd)/$basedir/patches

@@ -1,4 +1,4 @@
 config.sh
-.devkitARM
-.devkitPPC
-.devkitPSP
+.devkitARM*
+.devkitPPC*
+.devkitPSP*
