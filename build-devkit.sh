@@ -217,6 +217,7 @@ cd $BUILDDIR
 
 extract_and_patch binutils $BINUTILS_VER bz2
 extract_and_patch gcc $GCC_VER bz2
+rm -fr gcc-$GCC_VER/zlib
 extract_and_patch newlib $NEWLIB_VER gz
 extract_and_patch gdb $GDB_VER bz2
 
