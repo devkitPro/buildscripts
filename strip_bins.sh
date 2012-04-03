@@ -21,7 +21,7 @@ do
 	fi
 done
 
-if [ VERSION -eq 2 ]; then
+if [ $VERSION -eq 2 ]; then
 	for f in	$prefix/mn10200/bin/*
 	do
 		$HOST_STRIP $f
@@ -33,5 +33,5 @@ fi
 # strip debug info from libraries
 #---------------------------------------------------------------------------------
 find $prefix/lib/gcc/$target -name *.a -exec $target-strip -d {} \;
-find $prefix/$package/$target -name *.a -exec $target-strip -d {} \;
+find $prefix/$target -name *.a -exec $target-strip -d {} \;
 
