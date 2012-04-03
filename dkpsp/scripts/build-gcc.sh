@@ -1,10 +1,5 @@
 #!/bin/sh
 
-if [ ! -z $CROSSBUILD ]; then
-	echo "canadian cross not yet supported"
-	exit 1
-fi
-
 #---------------------------------------------------------------------------------
 # build and install binutils
 #---------------------------------------------------------------------------------
@@ -18,6 +13,7 @@ then
 	--prefix=$prefix --target=$target --disable-nls --disable-debug \
 	--enable-lto --enable-plugins \
 	--disable-dependency-tracking  --disable-werror \
+	$CROSS_PARAMS \
 	|| { echo "Error configuring binutils"; exit 1; }
 	touch configured-binutils
 fi
@@ -59,6 +55,7 @@ then
 	--prefix=$prefix \
 	--disable-dependency-tracking \
 	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPSP release 17" \
+	$CROSS_PARAMS \
 	|| { echo "Error configuring gcc"; exit 1; }
 	touch configured-gcc
 fi
@@ -88,7 +85,7 @@ fi
 
 if [ ! -f configure-sdk ]
 then
-	./configure --with-pspdev="$prefix" || { echo "ERROR RUNNING PSPSDK CONFIGURE"; exit 1; }
+	./configure --with-pspdev="$prefix" $CROSS_PARAMS || { echo "ERROR RUNNING PSPSDK CONFIGURE"; exit 1; }
 	touch configure-sdk
 fi
 
@@ -181,6 +178,7 @@ then
 	CFLAGS=$cflags LDFLAGS=$ldflags ../../gdb-$GDB_VER/configure \
 	--disable-nls --prefix=$prefix --target=$target --disable-werror \
 	--disable-dependency-tracking \
+	$CROSS_PARAMS \
 	|| { echo "Error configuring gdb"; exit 1; }
 	touch configured-gdb
 fi
