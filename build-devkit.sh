@@ -190,7 +190,7 @@ fi
 if [ $VERSION -eq 2 ]; then
 	targetarchives="libogc-src-${LIBOGC_VER}.tar.bz2 libfat-src-${LIBFAT_VER}.tar.bz2"
 	hostarchives="gxtexconv-$GXTEXCONV_VER.tar.bz2 gcdspsuite-$GCDSPSUITE_VER.tar.bz2
-				  wiiload-$WIILOAD_VER.tar.bz2 elf2dol-$ELF2DOL_VER.tar.bz2"
+			wiiload-$WIILOAD_VER.tar.bz2 elf2dol-$ELF2DOL_VER.tar.bz2 general-tools-$GENERAL_TOOLS_VER.tar.bz2"
 fi
 
 if [ $VERSION -eq 3 ]; then
