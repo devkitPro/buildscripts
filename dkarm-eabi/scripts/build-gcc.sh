@@ -44,7 +44,7 @@ then
         --enable-interwork --enable-multilib\
         --with-gcc --with-gnu-ld --with-gnu-as \
         --disable-dependency-tracking \
-        --disable-shared --disable-threads --disable-win32-registry --disable-nls --disable-debug\
+        --disable-threads --disable-win32-registry --disable-nls --disable-debug\
         --disable-libmudflap --disable-libssp --disable-libgomp \
         --disable-libstdcxx-pch \
         --target=$target \
