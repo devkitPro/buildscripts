@@ -6,7 +6,7 @@ do
 	dir=$(echo $archive | sed -e 's/\(.*\)\.tar\.bz2/\1/' )
 	cd $BUILDDIR/$dir
 	if [ ! -f configured ]; then
-		CXXFLAGS=$cflags CFLAGS=$cflags LDFLAGS=$ldflags ./configure --prefix=$prefix --disable-dependency-tracking || { echo "error configuring $archive"; exit 1; }
+		CXXFLAGS=$cflags CFLAGS=$cflags LDFLAGS=$ldflags ./configure --prefix=$prefix --disable-dependency-tracking $CROSS_PARAMS || { echo "error configuring $archive"; exit 1; }
 		touch configured
 	fi
 	if [ ! -f built ]; then
