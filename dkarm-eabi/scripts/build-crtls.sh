@@ -6,14 +6,14 @@ export DEVKITARM=$DEVKITPRO/devkitARM
 #---------------------------------------------------------------------------------
 # copy base rulesets
 #---------------------------------------------------------------------------------
-cp -v $BUILDSCRIPTDIR/dkarm-eabi/rules/* $DEVKITARM
+cp -v $BUILDSCRIPTDIR/dkarm-eabi/rules/* $prefix
 
 #---------------------------------------------------------------------------------
 # Install and build the gba crt
 #---------------------------------------------------------------------------------
 
-cp -v $BUILDSCRIPTDIR/dkarm-eabi/crtls/* $DEVKITARM/arm-eabi/lib/
-cd $DEVKITARM/arm-eabi/lib/
+cp -v $BUILDSCRIPTDIR/dkarm-eabi/crtls/* $prefix/arm-eabi/lib/
+cd $prefix/arm-eabi/lib/
 $MAKE CRT=gba
 $MAKE CRT=gp32
 $MAKE CRT=er
