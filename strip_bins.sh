@@ -12,7 +12,7 @@ fi
 
 for f in $prefix/bin/* \
          $prefix/$target/bin/* \
-         $prefix/$package/libexec/gcc/$target/$GCC_VER/*
+         $prefix/libexec/gcc/$target/$GCC_VER/*
 do
   # exclude dll for windows, so for linux/osx, directories .la files, embedspu script & the gccbug text file
   if  ! [[ "$f" == *.dll || "$f" == *.so || -d $f || "$f" == *.la || "$f" == *-embedspu || "$f" == *-gccbug ]]
