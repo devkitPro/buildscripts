@@ -25,7 +25,7 @@ LIBMIRKO_VER=0.9.7
 MAXMOD_VER=1.0.7
 FILESYSTEM_VER=0.9.9
 LIBFAT_VER=1.0.11
-PSPSDK_VER=20120403
+PSPSDK_VER=20120404
 GBATOOLS_VER=1.0.0
 GRIT_VER=0.8.9
 NDSTOOL_VER=1.50.1
@@ -244,6 +244,7 @@ if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh || { echo "Err
 if [ -f $scriptdir/build-tools.sh ]; then . $scriptdir/build-tools.sh || { echo "Error building tools"; exit 1; }; cd $BUILDSCRIPTDIR; fi
 if [ -f $scriptdir/build-crtls.sh ]; then . $scriptdir/build-crtls.sh || { echo "Error building crtls"; exit 1; }; cd $BUILDSCRIPTDIR; fi
 
+echo "stripping installed binaries"
 . ./strip_bins.sh
 
 #---------------------------------------------------------------------------------
