@@ -42,7 +42,7 @@ cd $target/gcc
 if [ ! -f configured-gcc ]
 then
 	CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../gcc-$GCC_VER/configure \
-	--enable-languages=c,c++,objc \
+	--enable-languages=c,c++ \
 	--disable-multilib\
 	--with-gcc --with-gnu-ld --with-gnu-as\
 	--disable-shared --disable-win32-registry --disable-nls\
