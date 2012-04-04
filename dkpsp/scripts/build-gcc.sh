@@ -85,7 +85,7 @@ fi
 
 if [ ! -f configure-sdk ]
 then
-	./configure --with-pspdev="$prefix" $CROSS_PARAMS || { echo "ERROR RUNNING PSPSDK CONFIGURE"; exit 1; }
+	CFLAGS_FOR_HOST=$cflags LDFLAGS=$ldflags ./configure --with-pspdev="$prefix" $CROSS_PARAMS || { echo "ERROR RUNNING PSPSDK CONFIGURE"; exit 1; }
 	touch configure-sdk
 fi
 
