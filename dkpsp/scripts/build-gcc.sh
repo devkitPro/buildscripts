@@ -83,10 +83,10 @@ then
 	touch bootstrap-sdk
 fi
 
-if [ ! -f configure-sdk ]
+if [ ! -f configured-sdk ]
 then
-	CFLAGS_FOR_HOST=$cflags LDFLAGS=$ldflags ./configure --with-pspdev="$prefix" $CROSS_PARAMS || { echo "ERROR RUNNING PSPSDK CONFIGURE"; exit 1; }
-	touch configure-sdk
+	CFLAGS_FOR_HOST=$cflags LDFLAGS=$ldflags ./configure --with-pspdev="$prefix" --disable-dependency-tracking $CROSS_PARAMS || { echo "ERROR RUNNING PSPSDK CONFIGURE"; exit 1; }
+	touch configured-sdk
 fi
 
 if [ ! -f install-sdk-data ]
