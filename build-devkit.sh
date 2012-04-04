@@ -250,19 +250,20 @@ if [ -f $scriptdir/build-crtls.sh ]; then . $scriptdir/build-crtls.sh || { echo 
 # Clean up temporary files and source directories
 #---------------------------------------------------------------------------------
 
+cd $BUILDSCRIPTDIR
+
 if [ "$BUILD_DKPRO_AUTOMATED" != "1" ] ; then
-  echo
-  echo "Would you like to delete the build folders and patched sources? [Y/n]"
-  read answer
+	echo
+	echo "Would you like to delete the build folders and patched sources? [Y/n]"
+	read answer
 else
-  answer=y
+	answer=y
 fi
 
-if [ "$answer" != "n" -a "$answer" != "N" ]
-  then
+if [ "$answer" != "n" -a "$answer" != "N" ]; then
 
-  echo "Removing patched sources and build directories"
-
+	echo "Removing patched sources and build directories"
+	rm -fr $BUILDDIR
 fi
 
 
