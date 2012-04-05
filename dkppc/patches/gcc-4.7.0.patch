@@ -1,6 +1,6 @@
 diff -Nbaur gcc-4.7.0/gcc/config/rs6000/rs6000.h gcc-4.7.0-ppc/gcc/config/rs6000/rs6000.h
 --- gcc-4.7.0/gcc/config/rs6000/rs6000.h	2011-11-29 17:33:05.000000000 +0000
-+++ gcc-4.7.0-ppc/gcc/config/rs6000/rs6000.h	2012-03-23 15:09:12.000000000 +0000
++++ gcc-4.7.0-ppc/gcc/config/rs6000/rs6000.h	2012-04-05 20:59:16.000000000 +0100
 @@ -200,6 +200,7 @@
    { "asm_cpu_476",		ASM_CPU_476_SPEC },			\
    SUBTARGET_EXTRA_SPECS
@@ -20,7 +20,7 @@ diff -Nbaur gcc-4.7.0/gcc/config/rs6000/rs6000.h gcc-4.7.0-ppc/gcc/config/rs6000
  #ifdef HAVE_LOCAL_CPU_DETECT
 diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.h gcc-4.7.0-ppc/gcc/config/rs6000/sysv4.h
 --- gcc-4.7.0/gcc/config/rs6000/sysv4.h	2011-04-11 19:46:05.000000000 +0100
-+++ gcc-4.7.0-ppc/gcc/config/rs6000/sysv4.h	2012-03-23 15:09:12.000000000 +0000
++++ gcc-4.7.0-ppc/gcc/config/rs6000/sysv4.h	2012-04-05 20:59:16.000000000 +0100
 @@ -594,7 +594,11 @@
  
  /* Default starting address if specified.  */
@@ -182,7 +182,7 @@ diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.h gcc-4.7.0-ppc/gcc/config/rs6000/
    { "cpp_os_mvme",		CPP_OS_MVME_SPEC },			\
 diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.opt gcc-4.7.0-ppc/gcc/config/rs6000/sysv4.opt
 --- gcc-4.7.0/gcc/config/rs6000/sysv4.opt	2011-05-05 15:59:55.000000000 +0100
-+++ gcc-4.7.0-ppc/gcc/config/rs6000/sysv4.opt	2012-03-23 15:09:12.000000000 +0000
++++ gcc-4.7.0-ppc/gcc/config/rs6000/sysv4.opt	2012-04-05 20:59:16.000000000 +0100
 @@ -121,6 +121,26 @@
  Target RejectNegative
  Link with libads.a, libc.a and crt0.o
@@ -212,7 +212,7 @@ diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.opt gcc-4.7.0-ppc/gcc/config/rs600
  Link with libyk.a, libc.a and crt0.o
 diff -Nbaur gcc-4.7.0/gcc/config.gcc gcc-4.7.0-ppc/gcc/config.gcc
 --- gcc-4.7.0/gcc/config.gcc	2012-03-05 10:43:22.000000000 +0000
-+++ gcc-4.7.0-ppc/gcc/config.gcc	2012-03-23 15:09:12.000000000 +0000
++++ gcc-4.7.0-ppc/gcc/config.gcc	2012-04-05 20:59:17.000000000 +0100
 @@ -1999,7 +1999,7 @@
  	use_gcc_stdint=wrap
  	;;
@@ -224,7 +224,7 @@ diff -Nbaur gcc-4.7.0/gcc/config.gcc gcc-4.7.0-ppc/gcc/config.gcc
  	use_gcc_stdint=wrap
 diff -Nbaur gcc-4.7.0/libcpp/Makefile.in gcc-4.7.0-ppc/libcpp/Makefile.in
 --- gcc-4.7.0/libcpp/Makefile.in	2012-03-22 07:37:39.000000000 +0000
-+++ gcc-4.7.0-ppc/libcpp/Makefile.in	2012-03-23 15:09:12.000000000 +0000
++++ gcc-4.7.0-ppc/libcpp/Makefile.in	2012-04-05 20:59:17.000000000 +0100
 @@ -214,8 +214,7 @@
  # Note that we put the dependencies into a .Tpo file, then move them
  # into place if the compile succeeds.  We need this because gcc does
@@ -235,3 +235,15 @@ diff -Nbaur gcc-4.7.0/libcpp/Makefile.in gcc-4.7.0-ppc/libcpp/Makefile.in
  else
  COMPILE = source='$<' object='$@' libtool=no DEPDIR=$(DEPDIR) $(DEPMODE) \
  	  $(depcomp) $(COMPILE.base)
+diff -Nbaur gcc-4.7.0/libgcc/crtstuff.c gcc-4.7.0-ppc/libgcc/crtstuff.c
+--- gcc-4.7.0/libgcc/crtstuff.c	2011-12-06 21:35:41.000000000 +0000
++++ gcc-4.7.0-ppc/libgcc/crtstuff.c	2012-04-05 20:59:46.000000000 +0100
+@@ -49,7 +49,7 @@
+ 
+ /* Target machine header files require this define. */
+ #define IN_LIBGCC2
+-
++#define USED_FOR_TARGET
+ /* FIXME: Including auto-host is incorrect, but until we have
+    identified the set of defines that need to go into auto-target.h,
+    this will have to do.  */
