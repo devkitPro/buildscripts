@@ -35,7 +35,7 @@ GXTEXCONV_VER=0.1.8
 GCDSPSUITE_VER=1.4.0
 ELF2DOL_VER=1.0.0
 WIILOAD_VER=0.5.1
-MMUTIL_VER=1.8.5
+MMUTIL_VER=1.8.6
 
 #---------------------------------------------------------------------------------
 function extract_and_patch {
