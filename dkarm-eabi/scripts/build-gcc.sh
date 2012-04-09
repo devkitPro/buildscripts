@@ -72,6 +72,8 @@ then
 	touch installed-gcc-stage1
 fi
 
+rm -fr $prefix/sys-include
+
 unset CFLAGS
 cd $BUILDDIR
 
