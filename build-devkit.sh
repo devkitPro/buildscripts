@@ -7,14 +7,22 @@
 #---------------------------------------------------------------------------------
 
 if [ 1 -eq 1 ] ; then
-  echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support."
-  echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
-  echo "http://sourceforge.net/projects/devkitpro/files/buildscripts/"
-  echo
-  echo "The scripts in svn are quite often dependent on things which currently only exist on developer"
-  echo "machines. This is not a bug, use stable releases."
-  exit 1
+	echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support."
+	echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
+	echo "http://sourceforge.net/projects/devkitpro/files/buildscripts/"
+	echo
+	echo "The scripts in svn are quite often dependent on things which currently only exist on developer"
+	echo "machines. This is not a bug, use stable releases."
+	exit 1
 fi
+
+echo "Please note, these scripts are provided as a courtesy, toolchains built with them"
+echo "are for personal use only and may not be distributed by entities other than devkitPro."
+echo "See http://devkitpro.org/wiki/Trademarks"
+echo
+echo "Patches and improvements are of course welcome, please send these to the patch tracker"
+echo "https://sourceforge.net/tracker/?group_id=114505&atid=668553"
+echo
 
 LIBOGC_VER=1.8.10
 LIBGBA_VER=20090222
@@ -155,14 +163,16 @@ fi
 PLATFORM=`uname -s`
 
 case $PLATFORM in
-  Darwin )	
-    cflags="-mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
-    ldflags="-mmacosx-version-min=10.4 -arch i386 -arch ppc -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk"
+	Darwin )
+		cflags="-mmacosx-version-min=10.4 -isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
+		ldflags="-mmacosx-version-min=10.4 -arch i386 -arch ppc -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk"
+		export CC=gcc-4.0
+		export CXX=g++-4.0
     ;;
-  MINGW32* )
-    cflags="-D__USE_MINGW_ACCESS"
+	MINGW32* )
+		cflags="-D__USE_MINGW_ACCESS"
 # horrid hack to get -flto to work on windows
-    plugin_ld="--with-plugin-ld=ld"
+		plugin_ld="--with-plugin-ld=ld"
     ;;
 esac
 
