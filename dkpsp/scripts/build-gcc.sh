@@ -74,7 +74,7 @@ then
 	touch installed-gcc
 fi
 
-rm -fr $prefix/sys-include
+rm -fr $prefix/$target/sys-include
 
 unset CFLAGS
 cd $BUILDDIR/pspsdk-$PSPSDK_VER

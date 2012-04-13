@@ -105,7 +105,7 @@ then
 	rm -fr $INSTALLDIR/devkitPPC/$target/sys-include
 fi
 
-rm -fr $prefix/sys-include
+rm -fr $prefix/$target/sys-include
 
 #---------------------------------------------------------------------------------
 # build and install newlib
