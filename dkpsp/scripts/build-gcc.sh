@@ -12,6 +12,7 @@ then
 	CFLAGS=$cflags LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
 	--prefix=$prefix --target=$target --disable-nls --disable-debug \
 	--enable-lto --enable-plugins \
+	--enable-poison-system-directories \
 	--disable-dependency-tracking  --disable-werror \
 	$CROSS_PARAMS \
 	|| { echo "Error configuring binutils"; exit 1; }
@@ -42,19 +43,17 @@ cd $target/gcc
 if [ ! -f configured-gcc ]
 then
 	CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../gcc-$GCC_VER/configure \
-	--enable-languages=c,c++ \
+	--enable-languages=c \
 	--disable-multilib\
-	--with-gcc --with-gnu-ld --with-gnu-as\
 	--disable-shared --disable-win32-registry --disable-nls\
 	--enable-cxx-flags="-G0" \
 	--disable-libstdcxx-pch \
 	--target=$target \
 	--with-newlib \
+	--without-headers \
 	--enable-lto $plugin_ld \
-	--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 	--prefix=$prefix \
 	--disable-dependency-tracking \
-	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPSP release 17" \
 	$CROSS_PARAMS \
 	|| { echo "Error configuring gcc"; exit 1; }
 	touch configured-gcc
@@ -73,8 +72,6 @@ then
 	$MAKE install-gcc || { echo "Error installing gcc"; exit 1; }
 	touch installed-gcc
 fi
-
-rm -fr $prefix/$target/sys-include
 
 unset CFLAGS
 cd $BUILDDIR/pspsdk-$PSPSDK_VER
@@ -138,18 +135,40 @@ cd $BUILDDIR
 # build and install the final compiler
 #---------------------------------------------------------------------------------
 
-cd $target/gcc
+mkdir -p $target/gcc-stage2
+cd $target/gcc-stage2
 
-if [ ! -f built-g++ ]
+
+if [ ! -f configured-gcc ]
 then
-	$MAKE || { echo "Error building g++"; exit 1; }
-	touch built-g++
+	CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../gcc-$GCC_VER/configure \
+	--enable-languages=c,c++,objc \
+	--disable-multilib\
+	--enable-poison-system-directories \
+	--disable-shared --disable-win32-registry --disable-nls\
+	--enable-cxx-flags="-G0" \
+	--disable-libstdcxx-pch \
+	--target=$target \
+	--with-newlib \
+	--enable-lto $plugin_ld \
+	--prefix=$prefix \
+	--disable-dependency-tracking \
+	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPSP release 17" \
+	$CROSS_PARAMS \
+	|| { echo "Error configuring gcc"; exit 1; }
+	touch configured-gcc
 fi
 
-if [ ! -f installed-g++ ]
+if [ ! -f built-gcc ]
+then
+	$MAKE || { echo "Error building g++"; exit 1; }
+	touch built-gcc
+fi
+
+if [ ! -f installed-gcc ]
 then
 	$MAKE install || { echo "Error installing g++"; exit 1; }
-	touch installed-g++
+	touch installed-gcc
 fi
 
 cd $BUILDDIR/pspsdk-$PSPSDK_VER

@@ -15,6 +15,7 @@ then
 	CFLAGS=$cflags LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
 	--disable-werror \
+	--enable-poison-system-directories \
 	--enable-plugins --enable-lto --disable-dependency-tracking \
 	--disable-werror $CROSS_PARAMS \
 	|| { echo "Error configuing ppc binutils"; exit 1; }
@@ -75,7 +76,7 @@ cd $target/gcc
 if [ ! -f configured-gcc ]
 then
 	CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../gcc-$GCC_VER/configure \
-	--enable-languages=c,c++,objc \
+	--enable-languages=c \
 	--enable-lto $plugin_ld \
 	--with-cpu=750 \
 	--disable-nls --disable-shared --enable-threads --disable-multilib \
@@ -83,12 +84,11 @@ then
 	--disable-libstdcxx-pch \
 	--target=$target \
 	--with-newlib \
-	--with-headers=$BUILDDIR/newlib-$NEWLIB_VER/newlib/libc/include \
+	--without-headers \
 	--prefix=$prefix\
 	--disable-dependency-tracking \
-	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 26" \
 	$CROSS_PARAMS \
-	2>&1 | tee gcc_configure.log
+	|| { echo "Error configuring gcc stage 1"; exit 1; }
 	touch configured-gcc
 fi
 
@@ -104,8 +104,6 @@ then
 	touch installed-gcc-stage1
 	rm -fr $INSTALLDIR/devkitPPC/$target/sys-include
 fi
-
-rm -fr $prefix/$target/sys-include
 
 #---------------------------------------------------------------------------------
 # build and install newlib
@@ -143,18 +141,41 @@ fi
 # build and install the final compiler
 #---------------------------------------------------------------------------------
 
-cd $BUILDDIR/$target/gcc
+cd $BUILDDIR
 
-if [ ! -f built-gcc-stage2 ]
+mkdir -p $target/gcc-stage2
+cd $target/gcc-stage2
+
+if [ ! -f configured-gcc ]
 then
-	$MAKE all || { echo "Error building gcc stage2"; exit 1; }
-	touch built-gcc-stage2
+	CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../gcc-$GCC_VER/configure \
+	--enable-languages=c,c++,objc \
+	--enable-lto $plugin_ld \
+	--with-cpu=750 \
+	--disable-nls --disable-shared --enable-threads --disable-multilib \
+	--disable-win32-registry \
+	--disable-libstdcxx-pch \
+	--target=$target \
+	--with-newlib \
+	--prefix=$prefix\
+	--enable-poison-system-directories \
+	--disable-dependency-tracking \
+	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 26" \
+	$CROSS_PARAMS \
+	|| { echo "Error configuring gcc stage 1"; exit 1; }
+	touch configured-gcc
 fi
 
-if [ ! -f installed-gcc-stage2 ]
+if [ ! -f built ]
+then
+	$MAKE all || { echo "Error building gcc stage2"; exit 1; }
+	touch built
+fi
+
+if [ ! -f installed ]
 then
 	$MAKE install || { echo "Error installing gcc stage2"; exit 1; }
-	touch installed-gcc-stage2
+	touch installed
 fi
 
 
