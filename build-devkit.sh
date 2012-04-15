@@ -254,7 +254,7 @@ if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh || { echo "Err
 if [ -f $scriptdir/build-tools.sh ]; then . $scriptdir/build-tools.sh || { echo "Error building tools"; exit 1; }; cd $BUILDSCRIPTDIR; fi
 if [ -f $scriptdir/build-crtls.sh ]; then . $scriptdir/build-crtls.sh || { echo "Error building crtls"; exit 1; }; cd $BUILDSCRIPTDIR; fi
 
-if [ $CROSSBUILD="i686-w64-mingw32" ]; then
+if [ "$CROSSBUILD" = "i686-w64-mingw32" ]; then
 	if [ $VERSION -ne 3 ]; then
 		cp -v 	/opt/i686-w64-mingw32/mingw/lib/FreeImage.dll $prefix/bin
 	fi
