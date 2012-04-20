@@ -1,4 +1,16 @@
 #---------------------------------------------------------------------------------
+# change shell on Snow Leopard
+#---------------------------------------------------------------------------------
+UNAME_S	:=	$(shell uname -s)
+UNAME_R	:=	$(shell uname -r)
+
+ifneq (,$(findstring Darwin,$(UNAME_S)))
+	ifneq (,$(findstring 10.8.0,$(UNAME_R)))
+		export SHELL=/bin/bash
+	endif
+endif
+
+#---------------------------------------------------------------------------------
 # path to tools 
 #---------------------------------------------------------------------------------
 export PORTLIBS	:=	$(DEVKITPRO)/portlibs/ppc
