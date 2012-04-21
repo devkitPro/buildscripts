@@ -1,6 +1,6 @@
-diff -Nbaur gcc-4.7.0/gcc/config/rs6000/rs6000.h gcc-4.7.0-ppc/gcc/config/rs6000/rs6000.h
---- gcc-4.7.0/gcc/config/rs6000/rs6000.h	2011-11-29 17:33:05.000000000 +0000
-+++ gcc-4.7.0-ppc/gcc/config/rs6000/rs6000.h	2012-04-05 20:59:16.000000000 +0100
+diff -Nbaur gcc-4.6.3/gcc/config/rs6000/rs6000.h gcc-4.6.3-ppc/gcc/config/rs6000/rs6000.h
+--- gcc-4.6.3/gcc/config/rs6000/rs6000.h	2011-07-27 19:17:15.000000000 +0100
++++ gcc-4.6.3-ppc/gcc/config/rs6000/rs6000.h	2012-04-21 22:54:04.000000000 +0100
 @@ -200,6 +200,7 @@
    { "asm_cpu_476",		ASM_CPU_476_SPEC },			\
    SUBTARGET_EXTRA_SPECS
@@ -18,10 +18,10 @@ diff -Nbaur gcc-4.7.0/gcc/config/rs6000/rs6000.h gcc-4.7.0-ppc/gcc/config/rs6000
  
  #ifndef CC1_CPU_SPEC
  #ifdef HAVE_LOCAL_CPU_DETECT
-diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.h gcc-4.7.0-ppc/gcc/config/rs6000/sysv4.h
---- gcc-4.7.0/gcc/config/rs6000/sysv4.h	2011-04-11 19:46:05.000000000 +0100
-+++ gcc-4.7.0-ppc/gcc/config/rs6000/sysv4.h	2012-04-05 20:59:16.000000000 +0100
-@@ -594,7 +594,11 @@
+diff -Nbaur gcc-4.6.3/gcc/config/rs6000/sysv4.h gcc-4.6.3-ppc/gcc/config/rs6000/sysv4.h
+--- gcc-4.6.3/gcc/config/rs6000/sysv4.h	2011-03-07 07:50:23.000000000 +0000
++++ gcc-4.6.3-ppc/gcc/config/rs6000/sysv4.h	2012-04-21 22:54:04.000000000 +0100
+@@ -603,7 +603,11 @@
  
  /* Default starting address if specified.  */
  #define LINK_START_SPEC "\
@@ -34,7 +34,7 @@ diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.h gcc-4.7.0-ppc/gcc/config/rs6000/
    myellowknife : %(link_start_yellowknife) ; \
    mmvme        : %(link_start_mvme)        ; \
    msim         : %(link_start_sim)         ; \
-@@ -631,7 +635,8 @@
+@@ -641,7 +645,8 @@
  
  /* Any specific OS flags.  */
  #define LINK_OS_SPEC "\
@@ -44,7 +44,7 @@ diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.h gcc-4.7.0-ppc/gcc/config/rs6000/
    myellowknife : %(link_os_yellowknife) ; \
    mmvme        : %(link_os_mvme)        ; \
    msim         : %(link_os_sim)         ; \
-@@ -649,7 +654,10 @@
+@@ -660,7 +665,10 @@
  /* Override rs6000.h definition.  */
  #undef	CPP_SPEC
  #define	CPP_SPEC "%{posix: -D_POSIX_SOURCE} \
@@ -56,7 +56,7 @@ diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.h gcc-4.7.0-ppc/gcc/config/rs6000/
    myellowknife : %(cpp_os_yellowknife) ; \
    mmvme        : %(cpp_os_mvme)        ; \
    msim         : %(cpp_os_sim)         ; \
-@@ -663,7 +671,10 @@
+@@ -675,7 +683,10 @@
  
  #undef	STARTFILE_SPEC
  #define	STARTFILE_SPEC "\
@@ -68,7 +68,7 @@ diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.h gcc-4.7.0-ppc/gcc/config/rs6000/
    myellowknife : %(startfile_yellowknife) ; \
    mmvme        : %(startfile_mvme)        ; \
    msim         : %(startfile_sim)         ; \
-@@ -673,11 +684,12 @@
+@@ -686,11 +697,12 @@
    mcall-openbsd: %(startfile_openbsd)     ; \
                 : %(startfile_default)     }"
  
@@ -83,7 +83,7 @@ diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.h gcc-4.7.0-ppc/gcc/config/rs6000/
    myellowknife : %(lib_yellowknife) ; \
    mmvme        : %(lib_mvme)        ; \
    msim         : %(lib_sim)         ; \
-@@ -687,11 +699,12 @@
+@@ -701,11 +713,12 @@
    mcall-openbsd: %(lib_openbsd)     ; \
                 : %(lib_default)     }"
  
@@ -98,7 +98,7 @@ diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.h gcc-4.7.0-ppc/gcc/config/rs6000/
    myellowknife : %(endfile_yellowknife) ; \
    mmvme        : %(endfile_mvme)        ; \
    msim         : %(endfile_sim)         ; \
-@@ -707,16 +720,27 @@
+@@ -722,16 +735,27 @@
  
  /* Motorola ADS support.  */
  #define LIB_ADS_SPEC "--start-group -lads -lc --end-group"
@@ -126,7 +126,7 @@ diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.h gcc-4.7.0-ppc/gcc/config/rs6000/
  
  /* Motorola Yellowknife support.  */
  #define LIB_YELLOWKNIFE_SPEC "--start-group -lyk -lc --end-group"
-@@ -886,6 +910,7 @@
+@@ -926,6 +950,7 @@
  #undef	SUBTARGET_EXTRA_SPECS
  #define	SUBTARGET_EXTRA_SPECS						\
    { "crtsavres_default",	CRTSAVRES_DEFAULT_SPEC },		\
@@ -134,7 +134,7 @@ diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.h gcc-4.7.0-ppc/gcc/config/rs6000/
    { "lib_ads",			LIB_ADS_SPEC },				\
    { "lib_yellowknife",		LIB_YELLOWKNIFE_SPEC },			\
    { "lib_mvme",			LIB_MVME_SPEC },			\
-@@ -895,6 +920,7 @@
+@@ -936,6 +961,7 @@
    { "lib_netbsd",		LIB_NETBSD_SPEC },			\
    { "lib_openbsd",		LIB_OPENBSD_SPEC },			\
    { "lib_default",		LIB_DEFAULT_SPEC },			\
@@ -142,7 +142,7 @@ diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.h gcc-4.7.0-ppc/gcc/config/rs6000/
    { "startfile_ads",		STARTFILE_ADS_SPEC },			\
    { "startfile_yellowknife",	STARTFILE_YELLOWKNIFE_SPEC },		\
    { "startfile_mvme",		STARTFILE_MVME_SPEC },			\
-@@ -904,6 +930,7 @@
+@@ -946,6 +972,7 @@
    { "startfile_netbsd",		STARTFILE_NETBSD_SPEC },		\
    { "startfile_openbsd",	STARTFILE_OPENBSD_SPEC },		\
    { "startfile_default",	STARTFILE_DEFAULT_SPEC },		\
@@ -150,7 +150,7 @@ diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.h gcc-4.7.0-ppc/gcc/config/rs6000/
    { "endfile_ads",		ENDFILE_ADS_SPEC },			\
    { "endfile_yellowknife",	ENDFILE_YELLOWKNIFE_SPEC },		\
    { "endfile_mvme",		ENDFILE_MVME_SPEC },			\
-@@ -916,7 +943,11 @@
+@@ -959,7 +986,11 @@
    { "link_shlib",		LINK_SHLIB_SPEC },			\
    { "link_target",		LINK_TARGET_SPEC },			\
    { "link_start",		LINK_START_SPEC },			\
@@ -162,7 +162,7 @@ diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.h gcc-4.7.0-ppc/gcc/config/rs6000/
    { "link_start_yellowknife",	LINK_START_YELLOWKNIFE_SPEC },		\
    { "link_start_mvme",		LINK_START_MVME_SPEC },			\
    { "link_start_sim",		LINK_START_SIM_SPEC },			\
-@@ -926,6 +957,7 @@
+@@ -970,6 +1001,7 @@
    { "link_start_openbsd",	LINK_START_OPENBSD_SPEC },		\
    { "link_start_default",	LINK_START_DEFAULT_SPEC },		\
    { "link_os",			LINK_OS_SPEC },				\
@@ -170,7 +170,7 @@ diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.h gcc-4.7.0-ppc/gcc/config/rs6000/
    { "link_os_ads",		LINK_OS_ADS_SPEC },			\
    { "link_os_yellowknife",	LINK_OS_YELLOWKNIFE_SPEC },		\
    { "link_os_mvme",		LINK_OS_MVME_SPEC },			\
-@@ -939,6 +971,9 @@
+@@ -984,6 +1016,9 @@
    { "cc1_endian_little",	CC1_ENDIAN_LITTLE_SPEC },		\
    { "cc1_endian_default",	CC1_ENDIAN_DEFAULT_SPEC },		\
    { "cc1_secure_plt_default",	CC1_SECURE_PLT_DEFAULT_SPEC },		\
@@ -180,10 +180,10 @@ diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.h gcc-4.7.0-ppc/gcc/config/rs6000/
    { "cpp_os_ads",		CPP_OS_ADS_SPEC },			\
    { "cpp_os_yellowknife",	CPP_OS_YELLOWKNIFE_SPEC },		\
    { "cpp_os_mvme",		CPP_OS_MVME_SPEC },			\
-diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.opt gcc-4.7.0-ppc/gcc/config/rs6000/sysv4.opt
---- gcc-4.7.0/gcc/config/rs6000/sysv4.opt	2011-05-05 15:59:55.000000000 +0100
-+++ gcc-4.7.0-ppc/gcc/config/rs6000/sysv4.opt	2012-04-05 20:59:16.000000000 +0100
-@@ -121,6 +121,26 @@
+diff -Nbaur gcc-4.6.3/gcc/config/rs6000/sysv4.opt gcc-4.6.3-ppc/gcc/config/rs6000/sysv4.opt
+--- gcc-4.6.3/gcc/config/rs6000/sysv4.opt	2011-01-03 20:52:22.000000000 +0000
++++ gcc-4.6.3-ppc/gcc/config/rs6000/sysv4.opt	2012-04-21 22:54:04.000000000 +0100
+@@ -108,6 +108,26 @@
  Target RejectNegative
  Link with libads.a, libc.a and crt0.o
  
@@ -210,22 +210,22 @@ diff -Nbaur gcc-4.7.0/gcc/config/rs6000/sysv4.opt gcc-4.7.0-ppc/gcc/config/rs600
  myellowknife
  Target RejectNegative
  Link with libyk.a, libc.a and crt0.o
-diff -Nbaur gcc-4.7.0/gcc/config.gcc gcc-4.7.0-ppc/gcc/config.gcc
---- gcc-4.7.0/gcc/config.gcc	2012-03-05 10:43:22.000000000 +0000
-+++ gcc-4.7.0-ppc/gcc/config.gcc	2012-04-05 20:59:17.000000000 +0100
-@@ -1999,7 +1999,7 @@
+diff -Nbaur gcc-4.6.3/gcc/config.gcc gcc-4.6.3-ppc/gcc/config.gcc
+--- gcc-4.6.3/gcc/config.gcc	2011-07-22 17:44:50.000000000 +0100
++++ gcc-4.6.3-ppc/gcc/config.gcc	2012-04-21 22:54:04.000000000 +0100
+@@ -2133,7 +2133,7 @@
  	use_gcc_stdint=wrap
  	;;
  powerpc-*-eabi*)
 -	tm_file="${tm_file} dbxelf.h elfos.h usegas.h freebsd-spec.h newlib-stdint.h rs6000/sysv4.h rs6000/eabi.h rs6000/e500.h"
 +	tm_file="${tm_file} dbxelf.h elfos.h usegas.h freebsd-spec.h newlib-stdint.h rs6000/sysv4.h rs6000/eabi.h rs6000/e500.h rs6000/750cl.h"
  	extra_options="${extra_options} rs6000/sysv4.opt"
- 	tmake_file="rs6000/t-fprules rs6000/t-ppcgas rs6000/t-ppccomm"
+ 	tmake_file="rs6000/t-fprules rs6000/t-fprules-fpbit rs6000/t-ppcgas rs6000/t-ppccomm"
  	use_gcc_stdint=wrap
-diff -Nbaur gcc-4.7.0/libcpp/Makefile.in gcc-4.7.0-ppc/libcpp/Makefile.in
---- gcc-4.7.0/libcpp/Makefile.in	2012-03-22 07:37:39.000000000 +0000
-+++ gcc-4.7.0-ppc/libcpp/Makefile.in	2012-04-05 20:59:17.000000000 +0100
-@@ -214,8 +214,7 @@
+diff -Nbaur gcc-4.6.3/libcpp/Makefile.in gcc-4.6.3-ppc/libcpp/Makefile.in
+--- gcc-4.6.3/libcpp/Makefile.in	2012-03-01 12:03:46.000000000 +0000
++++ gcc-4.6.3-ppc/libcpp/Makefile.in	2012-04-21 22:54:04.000000000 +0100
+@@ -212,8 +212,7 @@
  # Note that we put the dependencies into a .Tpo file, then move them
  # into place if the compile succeeds.  We need this because gcc does
  # not atomically write the dependency output file.
@@ -235,15 +235,3 @@ diff -Nbaur gcc-4.7.0/libcpp/Makefile.in gcc-4.7.0-ppc/libcpp/Makefile.in
  else
  COMPILE = source='$<' object='$@' libtool=no DEPDIR=$(DEPDIR) $(DEPMODE) \
  	  $(depcomp) $(COMPILE.base)
-diff -Nbaur gcc-4.7.0/libgcc/crtstuff.c gcc-4.7.0-ppc/libgcc/crtstuff.c
---- gcc-4.7.0/libgcc/crtstuff.c	2011-12-06 21:35:41.000000000 +0000
-+++ gcc-4.7.0-ppc/libgcc/crtstuff.c	2012-04-05 20:59:46.000000000 +0100
-@@ -49,7 +49,7 @@
- 
- /* Target machine header files require this define. */
- #define IN_LIBGCC2
--
-+#define USED_FOR_TARGET
- /* FIXME: Including auto-host is incorrect, but until we have
-    identified the set of defines that need to go into auto-target.h,
-    this will have to do.  */
