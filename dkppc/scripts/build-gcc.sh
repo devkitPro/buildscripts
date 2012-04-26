@@ -157,7 +157,7 @@ then
 	touch installed-stage2
 fi
 
-rm -fr $INSTALLDIR/devkitPPC/$target/sys-include
+rm -fr $prefix/$target/sys-include
 
 cd $BUILDDIR
 
