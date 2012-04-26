@@ -43,17 +43,18 @@ cd $target/gcc
 if [ ! -f configured-gcc ]
 then
 	CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../gcc-$GCC_VER/configure \
-	--enable-languages=c \
+	--enable-languages=c,c++,objc,obj-c++ \
 	--disable-multilib\
 	--disable-shared --disable-win32-registry --disable-nls\
 	--enable-cxx-flags="-G0" \
 	--disable-libstdcxx-pch \
 	--target=$target \
 	--with-newlib \
-	--without-headers \
+	--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 	--enable-lto $plugin_ld \
 	--prefix=$prefix \
 	--disable-dependency-tracking \
+	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPSP release 17" \
 	$CROSS_PARAMS \
 	|| { echo "Error configuring gcc"; exit 1; }
 	touch configured-gcc
@@ -128,49 +129,27 @@ then
 	touch installed-newlib
 fi
 
-cd $BUILDDIR
-
-
 #---------------------------------------------------------------------------------
 # build and install the final compiler
 #---------------------------------------------------------------------------------
 
-mkdir -p $target/gcc-stage2
-cd $target/gcc-stage2
+cd $BUILDDIR
 
+cd $target/gcc
 
-if [ ! -f configured-gcc ]
+if [ ! -f built-stage2 ]
 then
-	CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../gcc-$GCC_VER/configure \
-	--enable-languages=c,c++,objc \
-	--disable-multilib\
-	--enable-poison-system-directories \
-	--disable-shared --disable-win32-registry --disable-nls\
-	--enable-cxx-flags="-G0" \
-	--disable-libstdcxx-pch \
-	--target=$target \
-	--with-newlib \
-	--enable-lto $plugin_ld \
-	--prefix=$prefix \
-	--disable-dependency-tracking \
-	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPSP release 17" \
-	$CROSS_PARAMS \
-	|| { echo "Error configuring gcc"; exit 1; }
-	touch configured-gcc
+	$MAKE all || { echo "Error building gcc stage2"; exit 1; }
+	touch built-stage2
 fi
 
-if [ ! -f built-gcc ]
+if [ ! -f installed-stage2 ]
 then
-	$MAKE || { echo "Error building g++"; exit 1; }
-	touch built-gcc
+	$MAKE install || { echo "Error installing gcc stage2"; exit 1; }
+	touch installed-stage2
 fi
 
-if [ ! -f installed-gcc ]
-then
-	$MAKE install || { echo "Error installing g++"; exit 1; }
-	touch installed-gcc
-fi
-
+rm -fr $prefix/$target/sys-include
 cd $BUILDDIR/pspsdk-$PSPSDK_VER
 
 #---------------------------------------------------------------------------------

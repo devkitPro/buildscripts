@@ -40,8 +40,9 @@ cd $target/gcc-stage1
 if [ ! -f configured-gcc ]
 then
 	CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../gcc-$GCC_VER/configure \
-		--enable-languages=c \
+		--enable-languages=c,c++,objc,obj-c++ \
 		--with-march=armv4t\
+		--enable-poison-system-directories \
 		--enable-interwork --enable-multilib \
 		--disable-dependency-tracking \
 		--disable-threads --disable-win32-registry --disable-nls --disable-debug\
@@ -49,9 +50,10 @@ then
 		--disable-libstdcxx-pch \
 		--target=$target \
 		--with-newlib \
-		--without-headers \
+		--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 		--prefix=$prefix \
 		--enable-lto $plugin_ld\
+		--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 39" \
 		$CROSS_PARAMS \
 		|| { echo "Error configuring gcc"; exit 1; }
 	touch configured-gcc
@@ -109,41 +111,22 @@ fi
 #---------------------------------------------------------------------------------
 
 cd $BUILDDIR
-mkdir -p $target/gcc-stage2
-cd $target/gcc-stage2
 
-if [ ! -f configured-gcc ]
+cd $target/gcc
+
+if [ ! -f built-stage2 ]
 then
-	CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../gcc-$GCC_VER/configure \
-		--enable-languages=c,c++,objc \
-		--with-march=armv4t \
-		--enable-interwork --enable-multilib \
-		--enable-poison-system-directories \
-		--disable-dependency-tracking \
-		--disable-threads --disable-win32-registry --disable-nls --disable-debug\
-		--disable-libmudflap --disable-libssp --disable-libgomp \
-		--disable-libstdcxx-pch \
-		--target=$target \
-		--with-newlib \
-		--prefix=$prefix \
-		--enable-lto $plugin_ld\
-		--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 39" \
-		$CROSS_PARAMS \
-		|| { echo "Error configuring gcc"; exit 1; }
-	touch configured-gcc
+	$MAKE all || { echo "Error building gcc stage2"; exit 1; }
+	touch built-stage2
 fi
 
-if [ ! -f built-gcc ]
-then
-	$MAKE || { echo "Error building gcc stage2"; exit 1; }
-	touch built-gcc
-fi
-
-if [ ! -f installed-gcc ]
+if [ ! -f installed-stage2 ]
 then
 	$MAKE install || { echo "Error installing gcc stage2"; exit 1; }
-	touch installed-gcc
+	touch installed-stage2
 fi
+
+rm -fr $prefix/$target/sys-include
 
 cd $BUILDDIR
 
