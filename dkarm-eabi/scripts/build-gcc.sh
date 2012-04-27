@@ -34,8 +34,8 @@ cd $BUILDDIR
 #---------------------------------------------------------------------------------
 # build and install just the c compiler
 #---------------------------------------------------------------------------------
-mkdir -p $target/gcc-stage1
-cd $target/gcc-stage1
+mkdir -p $target/gcc
+cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
