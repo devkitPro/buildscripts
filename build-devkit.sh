@@ -1,7 +1,7 @@
 #!/bin/bash
 #---------------------------------------------------------------------------------
 # Build scripts for
-#	devkitARM release 38
+#	devkitARM release 39
 #	devkitPPC release 26
 #	devkitPSP release 17
 #---------------------------------------------------------------------------------
@@ -44,6 +44,8 @@ GCDSPSUITE_VER=1.4.0
 ELF2DOL_VER=1.0.0
 WIILOAD_VER=0.5.1
 MMUTIL_VER=1.8.6
+DFU_UTIL_VER=0.6
+STLINK_VER=0.5.0
 
 #---------------------------------------------------------------------------------
 function extract_and_patch {
@@ -194,7 +196,8 @@ if [ $VERSION -eq 1 ]; then
 		default-arm7-src-${DEFAULT_ARM7_VER}.tar.bz2 libfilesystem-src-${FILESYSTEM_VER}.tar.bz2
 		libfat-src-${LIBFAT_VER}.tar.bz2"
 	hostarchives="gbatools-$GBATOOLS_VER.tar.bz2 grit-$GRIT_VER.tar.bz2 ndstool-$NDSTOOL_VER.tar.bz2
-		general-tools-$GENERAL_TOOLS_VER.tar.bz2 dlditool-$DLDITOOL_VER.tar.bz2 mmutil-$MMUTIL_VER.tar.bz2"
+		general-tools-$GENERAL_TOOLS_VER.tar.bz2 dlditool-$DLDITOOL_VER.tar.bz2 mmutil-$MMUTIL_VER.tar.bz2
+		dfu-util-$DFU_UTIL_VER.tar.bz2 stlink-$STLINK_VER.tar.bz2"
 fi
 
 if [ $VERSION -eq 2 ]; then
