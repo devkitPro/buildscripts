@@ -1,7 +1,7 @@
 #!/bin/bash
 #---------------------------------------------------------------------------------
 # Build scripts for
-#	devkitARM release 39
+#	devkitARM release 40
 #	devkitPPC release 26
 #	devkitPSP release 17
 #---------------------------------------------------------------------------------
@@ -24,9 +24,9 @@ echo "Patches and improvements are of course welcome, please send these to the p
 echo "https://sourceforge.net/tracker/?group_id=114505&atid=668553"
 echo
 
-LIBOGC_VER=1.8.10
+LIBOGC_VER=1.8.11
 LIBGBA_VER=20090222
-LIBNDS_VER=1.5.5
+LIBNDS_VER=1.5.7
 DEFAULT_ARM7_VER=0.5.24
 DSWIFI_VER=0.3.13
 LIBMIRKO_VER=0.9.7
