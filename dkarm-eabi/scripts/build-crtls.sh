@@ -26,6 +26,10 @@ cd $BUILDDIR/libnds-$LIBNDS_VER
 $MAKE || { echo "error building libnds"; exit 1; }
 $MAKE install || { echo "error installing libnds"; exit 1; }
 
+cd $BUILDDIR/dswifi-$DSWIFI_VER
+$MAKE || { echo "error building dswifi"; exit 1; }
+$MAKE install || { echo "error installing dswifi"; exit 1; }
+
 cd $BUILDDIR/default-arm7-$DEFAULT_ARM7_VER
 $MAKE || { echo "error building default arm7"; exit 1; }
 $MAKE install || { echo "error installing default arm7"; exit 1; }
