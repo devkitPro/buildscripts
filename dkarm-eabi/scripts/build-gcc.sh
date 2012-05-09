@@ -41,6 +41,7 @@ if [ ! -f configured-gcc ]
 then
 	CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../gcc-$GCC_VER/configure \
 		--enable-languages=c,c++,objc,obj-c++ \
+		--with-gnu-as --with-gnu-ld --with-gcc \
 		--with-march=armv4t\
 		--enable-poison-system-directories \
 		--enable-interwork --enable-multilib \
@@ -53,7 +54,7 @@ then
 		--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 		--prefix=$prefix \
 		--enable-lto $plugin_ld\
-		--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 39" \
+		--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 40" \
 		$CROSS_PARAMS \
 		|| { echo "Error configuring gcc"; exit 1; }
 	touch configured-gcc
