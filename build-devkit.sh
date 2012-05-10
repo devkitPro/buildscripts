@@ -153,6 +153,10 @@ else
 	prefix=$INSTALLDIR/$package
 fi
 
+if [ "$CROSSBUILD" = "i686-w64-mingw32" ]; then
+	export PKG_CONFIG_PATH=/opt/i686-w64-mingw32/mingw/lib/pkgconfig
+fi
+
 if [ "$BUILD_DKPRO_AUTOMATED" != "1" ] ; then
 
 	echo
@@ -260,6 +264,9 @@ if [ -f $scriptdir/build-crtls.sh ]; then . $scriptdir/build-crtls.sh || { echo 
 if [ "$CROSSBUILD" = "i686-w64-mingw32" ]; then
 	if [ $VERSION -ne 3 ]; then
 		cp -v 	/opt/i686-w64-mingw32/mingw/lib/FreeImage.dll $prefix/bin
+	fi
+	if [ $VERSION -eq 1 ]; then
+		cp -v /opt/i686-w64-mingw32/i686-w64-mingw32/bin/libusb-1.0.dll $prefix/bin
 	fi
 	cp -v	/opt/i686-w64-mingw32/mingw/lib/libstdc++-6.dll \
 		/opt/i686-w64-mingw32/mingw/lib/libgcc_s_sjlj-1.dll \
