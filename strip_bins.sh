@@ -19,6 +19,10 @@ do
 	then
 		$HOST_STRIP $f
 	fi
+	if [[ "$f" == *.dll ]]
+	then
+		$HOST_STRIP -d $f
+	fi
 done
 
 if [ $VERSION -eq 2 ]; then
