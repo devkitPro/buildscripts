@@ -1,6 +1,6 @@
-diff -Nbaur gcc-4.7.0/gcc/config/arm/t-arm-elf gcc-4.7.0-arm/gcc/config/arm/t-arm-elf
---- gcc-4.7.0/gcc/config/arm/t-arm-elf	2011-11-02 15:23:48.000000000 +0000
-+++ gcc-4.7.0-arm/gcc/config/arm/t-arm-elf	2012-04-26 14:09:06.000000000 +0100
+diff -Nbaur gcc-4.7.1/gcc/config/arm/t-arm-elf gcc-4.7.1-arm/gcc/config/arm/t-arm-elf
+--- gcc-4.7.1/gcc/config/arm/t-arm-elf	2011-11-02 15:23:48.000000000 +0000
++++ gcc-4.7.1-arm/gcc/config/arm/t-arm-elf	2012-06-15 19:36:09.000000000 +0100
 @@ -26,22 +26,44 @@
  #MULTILIB_DIRNAMES    += fa526 fa626 fa606te fa626te fmp626 fa726te
  #MULTILIB_EXCEPTIONS  += *mthumb*/*mcpu=fa526 *mthumb*/*mcpu=fa626
@@ -71,18 +71,18 @@ diff -Nbaur gcc-4.7.0/gcc/config/arm/t-arm-elf gcc-4.7.0-arm/gcc/config/arm/t-ar
  # 
  # MULTILIB_OPTIONS    += mfloat-abi=hard/mfloat-abi=soft
  # MULTILIB_DIRNAMES   += fpu soft
-diff -Nbaur gcc-4.7.0/gcc/config/arm/unknown-elf.h gcc-4.7.0-arm/gcc/config/arm/unknown-elf.h
---- gcc-4.7.0/gcc/config/arm/unknown-elf.h	2011-03-31 13:13:13.000000000 +0100
-+++ gcc-4.7.0-arm/gcc/config/arm/unknown-elf.h	2012-04-26 14:09:07.000000000 +0100
+diff -Nbaur gcc-4.7.1/gcc/config/arm/unknown-elf.h gcc-4.7.1-arm/gcc/config/arm/unknown-elf.h
+--- gcc-4.7.1/gcc/config/arm/unknown-elf.h	2011-03-31 13:13:13.000000000 +0100
++++ gcc-4.7.1-arm/gcc/config/arm/unknown-elf.h	2012-06-15 19:36:09.000000000 +0100
 @@ -94,4 +94,4 @@
     udivmoddi4, which will depend on the exception unwind routines,
     which will depend on abort, which is defined in libc.  */ 
  #undef LINK_GCC_C_SEQUENCE_SPEC
 -#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L --end-group"
 +#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
-diff -Nbaur gcc-4.7.0/gcc/gcc.c gcc-4.7.0-arm/gcc/gcc.c
---- gcc-4.7.0/gcc/gcc.c	2012-02-28 17:31:38.000000000 +0000
-+++ gcc-4.7.0-arm/gcc/gcc.c	2012-04-26 14:09:07.000000000 +0100
+diff -Nbaur gcc-4.7.1/gcc/gcc.c gcc-4.7.1-arm/gcc/gcc.c
+--- gcc-4.7.1/gcc/gcc.c	2012-02-28 17:31:38.000000000 +0000
++++ gcc-4.7.1-arm/gcc/gcc.c	2012-06-15 19:36:09.000000000 +0100
 @@ -548,6 +548,11 @@
  #endif
  #endif
@@ -111,20 +111,9 @@ diff -Nbaur gcc-4.7.0/gcc/gcc.c gcc-4.7.0-arm/gcc/gcc.c
    INIT_STATIC_SPEC ("startfile",		&startfile_spec),
    INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
    INIT_STATIC_SPEC ("version",			&compiler_version),
-diff -Nbaur gcc-4.7.0/gcc/tree-ssa-pre.c gcc-4.7.0-arm/gcc/tree-ssa-pre.c
---- gcc-4.7.0/gcc/tree-ssa-pre.c	2012-02-15 00:10:00.000000000 +0000
-+++ gcc-4.7.0-arm/gcc/tree-ssa-pre.c	2012-04-26 14:09:43.000000000 +0100
-@@ -4337,6 +4337,7 @@
- 	     has the same value number as its rhs.  If so, the store is
- 	     dead.  */
- 	  else if (gimple_assign_single_p (stmt)
-+		   && !gimple_has_volatile_ops (stmt)
- 		   && !is_gimple_reg (gimple_assign_lhs (stmt))
- 		   && (TREE_CODE (rhs) == SSA_NAME
- 		       || is_gimple_min_invariant (rhs)))
-diff -Nbaur gcc-4.7.0/libcpp/Makefile.in gcc-4.7.0-arm/libcpp/Makefile.in
---- gcc-4.7.0/libcpp/Makefile.in	2012-03-22 07:37:39.000000000 +0000
-+++ gcc-4.7.0-arm/libcpp/Makefile.in	2012-04-26 14:09:08.000000000 +0100
+diff -Nbaur gcc-4.7.1/libcpp/Makefile.in gcc-4.7.1-arm/libcpp/Makefile.in
+--- gcc-4.7.1/libcpp/Makefile.in	2012-06-14 09:48:08.000000000 +0100
++++ gcc-4.7.1-arm/libcpp/Makefile.in	2012-06-15 19:36:11.000000000 +0100
 @@ -214,8 +214,7 @@
  # Note that we put the dependencies into a .Tpo file, then move them
  # into place if the compile succeeds.  We need this because gcc does
@@ -135,15 +124,15 @@ diff -Nbaur gcc-4.7.0/libcpp/Makefile.in gcc-4.7.0-arm/libcpp/Makefile.in
  else
  COMPILE = source='$<' object='$@' libtool=no DEPDIR=$(DEPDIR) $(DEPMODE) \
  	  $(depcomp) $(COMPILE.base)
-diff -Nbaur gcc-4.7.0/libgcc/Makefile.in gcc-4.7.0-arm/libgcc/Makefile.in
---- gcc-4.7.0/libgcc/Makefile.in	2011-11-22 03:01:02.000000000 +0000
-+++ gcc-4.7.0-arm/libgcc/Makefile.in	2012-04-26 14:09:09.000000000 +0100
+diff -Nbaur gcc-4.7.1/libgcc/Makefile.in gcc-4.7.1-arm/libgcc/Makefile.in
+--- gcc-4.7.1/libgcc/Makefile.in	2012-05-24 15:59:38.000000000 +0100
++++ gcc-4.7.1-arm/libgcc/Makefile.in	2012-06-16 13:58:38.000000000 +0100
 @@ -500,14 +500,14 @@
  lib2-divmod-o = $(patsubst %,%$(objext),$(LIB2_DIVMOD_FUNCS))
  $(lib2-divmod-o): %$(objext): $(srcdir)/libgcc2.c
  	$(gcc_compile) -DL$* -c $< \
 -	  -fexceptions -fnon-call-exceptions $(vis_hide)
-+	  -fno-exceptions -fnon-call-exceptions $(vis_hide)
++	  -fno-exceptions -fno-non-call-exceptions $(vis_hide)
  libgcc-objects += $(lib2-divmod-o)
  
  ifeq ($(enable_shared),yes)
@@ -151,7 +140,7 @@ diff -Nbaur gcc-4.7.0/libgcc/Makefile.in gcc-4.7.0-arm/libgcc/Makefile.in
  $(lib2-divmod-s-o): %_s$(objext): $(srcdir)/libgcc2.c
  	$(gcc_s_compile) -DL$* -c $< \
 -	  -fexceptions -fnon-call-exceptions
-+	  -fno-exceptions -fnon-call-exceptions
++	  -fno-exceptions -fno-non-call-exceptions
  libgcc-s-objects += $(lib2-divmod-s-o)
  endif
  
@@ -164,9 +153,9 @@ diff -Nbaur gcc-4.7.0/libgcc/Makefile.in gcc-4.7.0-arm/libgcc/Makefile.in
  
  ifeq ($(enable_shared),yes)
  
-diff -Nbaur gcc-4.7.0/libgcc/crtstuff.c gcc-4.7.0-arm/libgcc/crtstuff.c
---- gcc-4.7.0/libgcc/crtstuff.c	2011-12-06 21:35:41.000000000 +0000
-+++ gcc-4.7.0-arm/libgcc/crtstuff.c	2012-04-26 14:09:08.000000000 +0100
+diff -Nbaur gcc-4.7.1/libgcc/crtstuff.c gcc-4.7.1-arm/libgcc/crtstuff.c
+--- gcc-4.7.1/libgcc/crtstuff.c	2011-12-06 21:35:41.000000000 +0000
++++ gcc-4.7.1-arm/libgcc/crtstuff.c	2012-06-15 19:36:11.000000000 +0100
 @@ -49,7 +49,7 @@
  
  /* Target machine header files require this define. */

@@ -12,8 +12,8 @@ cp -v $BUILDSCRIPTDIR/dkarm-eabi/rules/* $prefix
 # Install and build the gba crt
 #---------------------------------------------------------------------------------
 
-cp -v $BUILDSCRIPTDIR/dkarm-eabi/crtls/* $prefix/arm-eabi/lib/
-cd $prefix/arm-eabi/lib/
+cp -v $BUILDSCRIPTDIR/dkarm-eabi/crtls/* $prefix/$target/lib/
+cd $prefix/$target/lib/
 $MAKE CRT=gba
 $MAKE CRT=gp32
 $MAKE CRT=er

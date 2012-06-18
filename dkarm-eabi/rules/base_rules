@@ -18,7 +18,7 @@ export PATH	:=	$(DEVKITARM)/bin:$(PORTLIBS)/bin:$(PATH)
 #---------------------------------------------------------------------------------
 # the prefix on the compiler executables
 #---------------------------------------------------------------------------------
-PREFIX		:=	arm-eabi-
+PREFIX		:=	arm-none-eabi-
 
 export CC	:=	$(PREFIX)gcc
 export CXX	:=	$(PREFIX)g++
