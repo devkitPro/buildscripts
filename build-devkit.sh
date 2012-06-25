@@ -1,18 +1,18 @@
 #!/bin/bash
 #---------------------------------------------------------------------------------
 # Build scripts for
-#	devkitARM release 40
+#	devkitARM release 41
 #	devkitPPC release 26
 #	devkitPSP release 17
 #---------------------------------------------------------------------------------
 
-if [ 1 -eq 1 ] ; then
+if [ 0 -eq 1 ] ; then
 	echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support."
 	echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
 	echo "http://sourceforge.net/projects/devkitpro/files/buildscripts/"
 	echo
-	echo "The scripts in svn are quite often dependent on things which currently only exist on developer"
-	echo "machines. This is not a bug, use stable releases."
+	echo "The scripts in the git repository are quite often dependent on things which currently only exist"
+	echo "on developer machines. This is not a bug, use stable releases."
 	exit 1
 fi
 
