@@ -111,7 +111,7 @@ else
 	echo "for mingw/msys you must use <drive>:/<install path> or you will have include path problems"
 	echo "this is the top level directory for devkitpro, i.e. e:/devkitPro"
 
-	read INSTALLDIR
+	read -e INSTALLDIR
 	echo
 fi
 
