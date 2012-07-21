@@ -2,3 +2,5 @@ config.sh
 .devkitARM*
 .devkitPPC*
 .devkitPSP*
+*.gz
+*.bz2
