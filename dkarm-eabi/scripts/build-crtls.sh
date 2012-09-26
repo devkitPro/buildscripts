@@ -22,6 +22,10 @@ $MAKE CRT=ds_arm7
 $MAKE CRT=ds_arm9
 $MAKE CRT=ds_cart
 
+cd $BUILDDIR/libgba-$LIBGBA_VER
+$MAKE || { echo "error building libgba"; exit 1; }
+$MAKE install || { echo "error installing libgba"; exit 1; }
+
 cd $BUILDDIR/libnds-$LIBNDS_VER
 $MAKE || { echo "error building libnds"; exit 1; }
 $MAKE install || { echo "error installing libnds"; exit 1; }
@@ -30,17 +34,17 @@ cd $BUILDDIR/dswifi-$DSWIFI_VER
 $MAKE || { echo "error building dswifi"; exit 1; }
 $MAKE install || { echo "error installing dswifi"; exit 1; }
 
-cd $BUILDDIR/default-arm7-$DEFAULT_ARM7_VER
+cd $BUILDDIR/maxmod-$MAXMOD_VER
+$MAKE || { echo "error building maxmod"; exit 1; }
+$MAKE install || { echo "error installing maxmod"; exit 1; }
+
+cd $BUILDDIR/default_arm7-$DEFAULT_ARM7_VER
 $MAKE || { echo "error building default arm7"; exit 1; }
 $MAKE install || { echo "error installing default arm7"; exit 1; }
 
 cd $BUILDDIR/libfat-$LIBFAT_VER
 $MAKE nds-install || { echo "error building nds libfat"; exit 1; }
 $MAKE gba-install || { echo "error installing gba libfat"; exit 1; }
-
-cd $BUILDDIR/maxmod-$MAXMOD_VER
-$MAKE || { echo "error building maxmod"; exit 1; }
-$MAKE install || { echo "error installing maxmod"; exit 1; }
 
 cd $BUILDDIR/libmirko-$LIBMIRKO_VER
 $MAKE || { echo "error building libmirko"; exit 1; }
