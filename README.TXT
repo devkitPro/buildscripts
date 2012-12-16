@@ -13,8 +13,6 @@ Bison, Flex and Wget from the gnuwin32 project
 
 http://sourceforge.net/projects/gnuwin32/
 
-For devkitPSP a command line subversion client is required to get the PSP SDK http://www.tigris.org
-
 required packages for building on debian/*buntu
 
 sudo apt-get install build-essential autoconf automake bison flex libncurses5-dev libreadline-dev texinfo
@@ -30,6 +28,7 @@ Some of the tools for devkitARM and devkitPPC also require FreeImage, zlib, and 
 http://freeimage.sourceforge.net/
 http://www.zlib.net
 http://www.libusb.org
+
  
 Downloading the source packages
 -------------------------------

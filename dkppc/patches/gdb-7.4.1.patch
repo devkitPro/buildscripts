@@ -1,6 +1,6 @@
-diff -Nbaur gdb-7.4/gdb/Makefile.in gdb-7.4-ppc/gdb/Makefile.in
---- gdb-7.4/gdb/Makefile.in	2012-01-06 04:43:01.000000000 +0000
-+++ gdb-7.4-ppc/gdb/Makefile.in	2012-01-28 15:56:00.000000000 +0000
+diff -Nbaur gdb-7.4.1/gdb/Makefile.in gdb-7.4.1-ppc/gdb/Makefile.in
+--- gdb-7.4.1/gdb/Makefile.in	2012-01-06 04:43:01.000000000 +0000
++++ gdb-7.4.1-ppc/gdb/Makefile.in	2012-07-03 17:36:24.000000000 +0100
 @@ -2195,10 +2195,10 @@
  # Note that we put the dependencies into a .Tpo file, then move them
  # into place if the compile succeeds.  We need this because gcc does
@@ -16,9 +16,9 @@ diff -Nbaur gdb-7.4/gdb/Makefile.in gdb-7.4-ppc/gdb/Makefile.in
  @GMAKE_TRUE@else
  @GMAKE_TRUE@override COMPILE.pre = source='$<' object='$@' libtool=no \
  @GMAKE_TRUE@	DEPDIR=$(DEPDIR) $(DEPMODE) $(depcomp) $(CC)
-diff -Nbaur gdb-7.4/sim/ppc/Makefile.in gdb-7.4-ppc/sim/ppc/Makefile.in
---- gdb-7.4/sim/ppc/Makefile.in	2009-09-16 00:26:44.000000000 +0100
-+++ gdb-7.4-ppc/sim/ppc/Makefile.in	2012-02-25 13:30:02.000000000 +0000
+diff -Nbaur gdb-7.4.1/sim/ppc/Makefile.in gdb-7.4.1-ppc/sim/ppc/Makefile.in
+--- gdb-7.4.1/sim/ppc/Makefile.in	2009-09-16 00:26:44.000000000 +0100
++++ gdb-7.4.1-ppc/sim/ppc/Makefile.in	2012-07-03 17:36:24.000000000 +0100
 @@ -551,7 +551,7 @@
  PACKAGE_OBJ = @sim_pk_obj@
  
