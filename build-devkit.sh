@@ -1,7 +1,7 @@
 #!/bin/bash
 #---------------------------------------------------------------------------------
 # Build scripts for
-#	devkitARM release 41
+#	devkitARM release 42
 #	devkitPPC release 26
 #	devkitPSP release 17
 #---------------------------------------------------------------------------------
