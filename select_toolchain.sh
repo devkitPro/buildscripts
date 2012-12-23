@@ -40,10 +40,10 @@ case "$VERSION" in
     toolchain=DEVKITARM
   ;;
   "2" )
-    GCC_VER=4.7.1
-    BINUTILS_VER=2.22
+    GCC_VER=4.7.2
+    BINUTILS_VER=2.23.1
     NEWLIB_VER=1.20.0
-    GDB_VER=7.4.1
+    GDB_VER=7.5.1
     basedir='dkppc'
     package=devkitPPC
     target=powerpc-eabi

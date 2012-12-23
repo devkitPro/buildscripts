@@ -1,6 +1,6 @@
-diff -Nbaur gcc-4.7.1/gcc/config/rs6000/rs6000.h gcc-4.7.1-ppc/gcc/config/rs6000/rs6000.h
---- gcc-4.7.1/gcc/config/rs6000/rs6000.h	2012-04-12 22:00:07.000000000 +0100
-+++ gcc-4.7.1-ppc/gcc/config/rs6000/rs6000.h	2012-07-03 16:45:44.000000000 +0100
+diff -Nbaur gcc-4.7.2/gcc/config/rs6000/rs6000.h gcc-4.7.2-ppc/gcc/config/rs6000/rs6000.h
+--- gcc-4.7.2/gcc/config/rs6000/rs6000.h	2012-04-12 22:00:07.000000000 +0100
++++ gcc-4.7.2-ppc/gcc/config/rs6000/rs6000.h	2012-12-18 21:19:30.000000000 +0000
 @@ -200,6 +200,7 @@
    { "asm_cpu_476",		ASM_CPU_476_SPEC },			\
    SUBTARGET_EXTRA_SPECS
@@ -18,9 +18,9 @@ diff -Nbaur gcc-4.7.1/gcc/config/rs6000/rs6000.h gcc-4.7.1-ppc/gcc/config/rs6000
  
  #ifndef CC1_CPU_SPEC
  #ifdef HAVE_LOCAL_CPU_DETECT
-diff -Nbaur gcc-4.7.1/gcc/config/rs6000/sysv4.h gcc-4.7.1-ppc/gcc/config/rs6000/sysv4.h
---- gcc-4.7.1/gcc/config/rs6000/sysv4.h	2012-04-30 18:39:01.000000000 +0100
-+++ gcc-4.7.1-ppc/gcc/config/rs6000/sysv4.h	2012-07-03 16:45:44.000000000 +0100
+diff -Nbaur gcc-4.7.2/gcc/config/rs6000/sysv4.h gcc-4.7.2-ppc/gcc/config/rs6000/sysv4.h
+--- gcc-4.7.2/gcc/config/rs6000/sysv4.h	2012-04-30 18:39:01.000000000 +0100
++++ gcc-4.7.2-ppc/gcc/config/rs6000/sysv4.h	2012-12-18 21:19:30.000000000 +0000
 @@ -593,7 +593,11 @@
  
  /* Default starting address if specified.  */
@@ -180,9 +180,9 @@ diff -Nbaur gcc-4.7.1/gcc/config/rs6000/sysv4.h gcc-4.7.1-ppc/gcc/config/rs6000/
    { "cpp_os_ads",		CPP_OS_ADS_SPEC },			\
    { "cpp_os_yellowknife",	CPP_OS_YELLOWKNIFE_SPEC },		\
    { "cpp_os_mvme",		CPP_OS_MVME_SPEC },			\
-diff -Nbaur gcc-4.7.1/gcc/config/rs6000/sysv4.opt gcc-4.7.1-ppc/gcc/config/rs6000/sysv4.opt
---- gcc-4.7.1/gcc/config/rs6000/sysv4.opt	2011-05-05 15:59:55.000000000 +0100
-+++ gcc-4.7.1-ppc/gcc/config/rs6000/sysv4.opt	2012-07-03 16:45:44.000000000 +0100
+diff -Nbaur gcc-4.7.2/gcc/config/rs6000/sysv4.opt gcc-4.7.2-ppc/gcc/config/rs6000/sysv4.opt
+--- gcc-4.7.2/gcc/config/rs6000/sysv4.opt	2011-05-05 15:59:55.000000000 +0100
++++ gcc-4.7.2-ppc/gcc/config/rs6000/sysv4.opt	2012-12-18 21:19:30.000000000 +0000
 @@ -121,6 +121,26 @@
  Target RejectNegative
  Link with libads.a, libc.a and crt0.o
@@ -210,10 +210,10 @@ diff -Nbaur gcc-4.7.1/gcc/config/rs6000/sysv4.opt gcc-4.7.1-ppc/gcc/config/rs600
  myellowknife
  Target RejectNegative
  Link with libyk.a, libc.a and crt0.o
-diff -Nbaur gcc-4.7.1/gcc/config.gcc gcc-4.7.1-ppc/gcc/config.gcc
---- gcc-4.7.1/gcc/config.gcc	2012-06-04 10:51:00.000000000 +0100
-+++ gcc-4.7.1-ppc/gcc/config.gcc	2012-07-03 16:45:44.000000000 +0100
-@@ -2011,7 +2011,7 @@
+diff -Nbaur gcc-4.7.2/gcc/config.gcc gcc-4.7.2-ppc/gcc/config.gcc
+--- gcc-4.7.2/gcc/config.gcc	2012-09-12 10:03:54.000000000 +0100
++++ gcc-4.7.2-ppc/gcc/config.gcc	2012-12-18 21:19:30.000000000 +0000
+@@ -2023,7 +2023,7 @@
  	use_gcc_stdint=wrap
  	;;
  powerpc-*-eabi*)
@@ -222,9 +222,9 @@ diff -Nbaur gcc-4.7.1/gcc/config.gcc gcc-4.7.1-ppc/gcc/config.gcc
  	extra_options="${extra_options} rs6000/sysv4.opt"
  	tmake_file="rs6000/t-fprules rs6000/t-ppcgas rs6000/t-ppccomm"
  	use_gcc_stdint=wrap
-diff -Nbaur gcc-4.7.1/libcpp/Makefile.in gcc-4.7.1-ppc/libcpp/Makefile.in
---- gcc-4.7.1/libcpp/Makefile.in	2012-06-14 09:48:08.000000000 +0100
-+++ gcc-4.7.1-ppc/libcpp/Makefile.in	2012-07-03 16:45:44.000000000 +0100
+diff -Nbaur gcc-4.7.2/libcpp/Makefile.in gcc-4.7.2-ppc/libcpp/Makefile.in
+--- gcc-4.7.2/libcpp/Makefile.in	2012-09-20 08:23:55.000000000 +0100
++++ gcc-4.7.2-ppc/libcpp/Makefile.in	2012-12-18 21:19:30.000000000 +0000
 @@ -214,8 +214,7 @@
  # Note that we put the dependencies into a .Tpo file, then move them
  # into place if the compile succeeds.  We need this because gcc does
