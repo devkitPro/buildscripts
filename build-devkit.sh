@@ -6,7 +6,7 @@
 #	devkitPSP release 17
 #---------------------------------------------------------------------------------
 
-if [ 1 -eq 1 ] ; then
+if [ 0 -eq 1 ] ; then
 	echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support."
 	echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
 	echo "http://sourceforge.net/projects/devkitpro/files/buildscripts/"
@@ -30,7 +30,7 @@ LIBNDS_VER=1.5.7
 DEFAULT_ARM7_VER=0.5.24
 DSWIFI_VER=0.3.13
 LIBMIRKO_VER=0.9.7
-MAXMOD_VER=1.0.7
+MAXMOD_VER=1.0.8
 FILESYSTEM_VER=0.9.9
 LIBFAT_VER=1.0.11
 PSPSDK_VER=20120404
@@ -44,8 +44,8 @@ GCDSPSUITE_VER=1.4.0
 ELF2DOL_VER=1.0.0
 WIILOAD_VER=0.5.1
 MMUTIL_VER=1.8.6
-DFU_UTIL_VER=0.6
-STLINK_VER=0.5.4
+DFU_UTIL_VER=0.7
+STLINK_VER=0.5.5
 
 #---------------------------------------------------------------------------------
 function extract_and_patch {
