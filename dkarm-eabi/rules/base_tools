@@ -1,0 +1,34 @@
+#---------------------------------------------------------------------------------
+# change shell on Snow Leopard
+#---------------------------------------------------------------------------------
+UNAME_S	:=	$(shell uname -s)
+UNAME_R	:=	$(shell uname -r)
+
+ifneq (,$(findstring Darwin,$(UNAME_S)))
+	ifneq (,$(findstring 10.8.0,$(UNAME_R)))
+		export SHELL=/bin/bash
+	endif
+endif
+#---------------------------------------------------------------------------------
+# path to tools
+#---------------------------------------------------------------------------------
+export PATH	:=	$(DEVKITARM)/bin:$(PATH)
+
+#---------------------------------------------------------------------------------
+# the prefix on the compiler executables
+#---------------------------------------------------------------------------------
+PREFIX		:=	arm-none-eabi-
+
+export CC	:=	$(PREFIX)gcc
+export CXX	:=	$(PREFIX)g++
+export AS	:=	$(PREFIX)as
+export AR	:=	$(PREFIX)ar
+export OBJCOPY	:=	$(PREFIX)objcopy
+export STRIP	:=	$(PREFIX)strip
+export NM	:=	$(PREFIX)nm
+
+ISVC=$(or $(VCBUILDHELPER_COMMAND),$(MSBUILDEXTENSIONSPATH32),$(MSBUILDEXTENSIONSPATH))
+
+ifneq (,$(ISVC))
+	ERROR_FILTER	:=	2>&1 | sed -e 's/\(.[a-zA-Z]\+\):\([0-9]\+\):/\1(\2):/g'
+endif
