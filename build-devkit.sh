@@ -62,7 +62,7 @@ function extract_and_patch {
 			echo "invalid archive type"
 			exit 1
 		fi
-		tar $extractflags $SRCDIR/$1-$2$archivetype || { echo "Error extracting "$1; exit 1; }
+		tar $extractflags "$SRCDIR/$1-$2$archivetype" || { echo "Error extracting "$1; exit 1; }
 		touch extracted-$1
 	fi
 	if [[ ! -f patched-$1 && -f $patchdir/$1-$2.patch ]]; then
@@ -217,7 +217,7 @@ else
 	SRCDIR=`pwd`
 fi
 
-cd $SRCDIR
+cd "$SRCDIR"
 for archive in $archives $targetarchives $hostarchives
 do
 	echo $archive
@@ -242,13 +242,13 @@ do
 	echo $destdir
 	if [ ! -d $destdir ]; then
 		mkdir -p $destdir
-		bzip2 -cd $SRCDIR/$archive | tar -xf - -C $destdir || { echo "Error extracting "$archive; exit 1; }
+		bzip2 -cd "$SRCDIR/$archive" | tar -xf - -C $destdir || { echo "Error extracting "$archive; exit 1; }
 	fi
 done
 
 for archive in $hostarchives
 do
-	tar -xjf $SRCDIR/$archive
+	tar -xjf "$SRCDIR/$archive"
 done
 
 #---------------------------------------------------------------------------------
