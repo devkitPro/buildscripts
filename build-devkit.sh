@@ -45,7 +45,7 @@ ELF2DOL_VER=1.0.0
 WIILOAD_VER=0.5.1
 MMUTIL_VER=1.8.6
 DFU_UTIL_VER=0.7
-STLINK_VER=0.5.5
+STLINK_VER=0.5.7
 
 #---------------------------------------------------------------------------------
 function extract_and_patch {
