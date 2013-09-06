@@ -11,11 +11,11 @@ GAME_TITLE	:=	$(notdir $(OUTPUT))
 endif
 
 ifeq ($(strip $(GAME_SUBTITLE1)),)
-GAME_SUBTITLE1	:=	www.devkitpro.org
+GAME_SUBTITLE1	:=	built with devkitARM
 endif
 
 ifeq ($(strip $(GAME_SUBTITLE2)),)
-GAME_SUBTITLE2	:=	www.drunkencoders.com
+GAME_SUBTITLE2	:=	http://devkitpro.org
 endif
 
 ifeq ($(strip $(GAME_ICON)),)
