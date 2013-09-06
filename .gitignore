@@ -4,3 +4,4 @@ config.sh
 .devkitPSP*
 *.gz
 *.bz2
+*~
