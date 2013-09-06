@@ -35,6 +35,7 @@ FILESYSTEM_VER=0.9.11
 LIBFAT_VER=1.0.12
 PSPSDK_VER=20120404
 GBATOOLS_VER=1.0.0
+DSTOOLS_VER=1.0.0
 GRIT_VER=0.8.12
 NDSTOOL_VER=1.50.1
 GENERAL_TOOLS_VER=1.0.0
@@ -195,7 +196,7 @@ if [ $VERSION -eq 1 ]; then
 		libmirko-src-${LIBMIRKO_VER}.tar.bz2 dswifi-src-${DSWIFI_VER}.tar.bz2 maxmod-src-${MAXMOD_VER}.tar.bz2
 		default_arm7-src-${DEFAULT_ARM7_VER}.tar.bz2 libfilesystem-src-${FILESYSTEM_VER}.tar.bz2
 		libfat-src-${LIBFAT_VER}.tar.bz2"
-	hostarchives="gbatools-$GBATOOLS_VER.tar.bz2 grit-$GRIT_VER.tar.bz2 ndstool-$NDSTOOL_VER.tar.bz2
+	hostarchives="gbatools-$GBATOOLS_VER.tar.bz2 dstools-$DSTOOLS_VER.tar.bz grit-$GRIT_VER.tar.bz2 ndstool-$NDSTOOL_VER.tar.bz2
 		general-tools-$GENERAL_TOOLS_VER.tar.bz2 dlditool-$DLDITOOL_VER.tar.bz2 mmutil-$MMUTIL_VER.tar.bz2
 		dfu-util-$DFU_UTIL_VER.tar.bz2 stlink-$STLINK_VER.tar.bz2"
 fi
