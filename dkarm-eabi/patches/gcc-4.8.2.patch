@@ -1,0 +1,159 @@
+diff -Nbaur gcc-4.8.2/gcc/config/arm/t-arm-elf gcc-4.8.2-arm/gcc/config/arm/t-arm-elf
+--- gcc-4.8.2/gcc/config/arm/t-arm-elf	2013-01-10 20:38:27.000000000 +0000
++++ gcc-4.8.2-arm/gcc/config/arm/t-arm-elf	2014-02-16 19:36:15.000000000 +0000
+@@ -25,22 +25,44 @@
+ #MULTILIB_DIRNAMES    += fa526 fa626 fa606te fa626te fmp626 fa726te
+ #MULTILIB_EXCEPTIONS  += *mthumb*/*mcpu=fa526 *mthumb*/*mcpu=fa626
+ 
+-#MULTILIB_OPTIONS      += march=armv7
+-#MULTILIB_DIRNAMES     += thumb2
+-#MULTILIB_EXCEPTIONS   += march=armv7* marm/*march=armv7*
+-#MULTILIB_MATCHES      += march?armv7=march?armv7-a
+-#MULTILIB_MATCHES      += march?armv7=march?armv7-r
+-#MULTILIB_MATCHES      += march?armv7=march?armv7-m
+-#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a8
+-#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-r4
+-#MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m3
++#mfloat-abi=hard|mfpu=fpv4-sp-d16
++
++MULTILIB_OPTIONS      += march=armv7/march=armv6-m/mcpu=cortex-m4
++MULTILIB_DIRNAMES     += thumb2 armv6-m cortex-m4
++MULTILIB_EXCEPTIONS   += march=armv7* marm/*march=armv7*
++MULTILIB_EXCEPTIONS   += march=armv6-m* marm/*march=armv6-m*
++MULTILIB_EXCEPTIONS   += mcpu=cortex-m4* marm/*mcpu=cortex-m4*
++MULTILIB_EXCEPTIONS   += mcpu=cortex-m4* mthumb/mcpu=cortex-m4
++MULTILIB_EXCEPTIONS   += mcpu=cortex-m4* mthumb/mcpu=cortex-m4/mbig-endian
++MULTILIB_MATCHES      += march?armv7=march?armv7-a
++MULTILIB_MATCHES      += march?armv7=march?armv7-r
++MULTILIB_MATCHES      += march?armv7=march?armv7-m
++MULTILIB_MATCHES      += march?armv7=mcpu?cortex-a8
++MULTILIB_MATCHES      += march?armv7=mcpu?cortex-r4
++MULTILIB_MATCHES      += march?armv7=mcpu?cortex-m3
++MULTILIB_MATCHES      += march?armv6-m=mcpu?cortex-m0
++MULTILIB_MATCHES      += march?armv6-m=mcpu?cortex-m1
++
++MULTILIB_OPTIONS      += mfloat-abi=hard mfpu=fpv4-sp-d16
++MULTILIB_DIRNAMES     += float-abi-hard fpuv4-sp-d16
++MULTILIB_EXCEPTIONS   += mfloat* marm/mfloat*
++MULTILIB_EXCEPTIONS   += mfloat* mthumb/mfloat*
++MULTILIB_EXCEPTIONS   += mfloat* mthumb*march=armv6-m*mfloat*
++MULTILIB_EXCEPTIONS   += mfloat* mthumb*march=armv7*mfloat*
++MULTILIB_EXCEPTIONS   += mfloat* mthumb/mcpu=cortex-m4/mfloat-abi=hard
++MULTILIB_EXCEPTIONS   += mfloat* mthumb/mcpu=cortex-m4/mfloat-abi=hard/mbig-endian
++MULTILIB_EXCEPTIONS   += mfpu* mthumb*march=armv6-m*mfpu*
++MULTILIB_EXCEPTIONS   += mfpu* mthumb*march=armv7*mfpu*
++MULTILIB_EXCEPTIONS   += mfpu* mthumb/mcpu=cortex-m4/mfpu*
++MULTILIB_EXCEPTIONS   += mfpu* mthumb/mfpu*
++MULTILIB_EXCEPTIONS   += mfpu* marm/mfpu*
+ 
+ # Not quite true.  We can support hard-vfp calling in Thumb2, but how do we
+ # express that here?  Also, we really need architecture v5e or later
+ # (mcrr etc).
+-MULTILIB_OPTIONS       += mfloat-abi=hard
+-MULTILIB_DIRNAMES      += fpu
+-MULTILIB_EXCEPTIONS    += *mthumb/*mfloat-abi=hard*
++#MULTILIB_OPTIONS       += mfloat-abi=hard
++#MULTILIB_DIRNAMES      += fpu
++#MULTILIB_EXCEPTIONS    += *mthumb/*mfloat-abi=hard*
+ #MULTILIB_EXCEPTIONS    += *mcpu=fa526/*mfloat-abi=hard*
+ #MULTILIB_EXCEPTIONS    += *mcpu=fa626/*mfloat-abi=hard*
+ 
+@@ -48,9 +70,9 @@
+ # MULTILIB_DIRNAMES   += ep9312
+ # MULTILIB_EXCEPTIONS += *mthumb/*mcpu=ep9312*
+ # 	
+-# MULTILIB_OPTIONS     += mlittle-endian/mbig-endian
+-# MULTILIB_DIRNAMES    += le be
+-# MULTILIB_MATCHES     += mbig-endian=mbe mlittle-endian=mle
++MULTILIB_OPTIONS     += mlittle-endian/mbig-endian
++MULTILIB_DIRNAMES    += le be
++MULTILIB_MATCHES     += mbig-endian=mbe mlittle-endian=mle
+ # 
+ # MULTILIB_OPTIONS    += mfloat-abi=hard/mfloat-abi=soft
+ # MULTILIB_DIRNAMES   += fpu soft
+diff -Nbaur gcc-4.8.2/gcc/config/arm/unknown-elf.h gcc-4.8.2-arm/gcc/config/arm/unknown-elf.h
+--- gcc-4.8.2/gcc/config/arm/unknown-elf.h	2013-01-10 20:38:27.000000000 +0000
++++ gcc-4.8.2-arm/gcc/config/arm/unknown-elf.h	2014-02-16 19:36:15.000000000 +0000
+@@ -93,4 +93,4 @@
+    udivmoddi4, which will depend on the exception unwind routines,
+    which will depend on abort, which is defined in libc.  */ 
+ #undef LINK_GCC_C_SEQUENCE_SPEC
+-#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L --end-group"
++#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
+diff -Nbaur gcc-4.8.2/gcc/gcc.c gcc-4.8.2-arm/gcc/gcc.c
+--- gcc-4.8.2/gcc/gcc.c	2013-05-17 13:24:26.000000000 +0100
++++ gcc-4.8.2-arm/gcc/gcc.c	2014-02-16 19:36:15.000000000 +0000
+@@ -599,6 +599,11 @@
+ #endif
+ #endif
+ 
++#ifndef LIBGLOSS_SPEC
++# define LIBGLOSS_SPEC "-lsysbase"
++#endif
++
++
+ /* config.h can define STARTFILE_SPEC to override the default crt0 files.  */
+ #ifndef STARTFILE_SPEC
+ #define STARTFILE_SPEC  \
+@@ -785,6 +790,7 @@
+ static const char *mflib_spec = MFLIB_SPEC;
+ static const char *link_gomp_spec = "";
+ static const char *libgcc_spec = LIBGCC_SPEC;
++static const char *libgloss_spec = LIBGLOSS_SPEC;
+ static const char *endfile_spec = ENDFILE_SPEC;
+ static const char *startfile_spec = STARTFILE_SPEC;
+ static const char *linker_name_spec = LINKER_NAME;
+@@ -1274,6 +1280,7 @@
+   INIT_STATIC_SPEC ("mflib",			&mflib_spec),
+   INIT_STATIC_SPEC ("link_gomp",		&link_gomp_spec),
+   INIT_STATIC_SPEC ("libgcc",			&libgcc_spec),
++  INIT_STATIC_SPEC ("libgloss",			&libgloss_spec),
+   INIT_STATIC_SPEC ("startfile",		&startfile_spec),
+   INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
+   INIT_STATIC_SPEC ("version",			&compiler_version),
+diff -Nbaur gcc-4.8.2/libcpp/Makefile.in gcc-4.8.2-arm/libcpp/Makefile.in
+--- gcc-4.8.2/libcpp/Makefile.in	2013-10-16 08:27:58.000000000 +0100
++++ gcc-4.8.2-arm/libcpp/Makefile.in	2014-02-16 19:36:15.000000000 +0000
+@@ -207,8 +207,7 @@
+ # Note that we put the dependencies into a .Tpo file, then move them
+ # into place if the compile succeeds.  We need this because gcc does
+ # not atomically write the dependency output file.
+-COMPILE = $(COMPILE.base) -o $@ -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Tpo
+-POSTCOMPILE = @mv $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
++COMPILE = $(COMPILE.base) -o $@
+ else
+ COMPILE = source='$<' object='$@' libtool=no DEPDIR=$(DEPDIR) $(DEPMODE) \
+ 	  $(depcomp) $(COMPILE.base)
+diff -Nbaur gcc-4.8.2/libgcc/config/arm/t-bpabi gcc-4.8.2-arm/libgcc/config/arm/t-bpabi
+--- gcc-4.8.2/libgcc/config/arm/t-bpabi	2012-08-17 16:06:06.000000000 +0100
++++ gcc-4.8.2-arm/libgcc/config/arm/t-bpabi	2014-02-16 19:36:15.000000000 +0000
+@@ -17,4 +17,4 @@
+ # On ARM, specifying -fnon-call-exceptions will needlessly pull in
+ # the unwinder in simple programs which use 64-bit division.  Omitting
+ # the option is safe.
+-LIB2_DIVMOD_EXCEPTION_FLAGS := -fexceptions
++LIB2_DIVMOD_EXCEPTION_FLAGS := -fno-exceptions
+diff -Nbaur gcc-4.8.2/libgcc/crtstuff.c gcc-4.8.2-arm/libgcc/crtstuff.c
+--- gcc-4.8.2/libgcc/crtstuff.c	2013-02-04 19:06:20.000000000 +0000
++++ gcc-4.8.2-arm/libgcc/crtstuff.c	2014-02-16 19:36:15.000000000 +0000
+@@ -47,7 +47,7 @@
+ 
+ /* Target machine header files require this define. */
+ #define IN_LIBGCC2
+-
++#define USED_FOR_TARGET
+ /* FIXME: Including auto-host is incorrect, but until we have
+    identified the set of defines that need to go into auto-target.h,
+    this will have to do.  */
+diff -Nbaur gcc-4.8.2/libgcc/Makefile.in gcc-4.8.2-arm/libgcc/Makefile.in
+--- gcc-4.8.2/libgcc/Makefile.in	2013-02-04 19:06:20.000000000 +0000
++++ gcc-4.8.2-arm/libgcc/Makefile.in	2014-02-16 19:36:15.000000000 +0000
+@@ -813,7 +813,7 @@
+ # libgcc_eh.a, only LIB2ADDEH matters.  If we do, only LIB2ADDEHSTATIC and
+ # LIB2ADDEHSHARED matter.  (Usually all three are identical.)
+ 
+-c_flags := -fexceptions
++c_flags := -fno-exceptions
+ 
+ ifeq ($(enable_shared),yes)
+ 
