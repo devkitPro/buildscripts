@@ -75,7 +75,7 @@ cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
-	CFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../gcc-$GCC_VER/configure \
+	CFLAGS="$cflags" CXXFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" CXXFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../gcc-$GCC_VER/configure \
 	--enable-languages=c,c++,objc \
 	--enable-lto $plugin_ld \
 	--with-cpu=750 \
