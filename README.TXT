@@ -3,27 +3,20 @@ devkitPro build scripts
 
 This readme will guide you through building devkitARM, devkitPPC or devkitPSP from source using a set of scripts.
 
-To use these scripts under minsys and MinGW you will need some additional packages over and above the base install.
-
-The minsys developer toolkit
-
-http://prdownloads.sourceforge.net/mingw/msysDTK-1.0.1.exe?download
-
-Bison, Flex and Wget from the gnuwin32 project
-
-http://sourceforge.net/projects/gnuwin32/
-
+The windows versions of the toolchains are now cross compiled on linux using mingw-w64
 required packages for building on debian/*buntu
 
-sudo apt-get install build-essential autoconf automake bison flex libncurses5-dev libreadline-dev texinfo
+sudo apt-get install build-essential autoconf automake bison flex libncurses5-dev libreadline-dev texinfo pkg-config
 
-for building gcc libgmp, libmpfr and libmpc are required
+For building gcc libgmp, libmpfr and libmpc are required - these are built as static libraries to make packaging simpler.
+If you're building the tools for personal use then the versions packaged by your chosen distro should suffice.
 
 http://gmplib.org/
 http://www.mpfr.org/
 http://www.multiprecision.org/
 
-Some of the tools for devkitARM and devkitPPC also require FreeImage, zlib, and libusb
+Some of the tools for devkitARM and devkitPPC also require FreeImage, zlib, and libusb. Again these are built as static
+libraries for ease of packaging but you can probably use the versions supplied by your distro.
 
 http://freeimage.sourceforge.net/
 http://www.zlib.net
