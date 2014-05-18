@@ -11308,7 +11308,7 @@ diff -Nbaur newlib-2.1.0/newlib/libc/include/sys/param.h newlib-2.1.0-arm/newlib
  #endif
  #ifndef PATHSIZE
 -# define PATHSIZE (1024)
-+# define PATHSIZE (3072)
++# define PATHSIZE (1024)
  #endif
  
  #define MAXPATHLEN PATH_MAX
@@ -11360,13 +11360,13 @@ diff -Nbaur newlib-2.1.0/newlib/libc/include/sys/syslimits.h newlib-2.1.0-arm/ne
  #define	MAX_CANON		  255	/* max bytes in term canon input line */
  #define	MAX_INPUT		  255	/* max bytes in terminal input */
 -#define	NAME_MAX		  255	/* max bytes in a file name */
-+#define	NAME_MAX		  767	/* max bytes in a file name */
++#define	NAME_MAX		  255	/* max bytes in a file name */
  #define	NGROUPS_MAX		   16	/* max supplemental group id's */
  #ifndef OPEN_MAX
  #define	OPEN_MAX		   64	/* max open files per process */
  #endif
 -#define	PATH_MAX		 1024	/* max bytes in pathname */
-+#define	PATH_MAX		 3072	/* max bytes in pathname */
++#define	PATH_MAX		 1024	/* max bytes in pathname */
  #define	PIPE_BUF		  512	/* max bytes for atomic pipe writes */
  #define	IOV_MAX			 1024	/* max elements in i/o vector */
  
@@ -11531,7 +11531,7 @@ diff -Nbaur newlib-2.1.0/newlib/libc/sys/arm/sys/param.h newlib-2.1.0-arm/newlib
  # define HZ (100)
  # define NOFILE	(60)
 -# define PATHSIZE (1024)
-+# define PATHSIZE (3072)
++# define PATHSIZE (1024)
 +# define MAXPATHLEN PATHSIZE
  
  #define BIG_ENDIAN      4321
