@@ -1,0 +1,32 @@
+diff -Nbaur gdb-7.7.1/gdb/Makefile.in gdb-7.7.1-arm/gdb/Makefile.in
+--- gdb-7.7.1/gdb/Makefile.in	2014-05-05 22:51:24.000000000 +0100
++++ gdb-7.7.1-arm/gdb/Makefile.in	2014-05-18 17:05:16.105567001 +0100
+@@ -2307,10 +2307,8 @@
+ # Note that we put the dependencies into a .Tpo file, then move them
+ # into place if the compile succeeds.  We need this because gcc does
+ # not atomically write the dependency output file.
+-@GMAKE_TRUE@override COMPILE.post = -c -o $@ -MT $@ -MMD -MP \
+-@GMAKE_TRUE@	-MF $(DEPDIR)/$(basename $(@F)).Tpo
+-@GMAKE_TRUE@override POSTCOMPILE = @mv $(DEPDIR)/$(basename $(@F)).Tpo \
+-@GMAKE_TRUE@	$(DEPDIR)/$(basename $(@F)).Po
++@GMAKE_TRUE@override COMPILE.post = -c -o $@
++@GMAKE_TRUE@override POSTCOMPILE =
+ @GMAKE_TRUE@else
+ @GMAKE_TRUE@override COMPILE.pre = source='$<' object='$@' libtool=no \
+ @GMAKE_TRUE@	DEPDIR=$(DEPDIR) $(DEPMODE) $(depcomp) $(CC)
+diff -Nbaur gdb-7.7.1/sim/common/Make-common.in gdb-7.7.1-arm/sim/common/Make-common.in
+--- gdb-7.7.1/sim/common/Make-common.in	2014-01-08 09:23:36.000000000 +0000
++++ gdb-7.7.1-arm/sim/common/Make-common.in	2014-05-18 17:05:16.105567001 +0100
+@@ -415,10 +415,8 @@
+ # Note that we put the dependencies into a .Tpo file, then move them
+ # into place if the compile succeeds.  We need this because gcc does
+ # not atomically write the dependency output file.
+-@GMAKE_TRUE@override COMPILE.post = -c -o $@ -MT $@ -MMD -MP \
+-@GMAKE_TRUE@	-MF $(DEPDIR)/$(basename $(@F)).Tpo
+-@GMAKE_TRUE@override POSTCOMPILE = @mv $(DEPDIR)/$(basename $(@F)).Tpo \
+-@GMAKE_TRUE@	$(DEPDIR)/$(basename $(@F)).Po
++@GMAKE_TRUE@override COMPILE.post = -c -o $@
++@GMAKE_TRUE@override POSTCOMPILE =
+ @GMAKE_TRUE@else
+ @GMAKE_TRUE@override COMPILE.pre = source='$<' object='$@' libtool=no \
+ @GMAKE_TRUE@	DEPDIR=$(DEPDIR) $(DEPMODE) $(depcomp) $(CC)
