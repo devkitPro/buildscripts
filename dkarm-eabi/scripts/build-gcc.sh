@@ -88,7 +88,7 @@ then
 	--disable-newlib-supplied-syscalls \
 	--enable-newlib-mb \
 	--enable-newlib-io-long-long \
-	--enable-newlib-io-c99 \
+	--enable-newlib-io-c99-formats \
 	--enable-newlib-io-pos-args \
 	--target=$target \
 	--prefix=$prefix \
