@@ -1,7 +1,7 @@
 #!/bin/bash
 #---------------------------------------------------------------------------------
 # Build scripts for
-#	devkitARM release 42
+#	devkitARM release 43
 #	devkitPPC release 27
 #	devkitPSP release 17
 #---------------------------------------------------------------------------------
@@ -27,6 +27,7 @@ echo
 LIBOGC_VER=1.8.12
 LIBGBA_VER=20090222
 LIBNDS_VER=1.5.8
+LIBCTRU_VER=0.1.0
 DEFAULT_ARM7_VER=0.5.24
 DSWIFI_VER=0.3.16
 LIBMIRKO_VER=0.9.7
@@ -196,7 +197,7 @@ if [ $VERSION -eq 1 ]; then
 	targetarchives="libnds-src-${LIBNDS_VER}.tar.bz2 libgba-src-${LIBGBA_VER}.tar.bz2
 		libmirko-src-${LIBMIRKO_VER}.tar.bz2 dswifi-src-${DSWIFI_VER}.tar.bz2 maxmod-src-${MAXMOD_VER}.tar.bz2
 		default_arm7-src-${DEFAULT_ARM7_VER}.tar.bz2 libfilesystem-src-${FILESYSTEM_VER}.tar.bz2
-		libfat-src-${LIBFAT_VER}.tar.bz2"
+		libfat-src-${LIBFAT_VER}.tar.bz2 libctru-src-${LIBCTRU_VER}.tar.bz2"
 	hostarchives="gbatools-$GBATOOLS_VER.tar.bz2 dstools-$DSTOOLS_VER.tar.bz2 grit-$GRIT_VER.tar.bz2 ndstool-$NDSTOOL_VER.tar.bz2
 		general-tools-$GENERAL_TOOLS_VER.tar.bz2 dlditool-$DLDITOOL_VER.tar.bz2 mmutil-$MMUTIL_VER.tar.bz2
 		dfu-util-$DFU_UTIL_VER.tar.bz2 stlink-$STLINK_VER.tar.bz2 3dstools-$TOOLS3DS_VER.tar.bz2"

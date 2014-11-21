@@ -54,3 +54,8 @@ $MAKE install || { echo "error installing libmirko"; exit 1; }
 cd $BUILDDIR/libfilesystem-$FILESYSTEM_VER
 $MAKE || { echo "error building libfilesystem"; exit 1; }
 $MAKE install || { echo "error installing libfilesystem"; exit 1; }
+
+cd $BUILDDIR/libctru-$LIBCTRU_VER
+$MAKE || { echo "error building libctru"; exit 1; }
+$MAKE install || { echo "error installing libctru"; exit 1; }
+
