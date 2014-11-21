@@ -4,8 +4,7 @@ endif
 
 include $(DEVKITARM)/base_rules
 
-# This line will be enabled in the future
-# CTRULIB	:=	$(DEVKITPRO)/libctru
+CTRULIB	:=	$(DEVKITPRO)/libctru
 
 ifeq ($(strip $(APP_TITLE)),)
 APP_TITLE	:=	$(notdir $(OUTPUT))
