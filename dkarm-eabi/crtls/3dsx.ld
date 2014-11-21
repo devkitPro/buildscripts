@@ -32,6 +32,10 @@ SECTIONS
 		*(.gnu.warning)
 		*(.gnu.linkonce.t*)
 		. = ALIGN(4);
+
+		/* .fini */
+		KEEP( *(.fini) )
+		. = ALIGN(4);
 	} : code
 
 	/* =========== RODATA section =========== */
