@@ -6,7 +6,7 @@
 #	devkitPSP release 17
 #---------------------------------------------------------------------------------
 
-if [ 1 -eq 1 ] ; then
+if [ 0 -eq 1 ] ; then
 	echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support."
 	echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
 	echo "http://sourceforge.net/projects/devkitpro/files/buildscripts/"
@@ -26,14 +26,14 @@ echo
 
 LIBOGC_VER=1.8.12
 LIBGBA_VER=20090222
-LIBNDS_VER=1.5.8
+LIBNDS_VER=1.5.9
 LIBCTRU_VER=0.1.0
-DEFAULT_ARM7_VER=0.5.24
+DEFAULT_ARM7_VER=0.5.26
 DSWIFI_VER=0.3.16
 LIBMIRKO_VER=0.9.7
 MAXMOD_VER=1.0.9
 FILESYSTEM_VER=0.9.11
-LIBFAT_VER=1.0.12
+LIBFAT_VER=1.0.13
 PSPSDK_VER=20120404
 GBATOOLS_VER=1.0.0
 DSTOOLS_VER=1.0.0
