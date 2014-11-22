@@ -250,7 +250,10 @@ done
 
 for archive in $hostarchives
 do
-	tar -xjf "$SRCDIR/$archive"
+	destdir=$(echo $archive | sed -e 's/\(.*\)-src-\(.*\)\.tar\.bz2/\1-\2/' )
+	if [ ! -d $destdir ]; then
+		tar -xjf "$SRCDIR/$archive"
+	fi
 done
 
 #---------------------------------------------------------------------------------
