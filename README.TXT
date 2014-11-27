@@ -22,6 +22,8 @@ http://freeimage.sourceforge.net/
 http://www.zlib.net
 http://www.libusb.org
 
+Building gxtexconv for cube/wii needs GL/gl.h which can be obtained with sudo apt-get install mesa-common-dev
+
  
 Downloading the source packages
 -------------------------------
