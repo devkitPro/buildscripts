@@ -15479,8 +15479,9 @@ diff -NBaur newlib-2.1.0/libgloss/libsysbase/read.c newlib-2.1.0-arm/libgloss/li
 +
 diff -NBaur newlib-2.1.0/libgloss/libsysbase/rename.c newlib-2.1.0-arm/libgloss/libsysbase/rename.c
 --- newlib-2.1.0/libgloss/libsysbase/rename.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.1.0-arm/libgloss/libsysbase/rename.c	2014-11-27 09:27:07.534756000 +0000
-@@ -0,0 +1,39 @@
++++ newlib-2.1.0-arm/libgloss/libsysbase/rename.c	2014-11-28 23:04:23.026756000 +0000
+@@ -0,0 +1,40 @@
++#include "config.h"
 +#include <reent.h>
 +#include <sys/iosupport.h>
 +#include <errno.h>
