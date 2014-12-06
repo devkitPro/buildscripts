@@ -46,7 +46,7 @@ then
 		--enable-poison-system-directories \
 		--enable-interwork --enable-multilib \
 		--disable-dependency-tracking \
-		--disable-threads --disable-win32-registry --disable-nls --disable-debug\
+		--enable-threads --disable-win32-registry --disable-nls --disable-debug\
 		--disable-libmudflap --disable-libssp --disable-libgomp \
 		--disable-libstdcxx-pch \
 		--target=$target \
