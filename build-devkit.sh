@@ -41,9 +41,7 @@ GRIT_VER=0.8.12
 NDSTOOL_VER=1.50.1
 GENERAL_TOOLS_VER=1.0.0
 DLDITOOL_VER=1.24.0
-GXTEXCONV_VER=0.1.9
-GCDSPSUITE_VER=1.4.0
-ELF2DOL_VER=1.0.0
+GAMECUBE_TOOLS_VER=1.0.0
 WIILOAD_VER=0.5.1
 MMUTIL_VER=1.8.6
 DFU_UTIL_VER=0.7.1
@@ -205,8 +203,7 @@ fi
 
 if [ $VERSION -eq 2 ]; then
 	targetarchives="libogc-src-${LIBOGC_VER}.tar.bz2 libfat-src-${LIBFAT_VER}.tar.bz2"
-	hostarchives="gxtexconv-$GXTEXCONV_VER.tar.bz2 gcdspsuite-$GCDSPSUITE_VER.tar.bz2
-			wiiload-$WIILOAD_VER.tar.bz2 elf2dol-$ELF2DOL_VER.tar.bz2 general-tools-$GENERAL_TOOLS_VER.tar.bz2"
+	hostarchives="gamecube-tools-$GAMECUBE_TOOLS_VER.tar.bz2 wiiload-$WIILOAD_VER.tar.bz2 general-tools-$GENERAL_TOOLS_VER.tar.bz2"
 fi
 
 if [ $VERSION -eq 3 ]; then
