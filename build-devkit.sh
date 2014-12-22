@@ -37,6 +37,7 @@ LIBFAT_VER=1.0.13
 PSPSDK_VER=20120404
 GBATOOLS_VER=1.0.0
 DSTOOLS_VER=1.0.0
+GP32_TOOLS_VER=1.0.1
 GRIT_VER=0.8.12
 NDSTOOL_VER=1.50.1
 GENERAL_TOOLS_VER=1.0.0
@@ -192,22 +193,29 @@ scriptdir=$(pwd)/$basedir/scripts
 archives="binutils-${BINUTILS_VER}.tar.bz2 gcc-${GCC_VER}.tar.bz2 newlib-${NEWLIB_VER}.tar.gz gdb-${GDB_VER}.tar.bz2"
 
 if [ $VERSION -eq 1 ]; then
+
 	targetarchives="libnds-src-${LIBNDS_VER}.tar.bz2 libgba-src-${LIBGBA_VER}.tar.bz2
 		libmirko-src-${LIBMIRKO_VER}.tar.bz2 dswifi-src-${DSWIFI_VER}.tar.bz2 maxmod-src-${MAXMOD_VER}.tar.bz2
 		default_arm7-src-${DEFAULT_ARM7_VER}.tar.bz2 libfilesystem-src-${FILESYSTEM_VER}.tar.bz2
 		libfat-src-${LIBFAT_VER}.tar.bz2 libctru-src-${LIBCTRU_VER}.tar.bz2"
-	hostarchives="gbatools-$GBATOOLS_VER.tar.bz2 dstools-$DSTOOLS_VER.tar.bz2 grit-$GRIT_VER.tar.bz2 ndstool-$NDSTOOL_VER.tar.bz2
+
+	hostarchives="gbatools-$GBATOOLS_VER.tar.bz2 gp32tools-$GP32_TOOLS_VER.tar.bz2
+		dstools-$DSTOOLS_VER.tar.bz2 grit-$GRIT_VER.tar.bz2 ndstool-$NDSTOOL_VER.tar.bz2
 		general-tools-$GENERAL_TOOLS_VER.tar.bz2 dlditool-$DLDITOOL_VER.tar.bz2 mmutil-$MMUTIL_VER.tar.bz2
 		dfu-util-$DFU_UTIL_VER.tar.bz2 stlink-$STLINK_VER.tar.bz2 3dstools-$TOOLS3DS_VER.tar.bz2"
 fi
 
 if [ $VERSION -eq 2 ]; then
+
 	targetarchives="libogc-src-${LIBOGC_VER}.tar.bz2 libfat-src-${LIBFAT_VER}.tar.bz2"
+
 	hostarchives="gamecube-tools-$GAMECUBE_TOOLS_VER.tar.bz2 wiiload-$WIILOAD_VER.tar.bz2 general-tools-$GENERAL_TOOLS_VER.tar.bz2"
 fi
 
 if [ $VERSION -eq 3 ]; then
+
 	targetarchives="pspsdk-src-${PSPSDK_VER}.tar.bz2"
+
 fi
 
 if [ ! -z "$BUILD_DKPRO_SRCDIR" ] ; then
