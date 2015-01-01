@@ -1,54 +1,65 @@
 devkitPro build scripts
 --------------------------
 
-This readme will guide you through building devkitARM, devkitPPC or devkitPSP from source using a set of scripts.
+This readme will guide you through building devkitARM, devkitPPC or devkitPSP
+from source using a set of scripts.
 
-The windows versions of the toolchains are now cross compiled on linux using mingw-w64
+The windows versions of the toolchains are now cross compiled on linux using
+mingw-w64
+
+Preparing to build
+--------------------------
+
 required packages for building on debian/*buntu
 
-sudo apt-get install build-essential autoconf automake bison flex libncurses5-dev libreadline-dev texinfo pkg-config
+sudo apt-get install build-essential autoconf automake bison flex libncurses5-dev
+libreadline-dev texinfo pkg-config
 
-For building gcc libgmp, libmpfr and libmpc are required - these are built as static libraries to make packaging simpler.
-If you're building the tools for personal use then the versions packaged by your chosen distro should suffice.
+For building gcc libgmp, libmpfr and libmpc are required - these are built as
+static libraries to make packaging simpler. If you're building the tools for
+personal use then the versions packaged by your chosen distro should suffice.
 
 http://gmplib.org/
 http://www.mpfr.org/
 http://www.multiprecision.org/
 
-Some of the tools for devkitARM and devkitPPC also require FreeImage, zlib, and libusb. Again these are built as static
-libraries for ease of packaging but you can probably use the versions supplied by your distro.
+Some of the tools for devkitARM and devkitPPC also require FreeImage, zlib,
+and libusb. Again these are built as static libraries for ease of packaging
+but you can probably use the versions supplied by your distro.
 
 http://freeimage.sourceforge.net/
 http://www.zlib.net
 http://www.libusb.org
 
-Building gxtexconv for cube/wii needs GL/gl.h which can be obtained with sudo apt-get install mesa-common-dev
+Building gxtexconv for cube/wii needs GL/gl.h which can be obtained with
+sudo apt-get install mesa-common-dev
 
- 
-Downloading the source packages
--------------------------------
+To avoid having to manually answer prompts during the build the script will
+read variables from config.sh if it exists. Copy config.sh.sample to config.sh
+and set the variables as appropriate for your build.
 
-When you run the build script it will ask you to choose from one of two options, one for if you have already downloaded the source packages and another for if you want it to download them for you (using wget or curl).
+The script will download the source packages it needs. These will be downloaded
+to the script directory by default but you can set BUILD_DKPRO_SRCDIR if you want
+to put them somewhere else.  When its finished you have the option to delete
+all temporary files, sources and their source packages.
 
-The top level shell script has now been unified and offers the option of devkitARM, devkitPPC or devkitPSP.
 
 Building the devkits
 --------------------
 
-Simply run the "build-devkit.sh" script in the same directory as this text file as shown below, then follow the prompts;
+Simply run the "build-devkit.sh" script in the same directory as this text file
+as shown below, then follow the prompts;
 
 ./build-devkit.sh
 
-Once the script finds the source packages they will be decompressed and the build process will begin.  When its finished you have the option to delete all temporary files, sources and their source packages.
-
-To avoid having to manually answer prompts during the build the script will read variables from config.sh if it exists. Copy config.sh.sample to config.sh and set the variables as appropriate for your build.
-
-Several examples tarballs are provided for the platforms supported by devkitARM & devkitPPC, these include basic templates for starting your own projects. See http://wiki.devkitpro.org/index.php/Getting_Started for links.
+Several examples tarballs are provided for the platforms supported by devkitARM &
+devkitPPC, these include basic templates for starting your own projects.
+See http://wiki.devkitpro.org/index.php/Getting_Started for links.
 
 Using devkitARM
 ---------------
 
-to use the built in crt0 and linkscript use arm-eabi-gcc to link your project
+to use the built in crt0 and linkscript use arm-none-eabi-gcc to link your project
 
 Several specs files are built in for the various platforms
 
@@ -60,25 +71,31 @@ Several specs files are built in for the various platforms
 	-specs=ds_cart for a DS arm7 binary which runs from GBA cart.
 	-specs=gp32.specs for standard GP32 app.
 	-specs=gp32_gpsdk.specs for official gamepark SDK GP32 app.
+	-specs=3dsx.specs for a 3DS homebrew binary.
 
 Using devkitPPC
 ---------------
 
-to use the built in crt0 and linkscript use powerpc-gekko-gcc to link your project, using the command line switch -mgcn for a bare bones system, -mogc to use libogc and the multi-threaded microkernel for gamecube, -mrvl for wii.
+to use the built in crt0 and linkscript use powerpc-eabi-gcc to link your project,
+using the command line switch -mgcn for a bare bones system, -mogc to use libogc and
+the multi-threaded microkernel for gamecube, -mrvl for wii.
 
 Using devkitPSP
 ---------------
 
-All you need to do now to use devkitPSP is make sure that your freshly built tools are in your PATH, something like this;
+All you need to do now to use devkitPSP is make sure that your freshly built tools
+are in your PATH, something like this;
 
 export PATH=$PATH:<path to devkitPSP>/bin
 
-(Obviously replace <path to devkitPSP> with the full path to the devkitPSP installation directory)
+(Obviously replace <path to devkitPSP> with the full path to the devkitPSP
+installation directory)
 
 Getting started
 ---------------
 
-The best thing to do next is test the compiler, so grab an examples tarball from sourceforge & run make in the top level.
+The best thing to do next is test the compiler, so grab an examples tarball
+from sourceforge & run make in the top level.
 
 Credits
 -------
@@ -86,6 +103,7 @@ Credits
 * Thanks to WinterMute for bringing us devkitPro, the website is http://www.devkitpro.org
 * Build scripts written by WinterMute and tied together by GreenGianT
 * Thanks to Mr Spiv, Honkey Kong, Raleigh and JoostP for OS X testing
+* libctru by Smealum, YellowS8, fincs, mtheall & WinterMute with contributions from many others.
 * libogc written and supplied by Shagkur. Additional code by WinterMute, Bushing, Marcan & Tybor
 * libgba by WinterMute
 * libnds by Joat, Dovoto and WinterMute with contributions from many others.

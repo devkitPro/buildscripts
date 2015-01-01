@@ -91,7 +91,7 @@ unset LDFLAGS
 #---------------------------------------------------------------------------------
 # Look for automated configuration file to bypass prompts
 #---------------------------------------------------------------------------------
- 
+
 echo -n "Looking for configuration file... "
 if [ -f ./config.sh ]; then
   echo "Found."
