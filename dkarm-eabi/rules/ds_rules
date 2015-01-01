@@ -4,6 +4,8 @@ endif
 
 include $(DEVKITARM)/base_rules
 
+PORTLIBS	:=	$(PORTLIBS_PATH)/armv5te $(PORTLIBS_PATH)/nds
+
 LIBNDS	:=	$(DEVKITPRO)/libnds
 
 ifeq ($(strip $(GAME_TITLE)),)
@@ -40,7 +42,7 @@ endif
 %.arm9: %.elf
 	@$(OBJCOPY) -O binary $< $@
 	@echo built ... $(notdir $@)
- 
+
 #---------------------------------------------------------------------------------
 %.arm7: %.elf
 	@$(OBJCOPY) -O binary $< $@

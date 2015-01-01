@@ -4,6 +4,8 @@ endif
 
 include $(DEVKITARM)/base_rules
 
+PORTLIBS	:=	$(PORTLIBS_PATH)/armv6k $(PORTLIBS_PATH)/3ds
+
 CTRULIB	:=	$(DEVKITPRO)/libctru
 
 ifeq ($(strip $(APP_TITLE)),)

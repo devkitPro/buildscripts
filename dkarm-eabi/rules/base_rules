@@ -3,8 +3,7 @@ include $(DEVKITARM)/base_tools
 #---------------------------------------------------------------------------------
 # add portlibs path
 #---------------------------------------------------------------------------------
-export PORTLIBS	:=	$(DEVKITPRO)/portlibs/arm
-export PATH	:=	$(PORTLIBS)/bin:$(PATH)
+export PORTLIBS_PATH	:=	$(DEVKITPRO)/portlibs
 
 
 #---------------------------------------------------------------------------------
@@ -18,7 +17,7 @@ export PATH	:=	$(PORTLIBS)/bin:$(PATH)
 %.arm.o: %.arm.cpp
 	@echo $(notdir $<)
 	$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.arm.d $(CXXFLAGS) -marm -c $< -o $@ $(ERROR_FILTER)
-	
+
 #---------------------------------------------------------------------------------
 %.arm.o: %.arm.c
 	@echo $(notdir $<)
@@ -33,7 +32,7 @@ export PATH	:=	$(PORTLIBS)/bin:$(PATH)
 %.thumb.o: %.thumb.cpp
 	@echo $(notdir $<)
 	$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.thumb.d $(CXXFLAGS) -mthumb -c $< -o $@ $(ERROR_FILTER)
-	
+
 #---------------------------------------------------------------------------------
 %.thumb.o: %.thumb.c
 	@echo $(notdir $<)
@@ -48,7 +47,7 @@ export PATH	:=	$(PORTLIBS)/bin:$(PATH)
 %.iwram.o: %.iwram.cpp
 	@echo $(notdir $<)
 	$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.iwram.d $(CXXFLAGS) -marm -mlong-calls -c $< -o $@ $(ERROR_FILTER)
-	
+
 #---------------------------------------------------------------------------------
 %.iwram.o: %.iwram.c
 	@echo $(notdir $<)
@@ -63,7 +62,7 @@ export PATH	:=	$(PORTLIBS)/bin:$(PATH)
 %.itcm.o: %.itcm.cpp
 	@echo $(notdir $<)
 	$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.itcm.d $(CXXFLAGS) -marm -mlong-calls -c $< -o $@ $(ERROR_FILTER)
-	
+
 #---------------------------------------------------------------------------------
 %.itcm.o: %.itcm.c
 	@echo $(notdir $<)
@@ -79,7 +78,7 @@ export PATH	:=	$(PORTLIBS)/bin:$(PATH)
 %.o: %.cpp
 	@echo $(notdir $<)
 	$(CXX) -MMD -MP -MF $(DEPSDIR)/$*.d $(CXXFLAGS) -c $< -o $@ $(ERROR_FILTER)
-	
+
 #---------------------------------------------------------------------------------
 %.o: %.c
 	@echo $(notdir $<)
