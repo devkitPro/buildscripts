@@ -13,7 +13,7 @@ APP_TITLE	:=	$(notdir $(OUTPUT))
 endif
 
 ifeq ($(strip $(APP_DESCRIPTION)),)
-APP_DESCRIPTION	:=	Built with devkitARM & ctrulib
+APP_DESCRIPTION	:=	Built with devkitARM & libctru
 endif
 
 ifeq ($(strip $(APP_AUTHOR)),)
@@ -31,7 +31,7 @@ endif
 
 #---------------------------------------------------------------------------------
 %.3dsx: %.elf
-	@3dsxtool $@ $< $(_3DSXFLAGS)
+	@3dsxtool $< $@ $(_3DSXFLAGS)
 	@echo built ... $(notdir $@)
 
 #---------------------------------------------------------------------------------

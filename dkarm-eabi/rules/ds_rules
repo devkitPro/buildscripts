@@ -4,9 +4,9 @@ endif
 
 include $(DEVKITARM)/base_rules
 
-PORTLIBS	:=	$(PORTLIBS_PATH)/armv5te $(PORTLIBS_PATH)/nds
+PORTLIBS	:=	$(PORTLIBS_PATH)/nds $(PORTLIBS_PATH)/armv5te
 
-LIBNDS	:=	$(DEVKITPRO)/libnds
+LIBNDS		:=	$(DEVKITPRO)/libnds
 
 ifeq ($(strip $(GAME_TITLE)),)
 GAME_TITLE	:=	$(notdir $(OUTPUT))
