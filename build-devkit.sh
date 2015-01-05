@@ -47,7 +47,7 @@ WIILOAD_VER=0.5.1
 MMUTIL_VER=1.8.6
 DFU_UTIL_VER=0.7.1
 STLINK_VER=0.5.8
-TOOLS3DS_VER=1.0.2
+TOOLS3DS_VER=1.0.3
 
 #---------------------------------------------------------------------------------
 function extract_and_patch {
