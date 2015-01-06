@@ -25,7 +25,7 @@ echo "https://sourceforge.net/tracker/?group_id=114505&atid=668553"
 echo
 
 LIBOGC_VER=1.8.12
-LIBGBA_VER=20090222
+LIBGBA_VER=20150106
 LIBNDS_VER=1.5.9
 LIBCTRU_VER=0.1.0
 DEFAULT_ARM7_VER=0.5.26
