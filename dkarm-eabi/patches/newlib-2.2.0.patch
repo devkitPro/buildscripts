@@ -1,6 +1,6 @@
 diff -NBaur newlib-2.2.0/libgloss/arm/_kill.c newlib-2.2.0-arm/libgloss/arm/_kill.c
---- newlib-2.2.0/libgloss/arm/_kill.c	2007-01-03 16:55:25.000000000 +0000
-+++ newlib-2.2.0-arm/libgloss/arm/_kill.c	2014-12-31 17:29:05.638756000 +0000
+--- newlib-2.2.0/libgloss/arm/_kill.c	2007-01-03 16:55:25 +0000
++++ newlib-2.2.0-arm/libgloss/arm/_kill.c	2014-12-31 19:45:54 +0000
 @@ -1,6 +1,7 @@
  #include <_ansi.h>
  #include <signal.h>
@@ -21,8 +21,8 @@ diff -NBaur newlib-2.2.0/libgloss/arm/_kill.c newlib-2.2.0-arm/libgloss/arm/_kil
 +#endif
  }
 diff -NBaur newlib-2.2.0/libgloss/arm/linux-syscalls0.S newlib-2.2.0-arm/libgloss/arm/linux-syscalls0.S
---- newlib-2.2.0/libgloss/arm/linux-syscalls0.S	2009-10-26 10:00:41.000000000 +0000
-+++ newlib-2.2.0-arm/libgloss/arm/linux-syscalls0.S	2014-12-31 17:29:05.638756000 +0000
+--- newlib-2.2.0/libgloss/arm/linux-syscalls0.S	2009-10-26 10:00:41 +0000
++++ newlib-2.2.0-arm/libgloss/arm/linux-syscalls0.S	2014-12-31 19:45:54 +0000
 @@ -7,6 +7,7 @@
   */
  
@@ -67,8 +67,8 @@ diff -NBaur newlib-2.2.0/libgloss/arm/linux-syscalls0.S newlib-2.2.0-arm/libglos
  #define SYSCALL0(name) SYSCALL3(name)
  #define SYSCALL3(name) SYSCALL4(name)
 diff -NBaur newlib-2.2.0/libgloss/arm/redboot-syscalls.c newlib-2.2.0-arm/libgloss/arm/redboot-syscalls.c
---- newlib-2.2.0/libgloss/arm/redboot-syscalls.c	2008-01-03 22:38:30.000000000 +0000
-+++ newlib-2.2.0-arm/libgloss/arm/redboot-syscalls.c	2014-12-31 17:29:05.638756000 +0000
+--- newlib-2.2.0/libgloss/arm/redboot-syscalls.c	2008-01-03 22:38:30 +0000
++++ newlib-2.2.0-arm/libgloss/arm/redboot-syscalls.c	2014-12-31 19:45:54 +0000
 @@ -20,13 +20,18 @@
  #include <sys/times.h>
  #include <errno.h>
@@ -89,8 +89,8 @@ diff -NBaur newlib-2.2.0/libgloss/arm/redboot-syscalls.c newlib-2.2.0-arm/libglo
      asm ("swi 0x180001\n");
  #endif
 diff -NBaur newlib-2.2.0/libgloss/arm/syscalls.c newlib-2.2.0-arm/libgloss/arm/syscalls.c
---- newlib-2.2.0/libgloss/arm/syscalls.c	2014-02-11 19:55:22.000000000 +0000
-+++ newlib-2.2.0-arm/libgloss/arm/syscalls.c	2014-12-31 17:29:05.638756000 +0000
+--- newlib-2.2.0/libgloss/arm/syscalls.c	2014-02-11 19:55:22 +0000
++++ newlib-2.2.0-arm/libgloss/arm/syscalls.c	2014-12-31 19:45:54 +0000
 @@ -16,6 +16,7 @@
  #include <unistd.h>
  #include <sys/wait.h>
@@ -368,8 +368,8 @@ diff -NBaur newlib-2.2.0/libgloss/arm/syscalls.c newlib-2.2.0-arm/libgloss/arm/s
  #endif
  }
 diff -NBaur newlib-2.2.0/libgloss/configure newlib-2.2.0-arm/libgloss/configure
---- newlib-2.2.0/libgloss/configure	2014-12-15 20:09:27.000000000 +0000
-+++ newlib-2.2.0-arm/libgloss/configure	2014-12-31 17:29:05.638756000 +0000
+--- newlib-2.2.0/libgloss/configure	2014-12-15 20:09:27 +0000
++++ newlib-2.2.0-arm/libgloss/configure	2014-12-31 19:45:54 +0000
 @@ -2572,6 +2572,8 @@
  
  fi
@@ -380,8 +380,8 @@ diff -NBaur newlib-2.2.0/libgloss/configure newlib-2.2.0-arm/libgloss/configure
  
  ac_config_commands="$ac_config_commands depfiles"
 diff -NBaur newlib-2.2.0/libgloss/configure.in newlib-2.2.0-arm/libgloss/configure.in
---- newlib-2.2.0/libgloss/configure.in	2014-12-15 20:09:27.000000000 +0000
-+++ newlib-2.2.0-arm/libgloss/configure.in	2014-12-31 17:29:05.642756000 +0000
+--- newlib-2.2.0/libgloss/configure.in	2014-12-15 20:09:27 +0000
++++ newlib-2.2.0-arm/libgloss/configure.in	2014-12-31 19:45:54 +0000
 @@ -2,6 +2,7 @@
  AC_PREREQ(2.59)
  AC_INIT([libgloss],[LIBGLOSS_VERSION])
@@ -398,9 +398,184 @@ diff -NBaur newlib-2.2.0/libgloss/configure.in newlib-2.2.0-arm/libgloss/configu
  
  LIB_AC_PROG_CC
  AS=${AS-as}
+diff -NBaur newlib-2.2.0/libgloss/libsysbase/Makefile.in newlib-2.2.0-arm/libgloss/libsysbase/Makefile.in
+--- newlib-2.2.0/libgloss/libsysbase/Makefile.in	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/Makefile.in	2014-12-31 19:45:54 +0000
+@@ -0,0 +1,148 @@
++# Copyright (c) 1998 Cygnus Support
++#
++# The authors hereby grant permission to use, copy, modify, distribute,
++# and license this software and its documentation for any purpose, provided
++# that existing copyright notices are retained in all copies and that this
++# notice is included verbatim in any distributions. No written agreement,
++# license, or royalty fee is required for any of the authorized uses.
++# Modifications to this software may be copyrighted by their authors
++# and need not follow the licensing terms described here, provided that
++# the new terms are clearly indicated on the first page of each file where
++# they apply.
++
++DESTDIR =
++VPATH = @srcdir@
++srcdir = @srcdir@
++objdir = .
++srcroot = $(srcdir)/../..
++objroot = $(objdir)/../..
++
++prefix = @prefix@
++exec_prefix = @exec_prefix@
++
++host_alias = @host_alias@
++target_alias = @target_alias@
++program_transform_name = @program_transform_name@
++
++bindir = @bindir@
++libdir = @libdir@
++tooldir = $(exec_prefix)/$(target_alias)
++
++# Multilib support variables.
++# TOP is used instead of MULTI{BUILD,SRC}TOP.
++MULTIDIRS =
++MULTISUBDIR =
++MULTIDO = true
++MULTICLEAN = true
++
++INSTALL = @INSTALL@
++INSTALL_PROGRAM = @INSTALL_PROGRAM@
++INSTALL_DATA = @INSTALL_DATA@
++
++SHELL =	/bin/sh
++
++CC = @CC@
++
++#AS = @AS@
++AS = `if [ -f ${objroot}/../gas/as.new ] ; \
++	then echo ${objroot}/../gas/as.new ; \
++	else echo as ; fi`
++
++AR = @AR@
++
++#LD = @LD@
++LD = `if [ -f ${objroot}/../ld/ld.new ] ; \
++	then echo ${objroot}/../ld/ld.new ; \
++	else echo ld ; fi`
++
++RANLIB = @RANLIB@
++
++OBJDUMP = `if [ -f ${objroot}/../binutils/objdump ] ; \
++	then echo ${objroot}/../binutils/objdump ; \
++	else t='$(program_transform_name)'; echo objdump | sed -e $$t ; fi`
++OBJCOPY = `if [ -f ${objroot}/../binutils/objcopy ] ; \
++	then echo ${objroot}/../binutils/objcopy ; \
++	else t='$(program_transform_name)'; echo objcopy | sed -e $$t ; fi`
++
++# object files needed
++OBJS = abort.o iosupport.o close.o environ.o execve.o fork.o fstat.o getpid.o gettod.o \
++	isatty.o kill.o link.o lseek.o open.o read.o sbrk.o stat.o times.o \
++	unlink.o wait.o write.o _exit.o malloc_vars.o \
++	chdir.o mkdir.o rename.o build_argv.o statvfs.o \
++	flock.o syscall_support.o handle_manager.o truncate.o ftruncate.o dirent.o fsync.o \
++	fchmod.o chmod.o getreent.o rmdir.o
++
++# Object files specific to particular targets.
++EVALOBJS = ${OBJS}
++
++GCC_LDFLAGS = `if [ -d ${objroot}/../gcc ] ; \
++	then echo -L${objroot}/../gcc ; fi`
++
++OUTPUTS = libsysbase.a
++
++NEWLIB_CFLAGS = `if [ -d ${objroot}/newlib ]; then echo -I${objroot}/newlib/targ-include -I${srcroot}/newlib/libc/include; fi`
++NEWLIB_LDFLAGS = `if [ -d ${objroot}/newlib ]; then echo -B${objroot}/newlib/ -L${objroot}/newlib/; fi`
++
++INCLUDES = -I. -I$(srcdir)/..
++# Note that when building the library, ${MULTILIB} is not the way multilib
++# options are passed; they're passed in $(CFLAGS).
++CFLAGS_FOR_TARGET = ${MULTILIB} ${INCLUDES} ${NEWLIB_CFLAGS}
++LDFLAGS_FOR_TARGET = ${MULTILIB} ${NEWLIB_LDFLAGS}
++AR_FLAGS = qc
++
++.c.o:
++	$(CC) $(CFLAGS_FOR_TARGET) -O2 $(INCLUDES) -c $(CFLAGS) $<
++
++.C.o:
++	$(CC) $(CFLAGS_FOR_TARGET) -O2 $(INCLUDES) -c $(CFLAGS) $<
++.s.o:
++	$(AS) $(ASFLAGS_FOR_TARGET) $(INCLUDES) $(ASFLAGS) -o $*.o $<
++
++#
++# GCC knows to run the preprocessor on .S files before it assembles them.
++#
++.S.o:
++	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -c $<
++
++#
++# this is a bogus target that'll produce an assembler from the
++# C source with the right compiler options. this is so we can
++# track down code generation or debug symbol bugs.
++#
++.c.s:
++	$(CC) $(CFLAGS_FOR_TARGET) -S $(INCLUDES) $(CFLAGS) $<
++
++all: ${OUTPUTS}
++
++#
++# here's where we build the library for each target
++#
++
++libsysbase.a: $(EVALOBJS)
++	${AR} ${ARFLAGS} $@ $(EVALOBJS)
++	${RANLIB} $@
++
++doc:
++
++clean mostlyclean:
++	rm -f $(OUTPUTS) *.i *~ *.o *-test *.srec *.dis *.map *.x
++
++distclean maintainer-clean realclean: clean
++	rm -f Makefile config.status $(OUTPUTS)
++
++.PHONY: install info install-info clean-info
++install:
++	@for outputs in ${OUTPUTS}; do\
++	 mkdir -p $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}; \
++	 $(INSTALL_PROGRAM) $${outputs} $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}; \
++	done
++
++info:
++install-info:
++clean-info:
++
++Makefile: Makefile.in config.status @host_makefile_frag_path@
++	$(SHELL) config.status
++
++config.status: configure
++	$(SHELL) config.status --recheck
+diff -NBaur newlib-2.2.0/libgloss/libsysbase/_exit.c newlib-2.2.0-arm/libgloss/libsysbase/_exit.c
+--- newlib-2.2.0/libgloss/libsysbase/_exit.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/_exit.c	2014-12-31 19:45:54 +0000
+@@ -0,0 +1,19 @@
++/* Stub version of _exit.  */
++
++#include <limits.h>
++#include "config.h"
++#include <_ansi.h>
++#include <_syslist.h>
++#include <sys/iosupport.h>
++
++_VOID
++_DEFUN (_exit, (rc),
++	int rc)
++{
++
++	if ( __syscalls.exit ) {
++		__syscalls.exit(rc);
++	}
++
++	while(1);
++}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/abort.c newlib-2.2.0-arm/libgloss/libsysbase/abort.c
---- newlib-2.2.0/libgloss/libsysbase/abort.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/abort.c	2014-12-31 17:29:05.642756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/abort.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/abort.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,8 @@
 +#include <stdlib.h>
 +#include <unistd.h>
@@ -411,8 +586,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/abort.c newlib-2.2.0-arm/libgloss/l
 +}
 +
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/acconfig.h newlib-2.2.0-arm/libgloss/libsysbase/acconfig.h
---- newlib-2.2.0/libgloss/libsysbase/acconfig.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/acconfig.h	2014-12-31 17:29:05.642756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/acconfig.h	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/acconfig.h	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,29 @@
 +/* Name of package.  */
 +#undef PACKAGE
@@ -444,8 +619,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/acconfig.h newlib-2.2.0-arm/libglos
 +/* symbol prefix */
 +#undef __SYMBOL_PREFIX
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/aclocal.m4 newlib-2.2.0-arm/libgloss/libsysbase/aclocal.m4
---- newlib-2.2.0/libgloss/libsysbase/aclocal.m4	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/aclocal.m4	2014-12-31 17:29:05.642756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/aclocal.m4	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/aclocal.m4	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,344 @@
 +# generated automatically by aclocal 1.9.5 -*- Autoconf -*-
 +
@@ -792,8 +967,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/aclocal.m4 newlib-2.2.0-arm/libglos
 +
 +m4_include([../acinclude.m4])
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/build_argv.c newlib-2.2.0-arm/libgloss/libsysbase/build_argv.c
---- newlib-2.2.0/libgloss/libsysbase/build_argv.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/build_argv.c	2014-12-31 17:29:05.642756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/build_argv.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/build_argv.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,31 @@
 +struct __argv {
 +	int argvMagic;
@@ -827,8 +1002,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/build_argv.c newlib-2.2.0-arm/libgl
 +	argstruct->endARGV = &argv[argCount];
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/chdir.c newlib-2.2.0-arm/libgloss/libsysbase/chdir.c
---- newlib-2.2.0/libgloss/libsysbase/chdir.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/chdir.c	2014-12-31 17:29:05.642756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/chdir.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/chdir.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,192 @@
 +#include <unistd.h>
 +#include <limits.h>
@@ -1023,8 +1198,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/chdir.c newlib-2.2.0-arm/libgloss/l
 +	return buf;
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/chmod.c newlib-2.2.0-arm/libgloss/libsysbase/chmod.c
---- newlib-2.2.0/libgloss/libsysbase/chmod.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/chmod.c	2014-12-31 17:29:05.642756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/chmod.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/chmod.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,28 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -1055,8 +1230,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/chmod.c newlib-2.2.0-arm/libgloss/l
 +}
 +
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/close.c newlib-2.2.0-arm/libgloss/libsysbase/close.c
---- newlib-2.2.0/libgloss/libsysbase/close.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/close.c	2014-12-31 17:29:05.642756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/close.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/close.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,43 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -1102,8 +1277,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/close.c newlib-2.2.0-arm/libgloss/l
 +	return ret;
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/config.h.in newlib-2.2.0-arm/libgloss/libsysbase/config.h.in
---- newlib-2.2.0/libgloss/libsysbase/config.h.in	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/config.h.in	2014-12-31 17:29:05.642756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/config.h.in	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/config.h.in	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,25 @@
 +/* config.h.in.  Generated automatically from configure.in by autoheader.  */
 +
@@ -1131,8 +1306,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/config.h.in newlib-2.2.0-arm/libglo
 +/* symbol prefix */
 +#undef __SYMBOL_PREFIX
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/configure newlib-2.2.0-arm/libgloss/libsysbase/configure
---- newlib-2.2.0/libgloss/libsysbase/configure	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/configure	2014-12-31 17:29:05.642756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/configure	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/configure	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,4170 @@
 +#! /bin/sh
 +# Guess values for system-dependent variables and create Makefiles.
@@ -5305,8 +5480,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/configure newlib-2.2.0-arm/libgloss
 +
 +
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/configure.in newlib-2.2.0-arm/libgloss/libsysbase/configure.in
---- newlib-2.2.0/libgloss/libsysbase/configure.in	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/configure.in	2014-12-31 17:29:05.642756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/configure.in	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/configure.in	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,210 @@
 +# Copyright (c) 1995, 1996 Cygnus Support
 +#
@@ -5519,8 +5694,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/configure.in newlib-2.2.0-arm/libgl
 +
 +
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/dirent.c newlib-2.2.0-arm/libgloss/libsysbase/dirent.c
---- newlib-2.2.0/libgloss/libsysbase/dirent.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/dirent.c	2014-12-31 17:29:05.642756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/dirent.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/dirent.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,250 @@
 +#include <malloc.h>
 +#include <errno.h>
@@ -5773,8 +5948,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/dirent.c newlib-2.2.0-arm/libgloss/
 +	return dirp->position;
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/environ.c newlib-2.2.0-arm/libgloss/libsysbase/environ.c
---- newlib-2.2.0/libgloss/libsysbase/environ.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/environ.c	2014-12-31 17:29:05.646756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/environ.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/environ.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,6 @@
 +/*
 + * Version of environ for no OS.
@@ -5783,8 +5958,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/environ.c newlib-2.2.0-arm/libgloss
 +char *__env[1] = { 0 };
 +char **environ = __env;
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/execve.c newlib-2.2.0-arm/libgloss/libsysbase/execve.c
---- newlib-2.2.0/libgloss/libsysbase/execve.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/execve.c	2014-12-31 17:29:05.646756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/execve.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/execve.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,31 @@
 +/*
 + * Stub version of execve.
@@ -5817,32 +5992,9 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/execve.c newlib-2.2.0-arm/libgloss/
 +	return -1;
 +}
 +
-diff -NBaur newlib-2.2.0/libgloss/libsysbase/_exit.c newlib-2.2.0-arm/libgloss/libsysbase/_exit.c
---- newlib-2.2.0/libgloss/libsysbase/_exit.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/_exit.c	2014-12-31 17:29:05.646756000 +0000
-@@ -0,0 +1,19 @@
-+/* Stub version of _exit.  */
-+
-+#include <limits.h>
-+#include "config.h"
-+#include <_ansi.h>
-+#include <_syslist.h>
-+#include <sys/iosupport.h>
-+
-+_VOID
-+_DEFUN (_exit, (rc),
-+	int rc)
-+{
-+
-+	if ( __syscalls.exit ) {
-+		__syscalls.exit(rc);
-+	}
-+
-+	while(1);
-+}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/fchmod.c newlib-2.2.0-arm/libgloss/libsysbase/fchmod.c
---- newlib-2.2.0/libgloss/libsysbase/fchmod.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/fchmod.c	2014-12-31 17:29:05.646756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/fchmod.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/fchmod.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,31 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5876,8 +6028,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/fchmod.c newlib-2.2.0-arm/libgloss/
 +	return ret;
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/flock.c newlib-2.2.0-arm/libgloss/libsysbase/flock.c
---- newlib-2.2.0/libgloss/libsysbase/flock.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/flock.c	2014-12-31 17:29:05.646756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/flock.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/flock.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,21 @@
 +#include <config.h>
 +#include <_ansi.h>
@@ -5901,8 +6053,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/flock.c newlib-2.2.0-arm/libgloss/l
 +	__lock_release_recursive(*(_LOCK_RECURSIVE_T*)&fp->_lock);
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/fork.c newlib-2.2.0-arm/libgloss/libsysbase/fork.c
---- newlib-2.2.0/libgloss/libsysbase/fork.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/fork.c	2014-12-31 17:29:05.646756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/fork.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/fork.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,25 @@
 +/*
 + * Stub version of fork.
@@ -5930,8 +6082,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/fork.c newlib-2.2.0-arm/libgloss/li
 +	return -1;
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/fstat.c newlib-2.2.0-arm/libgloss/libsysbase/fstat.c
---- newlib-2.2.0/libgloss/libsysbase/fstat.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/fstat.c	2014-12-31 17:29:05.646756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/fstat.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/fstat.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,48 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -5982,8 +6134,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/fstat.c newlib-2.2.0-arm/libgloss/l
 +	return ret;
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/fsync.c newlib-2.2.0-arm/libgloss/libsysbase/fsync.c
---- newlib-2.2.0/libgloss/libsysbase/fsync.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/fsync.c	2014-12-31 17:29:05.646756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/fsync.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/fsync.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,39 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -6025,8 +6177,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/fsync.c newlib-2.2.0-arm/libgloss/l
 +	return ret;
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/ftruncate.c newlib-2.2.0-arm/libgloss/libsysbase/ftruncate.c
---- newlib-2.2.0/libgloss/libsysbase/ftruncate.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/ftruncate.c	2014-12-31 17:29:05.646756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/ftruncate.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/ftruncate.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,40 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -6069,8 +6221,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/ftruncate.c newlib-2.2.0-arm/libglo
 +	return ret;
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/getpid.c newlib-2.2.0-arm/libgloss/libsysbase/getpid.c
---- newlib-2.2.0/libgloss/libsysbase/getpid.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/getpid.c	2014-12-31 17:29:05.646756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/getpid.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/getpid.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,21 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -6094,8 +6246,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/getpid.c newlib-2.2.0-arm/libgloss/
 +}
 +
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/getreent.c newlib-2.2.0-arm/libgloss/libsysbase/getreent.c
---- newlib-2.2.0/libgloss/libsysbase/getreent.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/getreent.c	2014-12-31 17:29:05.646756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/getreent.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/getreent.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,22 @@
 +
 +/* default reentrant pointer when multithread enabled */
@@ -6120,8 +6272,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/getreent.c newlib-2.2.0-arm/libglos
 +
 +
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/gettod.c newlib-2.2.0-arm/libgloss/libsysbase/gettod.c
---- newlib-2.2.0/libgloss/libsysbase/gettod.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/gettod.c	2014-12-31 17:29:05.646756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/gettod.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/gettod.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,35 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -6159,8 +6311,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/gettod.c newlib-2.2.0-arm/libgloss/
 +}
 +
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/handle_manager.c newlib-2.2.0-arm/libgloss/libsysbase/handle_manager.c
---- newlib-2.2.0/libgloss/libsysbase/handle_manager.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/handle_manager.c	2014-12-31 17:29:05.646756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/handle_manager.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/handle_manager.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,52 @@
 +#include <stdlib.h>
 +#include <stdio.h>
@@ -6215,9 +6367,9 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/handle_manager.c newlib-2.2.0-arm/l
 +}
 +
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/iosupport.c newlib-2.2.0-arm/libgloss/libsysbase/iosupport.c
---- newlib-2.2.0/libgloss/libsysbase/iosupport.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/iosupport.c	2014-12-31 17:29:05.646756000 +0000
-@@ -0,0 +1,139 @@
+--- newlib-2.2.0/libgloss/libsysbase/iosupport.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/iosupport.c	2015-01-15 10:47:03 +0000
+@@ -0,0 +1,126 @@
 +#include <stdlib.h>
 +#include <string.h>
 +#include <sys/iosupport.h>
@@ -6261,7 +6413,6 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/iosupport.c newlib-2.2.0-arm/libglo
 +	NULL,		// chmod_r
 +	NULL,		// fchmod_r
 +	NULL,		// rmdir_r
-+	false		// stdioUnbuffered
 +};
 +
 +//---------------------------------------------------------------------------------
@@ -6344,22 +6495,10 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/iosupport.c newlib-2.2.0-arm/libglo
 +	}
 +}
 +
-+//---------------------------------------------------------------------------------
-+bool WantUnbufferedIO(const char *name) {
-+//---------------------------------------------------------------------------------
-+	const devoptab_t *optab = GetDeviceOpTab(name);
-+
-+	if (NULL != optab) {
-+		return optab->stdioUnbuffered;
-+	}
-+
-+	return false;
-+}
-+
 +
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/isatty.c newlib-2.2.0-arm/libgloss/libsysbase/isatty.c
---- newlib-2.2.0/libgloss/libsysbase/isatty.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/isatty.c	2014-12-31 17:29:05.646756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/isatty.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/isatty.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,20 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -6382,8 +6521,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/isatty.c newlib-2.2.0-arm/libgloss/
 +	return 0;
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/kill.c newlib-2.2.0-arm/libgloss/libsysbase/kill.c
---- newlib-2.2.0/libgloss/libsysbase/kill.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/kill.c	2014-12-31 17:29:05.646756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/kill.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/kill.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,23 @@
 +/*
 + * Stub version of kill.
@@ -6409,8 +6548,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/kill.c newlib-2.2.0-arm/libgloss/li
 +  return -1;
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/link.c newlib-2.2.0-arm/libgloss/libsysbase/link.c
---- newlib-2.2.0/libgloss/libsysbase/link.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/link.c	2014-12-31 17:29:05.646756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/link.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/link.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,37 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -6450,8 +6589,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/link.c newlib-2.2.0-arm/libgloss/li
 +}
 +
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/lseek.c newlib-2.2.0-arm/libgloss/libsysbase/lseek.c
---- newlib-2.2.0/libgloss/libsysbase/lseek.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/lseek.c	2014-12-31 17:29:05.646756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/lseek.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/lseek.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,57 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -6510,167 +6649,15 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/lseek.c newlib-2.2.0-arm/libgloss/l
 +	return ret;
 +
 +}
-diff -NBaur newlib-2.2.0/libgloss/libsysbase/Makefile.in newlib-2.2.0-arm/libgloss/libsysbase/Makefile.in
---- newlib-2.2.0/libgloss/libsysbase/Makefile.in	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/Makefile.in	2014-12-31 17:29:05.650756000 +0000
-@@ -0,0 +1,148 @@
-+# Copyright (c) 1998 Cygnus Support
-+#
-+# The authors hereby grant permission to use, copy, modify, distribute,
-+# and license this software and its documentation for any purpose, provided
-+# that existing copyright notices are retained in all copies and that this
-+# notice is included verbatim in any distributions. No written agreement,
-+# license, or royalty fee is required for any of the authorized uses.
-+# Modifications to this software may be copyrighted by their authors
-+# and need not follow the licensing terms described here, provided that
-+# the new terms are clearly indicated on the first page of each file where
-+# they apply.
-+
-+DESTDIR =
-+VPATH = @srcdir@
-+srcdir = @srcdir@
-+objdir = .
-+srcroot = $(srcdir)/../..
-+objroot = $(objdir)/../..
-+
-+prefix = @prefix@
-+exec_prefix = @exec_prefix@
-+
-+host_alias = @host_alias@
-+target_alias = @target_alias@
-+program_transform_name = @program_transform_name@
-+
-+bindir = @bindir@
-+libdir = @libdir@
-+tooldir = $(exec_prefix)/$(target_alias)
-+
-+# Multilib support variables.
-+# TOP is used instead of MULTI{BUILD,SRC}TOP.
-+MULTIDIRS =
-+MULTISUBDIR =
-+MULTIDO = true
-+MULTICLEAN = true
-+
-+INSTALL = @INSTALL@
-+INSTALL_PROGRAM = @INSTALL_PROGRAM@
-+INSTALL_DATA = @INSTALL_DATA@
-+
-+SHELL =	/bin/sh
-+
-+CC = @CC@
-+
-+#AS = @AS@
-+AS = `if [ -f ${objroot}/../gas/as.new ] ; \
-+	then echo ${objroot}/../gas/as.new ; \
-+	else echo as ; fi`
-+
-+AR = @AR@
-+
-+#LD = @LD@
-+LD = `if [ -f ${objroot}/../ld/ld.new ] ; \
-+	then echo ${objroot}/../ld/ld.new ; \
-+	else echo ld ; fi`
-+
-+RANLIB = @RANLIB@
-+
-+OBJDUMP = `if [ -f ${objroot}/../binutils/objdump ] ; \
-+	then echo ${objroot}/../binutils/objdump ; \
-+	else t='$(program_transform_name)'; echo objdump | sed -e $$t ; fi`
-+OBJCOPY = `if [ -f ${objroot}/../binutils/objcopy ] ; \
-+	then echo ${objroot}/../binutils/objcopy ; \
-+	else t='$(program_transform_name)'; echo objcopy | sed -e $$t ; fi`
-+
-+# object files needed
-+OBJS = abort.o iosupport.o close.o environ.o execve.o fork.o fstat.o getpid.o gettod.o \
-+	isatty.o kill.o link.o lseek.o open.o read.o sbrk.o stat.o times.o \
-+	unlink.o wait.o write.o _exit.o malloc_vars.o \
-+	chdir.o mkdir.o rename.o build_argv.o statvfs.o \
-+	flock.o syscall_support.o handle_manager.o truncate.o ftruncate.o dirent.o fsync.o \
-+	fchmod.o chmod.o getreent.o rmdir.o
-+
-+# Object files specific to particular targets.
-+EVALOBJS = ${OBJS}
-+
-+GCC_LDFLAGS = `if [ -d ${objroot}/../gcc ] ; \
-+	then echo -L${objroot}/../gcc ; fi`
-+
-+OUTPUTS = libsysbase.a
-+
-+NEWLIB_CFLAGS = `if [ -d ${objroot}/newlib ]; then echo -I${objroot}/newlib/targ-include -I${srcroot}/newlib/libc/include; fi`
-+NEWLIB_LDFLAGS = `if [ -d ${objroot}/newlib ]; then echo -B${objroot}/newlib/ -L${objroot}/newlib/; fi`
-+
-+INCLUDES = -I. -I$(srcdir)/..
-+# Note that when building the library, ${MULTILIB} is not the way multilib
-+# options are passed; they're passed in $(CFLAGS).
-+CFLAGS_FOR_TARGET = ${MULTILIB} ${INCLUDES} ${NEWLIB_CFLAGS}
-+LDFLAGS_FOR_TARGET = ${MULTILIB} ${NEWLIB_LDFLAGS}
-+AR_FLAGS = qc
-+
-+.c.o:
-+	$(CC) $(CFLAGS_FOR_TARGET) -O2 $(INCLUDES) -c $(CFLAGS) $<
-+
-+.C.o:
-+	$(CC) $(CFLAGS_FOR_TARGET) -O2 $(INCLUDES) -c $(CFLAGS) $<
-+.s.o:
-+	$(AS) $(ASFLAGS_FOR_TARGET) $(INCLUDES) $(ASFLAGS) -o $*.o $<
-+
-+#
-+# GCC knows to run the preprocessor on .S files before it assembles them.
-+#
-+.S.o:
-+	$(CC) $(CFLAGS_FOR_TARGET) $(INCLUDES) $(CFLAGS) -c $<
-+
-+#
-+# this is a bogus target that'll produce an assembler from the
-+# C source with the right compiler options. this is so we can
-+# track down code generation or debug symbol bugs.
-+#
-+.c.s:
-+	$(CC) $(CFLAGS_FOR_TARGET) -S $(INCLUDES) $(CFLAGS) $<
-+
-+all: ${OUTPUTS}
-+
-+#
-+# here's where we build the library for each target
-+#
-+
-+libsysbase.a: $(EVALOBJS)
-+	${AR} ${ARFLAGS} $@ $(EVALOBJS)
-+	${RANLIB} $@
-+
-+doc:
-+
-+clean mostlyclean:
-+	rm -f $(OUTPUTS) *.i *~ *.o *-test *.srec *.dis *.map *.x
-+
-+distclean maintainer-clean realclean: clean
-+	rm -f Makefile config.status $(OUTPUTS)
-+
-+.PHONY: install info install-info clean-info
-+install:
-+	@for outputs in ${OUTPUTS}; do\
-+	 mkdir -p $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}; \
-+	 $(INSTALL_PROGRAM) $${outputs} $(DESTDIR)$(tooldir)/lib${MULTISUBDIR}; \
-+	done
-+
-+info:
-+install-info:
-+clean-info:
-+
-+Makefile: Makefile.in config.status @host_makefile_frag_path@
-+	$(SHELL) config.status
-+
-+config.status: configure
-+	$(SHELL) config.status --recheck
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/malloc_vars.c newlib-2.2.0-arm/libgloss/libsysbase/malloc_vars.c
---- newlib-2.2.0/libgloss/libsysbase/malloc_vars.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/malloc_vars.c	2014-12-31 17:29:05.650756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/malloc_vars.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/malloc_vars.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,2 @@
 +char *fake_heap_end = (char*)0;
 +char *fake_heap_start = (char*)0;
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/mkdir.c newlib-2.2.0-arm/libgloss/libsysbase/mkdir.c
---- newlib-2.2.0/libgloss/libsysbase/mkdir.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/mkdir.c	2014-12-31 17:29:05.650756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/mkdir.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/mkdir.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,18 @@
 +#include <reent.h>
 +#include <sys/iosupport.h>
@@ -6691,8 +6678,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/mkdir.c newlib-2.2.0-arm/libgloss/l
 +	return ret;
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/open.c newlib-2.2.0-arm/libgloss/libsysbase/open.c
---- newlib-2.2.0/libgloss/libsysbase/open.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/open.c	2014-12-31 17:29:05.650756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/open.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/open.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,60 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -6755,8 +6742,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/open.c newlib-2.2.0-arm/libgloss/li
 +	return fd;
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/read.c newlib-2.2.0-arm/libgloss/libsysbase/read.c
---- newlib-2.2.0/libgloss/libsysbase/read.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/read.c	2014-12-31 17:29:05.650756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/read.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/read.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,50 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -6809,8 +6796,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/read.c newlib-2.2.0-arm/libgloss/li
 +}
 +
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/rename.c newlib-2.2.0-arm/libgloss/libsysbase/rename.c
---- newlib-2.2.0/libgloss/libsysbase/rename.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/rename.c	2014-12-31 17:29:05.650756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/rename.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/rename.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,40 @@
 +#include "config.h"
 +#include <reent.h>
@@ -6853,8 +6840,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/rename.c newlib-2.2.0-arm/libgloss/
 +	return ret;
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/rmdir.c newlib-2.2.0-arm/libgloss/libsysbase/rmdir.c
---- newlib-2.2.0/libgloss/libsysbase/rmdir.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/rmdir.c	2014-12-31 17:29:05.650756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/rmdir.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/rmdir.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,24 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -6881,8 +6868,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/rmdir.c newlib-2.2.0-arm/libgloss/l
 +	return ret;
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/sbrk.c newlib-2.2.0-arm/libgloss/libsysbase/sbrk.c
---- newlib-2.2.0/libgloss/libsysbase/sbrk.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/sbrk.c	2014-12-31 17:29:05.650756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/sbrk.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/sbrk.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,60 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -6945,8 +6932,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/sbrk.c newlib-2.2.0-arm/libgloss/li
 +	return (caddr_t) prev_heap_start;
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/stat.c newlib-2.2.0-arm/libgloss/libsysbase/stat.c
---- newlib-2.2.0/libgloss/libsysbase/stat.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/stat.c	2014-12-31 17:29:05.650756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/stat.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/stat.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,43 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -6992,8 +6979,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/stat.c newlib-2.2.0-arm/libgloss/li
 +}
 +
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/statvfs.c newlib-2.2.0-arm/libgloss/libsysbase/statvfs.c
---- newlib-2.2.0/libgloss/libsysbase/statvfs.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/statvfs.c	2014-12-31 17:29:05.650756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/statvfs.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/statvfs.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,23 @@
 +#include <reent.h>
 +#include <sys/iosupport.h>
@@ -7019,8 +7006,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/statvfs.c newlib-2.2.0-arm/libgloss
 +	return ret;
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/syscall_support.c newlib-2.2.0-arm/libgloss/libsysbase/syscall_support.c
---- newlib-2.2.0/libgloss/libsysbase/syscall_support.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/syscall_support.c	2014-12-31 17:29:05.650756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/syscall_support.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/syscall_support.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,51 @@
 +#include <sys/iosupport.h>
 +
@@ -7074,8 +7061,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/syscall_support.c newlib-2.2.0-arm/
 +}
 +
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/times.c newlib-2.2.0-arm/libgloss/libsysbase/times.c
---- newlib-2.2.0/libgloss/libsysbase/times.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/times.c	2014-12-31 17:29:05.650756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/times.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/times.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,21 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -7099,8 +7086,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/times.c newlib-2.2.0-arm/libgloss/l
 +}
 +
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/truncate.c newlib-2.2.0-arm/libgloss/libsysbase/truncate.c
---- newlib-2.2.0/libgloss/libsysbase/truncate.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/truncate.c	2014-12-31 17:29:05.650756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/truncate.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/truncate.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,59 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -7162,8 +7149,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/truncate.c newlib-2.2.0-arm/libglos
 +	return ret;
 +}
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/unlink.c newlib-2.2.0-arm/libgloss/libsysbase/unlink.c
---- newlib-2.2.0/libgloss/libsysbase/unlink.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/unlink.c	2014-12-31 17:29:05.650756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/unlink.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/unlink.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,36 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -7202,8 +7189,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/unlink.c newlib-2.2.0-arm/libgloss/
 +}
 +
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/wait.c newlib-2.2.0-arm/libgloss/libsysbase/wait.c
---- newlib-2.2.0/libgloss/libsysbase/wait.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/wait.c	2014-12-31 17:29:05.650756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/wait.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/wait.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,28 @@
 +/*
 + * Stub version of wait.
@@ -7234,8 +7221,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/wait.c newlib-2.2.0-arm/libgloss/li
 +}
 +
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/warning.h newlib-2.2.0-arm/libgloss/libsysbase/warning.h
---- newlib-2.2.0/libgloss/libsysbase/warning.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/warning.h	2014-12-31 17:29:05.650756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/warning.h	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/warning.h	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,43 @@
 +#ifndef __WARNING_H__
 +#define __WARNING_H__
@@ -7281,8 +7268,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/warning.h newlib-2.2.0-arm/libgloss
 +
 +#endif /* __WARNING_H__ */
 diff -NBaur newlib-2.2.0/libgloss/libsysbase/write.c newlib-2.2.0-arm/libgloss/libsysbase/write.c
---- newlib-2.2.0/libgloss/libsysbase/write.c	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/libgloss/libsysbase/write.c	2014-12-31 17:29:05.650756000 +0000
+--- newlib-2.2.0/libgloss/libsysbase/write.c	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/libgloss/libsysbase/write.c	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,51 @@
 +#include "config.h"
 +#include <_ansi.h>
@@ -7336,8 +7323,8 @@ diff -NBaur newlib-2.2.0/libgloss/libsysbase/write.c newlib-2.2.0-arm/libgloss/l
 +	return ret;
 +}
 diff -NBaur newlib-2.2.0/newlib/configure.host newlib-2.2.0-arm/newlib/configure.host
---- newlib-2.2.0/newlib/configure.host	2014-12-15 13:27:37.000000000 +0000
-+++ newlib-2.2.0-arm/newlib/configure.host	2014-12-31 17:29:05.650756000 +0000
+--- newlib-2.2.0/newlib/configure.host	2014-12-15 13:27:37 +0000
++++ newlib-2.2.0-arm/newlib/configure.host	2014-12-31 19:45:54 +0000
 @@ -602,6 +602,14 @@
    arc-*-*)
  	syscall_dir=syscalls
@@ -7354,8 +7341,8 @@ diff -NBaur newlib-2.2.0/newlib/configure.host newlib-2.2.0-arm/newlib/configure
  	syscall_dir=syscalls
  	;;
 diff -NBaur newlib-2.2.0/newlib/libc/include/pthread.h newlib-2.2.0-arm/newlib/libc/include/pthread.h
---- newlib-2.2.0/newlib/libc/include/pthread.h	2013-11-29 23:35:34.000000000 +0000
-+++ newlib-2.2.0-arm/newlib/libc/include/pthread.h	1970-01-01 01:00:00.000000000 +0100
+--- newlib-2.2.0/newlib/libc/include/pthread.h	2013-11-29 23:35:34 +0000
++++ newlib-2.2.0-arm/newlib/libc/include/pthread.h	1970-01-01 00:00:00 +0000
 @@ -1,431 +0,0 @@
 -/*  pthread.h
 - *
@@ -7788,9 +7775,21 @@ diff -NBaur newlib-2.2.0/newlib/libc/include/pthread.h newlib-2.2.0-arm/newlib/l
 -
 -#endif
 -/* end of include file */
+diff -NBaur newlib-2.2.0/newlib/libc/include/sys/_types.h newlib-2.2.0-arm/newlib/libc/include/sys/_types.h
+--- newlib-2.2.0/newlib/libc/include/sys/_types.h	2013-10-15 18:37:37 +0100
++++ newlib-2.2.0-arm/newlib/libc/include/sys/_types.h	2014-12-31 19:45:54 +0000
+@@ -17,7 +17,7 @@
+ #endif
+ 
+ #ifndef __dev_t_defined
+-typedef short __dev_t;
++typedef int __dev_t;
+ #endif
+ 
+ #ifndef __uid_t_defined
 diff -NBaur newlib-2.2.0/newlib/libc/include/sys/config.h newlib-2.2.0-arm/newlib/libc/include/sys/config.h
---- newlib-2.2.0/newlib/libc/include/sys/config.h	2014-08-18 17:43:42.000000000 +0100
-+++ newlib-2.2.0-arm/newlib/libc/include/sys/config.h	2014-12-31 17:29:05.658756000 +0000
+--- newlib-2.2.0/newlib/libc/include/sys/config.h	2014-08-18 17:43:42 +0100
++++ newlib-2.2.0-arm/newlib/libc/include/sys/config.h	2014-12-31 19:45:54 +0000
 @@ -4,6 +4,9 @@
  #include <machine/ieeefp.h>  /* floating point macros */
  #include <sys/features.h>	/* POSIX defs */
@@ -7802,8 +7801,8 @@ diff -NBaur newlib-2.2.0/newlib/libc/include/sys/config.h newlib-2.2.0-arm/newli
  #define MALLOC_ALIGNMENT 16
  #endif
 diff -NBaur newlib-2.2.0/newlib/libc/include/sys/dirent.h newlib-2.2.0-arm/newlib/libc/include/sys/dirent.h
---- newlib-2.2.0/newlib/libc/include/sys/dirent.h	2005-10-04 21:47:39.000000000 +0100
-+++ newlib-2.2.0-arm/newlib/libc/include/sys/dirent.h	2014-12-31 17:29:05.662756000 +0000
+--- newlib-2.2.0/newlib/libc/include/sys/dirent.h	2005-10-04 21:47:39 +0100
++++ newlib-2.2.0-arm/newlib/libc/include/sys/dirent.h	2014-12-31 19:45:54 +0000
 @@ -4,10 +4,49 @@
     not support <dirent.h>, we will get this file which uses #error to force
     an error.  */
@@ -7857,9 +7856,9 @@ diff -NBaur newlib-2.2.0/newlib/libc/include/sys/dirent.h newlib-2.2.0-arm/newli
 +#endif // _dirent_h_
 \ No newline at end of file
 diff -NBaur newlib-2.2.0/newlib/libc/include/sys/iosupport.h newlib-2.2.0-arm/newlib/libc/include/sys/iosupport.h
---- newlib-2.2.0/newlib/libc/include/sys/iosupport.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/newlib/libc/include/sys/iosupport.h	2014-12-31 17:29:05.662756000 +0000
-@@ -0,0 +1,105 @@
+--- newlib-2.2.0/newlib/libc/include/sys/iosupport.h	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/newlib/libc/include/sys/iosupport.h	2015-01-15 10:47:23 +0000
+@@ -0,0 +1,103 @@
 +//---------------------------------------------------------------------------------
 +#ifndef __iosupp_h__
 +#define __iosupp_h__
@@ -7909,9 +7908,9 @@ diff -NBaur newlib-2.2.0/newlib/libc/include/sys/iosupport.h newlib-2.2.0-arm/ne
 +	int (*chdir_r)(struct _reent *r, const char *name);
 +	int (*rename_r) (struct _reent *r, const char *oldName, const char *newName);
 +	int (*mkdir_r) (struct _reent *r, const char *path, int mode);
-+		
++
 +	size_t dirStateSize;
-+	
++
 +	DIR_ITER* (*diropen_r)(struct _reent *r, DIR_ITER *dirState, const char *path);
 +	int (*dirreset_r)(struct _reent *r, DIR_ITER *dirState);
 +	int (*dirnext_r)(struct _reent *r, DIR_ITER *dirState, char *filename, struct stat *filestat);
@@ -7926,13 +7925,11 @@ diff -NBaur newlib-2.2.0/newlib/libc/include/sys/iosupport.h newlib-2.2.0-arm/ne
 +	int (*fchmod_r)(struct _reent *r, int fd, mode_t mode);
 +	int (*rmdir_r)(struct _reent *r, const char *name);
 +
-+	bool stdioUnbuffered;
-+
 +} devoptab_t;
-+	
++
 +extern const devoptab_t *devoptab_list[];
 +
-+	
++
 +typedef struct {
 +	void *(*sbrk_r) (struct _rent *ptr, ptrdiff_t incr);
 +	void (*exit) ( int rc );
@@ -7943,15 +7940,15 @@ diff -NBaur newlib-2.2.0/newlib/libc/include/sys/iosupport.h newlib-2.2.0-arm/ne
 +	int (*lock_acquire) (_LOCK_T *lock);
 +	struct _reent *(*getreent) ();
 +} __syscalls_t;
-+	
++
 +extern __syscalls_t __syscalls;
-+	
++
 +int AddDevice( const devoptab_t* device);
 +int FindDevice(const char* name);
 +int RemoveDevice(const char* name);
 +void setDefaultDevice( int device );
 +const devoptab_t* GetDeviceOpTab (const char *name);
-+bool WantUnbufferedIO(const char *name);
++
 +
 +void __release_handle(int fd);
 +int  __alloc_handle(size_t size);
@@ -7966,8 +7963,8 @@ diff -NBaur newlib-2.2.0/newlib/libc/include/sys/iosupport.h newlib-2.2.0-arm/ne
 +#endif // __iosupp_h__
 +//---------------------------------------------------------------------------------
 diff -NBaur newlib-2.2.0/newlib/libc/include/sys/statvfs.h newlib-2.2.0-arm/newlib/libc/include/sys/statvfs.h
---- newlib-2.2.0/newlib/libc/include/sys/statvfs.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/newlib/libc/include/sys/statvfs.h	2014-12-31 17:29:05.662756000 +0000
+--- newlib-2.2.0/newlib/libc/include/sys/statvfs.h	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/newlib/libc/include/sys/statvfs.h	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,35 @@
 +#ifndef _SYS_STATVFS_H
 +#define _SYS_STATVFS_H
@@ -8006,8 +8003,8 @@ diff -NBaur newlib-2.2.0/newlib/libc/include/sys/statvfs.h newlib-2.2.0-arm/newl
 +#endif // _SYS_STATVFS_H
 \ No newline at end of file
 diff -NBaur newlib-2.2.0/newlib/libc/include/sys/syslimits.h newlib-2.2.0-arm/newlib/libc/include/sys/syslimits.h
---- newlib-2.2.0/newlib/libc/include/sys/syslimits.h	2002-08-23 02:56:03.000000000 +0100
-+++ newlib-2.2.0-arm/newlib/libc/include/sys/syslimits.h	2014-12-31 17:29:05.662756000 +0000
+--- newlib-2.2.0/newlib/libc/include/sys/syslimits.h	2002-08-23 02:56:03 +0100
++++ newlib-2.2.0-arm/newlib/libc/include/sys/syslimits.h	2014-12-31 19:45:54 +0000
 @@ -44,12 +44,12 @@
  #define	LINK_MAX		32767	/* max file link count */
  #define	MAX_CANON		  255	/* max bytes in term canon input line */
@@ -8023,21 +8020,9 @@ diff -NBaur newlib-2.2.0/newlib/libc/include/sys/syslimits.h newlib-2.2.0-arm/ne
  #define	PIPE_BUF		  512	/* max bytes for atomic pipe writes */
  #define	IOV_MAX			 1024	/* max elements in i/o vector */
  
-diff -NBaur newlib-2.2.0/newlib/libc/include/sys/_types.h newlib-2.2.0-arm/newlib/libc/include/sys/_types.h
---- newlib-2.2.0/newlib/libc/include/sys/_types.h	2013-10-15 18:37:37.000000000 +0100
-+++ newlib-2.2.0-arm/newlib/libc/include/sys/_types.h	2014-12-31 17:29:05.662756000 +0000
-@@ -17,7 +17,7 @@
- #endif
- 
- #ifndef __dev_t_defined
--typedef short __dev_t;
-+typedef int __dev_t;
- #endif
- 
- #ifndef __uid_t_defined
 diff -NBaur newlib-2.2.0/newlib/libc/include/sys/types.h newlib-2.2.0-arm/newlib/libc/include/sys/types.h
---- newlib-2.2.0/newlib/libc/include/sys/types.h	2013-11-29 23:14:57.000000000 +0000
-+++ newlib-2.2.0-arm/newlib/libc/include/sys/types.h	2014-12-31 17:29:05.662756000 +0000
+--- newlib-2.2.0/newlib/libc/include/sys/types.h	2013-11-29 23:14:57 +0000
++++ newlib-2.2.0-arm/newlib/libc/include/sys/types.h	2014-12-31 19:45:54 +0000
 @@ -152,7 +152,7 @@
      defined(__sparc__) || defined(__SPU__)
  typedef	unsigned long	ino_t;
@@ -8058,8 +8043,8 @@ diff -NBaur newlib-2.2.0/newlib/libc/include/sys/types.h newlib-2.2.0-arm/newlib
  
  
 diff -NBaur newlib-2.2.0/newlib/libc/include/sys/unistd.h newlib-2.2.0-arm/newlib/libc/include/sys/unistd.h
---- newlib-2.2.0/newlib/libc/include/sys/unistd.h	2014-10-27 14:35:46.000000000 +0000
-+++ newlib-2.2.0-arm/newlib/libc/include/sys/unistd.h	2014-12-31 17:29:05.662756000 +0000
+--- newlib-2.2.0/newlib/libc/include/sys/unistd.h	2014-10-27 14:35:46 +0000
++++ newlib-2.2.0-arm/newlib/libc/include/sys/unistd.h	2014-12-31 19:45:54 +0000
 @@ -89,9 +89,7 @@
  gid_t   _EXFUN(getgid, (void ));
  #endif
@@ -8084,8 +8069,8 @@ diff -NBaur newlib-2.2.0/newlib/libc/include/sys/unistd.h newlib-2.2.0-arm/newli
  #if defined(__CYGWIN__) || defined(__rtems__)
  int	_EXFUN(getdtablesize, (void));
 diff -NBaur newlib-2.2.0/newlib/libc/locale/locale.c newlib-2.2.0-arm/newlib/libc/locale/locale.c
---- newlib-2.2.0/newlib/libc/locale/locale.c	2012-03-29 21:27:15.000000000 +0100
-+++ newlib-2.2.0-arm/newlib/libc/locale/locale.c	2014-12-31 17:29:05.662756000 +0000
+--- newlib-2.2.0/newlib/libc/locale/locale.c	2012-03-29 21:27:15 +0100
++++ newlib-2.2.0-arm/newlib/libc/locale/locale.c	2014-12-31 19:45:54 +0000
 @@ -188,7 +188,12 @@
  #define _LC_LAST      7
  #define ENCODING_LEN 31
@@ -8119,8 +8104,8 @@ diff -NBaur newlib-2.2.0/newlib/libc/locale/locale.c newlib-2.2.0-arm/newlib/lib
  #else
  static char lc_ctype_charset[ENCODING_LEN + 1] = "ASCII";
 diff -NBaur newlib-2.2.0/newlib/libc/machine/arm/sys/lock.h newlib-2.2.0-arm/newlib/libc/machine/arm/sys/lock.h
---- newlib-2.2.0/newlib/libc/machine/arm/sys/lock.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/newlib/libc/machine/arm/sys/lock.h	2014-12-31 17:29:05.662756000 +0000
+--- newlib-2.2.0/newlib/libc/machine/arm/sys/lock.h	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/newlib/libc/machine/arm/sys/lock.h	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,78 @@
 +#ifndef __SYS_LOCK_H__
 +#define __SYS_LOCK_H__
@@ -8201,8 +8186,8 @@ diff -NBaur newlib-2.2.0/newlib/libc/machine/arm/sys/lock.h newlib-2.2.0-arm/new
 +
 +#endif /* __SYS_LOCK_H__ */
 diff -NBaur newlib-2.2.0/newlib/libc/machine/arm/sys/stdio.h newlib-2.2.0-arm/newlib/libc/machine/arm/sys/stdio.h
---- newlib-2.2.0/newlib/libc/machine/arm/sys/stdio.h	1970-01-01 01:00:00.000000000 +0100
-+++ newlib-2.2.0-arm/newlib/libc/machine/arm/sys/stdio.h	2014-12-31 17:29:05.662756000 +0000
+--- newlib-2.2.0/newlib/libc/machine/arm/sys/stdio.h	1970-01-01 00:00:00 +0000
++++ newlib-2.2.0-arm/newlib/libc/machine/arm/sys/stdio.h	2014-12-31 19:45:54 +0000
 @@ -0,0 +1,27 @@
 +#ifndef _NEWLIB_STDIO_H
 +#define _NEWLIB_STDIO_H
@@ -8232,8 +8217,8 @@ diff -NBaur newlib-2.2.0/newlib/libc/machine/arm/sys/stdio.h newlib-2.2.0-arm/ne
 +
 +#endif /* _NEWLIB_STDIO_H */
 diff -NBaur newlib-2.2.0/newlib/libc/misc/init.c newlib-2.2.0-arm/newlib/libc/misc/init.c
---- newlib-2.2.0/newlib/libc/misc/init.c	2010-06-04 16:30:40.000000000 +0100
-+++ newlib-2.2.0-arm/newlib/libc/misc/init.c	2014-12-31 17:29:05.662756000 +0000
+--- newlib-2.2.0/newlib/libc/misc/init.c	2010-06-04 16:30:40 +0100
++++ newlib-2.2.0-arm/newlib/libc/misc/init.c	2014-12-31 19:45:54 +0000
 @@ -40,4 +40,8 @@
    for (i = 0; i < count; i++)
      __init_array_start[i] ();
@@ -8244,8 +8229,8 @@ diff -NBaur newlib-2.2.0/newlib/libc/misc/init.c newlib-2.2.0-arm/newlib/libc/mi
 +
  #endif
 diff -NBaur newlib-2.2.0/newlib/libc/reent/getreent.c newlib-2.2.0-arm/newlib/libc/reent/getreent.c
---- newlib-2.2.0/newlib/libc/reent/getreent.c	2007-09-07 01:45:55.000000000 +0100
-+++ newlib-2.2.0-arm/newlib/libc/reent/getreent.c	2014-12-31 17:29:05.666756000 +0000
+--- newlib-2.2.0/newlib/libc/reent/getreent.c	2007-09-07 01:45:55 +0100
++++ newlib-2.2.0-arm/newlib/libc/reent/getreent.c	2014-12-31 19:45:54 +0000
 @@ -1,3 +1,4 @@
 +#if 0
  /* default reentrant pointer when multithread enabled */
@@ -8258,8 +8243,8 @@ diff -NBaur newlib-2.2.0/newlib/libc/reent/getreent.c newlib-2.2.0-arm/newlib/li
 +
 +#endif
 diff -NBaur newlib-2.2.0/newlib/libc/reent/gettimeofdayr.c newlib-2.2.0-arm/newlib/libc/reent/gettimeofdayr.c
---- newlib-2.2.0/newlib/libc/reent/gettimeofdayr.c	2007-07-06 17:56:30.000000000 +0100
-+++ newlib-2.2.0-arm/newlib/libc/reent/gettimeofdayr.c	2014-12-31 17:29:05.666756000 +0000
+--- newlib-2.2.0/newlib/libc/reent/gettimeofdayr.c	2007-07-06 17:56:30 +0100
++++ newlib-2.2.0-arm/newlib/libc/reent/gettimeofdayr.c	2014-12-31 19:45:54 +0000
 @@ -59,7 +59,7 @@
  	Check libc.a to see if its available on yours.
  */
@@ -8277,8 +8262,17 @@ diff -NBaur newlib-2.2.0/newlib/libc/reent/gettimeofdayr.c newlib-2.2.0-arm/newl
 +*/
  #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */
 diff -NBaur newlib-2.2.0/newlib/libc/stdio/fopen.c newlib-2.2.0-arm/newlib/libc/stdio/fopen.c
---- newlib-2.2.0/newlib/libc/stdio/fopen.c	2013-11-18 17:28:05.000000000 +0000
-+++ newlib-2.2.0-arm/newlib/libc/stdio/fopen.c	2014-12-31 17:29:05.666756000 +0000
+--- newlib-2.2.0/newlib/libc/stdio/fopen.c	2013-11-18 17:28:05 +0000
++++ newlib-2.2.0-arm/newlib/libc/stdio/fopen.c	2015-01-15 09:25:28 +0000
+@@ -28,7 +28,7 @@
+ 	#include <stdio.h>
+ 	FILE *fopen(const char *<[file]>, const char *<[mode]>);
+ 
+-	FILE *_fopen_r(struct _reent *<[reent]>, 
++	FILE *_fopen_r(struct _reent *<[reent]>,
+                        const char *<[file]>, const char *<[mode]>);
+ 
+ TRAD_SYNOPSIS
 @@ -121,8 +121,12 @@
  #ifdef __CYGWIN__
  #include <fcntl.h>
@@ -8292,22 +8286,70 @@ diff -NBaur newlib-2.2.0/newlib/libc/stdio/fopen.c newlib-2.2.0-arm/newlib/libc/
  FILE *
  _DEFUN(_fopen_r, (ptr, file, mode),
         struct _reent *ptr _AND
-@@ -151,6 +155,12 @@
+@@ -140,12 +144,12 @@
  
-   _newlib_flockfile_start (fp);
+   if ((f = _open_r (ptr, file, oflags, 0666)) < 0)
+     {
+-      _newlib_sfp_lock_start (); 
++      _newlib_sfp_lock_start ();
+       fp->_flags = 0;		/* release */
+ #ifndef __SINGLE_THREAD__
+       __lock_close_recursive (fp->_lock);
+ #endif
+-      _newlib_sfp_lock_end (); 
++      _newlib_sfp_lock_end ();
+       return NULL;
+     }
  
-+  if (WantUnbufferedIO(file))
-+  {
-+    flags &= ~(__SLBF | __SNBF | __SMBF);
-+    flags |= __SNBF;
-+  }
+diff -NBaur newlib-2.2.0/newlib/libc/stdio/fread.c newlib-2.2.0-arm/newlib/libc/stdio/fread.c
+--- newlib-2.2.0/newlib/libc/stdio/fread.c	2014-12-18 14:55:20 +0000
++++ newlib-2.2.0-arm/newlib/libc/stdio/fread.c	2015-01-21 13:45:42 +0000
+@@ -168,7 +168,7 @@
+     }
+ 
+   return count;
+-  
 +
-   fp->_file = f;
-   fp->_flags = flags;
-   fp->_cookie = (_PTR) fp;
+ }
+ 
+ #endif
+@@ -259,7 +259,32 @@
+ 	  /* fp->_r = 0 ... done in __srefill */
+ 	  p += r;
+ 	  resid -= r;
+-	  if (__srefill_r (ptr, fp))
++
++      int rc = 0;
++
++      if (resid>BUFSIZ)
++      {
++        /* save fp buffering state */
++        void *old_base = fp->_bf._base;
++        void * old_p = fp->_p;
++        int old_size = fp->_bf._size;
++        /* allow __refill to use user's buffer */
++        fp->_bf._base = (unsigned char *) p;
++        fp->_bf._size = resid;
++        fp->_p = (unsigned char *) p;
++        rc = __srefill_r (ptr, fp);
++        /* restore fp buffering back to original state */
++        fp->_bf._base = old_base;
++        fp->_bf._size = old_size;
++        fp->_p = old_p;
++        resid -= fp->_r;
++        p += fp->_r;
++        fp->_r = 0;
++
++      } else {
++        rc = __srefill_r (ptr, fp);
++      }
++	  if (rc)
+ 	    {
+ 	      /* no more input: return partial result */
+ #ifdef __SCLE
 diff -NBaur newlib-2.2.0/newlib/libc/stdlib/mbtowc_r.c newlib-2.2.0-arm/newlib/libc/stdlib/mbtowc_r.c
---- newlib-2.2.0/newlib/libc/stdlib/mbtowc_r.c	2013-11-18 17:26:51.000000000 +0000
-+++ newlib-2.2.0-arm/newlib/libc/stdlib/mbtowc_r.c	2014-12-31 17:29:05.666756000 +0000
+--- newlib-2.2.0/newlib/libc/stdlib/mbtowc_r.c	2013-11-18 17:26:51 +0000
++++ newlib-2.2.0-arm/newlib/libc/stdlib/mbtowc_r.c	2014-12-31 19:45:54 +0000
 @@ -9,7 +9,7 @@
  
  int (*__mbtowc) (struct _reent *, wchar_t *, const char *, size_t,
@@ -8318,8 +8360,8 @@ diff -NBaur newlib-2.2.0/newlib/libc/stdlib/mbtowc_r.c newlib-2.2.0-arm/newlib/l
     = __utf8_mbtowc;
  #else
 diff -NBaur newlib-2.2.0/newlib/libc/stdlib/wctomb_r.c newlib-2.2.0-arm/newlib/libc/stdlib/wctomb_r.c
---- newlib-2.2.0/newlib/libc/stdlib/wctomb_r.c	2012-08-08 12:04:18.000000000 +0100
-+++ newlib-2.2.0-arm/newlib/libc/stdlib/wctomb_r.c	2014-12-31 17:29:05.666756000 +0000
+--- newlib-2.2.0/newlib/libc/stdlib/wctomb_r.c	2012-08-08 12:04:18 +0100
++++ newlib-2.2.0-arm/newlib/libc/stdlib/wctomb_r.c	2014-12-31 19:45:54 +0000
 @@ -8,7 +8,7 @@
  
  int (*__wctomb) (struct _reent *, char *, wchar_t, const char *charset,
@@ -8330,8 +8372,8 @@ diff -NBaur newlib-2.2.0/newlib/libc/stdlib/wctomb_r.c newlib-2.2.0-arm/newlib/l
      = __utf8_wctomb;
  #else
 diff -NBaur newlib-2.2.0/newlib/libc/sys/arm/sys/param.h newlib-2.2.0-arm/newlib/libc/sys/arm/sys/param.h
---- newlib-2.2.0/newlib/libc/sys/arm/sys/param.h	2005-02-02 19:00:30.000000000 +0000
-+++ newlib-2.2.0-arm/newlib/libc/sys/arm/sys/param.h	2014-12-31 17:29:05.666756000 +0000
+--- newlib-2.2.0/newlib/libc/sys/arm/sys/param.h	2005-02-02 19:00:30 +0000
++++ newlib-2.2.0-arm/newlib/libc/sys/arm/sys/param.h	2014-12-31 19:45:54 +0000
 @@ -3,10 +3,17 @@
  #ifndef _SYS_PARAM_H
  # define _SYS_PARAM_H
@@ -8353,8 +8395,8 @@ diff -NBaur newlib-2.2.0/newlib/libc/sys/arm/sys/param.h newlib-2.2.0-arm/newlib
  #define LITTLE_ENDIAN   1234
  
 diff -NBaur newlib-2.2.0/newlib/libc/syscalls/Makefile.am newlib-2.2.0-arm/newlib/libc/syscalls/Makefile.am
---- newlib-2.2.0/newlib/libc/syscalls/Makefile.am	2008-01-03 22:33:37.000000000 +0000
-+++ newlib-2.2.0-arm/newlib/libc/syscalls/Makefile.am	2014-12-31 17:29:05.666756000 +0000
+--- newlib-2.2.0/newlib/libc/syscalls/Makefile.am	2008-01-03 22:33:37 +0000
++++ newlib-2.2.0-arm/newlib/libc/syscalls/Makefile.am	2014-12-31 19:45:54 +0000
 @@ -20,8 +20,9 @@
  	sysstat.c	\
  	systimes.c	\
