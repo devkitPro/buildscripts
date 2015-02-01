@@ -1,7 +1,7 @@
-diff -Nbaur gdb-7.7/gdb/Makefile.in gdb-7.7-ppc/gdb/Makefile.in
---- gdb-7.7/gdb/Makefile.in	2014-02-06 02:21:29.000000000 +0000
-+++ gdb-7.7-ppc/gdb/Makefile.in	2014-04-01 14:01:24.000000000 +0100
-@@ -2307,10 +2307,10 @@
+diff -NBaur gdb-7.8.2/gdb/Makefile.in gdb-7.8.2-ppc/gdb/Makefile.in
+--- gdb-7.8.2/gdb/Makefile.in	2015-01-15 10:58:12.000000000 +0000
++++ gdb-7.8.2-ppc/gdb/Makefile.in	2015-02-01 22:38:26.102220000 +0000
+@@ -2516,10 +2516,10 @@
  # Note that we put the dependencies into a .Tpo file, then move them
  # into place if the compile succeeds.  We need this because gcc does
  # not atomically write the dependency output file.
@@ -16,15 +16,3 @@ diff -Nbaur gdb-7.7/gdb/Makefile.in gdb-7.7-ppc/gdb/Makefile.in
  @GMAKE_TRUE@else
  @GMAKE_TRUE@override COMPILE.pre = source='$<' object='$@' libtool=no \
  @GMAKE_TRUE@	DEPDIR=$(DEPDIR) $(DEPMODE) $(depcomp) $(CC)
-diff -Nbaur gdb-7.7/sim/ppc/Makefile.in gdb-7.7-ppc/sim/ppc/Makefile.in
---- gdb-7.7/sim/ppc/Makefile.in	2013-12-08 04:55:48.000000000 +0000
-+++ gdb-7.7-ppc/sim/ppc/Makefile.in	2014-04-01 14:01:24.000000000 +0100
-@@ -552,7 +552,7 @@
- PACKAGE_OBJ = @sim_pk_obj@
- 
- 
--psim: $(TARGETLIB) main.o $(LIBIBERTY_LIB) $(BFD_LIB) $(LIBS) $(LIBINTL_DEP)
-+psim: $(TARGETLIB) main.o $(LIBIBERTY_LIB) $(BFD_LIB) $(LIBINTL_DEP)
- 	$(CC) $(CFLAGS) $(SIM_CFLAGS) $(LDFLAGS) -o psim$(EXEEXT) main.o $(TARGETLIB) $(BFD_LIB) $(LIBINTL) $(LIBIBERTY_LIB) $(LIBS)
- 
- run: psim
