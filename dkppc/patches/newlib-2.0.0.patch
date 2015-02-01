@@ -6630,29 +6630,6 @@ diff -Nbaur newlib-2.0.0/newlib/libc/include/pthread.h newlib-2.0.0-ppc/newlib/l
 -
 -#endif
 -/* end of include file */
-diff -Nbaur newlib-2.0.0/newlib/libc/include/stdint.h newlib-2.0.0-ppc/newlib/libc/include/stdint.h
---- newlib-2.0.0/newlib/libc/include/stdint.h	2012-10-16 19:45:23.000000000 +0100
-+++ newlib-2.0.0-ppc/newlib/libc/include/stdint.h	2013-09-06 22:13:38.000000000 +0100
-@@ -75,14 +75,14 @@
- #endif
- #endif
- 
--#if __have_long32
--typedef signed long int32_t;
--typedef unsigned long uint32_t;
--#define __int32_t_defined 1
--#elif __STDINT_EXP(INT_MAX) == 0x7fffffffL
-+#if __STDINT_EXP(INT_MAX) == 0x7fffffffL
- typedef signed int int32_t;
- typedef unsigned int uint32_t;
- #define __int32_t_defined 1
-+#elif __have_long32
-+typedef signed long int32_t;
-+typedef unsigned long uint32_t;
-+#define __int32_t_defined 1
- #elif __STDINT_EXP(SHRT_MAX) == 0x7fffffffL
- typedef signed short int32_t;
- typedef unsigned short uint32_t;
 diff -Nbaur newlib-2.0.0/newlib/libc/include/stdio.h newlib-2.0.0-ppc/newlib/libc/include/stdio.h
 --- newlib-2.0.0/newlib/libc/include/stdio.h	2012-11-01 11:51:11.000000000 +0000
 +++ newlib-2.0.0-ppc/newlib/libc/include/stdio.h	2013-09-06 22:13:38.000000000 +0100
