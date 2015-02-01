@@ -41,7 +41,7 @@ case "$VERSION" in
   ;;
   "2" )
     GCC_VER=4.8.2
-    BINUTILS_VER=2.24
+    BINUTILS_VER=2.25
     NEWLIB_VER=2.0.0
     GDB_VER=7.7
     basedir='dkppc'
