@@ -43,7 +43,7 @@ case "$VERSION" in
     GCC_VER=4.9.2
     BINUTILS_VER=2.25
     NEWLIB_VER=2.0.0
-    GDB_VER=7.7
+    GDB_VER=7.8.2
     basedir='dkppc'
     package=devkitPPC
     target=powerpc-eabi
