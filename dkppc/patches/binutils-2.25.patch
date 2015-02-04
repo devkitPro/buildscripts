@@ -1,7 +1,7 @@
-diff -Nbaur binutils-2.24/opcodes/ppc-opc.c binutils-2.24-ppc/opcodes/ppc-opc.c
---- binutils-2.24/opcodes/ppc-opc.c	2013-11-04 15:33:40.000000000 +0000
-+++ binutils-2.24-ppc/opcodes/ppc-opc.c	2014-04-01 14:22:06.000000000 +0100
-@@ -2735,7 +2735,7 @@
+diff -NBaur binutils-2.25/opcodes/ppc-opc.c binutils-2.25-ppc/opcodes/ppc-opc.c
+--- binutils-2.25/opcodes/ppc-opc.c	2014-12-23 08:47:10.000000000 +0000
++++ binutils-2.25-ppc/opcodes/ppc-opc.c	2015-02-04 10:51:15.330220000 +0000
+@@ -2738,7 +2738,7 @@
  #define MFDEC1	PPC_OPCODE_POWER
  #define MFDEC2	PPC_OPCODE_PPC | PPC_OPCODE_601 | PPC_OPCODE_BOOKE | PPC_OPCODE_TITAN
  #define BOOKE	PPC_OPCODE_BOOKE
