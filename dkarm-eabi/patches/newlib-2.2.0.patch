@@ -880,7 +880,7 @@ index 0000000..f3959bf
 +
 diff --git a/libgloss/libsysbase/close.c b/libgloss/libsysbase/close.c
 new file mode 100644
-index 0000000..3dd9a37
+index 0000000..6470054
 --- /dev/null
 +++ b/libgloss/libsysbase/close.c
 @@ -0,0 +1,49 @@
@@ -922,7 +922,7 @@ index 0000000..3dd9a37
 +				if(devoptab_list[dev]->close_r)
 +					ret = devoptab_list[dev]->close_r(ptr,fd);
 +				else
-+					ptr->_errno = ENOSYS;
++					ret = 0;
 +
 +				__release_handle(fileDesc);
 +			} else {
@@ -5988,10 +5988,10 @@ index 0000000..d2982bc
 +
 diff --git a/libgloss/libsysbase/handle_manager.c b/libgloss/libsysbase/handle_manager.c
 new file mode 100644
-index 0000000..c2f97a6
+index 0000000..9714c10
 --- /dev/null
 +++ b/libgloss/libsysbase/handle_manager.c
-@@ -0,0 +1,156 @@
+@@ -0,0 +1,158 @@
 +#include <stdlib.h>
 +#include <stdio.h>
 +#include <errno.h>
@@ -6010,7 +6010,7 @@ index 0000000..c2f97a6
 +	&__stderr_handle
 +};
 +
-+__LOCK_INIT_RECURSIVE(static, __hndl_lock);
++__LOCK_INIT(static, __hndl_lock);
 +
 +void __free_handle(__handle *handle) {
 +
@@ -6029,12 +6029,12 @@ index 0000000..c2f97a6
 +
 +	if ( fd <0 || fd >= MAX_HANDLES ) return;
 +
-+	__lock_acquire_recursive (__hndl_lock);
++	__lock_acquire (__hndl_lock);
 +
 +	__free_handle(handles[fd]);
 +	handles[fd] = NULL;
 +
-+	__lock_release_recursive (__hndl_lock);
++	__lock_release (__hndl_lock);
 +
 +}
 +
@@ -6042,7 +6042,7 @@ index 0000000..c2f97a6
 +
 +	int i, ret = -1;
 +
-+	__lock_acquire_recursive (__hndl_lock);
++	__lock_acquire (__hndl_lock);
 +
 +	for ( i = 0; i < MAX_HANDLES; i++ ) {
 +		if ( handles[i] == NULL ) break;
@@ -6056,7 +6056,7 @@ index 0000000..c2f97a6
 +		}
 +	}
 +
-+	__lock_release_recursive (__hndl_lock);
++	__lock_release (__hndl_lock);
 +
 +	return ret;
 +}
@@ -6072,10 +6072,10 @@ index 0000000..c2f97a6
 +int dup(int oldfd) {
 +	int i, ret =-1;
 +
-+	__lock_acquire_recursive (__hndl_lock);
++	__lock_acquire (__hndl_lock);
 +
 +	if (handles[oldfd]==NULL) {
-+		__lock_release_recursive (__hndl_lock);
++		__lock_release (__hndl_lock);
 +		errno = EBADF;
 +		return -1;
 +	}
@@ -6090,7 +6090,7 @@ index 0000000..c2f97a6
 +		handles[oldfd]->refcount++;
 +		ret = i;
 +	}
-+	__lock_release_recursive (__hndl_lock);
++	__lock_release (__hndl_lock);
 +
 +	return ret;
 +
@@ -6099,21 +6099,21 @@ index 0000000..c2f97a6
 +int dup2(int oldfd, int newfd) {
 +
 +
-+	__lock_acquire_recursive (__hndl_lock);
++	__lock_acquire (__hndl_lock);
 +
 +	if ( newfd < 0 || newfd >= MAX_HANDLES ||
 +
 +		 oldfd < 0 || oldfd >= MAX_HANDLES ||
 +		 handles[oldfd] == NULL ) {
 +
-+		__lock_release_recursive (__hndl_lock);
++		__lock_release (__hndl_lock);
 +		errno = EBADF;
 +
 +		return -1;
 +	}
 +
 +	if ( newfd == oldfd ) {
-+		__lock_release_recursive (__hndl_lock);
++		__lock_release (__hndl_lock);
 +		return newfd;
 +	}
 +
@@ -6129,17 +6129,20 @@ index 0000000..c2f97a6
 +	handles[newfd] = handles[oldfd];
 +	handles[newfd]->refcount++;
 +
-+	__lock_release_recursive (__hndl_lock);
++	__lock_release (__hndl_lock);
 +
 +	if ( NULL != handle ) {
 +
 +		if (handle->refcount == 0 ) {
 +
 +			if( devoptab_list[handle->device]->close_r != NULL) {
++
 +				devoptab_list[handle->device]->close_r(_REENT,(unsigned int)handle->fileStruct);
-+			}
-+			else {
++
++			} else {
++
 +				__free_handle(handle);
++
 +			}
 +		}
 +	}
@@ -6147,7 +6150,6 @@ index 0000000..c2f97a6
 +	return newfd;
 +
 +}
-+
 diff --git a/libgloss/libsysbase/iosupport.c b/libgloss/libsysbase/iosupport.c
 new file mode 100644
 index 0000000..ae816a8
@@ -6810,10 +6812,10 @@ index 0000000..e259d18
 +}
 diff --git a/libgloss/libsysbase/syscall_support.c b/libgloss/libsysbase/syscall_support.c
 new file mode 100644
-index 0000000..c8c8ae6
+index 0000000..044f12d
 --- /dev/null
 +++ b/libgloss/libsysbase/syscall_support.c
-@@ -0,0 +1,51 @@
+@@ -0,0 +1,99 @@
 +#include <sys/iosupport.h>
 +
 +//---------------------------------------------------------------------------------
@@ -6823,46 +6825,94 @@ index 0000000..c8c8ae6
 +	NULL,	// exit
 +	NULL,	// gettod_r
 +	NULL,	// lock_init
-+	NULL,	// lock_close
-+	NULL,	// lock_release
 +	NULL,	// lock_acquire
++	NULL,	// lock_try_acquire
++	NULL,	// lock_release
++	NULL,	// lock_close
++	NULL,	// lock_init_recursive
++	NULL,	// lock_acquire_recursive
++	NULL,	// lock_try_acquire_recursive
++	NULL,	// lock_release_recursive
++	NULL,	// lock_close_recursive
 +	NULL,	// __getreent
 +};
 +
-+int __libc_lock_init(_LOCK_T *lock,int recursive) { 
++void __libc_lock_init(_LOCK_T *lock) {
 +
 +	if ( __syscalls.lock_init ) {
-+		return __syscalls.lock_init(lock, recursive);
++		__syscalls.lock_init(lock);
 +	}
-+	
-+	return 0;
++
 +}
 +
-+int __libc_lock_close(_LOCK_T *lock ) {
-+	
-+	if ( __syscalls.lock_close) {
-+		return __syscalls.lock_close(lock);
-+	}
-+	
-+	return 0;
-+}
++void __libc_lock_acquire(_LOCK_T *lock ) {
 +
-+int __libc_lock_release(_LOCK_T *lock ) {
-+	
-+	if ( __syscalls.lock_release) {
-+		return __syscalls.lock_release(lock);
-+	}
-+	
-+	return 0;
-+}
-+
-+int __libc_lock_acquire(_LOCK_T *lock ) {
-+	
 +	if ( __syscalls.lock_acquire) {
-+		return __syscalls.lock_acquire(lock);
++		__syscalls.lock_acquire(lock);
 +	}
-+	
-+	return 0;
++}
++
++int __libc_lock_try_acquire(_LOCK_T *lock ) {
++
++	if ( __syscalls.lock_acquire) {
++		return __syscalls.lock_try_acquire(lock);
++	} else {
++		return 0;
++	}
++}
++
++void __libc_lock_release(_LOCK_T *lock ) {
++
++	if ( __syscalls.lock_release) {
++		__syscalls.lock_release(lock);
++	}
++}
++
++void __libc_lock_close(_LOCK_T *lock ) {
++
++	if ( __syscalls.lock_close) {
++		__syscalls.lock_close(lock);
++	}
++}
++
++
++
++void __libc_lock_init_recursive(_LOCK_RECURSIVE_T *lock) {
++
++	if ( __syscalls.lock_init_recursive ) {
++		__syscalls.lock_init_recursive(lock);
++	}
++
++}
++
++void __libc_lock_acquire_recursive(_LOCK_RECURSIVE_T *lock ) {
++
++	if ( __syscalls.lock_acquire_recursive) {
++		__syscalls.lock_acquire_recursive(lock);
++	}
++}
++
++int __libc_lock_try_acquire_recursive(_LOCK_RECURSIVE_T *lock ) {
++
++	if ( __syscalls.lock_acquire_recursive) {
++		return __syscalls.lock_try_acquire_recursive(lock);
++	} else {
++		return 0;
++	}
++}
++
++void __libc_lock_release_recursive(_LOCK_RECURSIVE_T *lock ) {
++
++	if ( __syscalls.lock_release_recursive) {
++		__syscalls.lock_release_recursive(lock);
++	}
++}
++
++void __libc_lock_close_recursive(_LOCK_RECURSIVE_T *lock ) {
++
++	if ( __syscalls.lock_close_recursive) {
++		__syscalls.lock_close_recursive(lock);
++	}
 +}
 +
 diff --git a/libgloss/libsysbase/times.c b/libgloss/libsysbase/times.c
@@ -7240,10 +7290,10 @@ index a3fb5c0..1ead46b 100644
 +#endif // _dirent_h_
 diff --git a/newlib/libc/include/sys/iosupport.h b/newlib/libc/include/sys/iosupport.h
 new file mode 100644
-index 0000000..d043a02
+index 0000000..1cd3b62
 --- /dev/null
 +++ b/newlib/libc/include/sys/iosupport.h
-@@ -0,0 +1,104 @@
+@@ -0,0 +1,107 @@
 +//---------------------------------------------------------------------------------
 +#ifndef __iosupp_h__
 +#define __iosupp_h__
@@ -7256,8 +7306,6 @@ index 0000000..d043a02
 +#include <reent.h>
 +#include <sys/stat.h>
 +#include <sys/statvfs.h>
-+
-+#include <stdbool.h>
 +
 +enum	{
 +	STD_IN,
@@ -7315,15 +7363,22 @@ index 0000000..d043a02
 +
 +extern const devoptab_t *devoptab_list[];
 +
-+
 +typedef struct {
-+	void *(*sbrk_r) (struct _rent *ptr, ptrdiff_t incr);
++	void *(*sbrk_r) (struct _reent *ptr, ptrdiff_t incr);
 +	void (*exit) ( int rc );
-+	int (*gettod_r) (struct _reent *ptr, struct timeval *tp, struct timezone *tz);
-+	int (*lock_init) (_LOCK_T *lock,int recursive);
-+	int (*lock_close) (_LOCK_T *lock);
-+	int (*lock_release) (_LOCK_T *lock);
-+	int (*lock_acquire) (_LOCK_T *lock);
++	int  (*gettod_r) (struct _reent *ptr, struct timeval *tp, struct timezone *tz);
++	void (*malloc_lock) (struct _reent *ptr);
++	void (*malloc_unlock) (struct _reent *ptr);
++	void (*lock_init) (_LOCK_T *lock);
++	void (*lock_acquire) (_LOCK_T *lock);
++	int  (*lock_try_acquire) (_LOCK_T *lock);
++	void (*lock_release) (_LOCK_T *lock);
++	void (*lock_close) (_LOCK_T *lock);
++	void (*lock_init_recursive) (_LOCK_RECURSIVE_T *lock);
++	void (*lock_acquire_recursive) (_LOCK_RECURSIVE_T *lock);
++	int  (*lock_try_acquire_recursive) (_LOCK_RECURSIVE_T *lock);
++	void (*lock_release_recursive) (_LOCK_RECURSIVE_T *lock);
++	void (*lock_close_recursive) (_LOCK_RECURSIVE_T *lock);
 +	struct _reent *(*getreent) ();
 +} __syscalls_t;
 +
@@ -7335,11 +7390,9 @@ index 0000000..d043a02
 +void setDefaultDevice( int device );
 +const devoptab_t* GetDeviceOpTab (const char *name);
 +
-+
 +void __release_handle(int fd);
 +int  __alloc_handle(size_t size);
 +__handle *__get_handle(int fd);
-+
 +
 +#ifdef __cplusplus
 +}
@@ -7531,90 +7584,6 @@ index 8e2b121..4ccfac8 100644
        struct _reent *data)
  {
  #ifdef __HAVE_LOCALE_INFO__
-diff --git a/newlib/libc/machine/arm/sys/lock.h b/newlib/libc/machine/arm/sys/lock.h
-new file mode 100644
-index 0000000..a6034e4
---- /dev/null
-+++ b/newlib/libc/machine/arm/sys/lock.h
-@@ -0,0 +1,78 @@
-+#ifndef __SYS_LOCK_H__
-+#define __SYS_LOCK_H__
-+
-+#include <_ansi.h>
-+
-+typedef int _LOCK_T;
-+typedef int _LOCK_RECURSIVE_T;
-+
-+#define __INIT_PRIORITY__ 10
-+#define __CLOSE_PRIORITY__ 10
-+
-+#define __LOCK_INIT(CLASS,NAME) \
-+CLASS _LOCK_T NAME = 0; \
-+__attribute__((constructor(__INIT_PRIORITY__))) \
-+static void __init_##NAME() { \
-+	__libc_lock_init(&(NAME),0); \
-+} \
-+\
-+__attribute__((destructor(__CLOSE_PRIORITY__))) \
-+static void __close_##NAME() { \
-+	__libc_lock_close(&(NAME)); \
-+} \
-+ 
-+#define __LOCK_INIT_RECURSIVE(CLASS,NAME) \
-+CLASS _LOCK_T NAME = 0; \
-+__attribute__((constructor(__INIT_PRIORITY__))) \
-+static void __init_##NAME() { \
-+	__libc_lock_init(&(NAME),1); \
-+} \
-+\
-+__attribute__((destructor(__CLOSE_PRIORITY__))) \
-+static void __close_##NAME() { \
-+	__libc_lock_close(&(NAME)); \
-+} \
-+
-+#define __lock_init(NAME) \
-+	__libc_lock_init(&(NAME),0)
-+
-+#define __lock_init_recursive(NAME) \
-+	__libc_lock_init(&(NAME),1)
-+
-+#define __lock_close(NAME) \
-+	__libc_lock_close(&(NAME))
-+
-+#define __lock_close_recursive(NAME) \
-+	__libc_lock_close(&(NAME))
-+
-+#define __lock_acquire(NAME) \
-+	if(!(NAME)) __libc_lock_init(&(NAME),0);	\
-+	__libc_lock_acquire(&(NAME))
-+
-+#define __lock_acquire_recursive(NAME) \
-+	if(!(NAME)) __libc_lock_init(&(NAME),1);	\
-+	__libc_lock_acquire(&(NAME))
-+
-+#define __lock_try_acquire(NAME) \
-+	if(!(NAME)) __libc_lock_init(&(NAME),0);	\
-+	__libc_lock_try_acquire(&(NAME))
-+
-+#define __lock_try_acquire_recursive(NAME) \
-+	if(!(NAME)) __libc_lock_init(&(NAME),1);	\
-+	__libc_lock_try_acquire(&(NAME))
-+
-+#define __lock_release(NAME) \
-+	__libc_lock_release(&(NAME))
-+
-+#define __lock_release_recursive(NAME) \
-+	__libc_lock_release(&(NAME))
-+
-+
-+int __libc_lock_init(_LOCK_T *,int);
-+int __libc_lock_close(_LOCK_T *);
-+int __libc_lock_acquire(_LOCK_T *);
-+int __libc_lock_try_acquire(_LOCK_T *);
-+int __libc_lock_release(_LOCK_T *);
-+
-+
-+#endif /* __SYS_LOCK_H__ */
 diff --git a/newlib/libc/machine/arm/sys/stdio.h b/newlib/libc/machine/arm/sys/stdio.h
 new file mode 100644
 index 0000000..4eb278e
