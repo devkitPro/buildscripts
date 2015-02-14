@@ -1,6 +1,6 @@
 diff -NBaur gcc-4.9.2/gcc/config/arm/t-arm-elf gcc-4.9.2-arm/gcc/config/arm/t-arm-elf
 --- gcc-4.9.2/gcc/config/arm/t-arm-elf	2014-01-02 22:23:26.000000000 +0000
-+++ gcc-4.9.2-arm/gcc/config/arm/t-arm-elf	2014-11-28 23:00:35.274756000 +0000
++++ gcc-4.9.2-arm/gcc/config/arm/t-arm-elf	2015-02-14 19:27:06.598220000 +0000
 @@ -16,10 +16,18 @@
  # along with GCC; see the file COPYING3.  If not see
  # <http://www.gnu.org/licenses/>.
@@ -37,7 +37,7 @@ diff -NBaur gcc-4.9.2/gcc/config/arm/t-arm-elf gcc-4.9.2-arm/gcc/config/arm/t-ar
  
 diff -NBaur gcc-4.9.2/gcc/config/arm/unknown-elf.h gcc-4.9.2-arm/gcc/config/arm/unknown-elf.h
 --- gcc-4.9.2/gcc/config/arm/unknown-elf.h	2014-01-02 22:23:26.000000000 +0000
-+++ gcc-4.9.2-arm/gcc/config/arm/unknown-elf.h	2014-11-28 23:00:10.914756000 +0000
++++ gcc-4.9.2-arm/gcc/config/arm/unknown-elf.h	2015-02-14 19:27:06.598220000 +0000
 @@ -93,4 +93,4 @@
     udivmoddi4, which will depend on the exception unwind routines,
     which will depend on abort, which is defined in libc.  */ 
@@ -46,7 +46,7 @@ diff -NBaur gcc-4.9.2/gcc/config/arm/unknown-elf.h gcc-4.9.2-arm/gcc/config/arm/
 +#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
 diff -NBaur gcc-4.9.2/gcc/gcc.c gcc-4.9.2-arm/gcc/gcc.c
 --- gcc-4.9.2/gcc/gcc.c	2014-10-22 22:42:48.000000000 +0100
-+++ gcc-4.9.2-arm/gcc/gcc.c	2014-11-28 23:00:10.918756000 +0000
++++ gcc-4.9.2-arm/gcc/gcc.c	2015-02-14 19:27:06.606220000 +0000
 @@ -616,6 +616,11 @@
  #endif
  #endif
@@ -75,9 +75,23 @@ diff -NBaur gcc-4.9.2/gcc/gcc.c gcc-4.9.2-arm/gcc/gcc.c
    INIT_STATIC_SPEC ("startfile",		&startfile_spec),
    INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
    INIT_STATIC_SPEC ("version",			&compiler_version),
+diff -NBaur gcc-4.9.2/gcc/Makefile.in gcc-4.9.2-arm/gcc/Makefile.in
+--- gcc-4.9.2/gcc/Makefile.in	2014-10-16 14:50:42.000000000 +0100
++++ gcc-4.9.2-arm/gcc/Makefile.in	2015-02-14 21:02:09.598220000 +0000
+@@ -1046,8 +1046,8 @@
+ # things like the go/%.o rule work properly; but we use $(*F) for the
+ # file part, as we just want the file part of the stem, not the entire
+ # file name.
+-COMPILE = $(COMPILE.base) -MT $@ -MMD -MP -MF $(@D)/$(DEPDIR)/$(*F).TPo
+-POSTCOMPILE = @mv $(@D)/$(DEPDIR)/$(*F).TPo $(@D)/$(DEPDIR)/$(*F).Po
++COMPILE = $(COMPILE.base)
++POSTCOMPILE =
+ else
+ COMPILE = source='$<' object='$@' libtool=no \
+     DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) $(COMPILE.base)
 diff -NBaur gcc-4.9.2/libcpp/Makefile.in gcc-4.9.2-arm/libcpp/Makefile.in
 --- gcc-4.9.2/libcpp/Makefile.in	2014-10-30 08:28:58.000000000 +0000
-+++ gcc-4.9.2-arm/libcpp/Makefile.in	2014-11-28 23:00:10.922756000 +0000
++++ gcc-4.9.2-arm/libcpp/Makefile.in	2015-02-14 19:27:06.606220000 +0000
 @@ -208,8 +208,7 @@
  # Note that we put the dependencies into a .Tpo file, then move them
  # into place if the compile succeeds.  We need this because gcc does
@@ -90,7 +104,7 @@ diff -NBaur gcc-4.9.2/libcpp/Makefile.in gcc-4.9.2-arm/libcpp/Makefile.in
  	  $(depcomp) $(COMPILE.base)
 diff -NBaur gcc-4.9.2/libgcc/config/arm/t-bpabi gcc-4.9.2-arm/libgcc/config/arm/t-bpabi
 --- gcc-4.9.2/libgcc/config/arm/t-bpabi	2012-08-17 16:06:06.000000000 +0100
-+++ gcc-4.9.2-arm/libgcc/config/arm/t-bpabi	2014-11-28 23:00:10.922756000 +0000
++++ gcc-4.9.2-arm/libgcc/config/arm/t-bpabi	2015-02-14 19:27:06.610220000 +0000
 @@ -17,4 +17,4 @@
  # On ARM, specifying -fnon-call-exceptions will needlessly pull in
  # the unwinder in simple programs which use 64-bit division.  Omitting
@@ -99,7 +113,7 @@ diff -NBaur gcc-4.9.2/libgcc/config/arm/t-bpabi gcc-4.9.2-arm/libgcc/config/arm/
 +LIB2_DIVMOD_EXCEPTION_FLAGS := -fno-exceptions
 diff -NBaur gcc-4.9.2/libgcc/crtstuff.c gcc-4.9.2-arm/libgcc/crtstuff.c
 --- gcc-4.9.2/libgcc/crtstuff.c	2014-03-10 18:31:20.000000000 +0000
-+++ gcc-4.9.2-arm/libgcc/crtstuff.c	2014-11-28 23:00:10.922756000 +0000
++++ gcc-4.9.2-arm/libgcc/crtstuff.c	2015-02-14 19:27:06.610220000 +0000
 @@ -47,7 +47,7 @@
  
  /* Target machine header files require this define. */
@@ -111,7 +125,7 @@ diff -NBaur gcc-4.9.2/libgcc/crtstuff.c gcc-4.9.2-arm/libgcc/crtstuff.c
     this will have to do.  */
 diff -NBaur gcc-4.9.2/libgcc/Makefile.in gcc-4.9.2-arm/libgcc/Makefile.in
 --- gcc-4.9.2/libgcc/Makefile.in	2014-01-08 16:37:08.000000000 +0000
-+++ gcc-4.9.2-arm/libgcc/Makefile.in	2014-11-28 23:00:10.922756000 +0000
++++ gcc-4.9.2-arm/libgcc/Makefile.in	2015-02-14 19:27:06.610220000 +0000
 @@ -816,7 +816,7 @@
  # libgcc_eh.a, only LIB2ADDEH matters.  If we do, only LIB2ADDEHSTATIC and
  # LIB2ADDEHSHARED matter.  (Usually all three are identical.)
