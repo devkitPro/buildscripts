@@ -1,7 +1,7 @@
-diff -NBaur gdb-7.8.2/gdb/Makefile.in gdb-7.8.2-arm/gdb/Makefile.in
---- gdb-7.8.2/gdb/Makefile.in	2015-01-15 10:58:12.000000000 +0000
-+++ gdb-7.8.2-arm/gdb/Makefile.in	2015-01-21 17:13:14.155896000 +0000
-@@ -2516,10 +2516,8 @@
+diff -NBaur gdb-7.9/gdb/Makefile.in gdb-7.9-arm/gdb/Makefile.in
+--- gdb-7.9/gdb/Makefile.in	2015-02-20 17:11:44.000000000 +0000
++++ gdb-7.9-arm/gdb/Makefile.in	2015-03-16 18:00:14.357038000 +0000
+@@ -2614,10 +2614,8 @@
  # Note that we put the dependencies into a .Tpo file, then move them
  # into place if the compile succeeds.  We need this because gcc does
  # not atomically write the dependency output file.
@@ -14,9 +14,9 @@ diff -NBaur gdb-7.8.2/gdb/Makefile.in gdb-7.8.2-arm/gdb/Makefile.in
  @GMAKE_TRUE@else
  @GMAKE_TRUE@override COMPILE.pre = source='$<' object='$@' libtool=no \
  @GMAKE_TRUE@	DEPDIR=$(DEPDIR) $(DEPMODE) $(depcomp) $(CC)
-diff -NBaur gdb-7.8.2/sim/common/Make-common.in gdb-7.8.2-arm/sim/common/Make-common.in
---- gdb-7.8.2/sim/common/Make-common.in	2015-01-15 10:58:12.000000000 +0000
-+++ gdb-7.8.2-arm/sim/common/Make-common.in	2015-01-21 17:13:14.155896000 +0000
+diff -NBaur gdb-7.9/sim/common/Make-common.in gdb-7.9-arm/sim/common/Make-common.in
+--- gdb-7.9/sim/common/Make-common.in	2015-02-19 11:58:08.000000000 +0000
++++ gdb-7.9-arm/sim/common/Make-common.in	2015-03-16 18:00:14.361038000 +0000
 @@ -415,10 +415,8 @@
  # Note that we put the dependencies into a .Tpo file, then move them
  # into place if the compile succeeds.  We need this because gcc does
