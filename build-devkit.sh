@@ -49,6 +49,7 @@ DFU_UTIL_VER=0.8.1
 STLINK_VER=0.5.8
 TOOLS3DS_VER=1.0.3
 LINK3DS_VER=0.5.0
+PICASSO_VER=1.0.0
 
 #---------------------------------------------------------------------------------
 function extract_and_patch {
@@ -203,7 +204,8 @@ if [ $VERSION -eq 1 ]; then
 	hostarchives="gbatools-$GBATOOLS_VER.tar.bz2 gp32tools-$GP32_TOOLS_VER.tar.bz2
 		dstools-$DSTOOLS_VER.tar.bz2 grit-$GRIT_VER.tar.bz2 ndstool-$NDSTOOL_VER.tar.bz2
 		general-tools-$GENERAL_TOOLS_VER.tar.bz2 dlditool-$DLDITOOL_VER.tar.bz2 mmutil-$MMUTIL_VER.tar.bz2
-		dfu-util-$DFU_UTIL_VER.tar.bz2 stlink-$STLINK_VER.tar.bz2 3dstools-$TOOLS3DS_VER.tar.bz2 3dslink-$LINK3DS_VER.tar.bz2"
+		dfu-util-$DFU_UTIL_VER.tar.bz2 stlink-$STLINK_VER.tar.bz2 3dstools-$TOOLS3DS_VER.tar.bz2
+		picasso-$PICASSO_VER.tar.bz2 3dslink-$LINK3DS_VER.tar.bz2"
 fi
 
 if [ $VERSION -eq 2 ]; then
