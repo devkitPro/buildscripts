@@ -30,7 +30,7 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=5.1.0
+    GCC_VER=5.2.0
     BINUTILS_VER=2.25
     NEWLIB_VER=2.2.0
     GDB_VER=7.9
