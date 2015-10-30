@@ -33,7 +33,7 @@ case "$VERSION" in
     GCC_VER=5.2.0
     BINUTILS_VER=2.25
     NEWLIB_VER=2.2.0
-    GDB_VER=7.9
+    GDB_VER=7.10
     basedir='dkarm-eabi'
     package=devkitARM
     target=arm-none-eabi
