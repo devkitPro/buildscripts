@@ -1,0 +1,18 @@
+diff -NBaur gdb-7.10/gdb/Makefile.in gdb-7.10-ppc/gdb/Makefile.in
+--- gdb-7.10/gdb/Makefile.in	2015-08-28 22:22:07.000000000 +0100
++++ gdb-7.10-ppc/gdb/Makefile.in	2015-11-09 09:21:13.228003995 +0000
+@@ -2676,10 +2676,10 @@
+ # Note that we put the dependencies into a .Tpo file, then move them
+ # into place if the compile succeeds.  We need this because gcc does
+ # not atomically write the dependency output file.
+-@GMAKE_TRUE@override COMPILE.post = -c -o $@ -MT $@ -MMD -MP \
+-@GMAKE_TRUE@	-MF $(DEPDIR)/$(basename $(@F)).Tpo
+-@GMAKE_TRUE@override POSTCOMPILE = @mv $(DEPDIR)/$(basename $(@F)).Tpo \
+-@GMAKE_TRUE@	$(DEPDIR)/$(basename $(@F)).Po
++#@GMAKE_TRUE@override COMPILE.post = -c -o $@ -MT $@ -MMD -MP \
++#@GMAKE_TRUE@	-MF $(DEPDIR)/$(basename $(@F)).Tpo
++#@GMAKE_TRUE@override POSTCOMPILE = @mv $(DEPDIR)/$(basename $(@F)).Tpo \
++#@GMAKE_TRUE@	$(DEPDIR)/$(basename $(@F)).Po
+ @GMAKE_TRUE@else
+ @GMAKE_TRUE@override COMPILE.pre = source='$<' object='$@' libtool=no \
+ @GMAKE_TRUE@	DEPDIR=$(DEPDIR) $(DEPMODE) $(depcomp) $(CC)
