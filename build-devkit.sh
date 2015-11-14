@@ -23,7 +23,7 @@ echo "Patches and improvements are of course welcome, please send these to the p
 echo "https://sourceforge.net/tracker/?group_id=114505&atid=668553"
 echo
 
-LIBOGC_VER=1.8.12
+LIBOGC_VER=1.8.15
 LIBGBA_VER=20150106
 LIBNDS_VER=1.5.12
 LIBCTRU_VER=0.6.0
@@ -41,7 +41,7 @@ GRIT_VER=0.8.13
 NDSTOOL_VER=1.50.3
 GENERAL_TOOLS_VER=1.0.0
 DLDITOOL_VER=1.24.0
-GAMECUBE_TOOLS_VER=1.0.0
+GAMECUBE_TOOLS_VER=1.0.1
 WIILOAD_VER=0.5.1
 MMUTIL_VER=1.8.6
 DFU_UTIL_VER=0.8.1
