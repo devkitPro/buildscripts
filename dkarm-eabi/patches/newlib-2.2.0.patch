@@ -648,15 +648,16 @@ index 0000000..79d2006
 +}
 diff --git a/libgloss/libsysbase/chdir.c b/libgloss/libsysbase/chdir.c
 new file mode 100644
-index 0000000..c850f27
+index 0000000..31c09eb
 --- /dev/null
 +++ b/libgloss/libsysbase/chdir.c
-@@ -0,0 +1,192 @@
+@@ -0,0 +1,193 @@
 +#include <unistd.h>
 +#include <limits.h>
 +#include <reent.h>
 +#include <string.h>
 +#include <errno.h>
++#include <stdlib.h>
 +#include <sys/iosupport.h>
 +#include <sys/param.h>
 +
@@ -880,7 +881,7 @@ index 0000000..f3959bf
 +
 diff --git a/libgloss/libsysbase/close.c b/libgloss/libsysbase/close.c
 new file mode 100644
-index 0000000..6470054
+index 0000000..c69a817
 --- /dev/null
 +++ b/libgloss/libsysbase/close.c
 @@ -0,0 +1,49 @@
@@ -907,7 +908,7 @@ index 0000000..6470054
 +#endif
 +	int ret = -1;
 +	unsigned int dev = 0;
-+	unsigned int fd = -1;
++	int fd = -1;
 +
 +	if(fileDesc!=-1) {
 +
@@ -917,7 +918,7 @@ index 0000000..6470054
 +			dev = handle->device;
 +			handle->refcount--;
 +			if (handle->refcount == 0 ) {
-+				fd = (unsigned int)handle->fileStruct;
++				fd = (int)handle->fileStruct;
 +
 +				if(devoptab_list[dev]->close_r)
 +					ret = devoptab_list[dev]->close_r(ptr,fd);
@@ -5626,10 +5627,10 @@ index 0000000..1c485b2
 +char **environ = __env;
 diff --git a/libgloss/libsysbase/execve.c b/libgloss/libsysbase/execve.c
 new file mode 100644
-index 0000000..8b86b6b
+index 0000000..598b0c5
 --- /dev/null
 +++ b/libgloss/libsysbase/execve.c
-@@ -0,0 +1,31 @@
+@@ -0,0 +1,32 @@
 +/*
 + * Stub version of execve.
 + */
@@ -5641,6 +5642,7 @@ index 0000000..8b86b6b
 +
 +#ifdef REENTRANT_SYSCALLS_PROVIDED
 +//---------------------------------------------------------------------------------
++int
 +_DEFUN (_execve_r, (r, name, argv, env),
 +		struct _reent * r _AND
 +        char  *name  _AND
@@ -5758,7 +5760,7 @@ index 0000000..712b13e
 +}
 diff --git a/libgloss/libsysbase/fstat.c b/libgloss/libsysbase/fstat.c
 new file mode 100644
-index 0000000..c0d80dd
+index 0000000..9881601
 --- /dev/null
 +++ b/libgloss/libsysbase/fstat.c
 @@ -0,0 +1,45 @@
@@ -5787,7 +5789,7 @@ index 0000000..c0d80dd
 +#endif
 +	int ret = -1;
 +	unsigned int dev = 0;
-+	unsigned int fd = -1;
++	int fd = -1;
 +
 +	__handle * handle = NULL;
 +
@@ -6152,12 +6154,13 @@ index 0000000..9714c10
 +}
 diff --git a/libgloss/libsysbase/iosupport.c b/libgloss/libsysbase/iosupport.c
 new file mode 100644
-index 0000000..ae816a8
+index 0000000..54b62a7
 --- /dev/null
 +++ b/libgloss/libsysbase/iosupport.c
-@@ -0,0 +1,126 @@
+@@ -0,0 +1,127 @@
 +#include <stdlib.h>
 +#include <string.h>
++#include <ctype.h>
 +#include <sys/iosupport.h>
 +
 +static int defaultDevice = -1;
@@ -6382,7 +6385,7 @@ index 0000000..c1698dd
 +
 diff --git a/libgloss/libsysbase/lseek.c b/libgloss/libsysbase/lseek.c
 new file mode 100644
-index 0000000..aa232e0
+index 0000000..20a7da1
 --- /dev/null
 +++ b/libgloss/libsysbase/lseek.c
 @@ -0,0 +1,53 @@
@@ -6417,7 +6420,7 @@ index 0000000..aa232e0
 +//---------------------------------------------------------------------------------
 +	_off_t ret = -1;
 +	unsigned int dev = 0;
-+	unsigned int fd = -1;
++	int fd = -1;
 +
 +	__handle * handle;
 +
@@ -6539,7 +6542,7 @@ index 0000000..7a3953c
 +}
 diff --git a/libgloss/libsysbase/read.c b/libgloss/libsysbase/read.c
 new file mode 100644
-index 0000000..c7eaafe
+index 0000000..5fa5919
 --- /dev/null
 +++ b/libgloss/libsysbase/read.c
 @@ -0,0 +1,47 @@
@@ -6570,7 +6573,7 @@ index 0000000..c7eaafe
 +#endif
 +	int ret = -1;
 +	unsigned int dev = 0;
-+	unsigned int fd = -1;
++	int fd = -1;
 +
 +	__handle * handle = NULL;
 +
@@ -7049,10 +7052,10 @@ index 0000000..d493ca5
 +
 diff --git a/libgloss/libsysbase/wait.c b/libgloss/libsysbase/wait.c
 new file mode 100644
-index 0000000..407a75a
+index 0000000..322c847
 --- /dev/null
 +++ b/libgloss/libsysbase/wait.c
-@@ -0,0 +1,28 @@
+@@ -0,0 +1,29 @@
 +/*
 + * Stub version of wait.
 + */
@@ -7065,6 +7068,7 @@ index 0000000..407a75a
 +//---------------------------------------------------------------------------------	
 +#ifdef REENTRANT_SYSCALLS_PROVIDED
 +//---------------------------------------------------------------------------------	
++int
 +_DEFUN (_wait_r, (r, status),
 +		struct _reent *r _AND
 +		int  *status) {
@@ -7132,7 +7136,7 @@ index 0000000..2c29982
 +#endif /* __WARNING_H__ */
 diff --git a/libgloss/libsysbase/write.c b/libgloss/libsysbase/write.c
 new file mode 100644
-index 0000000..263eb69
+index 0000000..9422f52
 --- /dev/null
 +++ b/libgloss/libsysbase/write.c
 @@ -0,0 +1,46 @@
@@ -7163,7 +7167,7 @@ index 0000000..263eb69
 +#endif
 +	int ret = -1;
 +	unsigned int dev = 0;
-+	unsigned int fd = -1;
++	int fd = -1;
 +
 +	__handle * handle = NULL;
 +
@@ -7183,7 +7187,7 @@ index 0000000..263eb69
 +	return ret;
 +}
 diff --git a/newlib/configure.host b/newlib/configure.host
-index c4773d9..4f1f5a2 100644
+index c4773d9..e55f330 100644
 --- a/newlib/configure.host
 +++ b/newlib/configure.host
 @@ -602,6 +602,14 @@ case "${host}" in
@@ -7194,7 +7198,7 @@ index c4773d9..4f1f5a2 100644
 +	default_newlib_io_c99_formats="yes"
 +	default_newlib_io_long_long="yes"
 +	default_newlib_io_pos_args="yes"
-+	newlib_cflags="${newlib_cflags} -DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__"
++	newlib_cflags="${newlib_cflags} -D__DYNAMIC_REENT__ -DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__"
 +	newlib_cflags="${newlib_cflags} -ffunction-sections -fdata-sections"
 +	syscall_dir=syscalls
 +	;;
@@ -7290,10 +7294,10 @@ index a3fb5c0..1ead46b 100644
 +#endif // _dirent_h_
 diff --git a/newlib/libc/include/sys/iosupport.h b/newlib/libc/include/sys/iosupport.h
 new file mode 100644
-index 0000000..1cd3b62
+index 0000000..2b5fc6e
 --- /dev/null
 +++ b/newlib/libc/include/sys/iosupport.h
-@@ -0,0 +1,107 @@
+@@ -0,0 +1,105 @@
 +//---------------------------------------------------------------------------------
 +#ifndef __iosupp_h__
 +#define __iosupp_h__
@@ -7367,8 +7371,6 @@ index 0000000..1cd3b62
 +	void *(*sbrk_r) (struct _reent *ptr, ptrdiff_t incr);
 +	void (*exit) ( int rc );
 +	int  (*gettod_r) (struct _reent *ptr, struct timeval *tp, struct timezone *tz);
-+	void (*malloc_lock) (struct _reent *ptr);
-+	void (*malloc_unlock) (struct _reent *ptr);
 +	void (*lock_init) (_LOCK_T *lock);
 +	void (*lock_acquire) (_LOCK_T *lock);
 +	int  (*lock_try_acquire) (_LOCK_T *lock);
@@ -7401,6 +7403,26 @@ index 0000000..1cd3b62
 +//---------------------------------------------------------------------------------
 +#endif // __iosupp_h__
 +//---------------------------------------------------------------------------------
+diff --git a/newlib/libc/include/sys/reent.h b/newlib/libc/include/sys/reent.h
+index ce5b3ed..d068134 100644
+--- a/newlib/libc/include/sys/reent.h
++++ b/newlib/libc/include/sys/reent.h
+@@ -622,13 +622,13 @@ struct _reent
+   /* Two next two fields were once used by malloc.  They are no longer
+      used. They are used to preserve the space used before so as to
+      allow addition of new reent fields and keep binary compatibility.   */
+-      struct
++/*      struct
+         {
+ #define _N_LISTS 30
+           unsigned char * _nextf[_N_LISTS];
+           unsigned int _nmalloc[_N_LISTS];
+         } _unused;
+-    } _new;
++*/    } _new;
+ 
+ # ifndef _REENT_GLOBAL_ATEXIT
+   /* atexit stuff */
 diff --git a/newlib/libc/include/sys/statvfs.h b/newlib/libc/include/sys/statvfs.h
 new file mode 100644
 index 0000000..380329d
@@ -7444,10 +7466,10 @@ index 0000000..380329d
 +#endif // _SYS_STATVFS_H
 \ No newline at end of file
 diff --git a/newlib/libc/include/sys/syslimits.h b/newlib/libc/include/sys/syslimits.h
-index ba9dbd6..8bc19ff 100644
+index ba9dbd6..51d99ec 100644
 --- a/newlib/libc/include/sys/syslimits.h
 +++ b/newlib/libc/include/sys/syslimits.h
-@@ -44,12 +44,12 @@
+@@ -44,7 +44,7 @@
  #define	LINK_MAX		32767	/* max file link count */
  #define	MAX_CANON		  255	/* max bytes in term canon input line */
  #define	MAX_INPUT		  255	/* max bytes in terminal input */
@@ -7456,12 +7478,6 @@ index ba9dbd6..8bc19ff 100644
  #define	NGROUPS_MAX		   16	/* max supplemental group id's */
  #ifndef OPEN_MAX
  #define	OPEN_MAX		   64	/* max open files per process */
- #endif
--#define	PATH_MAX		 1024	/* max bytes in pathname */
-+#define	PATH_MAX		 4096	/* max bytes in pathname */
- #define	PIPE_BUF		  512	/* max bytes for atomic pipe writes */
- #define	IOV_MAX			 1024	/* max elements in i/o vector */
- 
 diff --git a/newlib/libc/include/sys/types.h b/newlib/libc/include/sys/types.h
 index ed33e0a..79f73ac 100644
 --- a/newlib/libc/include/sys/types.h
@@ -7725,8 +7741,80 @@ index 13e1e4c..ba71516 100644
     /* Cygwin starts up in UTF-8 mode. */
      = __utf8_wctomb;
  #else
+diff --git a/newlib/libc/sys/arm/sys/lock.h b/newlib/libc/sys/arm/sys/lock.h
+new file mode 100644
+index 0000000..567fed5
+--- /dev/null
++++ b/newlib/libc/sys/arm/sys/lock.h
+@@ -0,0 +1,66 @@
++#ifndef __SYS_LOCK_H__
++#define __SYS_LOCK_H__
++
++#include <_ansi.h>
++#include <stdint.h>
++
++typedef int32_t _LOCK_T;
++
++struct __lock_t {
++	_LOCK_T lock;
++	uint32_t thread_tag;
++	uint32_t counter;
++};
++
++typedef struct __lock_t _LOCK_RECURSIVE_T;
++
++extern void __libc_lock_init(_LOCK_T *lock);
++extern void __libc_lock_init_recursive(_LOCK_RECURSIVE_T *lock);
++extern void __libc_lock_close(_LOCK_T *lock);
++extern void __libc_lock_close_recursive(_LOCK_RECURSIVE_T *lock);
++extern void __libc_lock_acquire(_LOCK_T *lock);
++extern void __libc_lock_acquire_recursive(_LOCK_RECURSIVE_T *lock);
++extern void __libc_lock_release(_LOCK_T *lock);
++extern void __libc_lock_release_recursive(_LOCK_RECURSIVE_T *lock);
++
++/* Returns 0 for success and non-zero for failure */
++extern int __libc_lock_try_acquire(_LOCK_T *lock);
++extern int __libc_lock_try_acquire_recursive(_LOCK_RECURSIVE_T *lock);
++
++#define __LOCK_INIT(CLASS,NAME) \
++CLASS _LOCK_T NAME = 1;
++
++#define __LOCK_INIT_RECURSIVE(CLASS,NAME) \
++CLASS _LOCK_RECURSIVE_T NAME = {1,0,0};
++
++#define __lock_init(NAME) \
++	__libc_lock_init(&(NAME))
++
++#define __lock_init_recursive(NAME) \
++	__libc_lock_init_recursive(&(NAME))
++
++#define __lock_close(NAME) \
++	__libc_lock_close(&(NAME))
++
++#define __lock_close_recursive(NAME) \
++	__libc_lock_close_recursive(&(NAME))
++
++#define __lock_acquire(NAME) \
++	__libc_lock_acquire(&(NAME))
++
++#define __lock_acquire_recursive(NAME) \
++	__libc_lock_acquire_recursive(&(NAME))
++
++#define __lock_try_acquire(NAME) \
++	__libc_lock_try_acquire(&(NAME))
++
++#define __lock_try_acquire_recursive(NAME) \
++	__libc_lock_try_acquire_recursive(&(NAME))
++
++#define __lock_release(NAME) \
++	__libc_lock_release(&(NAME))
++
++#define __lock_release_recursive(NAME) \
++	__libc_lock_release_recursive(&(NAME))
++
++#endif // __SYS_LOCK_H__
 diff --git a/newlib/libc/sys/arm/sys/param.h b/newlib/libc/sys/arm/sys/param.h
-index adc066e..4bf7ad5 100644
+index adc066e..836f80f 100644
 --- a/newlib/libc/sys/arm/sys/param.h
 +++ b/newlib/libc/sys/arm/sys/param.h
 @@ -3,10 +3,17 @@
@@ -7739,13 +7827,12 @@ index adc066e..4bf7ad5 100644
 +#endif
 +#ifndef NOFILE
  # define NOFILE	(60)
--# define PATHSIZE (1024)
 +#endif
 +#ifndef PATHSIZE
-+# define PATHSIZE (4096)
+ # define PATHSIZE (1024)
 +#endif
  
-+#define MAXPATHLEN	4096
++#define MAXPATHLEN	PATHSIZE
  #define BIG_ENDIAN      4321
  #define LITTLE_ENDIAN   1234
  
