@@ -20,10 +20,11 @@ PREFIX		:=	arm-none-eabi-
 export CC	:=	$(PREFIX)gcc
 export CXX	:=	$(PREFIX)g++
 export AS	:=	$(PREFIX)as
-export AR	:=	$(PREFIX)ar
+export AR	:=	$(PREFIX)gcc-ar
 export OBJCOPY	:=	$(PREFIX)objcopy
 export STRIP	:=	$(PREFIX)strip
-export NM	:=	$(PREFIX)nm
+export NM	:=	$(PREFIX)gcc-nm
+export RANLIB	:=	$(PREFIX)gcc-ranlib
 
 ISVC=$(or $(VCBUILDHELPER_COMMAND),$(MSBUILDEXTENSIONSPATH32),$(MSBUILDEXTENSIONSPATH))
 
