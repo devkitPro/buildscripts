@@ -67,6 +67,25 @@ SECTIONS
 		. = ALIGN(4);
 	} : data
 
+	.tdata ALIGN(4) :
+	{
+		__tdata_lma = .;
+		*(.tdata)
+		*(.tdata.*)
+		*(.gnu.linkonce.td.*)
+		. = ALIGN(4);
+		__tdata_lma_end = .;
+	} : data
+
+	.tbss ALIGN(4) :
+	{
+		*(.tbss)
+		*(.tbss.*)
+		*(.gnu.linkonce.tb.*)
+		*(.tcommon)
+		. = ALIGN(4);
+	} : data
+
 	.preinit_array ALIGN(4) :
 	{
 		PROVIDE (__preinit_array_start = .);
@@ -115,6 +134,11 @@ SECTIONS
 		*(.gnu.linkonce.b*)
 		*(COMMON)
 		. = ALIGN(4);
+
+		/* Reserve space for the TLS segment of the main thread */
+		__tls_start = .;
+		. += + SIZEOF(.tdata) + SIZEOF(.tbss);
+		__tls_end = .;
 	} : data
 	__bss_end__ = .;
 
