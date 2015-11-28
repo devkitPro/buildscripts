@@ -1,6 +1,6 @@
-diff -NBaur gcc-5.2.0/gcc/config/arm/t-arm-elf gcc-5.2.0-arm/gcc/config/arm/t-arm-elf
+diff -Nbaur gcc-5.2.0/gcc/config/arm/t-arm-elf gcc-5.2.0-arm/gcc/config/arm/t-arm-elf
 --- gcc-5.2.0/gcc/config/arm/t-arm-elf	2015-01-05 12:33:28.000000000 +0000
-+++ gcc-5.2.0-arm/gcc/config/arm/t-arm-elf	2015-10-21 08:40:07.568598258 +0100
++++ gcc-5.2.0-arm/gcc/config/arm/t-arm-elf	2015-11-23 20:16:26.736000000 +0000
 @@ -16,11 +16,19 @@
  # along with GCC; see the file COPYING3.  If not see
  # <http://www.gnu.org/licenses/>.
@@ -36,18 +36,27 @@ diff -NBaur gcc-5.2.0/gcc/config/arm/t-arm-elf gcc-5.2.0-arm/gcc/config/arm/t-ar
  #MULTILIB_EXCEPTIONS    += *mcpu=fa526/*mfloat-abi=hard*
  #MULTILIB_EXCEPTIONS    += *mcpu=fa626/*mfloat-abi=hard*
  
-diff -NBaur gcc-5.2.0/gcc/config/arm/unknown-elf.h gcc-5.2.0-arm/gcc/config/arm/unknown-elf.h
---- gcc-5.2.0/gcc/config/arm/unknown-elf.h	2015-01-05 12:33:28.000000000 +0000
-+++ gcc-5.2.0-arm/gcc/config/arm/unknown-elf.h	2015-10-21 08:40:07.568598258 +0100
+diff -Nbaur gcc-5.2.0/gcc/config/arm/unknown-elf.h gcc-5.2.0-arm/gcc/config/arm/unknown-elf.h
+--- gcc-5.2.0/gcc/config/arm/unknown-elf.h	2015-11-28 18:13:20.576000000 +0000
++++ gcc-5.2.0-arm/gcc/config/arm/unknown-elf.h	2015-11-28 18:14:06.328000000 +0000
+@@ -29,7 +29,7 @@
+ #endif
+ 
+ /* Now we define the strings used to build the spec file.  */
+-#define UNKNOWN_ELF_STARTFILE_SPEC	" crti%O%s crtbegin%O%s crt0%O%s"
++#define UNKNOWN_ELF_STARTFILE_SPEC	" crti%O%s crtbegin%O%s"
+ 
+ #undef  STARTFILE_SPEC
+ #define STARTFILE_SPEC	UNKNOWN_ELF_STARTFILE_SPEC
 @@ -93,4 +93,4 @@
     udivmoddi4, which will depend on the exception unwind routines,
     which will depend on abort, which is defined in libc.  */ 
  #undef LINK_GCC_C_SEQUENCE_SPEC
 -#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L --end-group"
 +#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
-diff -NBaur gcc-5.2.0/gcc/gcc.c gcc-5.2.0-arm/gcc/gcc.c
+diff -Nbaur gcc-5.2.0/gcc/gcc.c gcc-5.2.0-arm/gcc/gcc.c
 --- gcc-5.2.0/gcc/gcc.c	2015-03-10 09:37:41.000000000 +0000
-+++ gcc-5.2.0-arm/gcc/gcc.c	2015-10-21 08:40:07.576598250 +0100
++++ gcc-5.2.0-arm/gcc/gcc.c	2015-11-23 20:16:26.740000000 +0000
 @@ -647,6 +647,11 @@
  #endif
  #endif
@@ -76,9 +85,9 @@ diff -NBaur gcc-5.2.0/gcc/gcc.c gcc-5.2.0-arm/gcc/gcc.c
    INIT_STATIC_SPEC ("startfile",		&startfile_spec),
    INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
    INIT_STATIC_SPEC ("version",			&compiler_version),
-diff -NBaur gcc-5.2.0/gcc/Makefile.in gcc-5.2.0-arm/gcc/Makefile.in
+diff -Nbaur gcc-5.2.0/gcc/Makefile.in gcc-5.2.0-arm/gcc/Makefile.in
 --- gcc-5.2.0/gcc/Makefile.in	2015-05-04 11:46:32.000000000 +0100
-+++ gcc-5.2.0-arm/gcc/Makefile.in	2015-10-21 08:40:07.584598070 +0100
++++ gcc-5.2.0-arm/gcc/Makefile.in	2015-11-23 20:16:26.744000000 +0000
 @@ -1053,8 +1053,8 @@
  # things like the go/%.o rule work properly; but we use $(*F) for the
  # file part, as we just want the file part of the stem, not the entire
@@ -90,9 +99,9 @@ diff -NBaur gcc-5.2.0/gcc/Makefile.in gcc-5.2.0-arm/gcc/Makefile.in
  else
  COMPILE = source='$<' object='$@' libtool=no \
      DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) $(COMPILE.base)
-diff -NBaur gcc-5.2.0/libcpp/Makefile.in gcc-5.2.0-arm/libcpp/Makefile.in
+diff -Nbaur gcc-5.2.0/libcpp/Makefile.in gcc-5.2.0-arm/libcpp/Makefile.in
 --- gcc-5.2.0/libcpp/Makefile.in	2015-07-16 10:16:25.000000000 +0100
-+++ gcc-5.2.0-arm/libcpp/Makefile.in	2015-10-21 08:40:07.584598070 +0100
++++ gcc-5.2.0-arm/libcpp/Makefile.in	2015-11-23 20:16:26.744000000 +0000
 @@ -208,8 +208,7 @@
  # Note that we put the dependencies into a .Tpo file, then move them
  # into place if the compile succeeds.  We need this because gcc does
@@ -103,18 +112,18 @@ diff -NBaur gcc-5.2.0/libcpp/Makefile.in gcc-5.2.0-arm/libcpp/Makefile.in
  else
  COMPILE = source='$<' object='$@' libtool=no DEPDIR=$(DEPDIR) $(DEPMODE) \
  	  $(depcomp) $(COMPILE.base)
-diff -NBaur gcc-5.2.0/libgcc/config/arm/t-bpabi gcc-5.2.0-arm/libgcc/config/arm/t-bpabi
+diff -Nbaur gcc-5.2.0/libgcc/config/arm/t-bpabi gcc-5.2.0-arm/libgcc/config/arm/t-bpabi
 --- gcc-5.2.0/libgcc/config/arm/t-bpabi	2012-08-17 16:06:06.000000000 +0100
-+++ gcc-5.2.0-arm/libgcc/config/arm/t-bpabi	2015-10-21 08:40:07.584598070 +0100
++++ gcc-5.2.0-arm/libgcc/config/arm/t-bpabi	2015-11-23 20:16:26.744000000 +0000
 @@ -17,4 +17,4 @@
  # On ARM, specifying -fnon-call-exceptions will needlessly pull in
  # the unwinder in simple programs which use 64-bit division.  Omitting
  # the option is safe.
 -LIB2_DIVMOD_EXCEPTION_FLAGS := -fexceptions
 +LIB2_DIVMOD_EXCEPTION_FLAGS := -fno-exceptions
-diff -NBaur gcc-5.2.0/libgcc/crtstuff.c gcc-5.2.0-arm/libgcc/crtstuff.c
+diff -Nbaur gcc-5.2.0/libgcc/crtstuff.c gcc-5.2.0-arm/libgcc/crtstuff.c
 --- gcc-5.2.0/libgcc/crtstuff.c	2015-01-05 12:33:28.000000000 +0000
-+++ gcc-5.2.0-arm/libgcc/crtstuff.c	2015-10-21 08:40:07.584598070 +0100
++++ gcc-5.2.0-arm/libgcc/crtstuff.c	2015-11-23 20:16:26.744000000 +0000
 @@ -47,7 +47,7 @@
  
  /* Target machine header files require this define. */
@@ -124,9 +133,9 @@ diff -NBaur gcc-5.2.0/libgcc/crtstuff.c gcc-5.2.0-arm/libgcc/crtstuff.c
  /* FIXME: Including auto-host is incorrect, but until we have
     identified the set of defines that need to go into auto-target.h,
     this will have to do.  */
-diff -NBaur gcc-5.2.0/libgcc/Makefile.in gcc-5.2.0-arm/libgcc/Makefile.in
+diff -Nbaur gcc-5.2.0/libgcc/Makefile.in gcc-5.2.0-arm/libgcc/Makefile.in
 --- gcc-5.2.0/libgcc/Makefile.in	2015-01-29 08:03:56.000000000 +0000
-+++ gcc-5.2.0-arm/libgcc/Makefile.in	2015-10-21 08:40:07.584598070 +0100
++++ gcc-5.2.0-arm/libgcc/Makefile.in	2015-11-23 20:16:26.744000000 +0000
 @@ -819,7 +819,7 @@
  # libgcc_eh.a, only LIB2ADDEH matters.  If we do, only LIB2ADDEHSTATIC and
  # LIB2ADDEHSHARED matter.  (Usually all three are identical.)
