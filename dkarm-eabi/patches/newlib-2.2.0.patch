@@ -648,10 +648,10 @@ index 0000000..79d2006
 +}
 diff --git a/libgloss/libsysbase/chdir.c b/libgloss/libsysbase/chdir.c
 new file mode 100644
-index 0000000..31c09eb
+index 0000000..ae3a099
 --- /dev/null
 +++ b/libgloss/libsysbase/chdir.c
-@@ -0,0 +1,193 @@
+@@ -0,0 +1,199 @@
 +#include <unistd.h>
 +#include <limits.h>
 +#include <reent.h>
@@ -780,7 +780,13 @@ index 0000000..31c09eb
 +		strncpy (temp_cwd, _current_working_directory, PATH_MAX);
 +	}
 +
-+	pathPosition = strchr (temp_cwd , ':') + 1;
++	pathPosition = strchr (temp_cwd , ':');
++
++	if (pathPosition == NULL) {
++		pathPosition = temp_cwd;
++	} else {
++		pathPosition++;
++	}
 +
 +	/* Make sure the path starts in the root directory */
 +	if (pathPosition[0] != DIRECTORY_SEPARATOR_CHAR) {
@@ -5627,10 +5633,10 @@ index 0000000..1c485b2
 +char **environ = __env;
 diff --git a/libgloss/libsysbase/execve.c b/libgloss/libsysbase/execve.c
 new file mode 100644
-index 0000000..598b0c5
+index 0000000..8b86b6b
 --- /dev/null
 +++ b/libgloss/libsysbase/execve.c
-@@ -0,0 +1,32 @@
+@@ -0,0 +1,31 @@
 +/*
 + * Stub version of execve.
 + */
@@ -5642,7 +5648,6 @@ index 0000000..598b0c5
 +
 +#ifdef REENTRANT_SYSCALLS_PROVIDED
 +//---------------------------------------------------------------------------------
-+int
 +_DEFUN (_execve_r, (r, name, argv, env),
 +		struct _reent * r _AND
 +        char  *name  _AND
@@ -7052,10 +7057,10 @@ index 0000000..d493ca5
 +
 diff --git a/libgloss/libsysbase/wait.c b/libgloss/libsysbase/wait.c
 new file mode 100644
-index 0000000..322c847
+index 0000000..407a75a
 --- /dev/null
 +++ b/libgloss/libsysbase/wait.c
-@@ -0,0 +1,29 @@
+@@ -0,0 +1,28 @@
 +/*
 + * Stub version of wait.
 + */
@@ -7068,7 +7073,6 @@ index 0000000..322c847
 +//---------------------------------------------------------------------------------	
 +#ifdef REENTRANT_SYSCALLS_PROVIDED
 +//---------------------------------------------------------------------------------	
-+int
 +_DEFUN (_wait_r, (r, status),
 +		struct _reent *r _AND
 +		int  *status) {
@@ -7403,26 +7407,6 @@ index 0000000..2b5fc6e
 +//---------------------------------------------------------------------------------
 +#endif // __iosupp_h__
 +//---------------------------------------------------------------------------------
-diff --git a/newlib/libc/include/sys/reent.h b/newlib/libc/include/sys/reent.h
-index ce5b3ed..d068134 100644
---- a/newlib/libc/include/sys/reent.h
-+++ b/newlib/libc/include/sys/reent.h
-@@ -622,13 +622,13 @@ struct _reent
-   /* Two next two fields were once used by malloc.  They are no longer
-      used. They are used to preserve the space used before so as to
-      allow addition of new reent fields and keep binary compatibility.   */
--      struct
-+/*      struct
-         {
- #define _N_LISTS 30
-           unsigned char * _nextf[_N_LISTS];
-           unsigned int _nmalloc[_N_LISTS];
-         } _unused;
--    } _new;
-+*/    } _new;
- 
- # ifndef _REENT_GLOBAL_ATEXIT
-   /* atexit stuff */
 diff --git a/newlib/libc/include/sys/statvfs.h b/newlib/libc/include/sys/statvfs.h
 new file mode 100644
 index 0000000..380329d
