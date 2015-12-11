@@ -48,7 +48,7 @@ MMUTIL_VER=1.8.6
 DFU_UTIL_VER=0.8.1
 STLINK_VER=0.5.8
 TOOLS3DS_VER=1.1.1
-LINK3DS_VER=0.5.0
+LINK3DS_VER=0.5.1
 PICASSO_VER=2.1.0
 
 #---------------------------------------------------------------------------------
