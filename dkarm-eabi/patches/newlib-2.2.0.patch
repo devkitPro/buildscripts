@@ -6159,10 +6159,10 @@ index 0000000..9714c10
 +}
 diff --git a/libgloss/libsysbase/iosupport.c b/libgloss/libsysbase/iosupport.c
 new file mode 100644
-index 0000000..54b62a7
+index 0000000..c08699d
 --- /dev/null
 +++ b/libgloss/libsysbase/iosupport.c
-@@ -0,0 +1,127 @@
+@@ -0,0 +1,133 @@
 +#include <stdlib.h>
 +#include <string.h>
 +#include <ctype.h>
@@ -6179,13 +6179,19 @@ index 0000000..54b62a7
 +}
 +
 +//---------------------------------------------------------------------------------
++static ssize_t null_write(struct _reent *r,int fd,const char *ptr, size_t len) {
++//---------------------------------------------------------------------------------
++	return len;
++}
++
++//---------------------------------------------------------------------------------
 +const devoptab_t dotab_stdnull = {
 +//---------------------------------------------------------------------------------
 +	"stdnull",	// device name
 +	0,		// size of file structure
 +	NULL,		// device open
 +	NULL,		// device close
-+	NULL,		// device write
++	null_write,	// device write
 +	NULL,		// device read
 +	NULL,		// device seek
 +	NULL,		// device fstat
