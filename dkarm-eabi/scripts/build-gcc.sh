@@ -43,6 +43,8 @@ then
 		--enable-languages=c,c++,objc,obj-c++ \
 		--with-gnu-as --with-gnu-ld --with-gcc \
 		--with-march=armv4t\
+		--enable-cxx-flags='-ffunction-sections' \
+		--disable-libstdcxx-verbose \
 		--enable-poison-system-directories \
 		--enable-interwork --enable-multilib \
 		--disable-dependency-tracking \
