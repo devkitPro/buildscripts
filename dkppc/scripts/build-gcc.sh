@@ -82,6 +82,8 @@ then
 	--disable-nls --disable-shared --enable-threads --disable-multilib \
 	--disable-win32-registry \
 	--disable-libstdcxx-pch \
+	--disable-libstdcxx-verbose \
+	--enable-cxx-flags='-ffunction-sections -fdata-sections' \
 	--target=$target \
 	--with-newlib \
 	--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
