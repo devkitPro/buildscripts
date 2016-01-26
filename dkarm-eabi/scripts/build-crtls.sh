@@ -59,3 +59,7 @@ cd $BUILDDIR/libctru-$LIBCTRU_VER
 $MAKE || { echo "error building libctru"; exit 1; }
 $MAKE install || { echo "error installing libctru"; exit 1; }
 
+cd $BUILDDIR/citro3d-$CITRO3D_VER
+$MAKE || { echo "error building libctru"; exit 1; }
+$MAKE install || { echo "error installing libctru"; exit 1; }
+
