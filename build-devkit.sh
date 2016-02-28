@@ -54,17 +54,7 @@ function extract_and_patch {
 #---------------------------------------------------------------------------------
 	if [ ! -f extracted-$1 ]; then
 		echo "extracting $1"
-		if [ $3 == "bz2" ]; then
-			extractflags="-xjf"
-			archivetype=".tar.bz2"
-		elif [ $3 == "gz" ]; then
-			extractflags="-xzf"
-			archivetype=".tar.gz"
-		else
-			echo "invalid archive type"
-			exit 1
-		fi
-		tar $extractflags "$SRCDIR/$1-$2$archivetype" || { echo "Error extracting "$1; exit 1; }
+		tar -xf "$SRCDIR/$1-$2.tar.$3" || { echo "Error extracting "$1; exit 1; }
 		touch extracted-$1
 	fi
 	if [[ ! -f patched-$1 && -f $patchdir/$1-$2.patch ]]; then
@@ -190,7 +180,7 @@ DEVKITPRO_URL="http://downloads.sourceforge.net/devkitpro"
 patchdir=$(pwd)/$basedir/patches
 scriptdir=$(pwd)/$basedir/scripts
 
-archives="binutils-${BINUTILS_VER}.tar.bz2 gcc-${GCC_VER}.tar.bz2 newlib-${NEWLIB_VER}.tar.gz gdb-${GDB_VER}.tar.bz2"
+archives="binutils-${BINUTILS_VER}.tar.bz2 gcc-${GCC_VER}.tar.bz2 newlib-${NEWLIB_VER}.tar.gz gdb-${GDB_VER}.tar.xz"
 
 if [ $VERSION -eq 1 ]; then
 
@@ -241,7 +231,7 @@ extract_and_patch binutils $BINUTILS_VER bz2
 extract_and_patch gcc $GCC_VER bz2
 rm -fr gcc-$GCC_VER/zlib
 extract_and_patch newlib $NEWLIB_VER gz
-extract_and_patch gdb $GDB_VER bz2
+extract_and_patch gdb $GDB_VER xz
 
 for archive in $targetarchives
 do
