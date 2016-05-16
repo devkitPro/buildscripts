@@ -47,9 +47,9 @@ cd $BUILDDIR/libfat-$LIBFAT_VER
 $MAKE nds-install || { echo "error building nds libfat"; exit 1; }
 $MAKE gba-install || { echo "error installing gba libfat"; exit 1; }
 
-cd $BUILDDIR/libmirko-$LIBMIRKO_VER
-$MAKE || { echo "error building libmirko"; exit 1; }
-$MAKE install || { echo "error installing libmirko"; exit 1; }
+#cd $BUILDDIR/libmirko-$LIBMIRKO_VER
+#$MAKE || { echo "error building libmirko"; exit 1; }
+#$MAKE install || { echo "error installing libmirko"; exit 1; }
 
 cd $BUILDDIR/libfilesystem-$FILESYSTEM_VER
 $MAKE || { echo "error building libfilesystem"; exit 1; }
