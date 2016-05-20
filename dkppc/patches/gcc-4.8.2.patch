@@ -21,7 +21,7 @@ diff -Nbaur gcc-4.8.2/gcc/config/rs6000/rs6000.h gcc-4.8.2-ppc/gcc/config/rs6000
 diff -Nbaur gcc-4.8.2/gcc/config/rs6000/sysv4.h gcc-4.8.2-ppc/gcc/config/rs6000/sysv4.h
 --- gcc-4.8.2/gcc/config/rs6000/sysv4.h	2013-06-19 02:18:38.000000000 +0100
 +++ gcc-4.8.2-ppc/gcc/config/rs6000/sysv4.h	2014-04-01 14:13:11.000000000 +0100
-@@ -570,7 +570,11 @@
+@@ -570,7 +570,12 @@
  
  /* Default starting address if specified.  */
  #define LINK_START_SPEC "\
@@ -30,21 +30,23 @@ diff -Nbaur gcc-4.8.2/gcc/config/rs6000/sysv4.h gcc-4.8.2-ppc/gcc/config/rs6000/
 +  mvgc         : %(link_start_vgc)         ; \
 +  mgcbios         : %(link_start_gcb)         ; \
 +  mrvl         : %(link_start_rvl)         ; \
++  mwup         : %(link_start_wup)         ; \
 +  mads         : %(link_start_ads)         ; \
    myellowknife : %(link_start_yellowknife) ; \
    mmvme        : %(link_start_mvme)        ; \
    msim         : %(link_start_sim)         ; \
-@@ -604,7 +608,8 @@
+@@ -604,7 +608,9 @@
  
  /* Any specific OS flags.  */
  #define LINK_OS_SPEC "\
 -%{mads         : %(link_os_ads)         ; \
 +%{mgcn|mogc|mvgc|mgcbios|mrvl         : %(link_os_ogc)         ; \
++  mwup         : %(link_os_wup)         ; \
 +  mads         : %(link_os_ads)         ; \
    myellowknife : %(link_os_yellowknife) ; \
    mmvme        : %(link_os_mvme)        ; \
    msim         : %(link_os_sim)         ; \
-@@ -622,7 +627,10 @@
+@@ -622,7 +627,11 @@
  /* Override rs6000.h definition.  */
  #undef	CPP_SPEC
  #define	CPP_SPEC "%{posix: -D_POSIX_SOURCE} \
@@ -52,11 +54,12 @@ diff -Nbaur gcc-4.8.2/gcc/config/rs6000/sysv4.h gcc-4.8.2-ppc/gcc/config/rs6000/
 +%{mgcn         : %(cpp_os_gcn)         ; \
 +  mogc|mvgc|mgcbios         : %(cpp_os_ogc)         ; \
 +  mrvl         : %(cpp_os_rvl)         ; \
++  mwup         : %(cpp_os_wup)         ; \
 +  mads         : %(cpp_os_ads)         ; \
    myellowknife : %(cpp_os_yellowknife) ; \
    mmvme        : %(cpp_os_mvme)        ; \
    msim         : %(cpp_os_sim)         ; \
-@@ -636,7 +644,10 @@
+@@ -636,7 +644,11 @@
  
  #undef	STARTFILE_SPEC
  #define	STARTFILE_SPEC "\
@@ -64,11 +67,12 @@ diff -Nbaur gcc-4.8.2/gcc/config/rs6000/sysv4.h gcc-4.8.2-ppc/gcc/config/rs6000/
 +%{mgcn         : %(startfile_gcn)         ; \
 +  mogc|mvgc|mgcbios         : %(startfile_ogc)         ; \
 +  mrvl         : %(startfile_ogc)         ; \
++  mwup         : %(startfile_wup)         ; \
 +  mads         : %(startfile_ads)         ; \
    myellowknife : %(startfile_yellowknife) ; \
    mmvme        : %(startfile_mvme)        ; \
    msim         : %(startfile_sim)         ; \
-@@ -646,11 +657,12 @@
+@@ -646,11 +657,13 @@
    mcall-openbsd: %(startfile_openbsd)     ; \
                 : %(startfile_default)     }"
  
@@ -79,11 +83,12 @@ diff -Nbaur gcc-4.8.2/gcc/config/rs6000/sysv4.h gcc-4.8.2-ppc/gcc/config/rs6000/
  #define	LIB_SPEC "\
 -%{mads         : %(lib_ads)         ; \
 +%{mgcn|mogc|mvgc|mgcbios|mrvl        : %(lib_ogc)         ; \
++  mwup         : %(lib_wup)         ; \
 +  mads         : %(lib_ads)         ; \
    myellowknife : %(lib_yellowknife) ; \
    mmvme        : %(lib_mvme)        ; \
    msim         : %(lib_sim)         ; \
-@@ -660,11 +672,12 @@
+@@ -660,11 +672,13 @@
    mcall-openbsd: %(lib_openbsd)     ; \
                 : %(lib_default)     }"
  
@@ -94,96 +99,109 @@ diff -Nbaur gcc-4.8.2/gcc/config/rs6000/sysv4.h gcc-4.8.2-ppc/gcc/config/rs6000/
  #define	ENDFILE_SPEC "\
 -%{mads         : %(endfile_ads)         ; \
 +%{mgcn|mogc|mvgc|mgcbios|mrvl         : %(endfile_ogc)         ; \
++  mwup         : %(endfile_wup)         ; \
 +  mads         : %(endfile_ads)         ; \
    myellowknife : %(endfile_yellowknife) ; \
    mmvme        : %(endfile_mvme)        ; \
    msim         : %(endfile_sim)         ; \
-@@ -680,16 +693,27 @@
+@@ -680,16 +693,33 @@
  
  /* Motorola ADS support.  */
  #define LIB_ADS_SPEC "--start-group -lads -lc --end-group"
 +#define LIB_OGC_SPEC "--start-group -lsysbase -lc --end-group"
++#define LIB_WUP_SPEC "--start-group -lsysbase -lc --end-group"
  
  #define	STARTFILE_ADS_SPEC "ecrti.o%s crt0.o%s crtbegin.o%s"
 +#define	STARTFILE_OGC_SPEC "ecrti.o%s crtbegin.o%s crtmain.o%s"
++#define	STARTFILE_WUP_SPEC "ecrti.o%s crtbegin.o%s crtmain.o%s"
  
  #define	ENDFILE_ADS_SPEC "crtend.o%s ecrtn.o%s"
 +#define	ENDFILE_OGC_SPEC "crtend.o%s ecrtn.o%s"
++#define	ENDFILE_WUP_SPEC "crtend.o%s ecrtn.o%s"
  
  #define LINK_START_ADS_SPEC "-T ads.ld%s"
 +#define LINK_START_OGC_SPEC "-T ogc.ld%s"
 +#define LINK_START_RVL_SPEC "-T rvl.ld%s"
++#define LINK_START_WUP_SPEC "-T wup.ld%s"
 +#define LINK_START_VGC_SPEC "-T vgcogc.ld%s"
 +#define LINK_START_GCB_SPEC "-T gcbogc.ld%s"
  
  #define LINK_OS_ADS_SPEC ""
 +#define LINK_OS_OGC_SPEC "--gc-sections"
++#define LINK_OS_WUP_SPEC "--gc-sections"
  
  #define CPP_OS_ADS_SPEC ""
 +#define CPP_OS_GCN_SPEC "-D__gamecube__ -ffunction-sections -fdata-sections"
 +#define CPP_OS_OGC_SPEC "-D__gamecube__ -DHW_DOL -ffunction-sections -fdata-sections"
 +#define CPP_OS_RVL_SPEC "-D__wii__ -DHW_RVL -ffunction-sections -fdata-sections"
++#define CPP_OS_WUP_SPEC "-D__wiiu__ -DHW_WUP -ffunction-sections -fdata-sections"
  
  /* Motorola Yellowknife support.  */
  #define LIB_YELLOWKNIFE_SPEC "--start-group -lyk -lc --end-group"
-@@ -859,6 +883,7 @@
+@@ -859,6 +883,8 @@
  #undef	SUBTARGET_EXTRA_SPECS
  #define	SUBTARGET_EXTRA_SPECS						\
    { "crtsavres_default",	CRTSAVRES_DEFAULT_SPEC },		\
 +  { "lib_ogc",			LIB_OGC_SPEC },				\
++  { "lib_wup",			LIB_WUP_SPEC },				\
    { "lib_ads",			LIB_ADS_SPEC },				\
    { "lib_yellowknife",		LIB_YELLOWKNIFE_SPEC },			\
    { "lib_mvme",			LIB_MVME_SPEC },			\
-@@ -868,6 +893,7 @@
+@@ -868,6 +893,8 @@
    { "lib_netbsd",		LIB_NETBSD_SPEC },			\
    { "lib_openbsd",		LIB_OPENBSD_SPEC },			\
    { "lib_default",		LIB_DEFAULT_SPEC },			\
 +  { "startfile_ogc",		STARTFILE_OGC_SPEC },			\
++  { "startfile_wup",		STARTFILE_WUP_SPEC },			\
    { "startfile_ads",		STARTFILE_ADS_SPEC },			\
    { "startfile_yellowknife",	STARTFILE_YELLOWKNIFE_SPEC },		\
    { "startfile_mvme",		STARTFILE_MVME_SPEC },			\
-@@ -877,6 +903,7 @@
+@@ -877,6 +903,8 @@
    { "startfile_netbsd",		STARTFILE_NETBSD_SPEC },		\
    { "startfile_openbsd",	STARTFILE_OPENBSD_SPEC },		\
    { "startfile_default",	STARTFILE_DEFAULT_SPEC },		\
 +  { "endfile_ogc",		ENDFILE_OGC_SPEC },			\
++  { "endfile_wup",		ENDFILE_WUP_SPEC },			\
    { "endfile_ads",		ENDFILE_ADS_SPEC },			\
    { "endfile_yellowknife",	ENDFILE_YELLOWKNIFE_SPEC },		\
    { "endfile_mvme",		ENDFILE_MVME_SPEC },			\
-@@ -889,7 +916,11 @@
+@@ -889,7 +916,12 @@
    { "link_shlib",		LINK_SHLIB_SPEC },			\
    { "link_target",		LINK_TARGET_SPEC },			\
    { "link_start",		LINK_START_SPEC },			\
 +  { "link_start_vgc",		LINK_START_VGC_SPEC },			\
 +  { "link_start_gcb",		LINK_START_GCB_SPEC },			\
 +  { "link_start_rvl",		LINK_START_RVL_SPEC },			\
++  { "link_start_wup",		LINK_START_WUP_SPEC },			\
    { "link_start_ads",		LINK_START_ADS_SPEC },			\
 +  { "link_start_ogc",		LINK_START_OGC_SPEC },			\
    { "link_start_yellowknife",	LINK_START_YELLOWKNIFE_SPEC },		\
    { "link_start_mvme",		LINK_START_MVME_SPEC },			\
    { "link_start_sim",		LINK_START_SIM_SPEC },			\
-@@ -899,6 +930,7 @@
+@@ -899,6 +930,8 @@
    { "link_start_openbsd",	LINK_START_OPENBSD_SPEC },		\
    { "link_start_default",	LINK_START_DEFAULT_SPEC },		\
    { "link_os",			LINK_OS_SPEC },				\
 +  { "link_os_ogc",		LINK_OS_OGC_SPEC },			\
++  { "link_os_wup",		LINK_OS_WUP_SPEC },			\
    { "link_os_ads",		LINK_OS_ADS_SPEC },			\
    { "link_os_yellowknife",	LINK_OS_YELLOWKNIFE_SPEC },		\
    { "link_os_mvme",		LINK_OS_MVME_SPEC },			\
-@@ -912,6 +944,9 @@
+@@ -912,6 +944,10 @@
    { "cc1_endian_little",	CC1_ENDIAN_LITTLE_SPEC },		\
    { "cc1_endian_default",	CC1_ENDIAN_DEFAULT_SPEC },		\
    { "cc1_secure_plt_default",	CC1_SECURE_PLT_DEFAULT_SPEC },		\
 +  { "cpp_os_gcn",		CPP_OS_GCN_SPEC },			\
 +  { "cpp_os_ogc",		CPP_OS_OGC_SPEC },			\
 +  { "cpp_os_rvl",		CPP_OS_RVL_SPEC },			\
++  { "cpp_os_wup",		CPP_OS_WUP_SPEC },			\
    { "cpp_os_ads",		CPP_OS_ADS_SPEC },			\
    { "cpp_os_yellowknife",	CPP_OS_YELLOWKNIFE_SPEC },		\
    { "cpp_os_mvme",		CPP_OS_MVME_SPEC },			\
 diff -Nbaur gcc-4.8.2/gcc/config/rs6000/sysv4.opt gcc-4.8.2-ppc/gcc/config/rs6000/sysv4.opt
 --- gcc-4.8.2/gcc/config/rs6000/sysv4.opt	2013-01-10 20:38:27.000000000 +0000
 +++ gcc-4.8.2-ppc/gcc/config/rs6000/sysv4.opt	2014-04-01 14:13:11.000000000 +0100
-@@ -120,6 +120,26 @@
+@@ -120,6 +120,30 @@
  Target RejectNegative
  Link with libads.a, libc.a and crt0.o
  
@@ -206,6 +224,10 @@ diff -Nbaur gcc-4.8.2/gcc/config/rs6000/sysv4.opt gcc-4.8.2-ppc/gcc/config/rs600
 +mrvl
 +Target RejectNegative
 +Link with libsysbase.a and libc.a, use rvl linker script 
++
++mwup
++Target RejectNegative
++Link with libsysbase.a and libc.a, use wup linker script 
 +
  myellowknife
  Target RejectNegative
