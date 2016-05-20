@@ -1,6 +1,20 @@
-diff -Nbaur gcc-5.2.0/gcc/config/rs6000/rs6000.h gcc-5.2.0-ppc/gcc/config/rs6000/rs6000.h
---- gcc-5.2.0/gcc/config/rs6000/rs6000.h	2015-05-05 11:22:33.000000000 -0300
-+++ gcc-5.2.0-ppc/gcc/config/rs6000/rs6000.h	2015-07-26 00:16:59.609820389 -0300
+diff -NBaur gcc-5.3.0/gcc/Makefile.in gcc-5.3.0-ppc/gcc/Makefile.in
+--- gcc-5.3.0/gcc/Makefile.in	2015-05-04 11:46:32.000000000 +0100
++++ gcc-5.3.0-ppc/gcc/Makefile.in	2016-03-01 19:05:14.000000000 +0000
+@@ -1053,8 +1053,8 @@
+ # things like the go/%.o rule work properly; but we use $(*F) for the
+ # file part, as we just want the file part of the stem, not the entire
+ # file name.
+-COMPILE = $(COMPILE.base) -MT $@ -MMD -MP -MF $(@D)/$(DEPDIR)/$(*F).TPo
+-POSTCOMPILE = @mv $(@D)/$(DEPDIR)/$(*F).TPo $(@D)/$(DEPDIR)/$(*F).Po
++COMPILE = $(COMPILE.base)
++POSTCOMPILE =
+ else
+ COMPILE = source='$<' object='$@' libtool=no \
+     DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) $(COMPILE.base)
+diff -NBaur gcc-5.3.0/gcc/config/rs6000/rs6000.h gcc-5.3.0-ppc/gcc/config/rs6000/rs6000.h
+--- gcc-5.3.0/gcc/config/rs6000/rs6000.h	2015-05-05 15:22:33.000000000 +0100
++++ gcc-5.3.0-ppc/gcc/config/rs6000/rs6000.h	2016-03-01 08:53:23.000000000 +0000
 @@ -196,6 +196,7 @@
    { "asm_cpu_476",		ASM_CPU_476_SPEC },			\
    SUBTARGET_EXTRA_SPECS
@@ -18,9 +32,9 @@ diff -Nbaur gcc-5.2.0/gcc/config/rs6000/rs6000.h gcc-5.2.0-ppc/gcc/config/rs6000
  
  #ifndef CC1_CPU_SPEC
  #ifdef HAVE_LOCAL_CPU_DETECT
-diff -Nbaur gcc-5.2.0/gcc/config/rs6000/sysv4.h gcc-5.2.0-ppc/gcc/config/rs6000/sysv4.h
---- gcc-5.2.0/gcc/config/rs6000/sysv4.h	2015-01-05 09:33:28.000000000 -0300
-+++ gcc-5.2.0-ppc/gcc/config/rs6000/sysv4.h	2015-07-26 00:33:55.128451174 -0300
+diff -NBaur gcc-5.3.0/gcc/config/rs6000/sysv4.h gcc-5.3.0-ppc/gcc/config/rs6000/sysv4.h
+--- gcc-5.3.0/gcc/config/rs6000/sysv4.h	2015-09-24 14:46:45.000000000 +0100
++++ gcc-5.3.0-ppc/gcc/config/rs6000/sysv4.h	2016-03-01 08:53:23.000000000 +0000
 @@ -556,7 +556,11 @@
  
  /* Default starting address if specified.  */
@@ -34,7 +48,7 @@ diff -Nbaur gcc-5.2.0/gcc/config/rs6000/sysv4.h gcc-5.2.0-ppc/gcc/config/rs6000/
    myellowknife : %(link_start_yellowknife) ; \
    mmvme        : %(link_start_mvme)        ; \
    msim         : %(link_start_sim)         ; \
-@@ -590,7 +594,8 @@
+@@ -585,7 +589,8 @@
  
  /* Any specific OS flags.  */
  #define LINK_OS_SPEC "\
@@ -44,7 +58,7 @@ diff -Nbaur gcc-5.2.0/gcc/config/rs6000/sysv4.h gcc-5.2.0-ppc/gcc/config/rs6000/
    myellowknife : %(link_os_yellowknife) ; \
    mmvme        : %(link_os_mvme)        ; \
    msim         : %(link_os_sim)         ; \
-@@ -608,7 +613,10 @@
+@@ -603,7 +608,10 @@
  /* Override rs6000.h definition.  */
  #undef	CPP_SPEC
  #define	CPP_SPEC "%{posix: -D_POSIX_SOURCE} \
@@ -56,7 +70,7 @@ diff -Nbaur gcc-5.2.0/gcc/config/rs6000/sysv4.h gcc-5.2.0-ppc/gcc/config/rs6000/
    myellowknife : %(cpp_os_yellowknife) ; \
    mmvme        : %(cpp_os_mvme)        ; \
    msim         : %(cpp_os_sim)         ; \
-@@ -622,7 +630,10 @@
+@@ -617,7 +625,10 @@
  
  #undef	STARTFILE_SPEC
  #define	STARTFILE_SPEC "\
@@ -68,7 +82,7 @@ diff -Nbaur gcc-5.2.0/gcc/config/rs6000/sysv4.h gcc-5.2.0-ppc/gcc/config/rs6000/
    myellowknife : %(startfile_yellowknife) ; \
    mmvme        : %(startfile_mvme)        ; \
    msim         : %(startfile_sim)         ; \
-@@ -632,11 +643,12 @@
+@@ -627,11 +638,12 @@
    mcall-openbsd: %(startfile_openbsd)     ; \
                 : %(startfile_default)     }"
  
@@ -83,7 +97,7 @@ diff -Nbaur gcc-5.2.0/gcc/config/rs6000/sysv4.h gcc-5.2.0-ppc/gcc/config/rs6000/
    myellowknife : %(lib_yellowknife) ; \
    mmvme        : %(lib_mvme)        ; \
    msim         : %(lib_sim)         ; \
-@@ -646,11 +658,12 @@
+@@ -641,11 +653,12 @@
    mcall-openbsd: %(lib_openbsd)     ; \
                 : %(lib_default)     }"
  
@@ -98,7 +112,7 @@ diff -Nbaur gcc-5.2.0/gcc/config/rs6000/sysv4.h gcc-5.2.0-ppc/gcc/config/rs6000/
    myellowknife : %(endfile_yellowknife) ; \
    mmvme        : %(endfile_mvme)        ; \
    msim         : %(endfile_sim)         ; \
-@@ -666,16 +679,27 @@
+@@ -661,16 +674,27 @@
  
  /* Motorola ADS support.  */
  #define LIB_ADS_SPEC "--start-group -lads -lc --end-group"
@@ -126,7 +140,7 @@ diff -Nbaur gcc-5.2.0/gcc/config/rs6000/sysv4.h gcc-5.2.0-ppc/gcc/config/rs6000/
  
  /* Motorola Yellowknife support.  */
  #define LIB_YELLOWKNIFE_SPEC "--start-group -lyk -lc --end-group"
-@@ -845,6 +869,7 @@
+@@ -840,6 +864,7 @@
  #undef	SUBTARGET_EXTRA_SPECS
  #define	SUBTARGET_EXTRA_SPECS						\
    { "crtsavres_default",	CRTSAVRES_DEFAULT_SPEC },		\
@@ -134,7 +148,7 @@ diff -Nbaur gcc-5.2.0/gcc/config/rs6000/sysv4.h gcc-5.2.0-ppc/gcc/config/rs6000/
    { "lib_ads",			LIB_ADS_SPEC },				\
    { "lib_yellowknife",		LIB_YELLOWKNIFE_SPEC },			\
    { "lib_mvme",			LIB_MVME_SPEC },			\
-@@ -854,6 +879,7 @@
+@@ -849,6 +874,7 @@
    { "lib_netbsd",		LIB_NETBSD_SPEC },			\
    { "lib_openbsd",		LIB_OPENBSD_SPEC },			\
    { "lib_default",		LIB_DEFAULT_SPEC },			\
@@ -142,7 +156,7 @@ diff -Nbaur gcc-5.2.0/gcc/config/rs6000/sysv4.h gcc-5.2.0-ppc/gcc/config/rs6000/
    { "startfile_ads",		STARTFILE_ADS_SPEC },			\
    { "startfile_yellowknife",	STARTFILE_YELLOWKNIFE_SPEC },		\
    { "startfile_mvme",		STARTFILE_MVME_SPEC },			\
-@@ -863,6 +889,7 @@
+@@ -858,6 +884,7 @@
    { "startfile_netbsd",		STARTFILE_NETBSD_SPEC },		\
    { "startfile_openbsd",	STARTFILE_OPENBSD_SPEC },		\
    { "startfile_default",	STARTFILE_DEFAULT_SPEC },		\
@@ -150,9 +164,9 @@ diff -Nbaur gcc-5.2.0/gcc/config/rs6000/sysv4.h gcc-5.2.0-ppc/gcc/config/rs6000/
    { "endfile_ads",		ENDFILE_ADS_SPEC },			\
    { "endfile_yellowknife",	ENDFILE_YELLOWKNIFE_SPEC },		\
    { "endfile_mvme",		ENDFILE_MVME_SPEC },			\
-@@ -875,7 +902,11 @@
+@@ -869,7 +896,11 @@
+   { "endfile_default",		ENDFILE_DEFAULT_SPEC },			\
    { "link_shlib",		LINK_SHLIB_SPEC },			\
-   { "link_target",		LINK_TARGET_SPEC },			\
    { "link_start",		LINK_START_SPEC },			\
 +  { "link_start_vgc",		LINK_START_VGC_SPEC },			\
 +  { "link_start_gcb",		LINK_START_GCB_SPEC },			\
@@ -162,7 +176,7 @@ diff -Nbaur gcc-5.2.0/gcc/config/rs6000/sysv4.h gcc-5.2.0-ppc/gcc/config/rs6000/
    { "link_start_yellowknife",	LINK_START_YELLOWKNIFE_SPEC },		\
    { "link_start_mvme",		LINK_START_MVME_SPEC },			\
    { "link_start_sim",		LINK_START_SIM_SPEC },			\
-@@ -885,6 +916,7 @@
+@@ -879,6 +910,7 @@
    { "link_start_openbsd",	LINK_START_OPENBSD_SPEC },		\
    { "link_start_default",	LINK_START_DEFAULT_SPEC },		\
    { "link_os",			LINK_OS_SPEC },				\
@@ -170,7 +184,7 @@ diff -Nbaur gcc-5.2.0/gcc/config/rs6000/sysv4.h gcc-5.2.0-ppc/gcc/config/rs6000/
    { "link_os_ads",		LINK_OS_ADS_SPEC },			\
    { "link_os_yellowknife",	LINK_OS_YELLOWKNIFE_SPEC },		\
    { "link_os_mvme",		LINK_OS_MVME_SPEC },			\
-@@ -895,6 +927,9 @@
+@@ -889,6 +921,9 @@
    { "link_os_openbsd",		LINK_OS_OPENBSD_SPEC },			\
    { "link_os_default",		LINK_OS_DEFAULT_SPEC },			\
    { "cc1_secure_plt_default",	CC1_SECURE_PLT_DEFAULT_SPEC },		\
@@ -180,9 +194,9 @@ diff -Nbaur gcc-5.2.0/gcc/config/rs6000/sysv4.h gcc-5.2.0-ppc/gcc/config/rs6000/
    { "cpp_os_ads",		CPP_OS_ADS_SPEC },			\
    { "cpp_os_yellowknife",	CPP_OS_YELLOWKNIFE_SPEC },		\
    { "cpp_os_mvme",		CPP_OS_MVME_SPEC },			\
-diff -Nbaur gcc-5.2.0/gcc/config/rs6000/sysv4.opt gcc-5.2.0-ppc/gcc/config/rs6000/sysv4.opt
---- gcc-5.2.0/gcc/config/rs6000/sysv4.opt	2015-01-05 09:33:28.000000000 -0300
-+++ gcc-5.2.0-ppc/gcc/config/rs6000/sysv4.opt	2015-07-26 00:37:44.107450865 -0300
+diff -NBaur gcc-5.3.0/gcc/config/rs6000/sysv4.opt gcc-5.3.0-ppc/gcc/config/rs6000/sysv4.opt
+--- gcc-5.3.0/gcc/config/rs6000/sysv4.opt	2015-01-05 12:33:28.000000000 +0000
++++ gcc-5.3.0-ppc/gcc/config/rs6000/sysv4.opt	2016-03-01 08:53:23.000000000 +0000
 @@ -120,6 +120,26 @@
  Target RejectNegative
  Link with libads.a, libc.a and crt0.o
@@ -210,10 +224,10 @@ diff -Nbaur gcc-5.2.0/gcc/config/rs6000/sysv4.opt gcc-5.2.0-ppc/gcc/config/rs600
  myellowknife
  Target RejectNegative
  Link with libyk.a, libc.a and crt0.o
-diff -Nbaur gcc-5.2.0/gcc/config.gcc gcc-5.2.0-ppc/gcc/config.gcc
---- gcc-5.2.0/gcc/config.gcc	2015-07-02 12:53:33.000000000 -0300
-+++ gcc-5.2.0-ppc/gcc/config.gcc	2015-07-26 00:40:07.066675359 -0300
-@@ -2326,7 +2326,7 @@
+diff -NBaur gcc-5.3.0/gcc/config.gcc gcc-5.3.0-ppc/gcc/config.gcc
+--- gcc-5.3.0/gcc/config.gcc	2015-09-10 15:17:53.000000000 +0100
++++ gcc-5.3.0-ppc/gcc/config.gcc	2016-03-01 08:53:23.000000000 +0000
+@@ -2332,7 +2332,7 @@
  	use_gcc_stdint=wrap
  	;;
  powerpc-*-eabi*)
@@ -222,9 +236,9 @@ diff -Nbaur gcc-5.2.0/gcc/config.gcc gcc-5.2.0-ppc/gcc/config.gcc
  	extra_options="${extra_options} rs6000/sysv4.opt"
  	tmake_file="rs6000/t-fprules rs6000/t-ppcgas rs6000/t-ppccomm"
  	use_gcc_stdint=wrap
-diff -Nbaur gcc-5.2.0/libcpp/Makefile.in gcc-5.2.0-ppc/libcpp/Makefile.in
---- gcc-5.2.0/libcpp/Makefile.in	2015-07-16 06:16:25.000000000 -0300
-+++ gcc-5.2.0-ppc/libcpp/Makefile.in	2015-07-26 00:43:56.075938795 -0300
+diff -NBaur gcc-5.3.0/libcpp/Makefile.in gcc-5.3.0-ppc/libcpp/Makefile.in
+--- gcc-5.3.0/libcpp/Makefile.in	2015-12-04 10:47:53.000000000 +0000
++++ gcc-5.3.0-ppc/libcpp/Makefile.in	2016-03-01 08:53:23.000000000 +0000
 @@ -208,8 +208,7 @@
  # Note that we put the dependencies into a .Tpo file, then move them
  # into place if the compile succeeds.  We need this because gcc does
@@ -235,9 +249,9 @@ diff -Nbaur gcc-5.2.0/libcpp/Makefile.in gcc-5.2.0-ppc/libcpp/Makefile.in
  else
  COMPILE = source='$<' object='$@' libtool=no DEPDIR=$(DEPDIR) $(DEPMODE) \
  	  $(depcomp) $(COMPILE.base)
-diff -Nbaur gcc-5.2.0/libgcc/config/rs6000/crtrestvr.S gcc-5.2.0-ppc/libgcc/config/rs6000/crtrestvr.S
---- gcc-5.2.0/libgcc/config/rs6000/crtrestvr.S	2015-01-05 09:33:28.000000000 -0300
-+++ gcc-5.2.0-ppc/libgcc/config/rs6000/crtrestvr.S	2015-07-26 00:47:35.986193255 -0300
+diff -NBaur gcc-5.3.0/libgcc/config/rs6000/crtrestvr.S gcc-5.3.0-ppc/libgcc/config/rs6000/crtrestvr.S
+--- gcc-5.3.0/libgcc/config/rs6000/crtrestvr.S	2015-01-05 12:33:28.000000000 +0000
++++ gcc-5.3.0-ppc/libgcc/config/rs6000/crtrestvr.S	2016-03-01 08:53:23.000000000 +0000
 @@ -24,7 +24,7 @@
  
  /* On PowerPC64 Linux, these functions are provided by the linker.  */
@@ -252,9 +266,9 @@ diff -Nbaur gcc-5.2.0/libgcc/config/rs6000/crtrestvr.S gcc-5.2.0-ppc/libgcc/conf
  
  #endif
 +#endif
-diff -Nbaur gcc-5.2.0/libgcc/config/rs6000/crtsavevr.S gcc-5.2.0-ppc/libgcc/config/rs6000/crtsavevr.S
---- gcc-5.2.0/libgcc/config/rs6000/crtsavevr.S	2015-01-05 09:33:28.000000000 -0300
-+++ gcc-5.2.0-ppc/libgcc/config/rs6000/crtsavevr.S	2015-07-26 00:52:13.547573910 -0300
+diff -NBaur gcc-5.3.0/libgcc/config/rs6000/crtsavevr.S gcc-5.3.0-ppc/libgcc/config/rs6000/crtsavevr.S
+--- gcc-5.3.0/libgcc/config/rs6000/crtsavevr.S	2015-01-05 12:33:28.000000000 +0000
++++ gcc-5.3.0-ppc/libgcc/config/rs6000/crtsavevr.S	2016-03-01 08:53:23.000000000 +0000
 @@ -24,7 +24,7 @@
  
  /* On PowerPC64 Linux, these functions are provided by the linker.  */
@@ -269,9 +283,9 @@ diff -Nbaur gcc-5.2.0/libgcc/config/rs6000/crtsavevr.S gcc-5.2.0-ppc/libgcc/conf
  
  #endif
 +#endif
-diff -Nbaur gcc-5.2.0/libgcc/crtstuff.c gcc-5.2.0-ppc/libgcc/crtstuff.c
---- gcc-5.2.0/libgcc/crtstuff.c	2015-01-05 09:33:28.000000000 -0300
-+++ gcc-5.2.0-ppc/libgcc/crtstuff.c	2015-07-26 00:54:00.085158756 -0300
+diff -NBaur gcc-5.3.0/libgcc/crtstuff.c gcc-5.3.0-ppc/libgcc/crtstuff.c
+--- gcc-5.3.0/libgcc/crtstuff.c	2015-01-05 12:33:28.000000000 +0000
++++ gcc-5.3.0-ppc/libgcc/crtstuff.c	2016-03-01 08:53:23.000000000 +0000
 @@ -47,6 +47,7 @@
  
  /* Target machine header files require this define. */
@@ -280,9 +294,9 @@ diff -Nbaur gcc-5.2.0/libgcc/crtstuff.c gcc-5.2.0-ppc/libgcc/crtstuff.c
  
  /* FIXME: Including auto-host is incorrect, but until we have
     identified the set of defines that need to go into auto-target.h,
-diff -Nbaur gcc-5.2.0/libstdc++-v3/include/std/type_traits gcc-5.2.0-ppc/libstdc++-v3/include/std/type_traits
---- gcc-5.2.0/libstdc++-v3/include/std/type_traits	2015-01-05 09:33:28.000000000 -0300
-+++ gcc-5.2.0-ppc/libstdc++-v3/include/std/type_traits	2015-07-26 00:54:00.085158756 -0300
+diff -NBaur gcc-5.3.0/libstdc++-v3/include/std/type_traits gcc-5.3.0-ppc/libstdc++-v3/include/std/type_traits
+--- gcc-5.3.0/libstdc++-v3/include/std/type_traits	2015-01-08 16:24:55.000000000 +0000
++++ gcc-5.3.0-ppc/libstdc++-v3/include/std/type_traits	2016-03-01 08:53:23.000000000 +0000
 @@ -38,7 +38,7 @@
  #include <bits/c++config.h>
  
