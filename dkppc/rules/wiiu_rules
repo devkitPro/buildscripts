@@ -1,0 +1,12 @@
+ifeq ($(strip $(DEVKITPPC)),)
+$(error "Please set DEVKITPPC in your environment. export DEVKITPPC=<path to>devkitPro/devkitPPC)
+endif
+
+MACHDEP = -DESPRESSO -mwup -mcpu=750 -meabi -mhard-float
+
+include $(DEVKITPPC)/base_rules
+
+#---------------------------------------------------------------------------------
+%.elf:
+	@echo linking ... $(notdir $@)
+	@$(LD)  $^ $(LDFLAGS) $(LIBPATHS) $(LIBS) -o $@
