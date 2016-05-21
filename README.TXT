@@ -78,7 +78,7 @@ Using devkitPPC
 
 to use the built in crt0 and linkscript use powerpc-eabi-gcc to link your project,
 using the command line switch -mgcn for a bare bones system, -mogc to use libogc and
-the multi-threaded microkernel for gamecube, -mrvl for wii.
+the multi-threaded microkernel for gamecube, -mrvl for wii, -mwup for wii u.
 
 Using devkitPSP
 ---------------
