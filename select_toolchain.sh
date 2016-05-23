@@ -50,7 +50,7 @@ case "$VERSION" in
     toolchain=DEVKITPPC
   ;;
   "3" )
-    GCC_VER=4.6.3
+    GCC_VER=4.9.3
     BINUTILS_VER=2.22
     NEWLIB_VER=1.20.0
     GDB_VER=7.4
