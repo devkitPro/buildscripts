@@ -1531,3 +1531,102 @@ diff -Nbaur gdb-7.4/sim/common/sim-signal.c gdb-7.4-psp/sim/common/sim-signal.c
  #ifndef SIGTRAP
  #define SIGTRAP 5
  #endif
+diff -burN orig.gdb-7.4/bfd/doc/bfd.texinfo gdb-7.4/bfd/doc/bfd.texinfo
+--- orig.gdb-7.4/bfd/doc/bfd.texinfo	2010-10-28 20:40:25.000000000 +0900
++++ gdb-7.4/bfd/doc/bfd.texinfo	2016-05-23 12:59:06.936742780 +0900
+@@ -321,9 +321,9 @@
+ @unnumbered BFD Index
+ @printindex cp
+ 
++@c I think something like @colophon should be in texinfo.  In the
++@c meantime:
+ @tex
+-% I think something like @colophon should be in texinfo.  In the
+-% meantime:
+ \long\def\colophon{\hbox to0pt{}\vfill
+ \centerline{The body of this manual is set in}
+ \centerline{\fontname\tenrm,}
+@@ -333,7 +333,7 @@
+ \centerline{{\sl\fontname\tensl\/}}
+ \centerline{are used for emphasis.}\vfill}
+ \page\colophon
+-% Blame: doc@cygnus.com, 28mar91.
+ @end tex
++@c Blame: doc@cygnus.com, 28mar91.
+ 
+ @bye
+diff -burN orig.gdb-7.4/gdb/doc/gdb.texinfo gdb-7.4/gdb/doc/gdb.texinfo
+--- orig.gdb-7.4/gdb/doc/gdb.texinfo	2012-01-06 13:43:35.000000000 +0900
++++ gdb-7.4/gdb/doc/gdb.texinfo	2016-05-23 13:23:23.606668610 +0900
+@@ -4824,7 +4824,7 @@
+ 
+ 
+ @kindex advance @var{location}
+-@itemx advance @var{location}
++@item advance @var{location}
+ Continue running the program up to the given @var{location}.  An argument is
+ required, which should be of one of the forms described in
+ @ref{Specify Location}.
+@@ -5719,7 +5719,7 @@
+ @kindex set exec-direction
+ @item set exec-direction
+ Set the direction of target execution.
+-@itemx set exec-direction reverse
++@item set exec-direction reverse
+ @cindex execute forward or backward in time
+ @value{GDBN} will perform all execution commands in reverse, until the
+ exec-direction mode is changed to ``forward''.  Affected commands include
+@@ -38719,9 +38719,9 @@
+ 
+ @printindex cp
+ 
++@c I think something like @colophon should be in texinfo.  In the
++@c meantime:
+ @tex
+-% I think something like @colophon should be in texinfo.  In the
+-% meantime:
+ \long\def\colophon{\hbox to0pt{}\vfill
+ \centerline{The body of this manual is set in}
+ \centerline{\fontname\tenrm,}
+@@ -38732,7 +38732,7 @@
+ \centerline{{\sl\fontname\tensl\/}}
+ \centerline{are used for emphasis.}\vfill}
+ \page\colophon
+-% Blame: doc@cygnus.com, 1991.
+ @end tex
++@c Blame: doc@cygnus.com, 1991.
+ 
+ @bye
+diff -burN orig.gdb-7.4/gdb/doc/gdbint.texinfo gdb-7.4/gdb/doc/gdbint.texinfo
+--- orig.gdb-7.4/gdb/doc/gdbint.texinfo	2012-01-06 13:43:35.000000000 +0900
++++ gdb-7.4/gdb/doc/gdbint.texinfo	2016-05-23 13:24:19.270002549 +0900
+@@ -34,7 +34,7 @@
+ 
+ @titlepage
+ @title @value{GDBN} Internals
+-@subtitle{A guide to the internals of the GNU debugger}
++@subtitle A guide to the internals of the GNU debugger
+ @author John Gilmore
+ @author Cygnus Solutions
+ @author Second Edition:
+diff -burN orig.gdb-7.4/sim/common/sim-arange.h gdb-7.4/sim/common/sim-arange.h
+--- orig.gdb-7.4/sim/common/sim-arange.h	2012-01-06 13:54:39.000000000 +0900
++++ gdb-7.4/sim/common/sim-arange.h	2016-05-23 13:04:49.726746511 +0900
+@@ -62,7 +62,7 @@
+ 
+ /* Return non-zero if ADDR is in range AR, traversing the entire tree.
+    If no range is specified, that is defined to mean "everything".  */
+-extern INLINE int
++static INLINE int
+ sim_addr_range_hit_p (ADDR_RANGE * /*ar*/, address_word /*addr*/);
+ #define ADDR_RANGE_HIT_P(ar, addr) \
+   ((ar)->range_tree == NULL || sim_addr_range_hit_p ((ar), (addr)))
+@@ -71,7 +71,7 @@
+ #ifdef SIM_ARANGE_C
+ #define SIM_ARANGE_INLINE INLINE
+ #else
+-#define SIM_ARANGE_INLINE EXTERN_INLINE
++#define SIM_ARANGE_INLINE static INLINE
+ #endif
+ #include "sim-arange.c"
+ #else
