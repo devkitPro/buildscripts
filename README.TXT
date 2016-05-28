@@ -23,6 +23,8 @@ http://gmplib.org/
 http://www.mpfr.org/
 http://www.multiprecision.org/
 
+sudo apt-get install libgmp-dev libmpfr-dev libmpc-dev
+
 Some of the tools for devkitARM and devkitPPC also require FreeImage, zlib,
 and libusb. Again these are built as static libraries for ease of packaging
 but you can probably use the versions supplied by your distro.
@@ -31,7 +33,10 @@ http://freeimage.sourceforge.net/
 http://www.zlib.net
 http://www.libusb.org
 
+sudo apt-get install  libfreeimage-dev zlib1g-dev libusb-dev
+
 Building gxtexconv for cube/wii needs GL/gl.h which can be obtained with
+
 sudo apt-get install mesa-common-dev
 
 To avoid having to manually answer prompts during the build the script will
