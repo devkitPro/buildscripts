@@ -7482,20 +7482,6 @@ index ba9dbd6..51d99ec 100644
  #define	NGROUPS_MAX		   16	/* max supplemental group id's */
  #ifndef OPEN_MAX
  #define	OPEN_MAX		   64	/* max open files per process */
-diff --git a/newlib/libc/include/sys/types.h b/newlib/libc/include/sys/types.h
-index 379b755..cfd702c 100644
---- a/newlib/libc/include/sys/types.h
-+++ b/newlib/libc/include/sys/types.h
-@@ -235,6 +235,9 @@ typedef	__suseconds_t	suseconds_t;
- 
- typedef	__int64_t	sbintime_t;
- 
-+typedef __uint32_t fsblkcnt_t;
-+typedef __uint32_t fsfilcnt_t;
-+
- #include <sys/features.h>
- 
- 
 diff --git a/newlib/libc/include/sys/unistd.h b/newlib/libc/include/sys/unistd.h
 index ef00575..65fcfe5 100644
 --- a/newlib/libc/include/sys/unistd.h
@@ -7750,10 +7736,10 @@ index c93962f..1ef15d6 100644
  #else
 diff --git a/newlib/libc/sys/arm/include/machine/_types.h b/newlib/libc/sys/arm/include/machine/_types.h
 new file mode 100644
-index 0000000..718eadd
+index 0000000..e2d3cc6
 --- /dev/null
 +++ b/newlib/libc/sys/arm/include/machine/_types.h
-@@ -0,0 +1,13 @@
+@@ -0,0 +1,14 @@
 +#ifndef _MACHINE__TYPES_H
 +#define _MACHINE__TYPES_H
 +
@@ -7761,13 +7747,13 @@ index 0000000..718eadd
 +
 +/* Use 64bit types */
 +typedef __int64_t _off_t;
-+#define __off_t_defined 1
++#define __machine_off_t_defined
 +
 +typedef __int64_t _fpos_t;
-+#define __fpos_t_defined 1
++#define __machine_fpos_t_defined
 +
 +#endif
-\ No newline at end of file
++
 diff --git a/newlib/libc/sys/arm/sys/lock.h b/newlib/libc/sys/arm/sys/lock.h
 new file mode 100644
 index 0000000..567fed5
