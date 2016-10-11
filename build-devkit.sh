@@ -23,7 +23,7 @@ echo "Patches and improvements are of course welcome, please send these to the p
 echo "https://sourceforge.net/tracker/?group_id=114505&atid=668553"
 echo
 
-LIBOGC_VER=1.8.15
+LIBOGC_VER=1.8.14
 LIBGBA_VER=20150106
 LIBNDS_VER=1.5.12
 LIBCTRU_VER=0.6.0
