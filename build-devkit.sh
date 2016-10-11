@@ -169,8 +169,8 @@ PLATFORM=`uname -s`
 
 case $PLATFORM in
 	Darwin )
-                cflags="-mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk -I/usr/local/include"
-                ldflags="-mmacosx-version-min=10.5 -Wl,-syslibroot,/Developer/SDKs/MacOSX10.5.sdk -L/usr/local/lib"
+		cflags="-mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk -I/usr/local/include"
+		ldflags="-mmacosx-version-min=10.5 -Wl,-syslibroot,/Developer/SDKs/MacOSX10.5.sdk -L/usr/local/lib"
     ;;
 	MINGW32* )
 		cflags="-D__USE_MINGW_ACCESS"

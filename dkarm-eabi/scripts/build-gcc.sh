@@ -15,7 +15,7 @@ cd $target/binutils
 if [ ! -f configured-binutils ]
 then
 	CFLAGS=$cflags LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
-        --prefix=$prefix --target=$target --disable-nls --disable-dependency-tracking --disable-werror \
+        --prefix=$prefix --target=$target --disable-nls --disable-werror \
 	--enable-lto --enable-plugins --enable-poison-system-directories \
 	$CROSS_PARAMS \
         || { echo "Error configuring binutils"; exit 1; }
@@ -51,7 +51,6 @@ then
 		--disable-libstdcxx-verbose \
 		--enable-poison-system-directories \
 		--enable-interwork --enable-multilib \
-		--disable-dependency-tracking \
 		--enable-threads --disable-win32-registry --disable-nls --disable-debug\
 		--disable-libmudflap --disable-libssp --disable-libgomp \
 		--disable-libstdcxx-pch \
@@ -148,7 +147,6 @@ if [ ! -f configured-gdb ]
 then
 	CFLAGS="$cflags" LDFLAGS="$ldflags" ../../gdb-$GDB_VER/configure \
 	--disable-nls --prefix=$prefix --target=$target --disable-werror \
-	--disable-dependency-tracking \
 	$CROSS_PARAMS \
 	|| { echo "Error configuring gdb"; exit 1; }
 	touch configured-gdb
