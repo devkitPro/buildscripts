@@ -16,7 +16,7 @@ then
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
 	--disable-werror \
 	--enable-poison-system-directories \
-	--enable-plugins --enable-lto --disable-dependency-tracking \
+	--enable-plugins --enable-lto \
 	--disable-werror $CROSS_PARAMS \
 	|| { echo "Error configuing ppc binutils"; exit 1; }
 	touch configured-binutils
@@ -47,7 +47,6 @@ if [ ! -f configured-binutils ]
 then
 	CFLAGS=$cflags LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
 	--prefix=$prefix --target=mn10200 --disable-nls --disable-debug \
-	--disable-dependency-tracking \
 	--disable-werror $CROSS_PARAMS \
 	|| { echo "Error configuing mn10200 binutils"; exit 1; }
 	touch configured-binutils
@@ -88,7 +87,6 @@ then
 	--with-newlib \
 	--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 	--prefix=$prefix\
-	--disable-dependency-tracking \
 	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 28" \
 	$CROSS_PARAMS \
 	|| { echo "Error configuring gcc stage 1"; exit 1; }
@@ -172,7 +170,7 @@ cd $target/gdb
 if [ ! -f configured-gdb ]
 then
 	CFLAGS="$cflags" LDFLAGS="$ldflags" ../../gdb-$GDB_VER/configure \
-	--disable-nls --prefix=$prefix --target=$target --disable-werror --disable-dependency-tracking\
+	--disable-nls --prefix=$prefix --target=$target --disable-werror \
 	$CROSS_PARAMS || { echo "Error configuring gdb"; exit 1; }
 	touch configured-gdb
 fi
