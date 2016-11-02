@@ -7736,10 +7736,10 @@ index c93962f..1ef15d6 100644
  #else
 diff --git a/newlib/libc/sys/arm/include/machine/_types.h b/newlib/libc/sys/arm/include/machine/_types.h
 new file mode 100644
-index 0000000..e2d3cc6
+index 0000000..40092f9
 --- /dev/null
 +++ b/newlib/libc/sys/arm/include/machine/_types.h
-@@ -0,0 +1,14 @@
+@@ -0,0 +1,19 @@
 +#ifndef _MACHINE__TYPES_H
 +#define _MACHINE__TYPES_H
 +
@@ -7752,6 +7752,11 @@ index 0000000..e2d3cc6
 +typedef __int64_t _fpos_t;
 +#define __machine_fpos_t_defined
 +
++typedef __uint32_t __ino_t;
++#define __machine_ino_t_defined
++
++typedef __uint32_t __dev_t;
++#define __machine_dev_t_defined
 +#endif
 +
 diff --git a/newlib/libc/sys/arm/sys/lock.h b/newlib/libc/sys/arm/sys/lock.h
