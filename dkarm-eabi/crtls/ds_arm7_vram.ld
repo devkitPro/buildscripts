@@ -6,7 +6,7 @@ MEMORY {
 
 	rom	: ORIGIN = 0x08000000, LENGTH = 32M
 	iwram	: ORIGIN = 0x037f8000, LENGTH = 96K	
-	vram	: ORIGIN = 0x06000000, LENGTH = 128K
+	vram	: ORIGIN = 0x06000000, LENGTH = 256K
 }
 
 __iwram_start	=	ORIGIN(iwram);
