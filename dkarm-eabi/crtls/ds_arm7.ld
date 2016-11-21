@@ -21,12 +21,12 @@ __irq_vector	=	0x04000000 - 4;
 
 SECTIONS
 {
-	.init	:
+	.crt0	:
 	{
 		__text_start = . ;
-		KEEP (*(.init))
+		KEEP (*(.crt0))
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
-		} >iwram = 0xff
+	} >iwram = 0xff
 	.plt : { *(.plt) } >iwram = 0xff
 
 	.text :   /* ALIGN (4): */
