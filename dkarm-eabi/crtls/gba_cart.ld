@@ -79,6 +79,11 @@ SECTIONS
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >rom
 
+	.init :
+	{
+		KEEP (*(SORT_NONE(.init)))
+	} >rom
+
 	.text  :   /* ALIGN (4): */
 	{
 		*(EXCLUDE_FILE (*.iwram*) .text)
