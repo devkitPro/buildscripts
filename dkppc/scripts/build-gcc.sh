@@ -87,6 +87,7 @@ then
 	--with-newlib \
 	--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 	--prefix=$prefix\
+	--with-system-zlib\
 	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 28" \
 	$CROSS_PARAMS \
 	|| { echo "Error configuring gcc stage 1"; exit 1; }
