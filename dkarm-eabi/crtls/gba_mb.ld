@@ -68,16 +68,17 @@ SECTIONS
 		. = ALIGN(4);
 	} >ewram =0xff
 
+	.init :
+	{
+		KEEP (*(SORT_NONE(.init)))
+	} >ewram
+
 	.plt :
 	{
 		*(.plt)
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >ewram
 
-	.init :
-	{
-		KEEP (*(SORT_NONE(.init)))
-	} >ewram
 
 	.text  ALIGN (4):
 	{

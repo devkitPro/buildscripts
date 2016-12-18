@@ -73,15 +73,16 @@ SECTIONS
 		. = ALIGN(4);
 	} >rom =0xff
 
-	.plt :
-	{
-		*(.plt)
-		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-	} >rom
 
 	.init :
 	{
 		KEEP (*(SORT_NONE(.init)))
+	} >rom
+
+	.plt :
+	{
+		*(.plt)
+		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >rom
 
 	.text  :   /* ALIGN (4): */

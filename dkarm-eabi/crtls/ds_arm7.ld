@@ -27,7 +27,15 @@ SECTIONS
 		KEEP (*(.crt0))
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
 	} >iwram = 0xff
+
+	.init           :
+	{
+		KEEP (*(SORT_NONE(.init)))
+	} >iwram = 0xff
+
 	.plt : { *(.plt) } >iwram = 0xff
+
+
 
 	.text :   /* ALIGN (4): */
 	{

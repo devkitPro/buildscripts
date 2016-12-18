@@ -28,6 +28,12 @@ SECTIONS
 		KEEP (*(.crt0))
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
 	} >vram = 0xff
+
+	.init           :
+	{
+		KEEP (*(SORT_NONE(.init)))
+	} >vram = 0xff
+
 	.plt : { *(.plt) } >vram = 0xff
 
 	.text :   /* ALIGN (4): */

@@ -15,6 +15,12 @@ SECTIONS
     KEEP (*(.crt0))
     . = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
   } >ram = 0xff
+
+  .init :
+  {
+    KEEP (*(SORT_NONE(.init)))
+  } >ram
+
   .plt            : { *(.plt) } >ram = 0xff
 
  
