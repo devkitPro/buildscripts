@@ -29,6 +29,8 @@ SECTIONS
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
 	} >vram = 0xff
 
+	__arm7_lma__ = .;
+	__arm7_start__ = .;
 	.init           :
 	{
 		KEEP (*(SORT_NONE(.init)))
@@ -133,6 +135,8 @@ SECTIONS
 		__data_end = ABSOLUTE(.) ;
 	} >vram = 0xff
 
+
+	__arm7_end__ = .;
 
 
 	.bss ALIGN(4) :
