@@ -23,6 +23,14 @@ _start:
 	msr	cpsr, r0
 	ldr	sp, =__sp_usr		@ Set user stack
 
+@---------------------------------------------------------------------------------
+@ Copy initialized data (data section) from LMA to VMA (EWRAM to IWRAM)
+@---------------------------------------------------------------------------------
+	ldr	r1, =__arm7_lma__
+	ldr	r2, =__arm7_start__
+	ldr	r4, =__arm7_end__
+	bl	CopyMemCheck
+
 	ldr	r0, =__bss_start__	@ Clear BSS section to 0x00
 	ldr	r1, =__bss_end__
 	sub	r1, r1, r0
@@ -70,6 +78,9 @@ ClrLoop:
 @---------------------------------------------------------------------------------
 CopyMemCheck:
 @---------------------------------------------------------------------------------
+	cmp	r1, r2
+	bxeq	lr
+
 	sub	r3, r4, r2		@ Is there any data to copy?
 @---------------------------------------------------------------------------------
 @ Copy memory

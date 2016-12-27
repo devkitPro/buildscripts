@@ -3,9 +3,9 @@ OUTPUT_ARCH(arm)
 ENTRY(_start)
 
 MEMORY {
-
-	rom	: ORIGIN = 0x08000000, LENGTH = 32M
-	iwram	: ORIGIN = 0x037f8000, LENGTH = 96K	
+	ewram  : ORIGIN = 0x02380000, LENGTH = 512K - 48K
+	rom    : ORIGIN = 0x08000000, LENGTH = 32M
+	iwram  : ORIGIN = 0x037f8000, LENGTH = 96K
 }
 
 __iwram_start	=	ORIGIN(iwram);
@@ -23,36 +23,29 @@ SECTIONS
 {
 	.crt0	:
 	{
-		__text_start = . ;
 		KEEP (*(.crt0))
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
-	} >iwram = 0xff
+	} >ewram
 
-	.init           :
-	{
-		KEEP (*(SORT_NONE(.init)))
-	} >iwram = 0xff
-
-	.plt : { *(.plt) } >iwram = 0xff
-
-
+	__arm7_lma__ = .;
 
 	.text :   /* ALIGN (4): */
 	{
+		__arm7_start__ = .;
+		KEEP (*(SORT_NONE(.init)))
+		*(.plt)
 		*(.text .stub .text.* .gnu.linkonce.t.*)
 		KEEP (*(.text.*personality*))
 		/* .gnu.warning sections are handled specially by elf32.em.  */
 		*(.gnu.warning)
 		*(.glue_7t) *(.glue_7) *(.vfp11_veneer)
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
-	} >iwram = 0xff
+	} >iwram AT>ewram
 
 	.fini           :
 	{
 		KEEP (*(.fini))
-	} >iwram =0xff
-
-	__text_end = . ;
+	} >iwram AT>ewram
 
 	.rodata :
 	{
@@ -63,27 +56,38 @@ SECTIONS
 		*(.gnu.linkonce.r*)
 		SORT(CONSTRUCTORS)
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-	} >iwram = 0xff
+	} >iwram AT>ewram
 
-	.ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >iwram
-	__exidx_start = .;
-	.ARM.exidx   : { *(.ARM.exidx* .gnu.linkonce.armexidx.*) } >iwram
-	__exidx_end = .;
+	.ARM.extab   : { *(.ARM.extab* .gnu.linkonce.armextab.*) } >iwram AT>ewram
+
+	.ARM.exidx   : {
+		__exidx_start = .;
+		*(.ARM.exidx* .gnu.linkonce.armexidx.*)
+		__exidx_end = .;
+	 } >iwram AT>ewram
 
 /* Ensure the __preinit_array_start label is properly aligned.  We
    could instead move the label definition inside the section, but
    the linker would then create the section even if it turns out to
    be empty, which isn't pretty.  */
-	. = ALIGN(32 / 8);
-	PROVIDE (__preinit_array_start = .);
-	.preinit_array     : { KEEP (*(.preinit_array)) } >iwram = 0xff
-	PROVIDE (__preinit_array_end = .);
-	PROVIDE (__init_array_start = .);
-	.init_array     : { KEEP (*(.init_array)) } >iwram = 0xff
-	PROVIDE (__init_array_end = .);
-	PROVIDE (__fini_array_start = .);
-	.fini_array     : { KEEP (*(.fini_array)) } >iwram = 0xff
-	PROVIDE (__fini_array_end = .);
+	.preinit_array     : {
+		. = ALIGN(32 / 8);
+		PROVIDE (__preinit_array_start = .);
+		KEEP (*(.preinit_array))
+		PROVIDE (__preinit_array_end = .);
+	}>iwram AT>ewram
+
+	.init_array     : {
+		PROVIDE (__init_array_start = .);
+		KEEP (*(.init_array))
+		PROVIDE (__init_array_end = .);
+	} >iwram AT>ewram
+
+	.fini_array     : {
+		PROVIDE (__fini_array_start = .);
+		KEEP (*(.fini_array))
+		PROVIDE (__fini_array_end = .);
+	} >iwram AT>ewram
 
 	.ctors :
 	{
@@ -98,7 +102,7 @@ SECTIONS
 		KEEP (*(SORT(.ctors.*)))
 		KEEP (*(.ctors))
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-	} >iwram = 0xff
+	} >iwram AT>ewram
 
 	.dtors :
 	{
@@ -107,19 +111,19 @@ SECTIONS
 		KEEP (*(SORT(.dtors.*)))
 		KEEP (*(.dtors))
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-	} >iwram = 0xff
+	} >iwram AT>ewram
 
 	.eh_frame :
 	{
 		KEEP (*(.eh_frame))
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-	} >iwram = 0xff
+	} >iwram AT>ewram
 
 	.gcc_except_table :
 	{
 		*(.gcc_except_table)
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
-	} >iwram = 0xff
+	} >iwram AT>ewram
 	.jcr            : { KEEP (*(.jcr)) } >iwram = 0
 	.got            : { *(.got.plt) *(.got) } >iwram = 0
 
@@ -131,10 +135,12 @@ SECTIONS
 		CONSTRUCTORS
 		. = ALIGN(4);
 		__data_end = ABSOLUTE(.) ;
-	} >iwram = 0xff
+	} >iwram AT>ewram
 
-	.bss ALIGN(4) :
+
+	.bss ALIGN(4) (NOLOAD) :
 	{
+		__arm7_end__ = .;
 		__bss_start = ABSOLUTE(.);
 		__bss_start__ = ABSOLUTE(.);
 		*(.dynbss)
@@ -179,6 +185,5 @@ SECTIONS
 	.debug_funcnames 0 : { *(.debug_funcnames) }
 	.debug_typenames 0 : { *(.debug_typenames) }
 	.debug_varnames  0 : { *(.debug_varnames) }
-	.stack 0x80000 : { _stack = .; *(.stack) }
 	/* These must appear regardless of  .  */
 }
