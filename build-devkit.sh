@@ -189,7 +189,7 @@ DEVKITPRO_URL="http://downloads.sourceforge.net/devkitpro"
 patchdir=$(pwd)/$basedir/patches
 scriptdir=$(pwd)/$basedir/scripts
 
-archives="binutils-${BINUTILS_VER}.tar.bz2 gcc-${GCC_VER}.tar.bz2 newlib-${NEWLIB_VER}.tar.gz gdb-${GDB_VER}.tar.xz"
+archives="binutils-${BINUTILS_VER}.tar.bz2 gcc-${GCC_VER}.tar.bz2 newlib-${NEWLIB_VER}.tar.gz gdb-${GDB_VER}.tar.bz2"
 
 if [ $VERSION -eq 1 ]; then
 
@@ -240,7 +240,7 @@ cd $BUILDDIR
 extract_and_patch binutils $BINUTILS_VER bz2
 extract_and_patch gcc $GCC_VER bz2
 extract_and_patch newlib $NEWLIB_VER gz
-extract_and_patch gdb $GDB_VER xz
+extract_and_patch gdb $GDB_VER bz2
 
 for archive in $targetarchives
 do
