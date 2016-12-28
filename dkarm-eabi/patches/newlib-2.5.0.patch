@@ -6004,10 +6004,10 @@ index 0000000..d2982bc
 +
 diff --git a/libgloss/libsysbase/handle_manager.c b/libgloss/libsysbase/handle_manager.c
 new file mode 100644
-index 0000000..f64d0c2
+index 0000000..f3fcc88
 --- /dev/null
 +++ b/libgloss/libsysbase/handle_manager.c
-@@ -0,0 +1,164 @@
+@@ -0,0 +1,173 @@
 +#include <stdlib.h>
 +#include <stdio.h>
 +#include <errno.h>
@@ -6070,12 +6070,21 @@ index 0000000..f64d0c2
 +		handles[i] = malloc(size);
 +		__handle *handle = handles[i];
 +		if ( NULL != handles[i] ) {
++
 +			handles[i]->refcount = 1;
 +			ret =  i;
 +			handles[i]->device = device;
 +			handles[i]->fileStruct = (void *)&handle[1];
 +
++		} else {
++
++			errno = ENOMEM;
++
 +		}
++	} else {
++
++		errno = ENFILE;
++
 +	}
 +
 +	__lock_release (__hndl_lock);
@@ -7512,7 +7521,7 @@ index 0000000..380329d
 +#endif // _SYS_STATVFS_H
 \ No newline at end of file
 diff --git a/newlib/libc/include/sys/unistd.h b/newlib/libc/include/sys/unistd.h
-index 05b4f9d..f00ecb3 100644
+index 84219ca..af9d12c 100644
 --- a/newlib/libc/include/sys/unistd.h
 +++ b/newlib/libc/include/sys/unistd.h
 @@ -252,12 +252,10 @@ _READ_WRITE_RETURN_TYPE _EXFUN(_write, (int __fd, const void *__buf, size_t __nb
@@ -7529,7 +7538,7 @@ index 05b4f9d..f00ecb3 100644
  #if defined(__CYGWIN__) || defined(__rtems__)
  int	_EXFUN(getdtablesize, (void));
 diff --git a/newlib/libc/locale/locale.c b/newlib/libc/locale/locale.c
-index b7ced4d..6ad710f 100644
+index 8572821..52b6469 100644
 --- a/newlib/libc/locale/locale.c
 +++ b/newlib/libc/locale/locale.c
 @@ -107,7 +107,7 @@ beginning with <<"LC_">>.
@@ -7601,7 +7610,7 @@ index b7ced4d..6ad710f 100644
  __locale_ctype_ptr (void)
 +
  {
-   return __get_current_locale (_REENT)->ctype_ptr;
+   return __get_current_locale ()->ctype_ptr;
  }
 diff --git a/newlib/libc/machine/arm/sys/stdio.h b/newlib/libc/machine/arm/sys/stdio.h
 new file mode 100644
