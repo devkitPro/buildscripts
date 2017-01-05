@@ -23,7 +23,7 @@ echo "Patches and improvements are of course welcome, please send these to the p
 echo "https://sourceforge.net/tracker/?group_id=114505&atid=668553"
 echo
 
-LIBOGC_VER=1.8.15
+LIBOGC_VER=1.8.16
 LIBGBA_VER=20150106
 LIBNDS_VER=1.5.12
 LIBCTRU_VER=0.6.0
@@ -32,7 +32,7 @@ DSWIFI_VER=0.3.17
 LIBMIRKO_VER=0.9.7
 MAXMOD_VER=1.0.9
 FILESYSTEM_VER=0.9.12
-LIBFAT_VER=1.0.14
+LIBFAT_VER=1.0.15
 PSPSDK_VER=20120404
 GBATOOLS_VER=1.0.0
 DSTOOLS_VER=1.0.2
