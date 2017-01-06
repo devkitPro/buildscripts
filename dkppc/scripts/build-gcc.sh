@@ -45,7 +45,7 @@ cd mn10200/binutils
 
 if [ ! -f configured-binutils ]
 then
-	CFLAGS=$cflags LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
+	CFLAGS=$cflags LDFLAGS=$ldflags ../../binutils-$MN_BINUTILS_VER/configure \
 	--prefix=$prefix --target=mn10200 --disable-nls --disable-debug \
 	--disable-werror $CROSS_PARAMS \
 	|| { echo "Error configuing mn10200 binutils"; exit 1; }

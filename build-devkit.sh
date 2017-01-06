@@ -200,6 +200,8 @@ if [ $VERSION -eq 2 ]; then
 	targetarchives="libogc-src-${LIBOGC_VER}.tar.bz2 libfat-src-${LIBFAT_VER}.tar.bz2"
 
 	hostarchives="gamecube-tools-$GAMECUBE_TOOLS_VER.tar.bz2 wiiload-$WIILOAD_VER.tar.bz2 general-tools-$GENERAL_TOOLS_VER.tar.bz2"
+
+	archives="binutils-${MN_BINUTILS_VER}.tar.bz2 $archives"
 fi
 
 if [ $VERSION -eq 3 ]; then
@@ -232,6 +234,10 @@ extract_and_patch gcc $GCC_VER bz2
 rm -fr gcc-$GCC_VER/zlib
 extract_and_patch newlib $NEWLIB_VER gz
 extract_and_patch gdb $GDB_VER bz2
+
+if [ $VERSION -eq 2 ]; then
+	extract_and_patch binutils $MN_BINUTILS_VER bz2
+fi
 
 for archive in $targetarchives
 do
