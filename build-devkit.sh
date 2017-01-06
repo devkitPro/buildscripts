@@ -53,15 +53,15 @@ PICASSO_VER=2.1.0
 #---------------------------------------------------------------------------------
 function extract_and_patch {
 #---------------------------------------------------------------------------------
-	if [ ! -f extracted-$1 ]; then
-		echo "extracting $1"
+	if [ ! -f extracted-$1-$2 ]; then
+		echo "extracting $1-$2"
 		tar -xf "$SRCDIR/$1-$2.tar.$3" || { echo "Error extracting "$1; exit 1; }
-		touch extracted-$1
+		touch extracted-$1-$2
 	fi
-	if [[ ! -f patched-$1 && -f $patchdir/$1-$2.patch ]]; then
-		echo "patching $1"
+	if [[ ! -f patched-$1-$2 && -f $patchdir/$1-$2.patch ]]; then
+		echo "patching $1-$2"
 		patch -p1 -d $1-$2 -i $patchdir/$1-$2.patch || { echo "Error patching $1"; exit 1; }
-		touch patched-$1
+		touch patched-$1-$2
 	fi
 }
 
