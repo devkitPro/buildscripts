@@ -2,10 +2,21 @@ OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 OUTPUT_ARCH(arm)
 ENTRY(_start)
 
+
+PHDRS {
+	crt0  PT_LOAD FLAGS(7);
+	arm7  PT_LOAD FLAGS(7);
+	arm7i PT_LOAD FLAGS(0x100007);
+}
+
+
 MEMORY {
-	ewram  : ORIGIN = 0x02380000, LENGTH = 512K - 48K
+	ewram  : ORIGIN = 0x02380000, LENGTH = 12M - 512K
 	rom    : ORIGIN = 0x08000000, LENGTH = 32M
 	iwram  : ORIGIN = 0x037f8000, LENGTH = 96K
+
+	twl_ewram : ORIGIN = 0x02e80000, LENGTH = 512K - 64K
+	twl_iwram : ORIGIN = 0x03000000, LENGTH = 256K
 }
 
 __iwram_start	=	ORIGIN(iwram);
@@ -21,11 +32,37 @@ __irq_vector	=	0x04000000 - 4;
 
 SECTIONS
 {
+
+	.twl :
+	{
+		__arm7i_start__ = .;
+		*(.twl)
+		*.twl.*(.text .stub .text.* .gnu.linkonce.t.*)
+		*.twl.*(.rodata)
+		*.twl.*(.roda)
+		*.twl.*(.rodata.*)
+		*.twl.*(.data)
+		*.twl.*(.data.*)
+		*.twl.*(.gnu.linkonce.d*)
+		__arm7i_end__ = .;
+	} >twl_iwram AT>twl_ewram :arm7i
+
+	.twl_bss ALIGN(4) (NOLOAD) :
+	{
+		__twl_bss_start__ = .;
+		*.(.twl_bss)
+		*.twl.*(.dynbss)
+		*.twl.*(.gnu.linkonce.b*)
+		*.twl.*(.bss*)
+		*.twl.*(COMMON)
+		__twl_bss_end__ = .;
+	}
+
 	.crt0	:
 	{
 		KEEP (*(.crt0))
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
-	} >ewram
+	} >ewram :crt0
 
 	__arm7_lma__ = .;
 
@@ -40,7 +77,7 @@ SECTIONS
 		*(.gnu.warning)
 		*(.glue_7t) *(.glue_7) *(.vfp11_veneer)
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
-	} >iwram AT>ewram
+	} >iwram AT>ewram :arm7
 
 	.fini           :
 	{
@@ -75,7 +112,7 @@ SECTIONS
 		PROVIDE (__preinit_array_start = .);
 		KEEP (*(.preinit_array))
 		PROVIDE (__preinit_array_end = .);
-	}>iwram AT>ewram
+	} >iwram AT>ewram
 
 	.init_array     : {
 		PROVIDE (__init_array_start = .);
@@ -124,8 +161,8 @@ SECTIONS
 		*(.gcc_except_table)
 		. = ALIGN(4);   /* REQUIRED. LD is flaky without it. */
 	} >iwram AT>ewram
-	.jcr            : { KEEP (*(.jcr)) } >iwram = 0
-	.got            : { *(.got.plt) *(.got) } >iwram = 0
+	.jcr            : { KEEP (*(.jcr)) } >iwram AT>ewram
+	.got            : { *(.got.plt) *(.got) } >iwram AT>ewram
 
 	.data ALIGN(4) : 	{
 		__data_start = ABSOLUTE(.);
@@ -136,7 +173,6 @@ SECTIONS
 		. = ALIGN(4);
 		__data_end = ABSOLUTE(.) ;
 	} >iwram AT>ewram
-
 
 	.bss ALIGN(4) (NOLOAD) :
 	{
