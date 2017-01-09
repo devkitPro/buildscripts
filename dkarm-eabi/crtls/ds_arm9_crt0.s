@@ -51,7 +51,7 @@ _start:
 	ldr	r4, =__itcm_end
 	bl	CopyMemCheck
 
-	ldr	r1, =__vectors_lma		@ Copy reserved vectors area (itcm section) from LMA to VMA
+	ldr	r1, =__vectors_lma	@ Copy reserved vectors area (itcm section) from LMA to VMA
 	ldr	r2, =__vectors_start
 	ldr	r4, =__vectors_end
 	bl	CopyMemCheck
@@ -86,6 +86,7 @@ _start:
 	str	r8, [r1]
 
 	push	{r0}
+	ldr	r0, =__secure_area__
 	ldr	r3, =initSystem
 	blx	r3			@ system initialisation
 
