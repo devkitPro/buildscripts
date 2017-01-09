@@ -17,6 +17,9 @@ __sp_usr	=	__sp_irq - 0x100;
 
 SECTIONS
 {
+	/* Secure area crap */
+	.secure : { *(.secure) } >ewram = 0
+
 	.crt0	:
 	{
 		__text_start = . ;
