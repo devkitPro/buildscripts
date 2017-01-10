@@ -37,26 +37,26 @@ SECTIONS
 	{
 		__arm7i_start__ = .;
 		*(.twl)
-		*.twl.*(.text .stub .text.* .gnu.linkonce.t.*)
-		*.twl.*(.rodata)
-		*.twl.*(.roda)
-		*.twl.*(.rodata.*)
-		*.twl.*(.data)
-		*.twl.*(.data.*)
-		*.twl.*(.gnu.linkonce.d*)
+		*.twl*(.text .stub .text.* .gnu.linkonce.t.*)
+		*.twl*(.rodata)
+		*.twl*(.roda)
+		*.twl*(.rodata.*)
+		*.twl*(.data)
+		*.twl*(.data.*)
+		*.twl*(.gnu.linkonce.d*)
 		__arm7i_end__ = .;
 	} >twl_iwram AT>twl_ewram :arm7i
 
 	.twl_bss ALIGN(4) (NOLOAD) :
 	{
 		__twl_bss_start__ = .;
-		*.(.twl_bss)
+		*(.twl_bss)
 		*.twl.*(.dynbss)
 		*.twl.*(.gnu.linkonce.b*)
 		*.twl.*(.bss*)
 		*.twl.*(COMMON)
 		__twl_bss_end__ = .;
-	}
+	} >twl_iwram :NONE
 
 	.crt0	:
 	{
@@ -66,7 +66,7 @@ SECTIONS
 
 	__arm7_lma__ = .;
 
-	.text :   /* ALIGN (4): */
+	.text :
 	{
 		__arm7_start__ = .;
 		KEEP (*(SORT_NONE(.init)))
