@@ -35,6 +35,7 @@ SECTIONS
 
 	.twl :
 	{
+		__arm7i_lma__ = LOADADDR(.twl);
 		__arm7i_start__ = .;
 		*(.twl)
 		*.twl*(.text .stub .text.* .gnu.linkonce.t.*)
@@ -64,10 +65,9 @@ SECTIONS
 		. = ALIGN(4);  /* REQUIRED. LD is flaky without it. */
 	} >ewram :crt0
 
-	__arm7_lma__ = .;
-
 	.text :
 	{
+		__arm7_lma__ = LOADADDR(.text);
 		__arm7_start__ = .;
 		KEEP (*(SORT_NONE(.init)))
 		*(.plt)

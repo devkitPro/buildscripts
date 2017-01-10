@@ -51,7 +51,7 @@ _start:
 	ldr	r1, =__dsimode		@ set DSi mode flag
 	strb	r10, [r1]
 
-	ldr	r1, =__arm7i_lma
+	ldr	r1, =__arm7i_lma__
 	ldr	r2, =__arm7i_start__
 	ldr	r4, =__arm7i_end__
 	bl	CopyMemCheck
