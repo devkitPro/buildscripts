@@ -43,7 +43,13 @@ cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
-	CFLAGS="$cflags" CXXFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" CXXFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../gcc-$GCC_VER/configure \
+	CFLAGS="$cflags" \
+	CXXFLAGS="$cflags" \
+	LDFLAGS="$ldflags" \
+	CFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
+	CXXFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
+	LDFLAGS_FOR_TARGET="" \
+	../../gcc-$GCC_VER/configure \
 		--enable-languages=c,c++,objc,obj-c++ \
 		--with-gnu-as --with-gnu-ld --with-gcc \
 		--with-march=armv4t\
@@ -90,6 +96,7 @@ cd $target/newlib
 
 if [ ! -f configured-newlib ]
 then
+	CFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
 	../../newlib-$NEWLIB_VER/configure \
 	--disable-newlib-supplied-syscalls \
 	--enable-newlib-mb \
