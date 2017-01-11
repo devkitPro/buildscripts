@@ -40,9 +40,10 @@ case "$VERSION" in
     toolchain=DEVKITARM
   ;;
   "2" )
-    GCC_VER=6.2.0
+    GCC_VER=6.3.0
     BINUTILS_VER=2.27
-    NEWLIB_VER=2.0.0
+    MN_BINUTILS_VER=2.17
+    NEWLIB_VER=2.5.0
     GDB_VER=7.11
     basedir='dkppc'
     package=devkitPPC

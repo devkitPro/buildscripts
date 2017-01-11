@@ -1,7 +1,7 @@
 #!/bin/bash
 #---------------------------------------------------------------------------------
 #	devkitARM release 45
-#	devkitPPC release 28
+#	devkitPPC release 29
 #	devkitPSP release 17
 #---------------------------------------------------------------------------------
 
@@ -22,6 +22,7 @@ echo
 echo "Patches and improvements are of course welcome, please send these to the patch tracker"
 echo "https://sourceforge.net/tracker/?group_id=114505&atid=668553"
 echo
+
 
 GENERAL_TOOLS_VER=1.0.0
 
@@ -45,7 +46,7 @@ STLINK_VER=0.5.8
 
 
 GAMECUBE_TOOLS_VER=1.0.0
-LIBOGC_VER=1.8.15
+LIBOGC_VER=1.8.16
 WIILOAD_VER=0.5.1
 
 LIBCTRU_VER=1.1.0
@@ -63,15 +64,15 @@ PSPSDK_VER=20120404
 #---------------------------------------------------------------------------------
 function extract_and_patch {
 #---------------------------------------------------------------------------------
-	if [ ! -f extracted-$1 ]; then
-		echo "extracting $1"
+	if [ ! -f extracted-$1-$2 ]; then
+		echo "extracting $1-$2"
 		tar -xf "$SRCDIR/$1-$2.tar.$3" || { echo "Error extracting "$1; exit 1; }
-		touch extracted-$1
+		touch extracted-$1-$2
 	fi
-	if [[ ! -f patched-$1 && -f $patchdir/$1-$2.patch ]]; then
-		echo "patching $1"
+	if [[ ! -f patched-$1-$2 && -f $patchdir/$1-$2.patch ]]; then
+		echo "patching $1-$2"
 		patch -p1 -d $1-$2 -i $patchdir/$1-$2.patch || { echo "Error patching $1"; exit 1; }
-		touch patched-$1
+		touch patched-$1-$2
 	fi
 }
 
@@ -210,6 +211,8 @@ if [ $VERSION -eq 2 ]; then
 	targetarchives="libogc-src-${LIBOGC_VER}.tar.bz2 libfat-src-${LIBFAT_VER}.tar.bz2"
 
 	hostarchives="gamecube-tools-$GAMECUBE_TOOLS_VER.tar.bz2 wiiload-$WIILOAD_VER.tar.bz2 general-tools-$GENERAL_TOOLS_VER.tar.bz2"
+
+	archives="binutils-${MN_BINUTILS_VER}.tar.bz2 $archives"
 fi
 
 if [ $VERSION -eq 3 ]; then
@@ -241,6 +244,10 @@ extract_and_patch binutils $BINUTILS_VER bz2
 extract_and_patch gcc $GCC_VER bz2
 extract_and_patch newlib $NEWLIB_VER gz
 extract_and_patch gdb $GDB_VER bz2
+
+if [ $VERSION -eq 2 ]; then
+	extract_and_patch binutils $MN_BINUTILS_VER bz2
+fi
 
 for archive in $targetarchives
 do

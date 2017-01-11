@@ -45,8 +45,9 @@ cd mn10200/binutils
 
 if [ ! -f configured-binutils ]
 then
-	CFLAGS=$cflags LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
+	CFLAGS=$cflags LDFLAGS=$ldflags ../../binutils-$MN_BINUTILS_VER/configure \
 	--prefix=$prefix --target=mn10200 --disable-nls --disable-debug \
+	--disable-multilib \
 	--disable-werror $CROSS_PARAMS \
 	|| { echo "Error configuing mn10200 binutils"; exit 1; }
 	touch configured-binutils
@@ -88,7 +89,7 @@ then
 	--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 	--prefix=$prefix\
 	--with-system-zlib\
-	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 28" \
+	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 29" \
 	$CROSS_PARAMS \
 	|| { echo "Error configuring gcc stage 1"; exit 1; }
 	touch configured-gcc
