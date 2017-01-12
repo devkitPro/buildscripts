@@ -21,6 +21,7 @@ $MAKE CRT=gp32_gpsdk
 $MAKE CRT=ds_arm7
 $MAKE CRT=ds_arm9
 $MAKE CRT=ds_cart
+$MAKE ds_arm7_vram_crt0
 $target-gcc -march=armv6k -mfloat-abi=hard -c 3dsx_crt0.s -o armv6k/fpu/3dsx_crt0.o
 
 cd $BUILDDIR/libgba-$LIBGBA_VER

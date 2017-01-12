@@ -23,6 +23,7 @@ _start:
 	msr	cpsr, r0
 	ldr	sp, =__sp_usr		@ Set user stack
 
+#ifndef VRAM
 	adr	r1, __sync_start	@ Perform ARM7<->ARM9 sync code
 	ldr	r2, =__arm7_start__
 	mov	r3, #(__sync_end-__sync_start)
@@ -30,7 +31,9 @@ _start:
 	bl	CopyMem
 	mov	r3, r8
 	bl	_blx_r3_stub
-
+#else
+	bl	__sync_start
+#endif
 @---------------------------------------------------------------------------------
 @ Copy initialized data (data section) from LMA to VMA (EWRAM to IWRAM)
 @---------------------------------------------------------------------------------
@@ -46,6 +49,7 @@ _start:
 	sub	r1, r1, r0
 	bl	ClearMem
 
+#ifndef VRAM
 	cmp	r10, #1
 	bne	NotTWL
 	ldr	r1, =__dsimode		@ set DSi mode flag
@@ -60,6 +64,7 @@ _start:
 	ldr	r1, =__twl_bss_end__
 	sub	r1, r1, r0
 	bl	ClearMem
+#endif
 
 NotTWL:
 	ldr	r3, =__libc_init_array	@ global constructors
