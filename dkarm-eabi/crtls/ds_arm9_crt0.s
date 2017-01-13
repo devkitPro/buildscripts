@@ -103,7 +103,12 @@ _start:
 	ldr	r9, =__dsimode		@ set DSi mode flag
 	strb	r11, [r9]
 
-	ldr	r1, =__arm9i_lma	@ Copy TWL area (arm9i section) from LMA to VMA
+	@ Copy TWL area (arm9i section) from LMA to VMA
+
+	adr	r0, arm9ilma		@ Calculate ARM9i LMA
+	ldr	r1, [r0]
+	add	r1, r1, r0
+
 	ldr	r2, =__arm9i_start__
 	cmp	r1, r2			@ skip copy if LMA=VMA
 	ldrne	r4, =__arm9i_end__
@@ -144,6 +149,10 @@ NotTWL:
 	ldr	r3, =main
 	ldr	lr, =__libnds_exit
 	bx	r3			@ jump to user code
+
+@---------------------------------------------------------------------------------
+arm9ilma:
+	.word	__arm9i_lma__ - .
 
 @---------------------------------------------------------------------------------
 @ check for a commandline 
