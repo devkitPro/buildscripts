@@ -105,9 +105,9 @@ _start:
 
 	@ Copy TWL area (arm9i section) from LMA to VMA
 
-	adr	r0, arm9ilma		@ Calculate ARM9i LMA
-	ldr	r1, [r0]
-	add	r1, r1, r0
+	mov	r11, r11
+	ldr	r1, =0x02ffe1c8		@ Get ARM9i LMA from header
+	ldr	r1, [r1]
 
 	ldr	r2, =__arm9i_start__
 	cmp	r1, r2			@ skip copy if LMA=VMA
@@ -149,10 +149,6 @@ NotTWL:
 	ldr	r3, =main
 	ldr	lr, =__libnds_exit
 	bx	r3			@ jump to user code
-
-@---------------------------------------------------------------------------------
-arm9ilma:
-	.word	__arm9i_lma__ - .
 
 @---------------------------------------------------------------------------------
 @ check for a commandline 

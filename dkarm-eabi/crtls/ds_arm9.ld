@@ -216,7 +216,7 @@ SECTIONS
 
 	.twl __end__ : AT(MAX(0x2400000,MAX(__end__,LOADADDR(.vectors)+SIZEOF(.vectors))))
 	{
-		__arm9i_lma = LOADADDR(.twl);
+		__arm9i_lma__ = LOADADDR(.twl);
 		__arm9i_start__ = ABSOLUTE(.);
 		*(.twl)
 		*.twl*(.text .stub .text.* .gnu.linkonce.t.*)
