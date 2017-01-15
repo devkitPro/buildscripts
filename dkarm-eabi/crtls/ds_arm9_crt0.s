@@ -104,8 +104,6 @@ _start:
 	strb	r11, [r9]
 
 	@ Copy TWL area (arm9i section) from LMA to VMA
-
-	mov	r11, r11
 	ldr	r1, =0x02ffe1c8		@ Get ARM9i LMA from header
 	ldr	r1, [r1]
 
