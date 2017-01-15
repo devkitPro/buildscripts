@@ -56,6 +56,7 @@ _start:
 	strb	r10, [r1]
 
 	ldr	r1, =0x02ffe1d8		@ Get ARM7i LMA from header
+	ldr	r1, [r1]
 	ldr	r2, =__arm7i_start__
 	ldr	r4, =__arm7i_end__
 	bl	CopyMemCheck
