@@ -100,6 +100,7 @@ then
 	../../newlib-$NEWLIB_VER/configure \
 	--disable-newlib-supplied-syscalls \
 	--enable-newlib-mb \
+	--disable-newlib-wide-orient \
 	--target=$target \
 	--prefix=$prefix \
 	|| { echo "Error configuring newlib"; exit 1; }
