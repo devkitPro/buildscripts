@@ -31,11 +31,9 @@ _start:
 	bl	CopyMem
 	mov	r3, r8
 	bl	_blx_r3_stub
-#else
-	bl	__sync_start
-#endif
+
 @---------------------------------------------------------------------------------
-@ Copy initialized data (data section) from LMA to VMA (EWRAM to IWRAM)
+@ Copy arm7 binary from LMA to VMA (EWRAM to IWRAM)
 @---------------------------------------------------------------------------------
 	adr	r0, arm7lma		@ Calculate ARM7 LMA
 	ldr	r1, [r0]
@@ -43,6 +41,10 @@ _start:
 	ldr	r2, =__arm7_start__
 	ldr	r4, =__arm7_end__
 	bl	CopyMemCheck
+
+#else
+	bl	__sync_start
+#endif
 
 	ldr	r0, =__bss_start__	@ Clear BSS section to 0x00
 	ldr	r1, =__bss_end__
@@ -80,9 +82,11 @@ NotTWL:
 	str	r9, [r12, #0x180]
 _blx_r3_stub:
 	bx	r3
+
+#ifndef VRAM
 arm7lma:
 	.word	__arm7_lma__ - .
-
+#endif
 	.pool
 
 @---------------------------------------------------------------------------------
