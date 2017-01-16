@@ -154,7 +154,10 @@ PLATFORM=`uname -s`
 
 if [ ! -f configured-gdb ]
 then
-	CFLAGS="$cflags" LDFLAGS="$ldflags" ../../gdb-$GDB_VER/configure \
+	CFLAGS="$cflags" \
+	CXXFLAGS="$cflags" \
+	LDFLAGS="$ldflags" \
+	../../gdb-$GDB_VER/configure \
 	--disable-nls --prefix=$prefix --target=$target --disable-werror \
 	$CROSS_PARAMS \
 	|| { echo "Error configuring gdb"; exit 1; }
