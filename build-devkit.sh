@@ -2,7 +2,6 @@
 #---------------------------------------------------------------------------------
 #	devkitARM release 46
 #	devkitPPC release 29
-#	devkitPSP release 17
 #---------------------------------------------------------------------------------
 
 if [ 1 -eq 1 ] ; then
@@ -44,7 +43,6 @@ MMUTIL_VER=1.8.6
 DFU_UTIL_VER=0.9.1
 STLINK_VER=1.2.1
 
-
 GAMECUBE_TOOLS_VER=1.0.1
 LIBOGC_VER=1.8.16
 WIILOAD_VER=0.5.1
@@ -57,9 +55,6 @@ PICASSO_VER=2.5.0
 
 GP32_TOOLS_VER=1.0.1
 LIBMIRKO_VER=0.9.7
-
-PSPSDK_VER=20120404
-
 
 #---------------------------------------------------------------------------------
 function extract_and_patch {
@@ -215,11 +210,6 @@ if [ $VERSION -eq 2 ]; then
 	archives="binutils-${MN_BINUTILS_VER}.tar.bz2 $archives"
 fi
 
-if [ $VERSION -eq 3 ]; then
-
-	targetarchives="pspsdk-src-${PSPSDK_VER}.tar.bz2"
-
-fi
 
 if [ ! -z "$BUILD_DKPRO_SRCDIR" ] ; then
 	SRCDIR="$BUILD_DKPRO_SRCDIR"
