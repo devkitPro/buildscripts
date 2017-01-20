@@ -8,7 +8,7 @@ MEMORY {
 		the patcher / linker to find all shifted addresses within each section.
 		Changed sections are: glue_7, got
 	*/
-	ddmem	: ORIGIN = 0xBF800000, LENGTH = 32K		
+	ddmem	: ORIGIN = 0xBF800000, LENGTH = 16K		
 }
 
 
