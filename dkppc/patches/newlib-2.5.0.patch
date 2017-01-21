@@ -6804,10 +6804,10 @@ index 0000000..b3dec22
 +}
 diff --git a/libgloss/libsysbase/syscall_support.c b/libgloss/libsysbase/syscall_support.c
 new file mode 100644
-index 0000000..316443a
+index 0000000..70d717a
 --- /dev/null
 +++ b/libgloss/libsysbase/syscall_support.c
-@@ -0,0 +1,51 @@
+@@ -0,0 +1,63 @@
 +#include <sys/iosupport.h>
 +
 +//---------------------------------------------------------------------------------
@@ -6829,37 +6829,48 @@ index 0000000..316443a
 +	if ( __syscalls.lock_init ) {
 +		return __syscalls.lock_init(lock, recursive);
 +	}
-+	
++
 +	return 0;
 +}
 +
 +int __libc_lock_close( int *lock ) {
-+	
++
 +	if ( __syscalls.lock_close) {
 +		return __syscalls.lock_close(lock);
 +	}
-+	
++
 +	return 0;
 +}
 +
 +int __libc_lock_release( int *lock ) {
-+	
++
 +	if ( __syscalls.lock_release) {
 +		return __syscalls.lock_release(lock);
 +	}
-+	
++
 +	return 0;
 +}
 +
 +int __libc_lock_acquire( int *lock ) {
-+	
++
 +	if ( __syscalls.lock_acquire) {
 +		return __syscalls.lock_acquire(lock);
 +	}
 +	
 +	return 0;
 +}
-\ No newline at end of file
++
++void __malloc_lock( struct _reent *ptr ) {
++	if ( __syscalls.malloc_lock) {
++		__syscalls.malloc_lock(ptr);
++	}
++}
++
++void __malloc_unlock( struct _reent *ptr ) {
++	if ( __syscalls.malloc_unlock) {
++		__syscalls.malloc_unlock(ptr);
++	}
++}
 diff --git a/libgloss/libsysbase/times.c b/libgloss/libsysbase/times.c
 new file mode 100644
 index 0000000..67db6c7
@@ -7861,3 +7872,23 @@ index 116b4d8..57941e3 100644
  int
  _DEFUN (_mbtowc_r, (r, pwc, s, n, state),
          struct _reent *r   _AND
+diff --git a/newlib/libc/stdlib/mlock.c b/newlib/libc/stdlib/mlock.c
+index 888c986..7aedbaa 100644
+--- a/newlib/libc/stdlib/mlock.c
++++ b/newlib/libc/stdlib/mlock.c
+@@ -35,7 +35,7 @@ the sequence of calls may go <<__malloc_lock>>, <<__malloc_lock>>,
+ routines must be careful to avoid causing a thread to wait for a lock
+ that it already holds.
+ */
+-
++#if 0
+ #include <malloc.h>
+ #include <sys/lock.h>
+ 
+@@ -60,5 +60,5 @@ __malloc_unlock (ptr)
+   __lock_release_recursive (__malloc_lock_object);
+ #endif
+ }
+-
++#endif
+ #endif
