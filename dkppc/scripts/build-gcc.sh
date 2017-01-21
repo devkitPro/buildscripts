@@ -75,7 +75,13 @@ cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
-	CFLAGS="$cflags" CXXFLAGS="$cflags" LDFLAGS="$ldflags" CFLAGS_FOR_TARGET="-O2" CXXFLAGS_FOR_TARGET="-O2" LDFLAGS_FOR_TARGET="" ../../gcc-$GCC_VER/configure \
+	CFLAGS="$cflags" \
+	CXXFLAGS="$cflags" \
+	LDFLAGS="$ldflags" \
+	CFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
+	CXXFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
+	LDFLAGS_FOR_TARGET="" \
+	../../gcc-$GCC_VER/configure \
 	--enable-languages=c,c++,objc \
 	--enable-lto $plugin_ld \
 	--with-cpu=750 \
@@ -119,6 +125,7 @@ unset LDFLAGS
 
 if [ ! -f configured-newlib ]
 then
+	CFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
 	../../newlib-$NEWLIB_VER/configure \
 	--target=$target \
 	--prefix=$prefix \
