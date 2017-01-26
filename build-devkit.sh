@@ -4,7 +4,7 @@
 #	devkitPPC release 29-1
 #---------------------------------------------------------------------------------
 
-if [ 1 -eq 1 ] ; then
+if [ 0 -eq 1 ] ; then
 	echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support."
 	echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
 	echo "http://sourceforge.net/projects/devkitpro/files/buildscripts/"
@@ -28,7 +28,7 @@ GENERAL_TOOLS_VER=1.0.0
 LIBGBA_VER=0.5.0
 GBATOOLS_VER=1.0.0
 
-LIBNDS_VER=1.6.0
+LIBNDS_VER=1.6.1
 DEFAULT_ARM7_VER=0.7.0
 DSWIFI_VER=0.4.0
 MAXMOD_VER=1.0.10
