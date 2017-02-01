@@ -1,10 +1,6 @@
 #!/bin/sh
 #---------------------------------------------------------------------------------
 
-numcores=`getconf _NPROCESSORS_ONLN`
-
-numjobs=$(($numcores * 2 + 1))
-
 #---------------------------------------------------------------------------------
 # build and install binutils
 #---------------------------------------------------------------------------------
@@ -24,7 +20,7 @@ fi
 
 if [ ! -f built-binutils ]
 then
-  $MAKE -j$numjobs || { echo "Error building binutils"; exit 1; }
+  $MAKE || { echo "Error building binutils"; exit 1; }
   touch built-binutils
 fi
 
@@ -74,7 +70,7 @@ fi
 
 if [ ! -f built-gcc ]
 then
-	$MAKE all-gcc -j$numjobs || { echo "Error building gcc stage1"; exit 1; }
+	$MAKE all-gcc || { echo "Error building gcc stage1"; exit 1; }
 	touch built-gcc
 fi
 
@@ -109,7 +105,7 @@ fi
 
 if [ ! -f built-newlib ]
 then
-	$MAKE -j$numjobs || { echo "Error building newlib"; exit 1; }
+	$MAKE || { echo "Error building newlib"; exit 1; }
 	touch built-newlib
 fi
 
@@ -130,7 +126,7 @@ cd $target/gcc
 
 if [ ! -f built-stage2 ]
 then
-	$MAKE all -j$numjobs || { echo "Error building gcc stage2"; exit 1; }
+	$MAKE all || { echo "Error building gcc stage2"; exit 1; }
 	touch built-stage2
 fi
 
@@ -166,7 +162,7 @@ fi
 
 if [ ! -f built-gdb ]
 then
-	$MAKE -j$numjobs || { echo "Error building gdb"; exit 1; }
+	$MAKE || { echo "Error building gdb"; exit 1; }
 	touch built-gdb
 fi
 

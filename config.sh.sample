@@ -25,9 +25,16 @@ BUILD_DKPRO_PACKAGE=0
 #BUILD_DKPRO_SRCDIR=/d/projects/archives
 
 #---------------------------------------------------------------------------------
+# MAKEFLAGS for building - use number of processors for jobs
+#---------------------------------------------------------------------------------
+#numcores=`getconf _NPROCESSORS_ONLN`
+#MAKEFLAGS=-j$numcores
+
+#---------------------------------------------------------------------------------
 # Automated script execution
 #---------------------------------------------------------------------------------
 #  0: Ask to delete build folders & patched sources
 #  1: Use defaults, don't pause for answers
 #---------------------------------------------------------------------------------
 BUILD_DKPRO_AUTOMATED=0
+
