@@ -112,7 +112,7 @@ fi
 
 if [ ! -f installed-newlib ]
 then
-	$MAKE install || { echo "Error installing newlib"; exit 1; }
+	$MAKE install -j1 || { echo "Error installing newlib"; exit 1; }
 	touch installed-newlib
 fi
 
