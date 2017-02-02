@@ -28,7 +28,7 @@ BUILD_DKPRO_PACKAGE=0
 # MAKEFLAGS for building - use number of processors for jobs
 #---------------------------------------------------------------------------------
 #numcores=`getconf _NPROCESSORS_ONLN`
-#MAKEFLAGS=-j$numcores
+#export MAKEFLAGS="$MAKEFLAGS -j${numcores}"
 
 #---------------------------------------------------------------------------------
 # Automated script execution
