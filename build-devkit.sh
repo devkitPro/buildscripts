@@ -142,6 +142,9 @@ export MAKE
 #---------------------------------------------------------------------------------
 # Add installed devkit to the path, adjusting path on minsys
 #---------------------------------------------------------------------------------
+MACOSX_SDK=10.12
+MACOSX_MIN_SDK=10.5
+
 TOOLPATH=$(echo $INSTALLDIR | sed -e 's/^\([a-zA-Z]\):/\/\1/')
 export PATH=$PATH:$TOOLPATH/$package/bin
 
@@ -165,8 +168,9 @@ PLATFORM=`uname -s`
 
 case $PLATFORM in
 	Darwin )
-		cflags="-mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk -I/usr/local/include"
-		ldflags="-mmacosx-version-min=10.5 -Wl,-syslibroot,/Developer/SDKs/MacOSX10.5.sdk -L/usr/local/lib"
+		MACOSX_SYSROOT=$(xcodebuild -version -sdk macosx$MACOSX_SDK Path)
+		cflags="-mmacosx-version-min=$MACOSX_MIN_SDK -isysroot $MACOSX_SYSROOT -I/usr/local/include"
+		ldflags="-mmacosx-version-min=$MACOSX_MIN_SDK -Wl,-syslibroot,$MACOSX_SYSROOT -L/usr/local/lib"
     ;;
 	MINGW32* )
 		cflags="-D__USE_MINGW_ACCESS"
