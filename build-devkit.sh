@@ -56,6 +56,9 @@ PICASSO_VER=2.5.0
 GP32_TOOLS_VER=1.0.2
 LIBMIRKO_VER=0.9.7
 
+OSXMIN=${OSXMIN:-10.5}
+OSXSDKPATH=${OSXSDKPATH:-/Developer/SDKs/MacOSX10.5.sdk}
+
 #---------------------------------------------------------------------------------
 function extract_and_patch {
 #---------------------------------------------------------------------------------
@@ -165,8 +168,8 @@ PLATFORM=`uname -s`
 
 case $PLATFORM in
 	Darwin )
-		cflags="-mmacosx-version-min=10.5 -isysroot /Developer/SDKs/MacOSX10.5.sdk -I/usr/local/include"
-		ldflags="-mmacosx-version-min=10.5 -Wl,-syslibroot,/Developer/SDKs/MacOSX10.5.sdk -L/usr/local/lib"
+		cflags="-mmacosx-version-min=${OSXMIN} -isysroot ${OSXSDKPATH} -I/usr/local/include"
+		ldflags="-mmacosx-version-min=${OSXMIN} -Wl,-syslibroot,${OSXSDKPATH} -L/usr/local/lib"
     ;;
 	MINGW32* )
 		cflags="-D__USE_MINGW_ACCESS"
