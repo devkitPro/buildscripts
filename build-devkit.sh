@@ -170,6 +170,10 @@ case $PLATFORM in
 	Darwin )
 		cflags="-mmacosx-version-min=${OSXMIN} -isysroot ${OSXSDKPATH} -I/usr/local/include"
 		ldflags="-mmacosx-version-min=${OSXMIN} -Wl,-syslibroot,${OSXSDKPATH} -L/usr/local/lib"
+		TESTCC=`cc -v 2>&1 | grep clang`
+		if [ "x${TESTCC}x" != "xx" ]; then
+			cflags="$cflags -fbracket-depth=512"
+		fi
     ;;
 	MINGW32* )
 		cflags="-D__USE_MINGW_ACCESS"
