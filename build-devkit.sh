@@ -183,7 +183,6 @@ BUILDDIR=$(pwd)/.$package
 if [ ! -z $CROSSBUILD ]; then
 	BUILDDIR=$BUILDDIR-$CROSSBUILD
 fi
-DEVKITPRO_URL="http://downloads.sourceforge.net/devkitpro"
 
 patchdir=$(pwd)/$basedir/patches
 scriptdir=$(pwd)/$basedir/scripts
@@ -225,7 +224,7 @@ for archive in $archives $targetarchives $hostarchives
 do
 	echo $archive
 	if [ ! -f $archive ]; then
-		$FETCH http://downloads.sf.net/devkitpro/$archive || { echo "Error: Failed to download $archive"; exit 1; }
+		$FETCH https://github.com/devkitPro/buildscripts/releases/download/sources/$archive || { echo "Error: Failed to download $archive"; exit 1; }
 	fi
 done
 
