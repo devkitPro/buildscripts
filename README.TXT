@@ -85,16 +85,6 @@ to use the built in crt0 and linkscript use powerpc-eabi-gcc to link your projec
 using the command line switch -mgcn for a bare bones system, -mogc to use libogc and
 the multi-threaded microkernel for gamecube, -mrvl for wii, -mwup for wii u.
 
-Using devkitPSP
----------------
-
-All you need to do now to use devkitPSP is make sure that your freshly built tools
-are in your PATH, something like this;
-
-export PATH=$PATH:<path to devkitPSP>/bin
-
-(Obviously replace <path to devkitPSP> with the full path to the devkitPSP
-installation directory)
 
 Getting started
 ---------------
