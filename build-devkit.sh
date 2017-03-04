@@ -277,9 +277,7 @@ if [ ! -z $CROSSBUILD ]; then
 	if [ $VERSION -eq 1 ]; then
 		cp -v $CROSSBINPATH/libusb-1.0.dll $prefix/bin
 	fi
-	cp -v	$CROSSLIBPATH/libstdc++-6.dll \
-		$CROSSLIBPATH/libgcc_s_sjlj-1.dll \
-		$prefix/bin
+	cp -v	$CROSSLIBPATH/*.dll $prefix/bin
 fi
 
 echo "stripping installed binaries"
