@@ -40,7 +40,8 @@ SECTIONS
 
 	/* =========== RODATA section =========== */
 
-	.rodata ALIGN(0x1000) :
+	. = ALIGN(0x1000);
+	.rodata ALIGN(4) :
 	{
 		*(.rodata)
 		*(.roda)
@@ -58,7 +59,8 @@ SECTIONS
 
 	/* =========== DATA section =========== */
 
-	.data ALIGN(0x1000) :
+	. = ALIGN(0x1000);
+	.data ALIGN(4) :
 	{
 		*(.data)
 		*(.data.*)
