@@ -221,6 +221,12 @@ if [ $VERSION -eq 2 ]; then
 	archives="binutils-${MN_BINUTILS_VER}.tar.bz2 $archives"
 fi
 
+if [ $VERSION -eq 3 ]; then
+
+	hostarchives="general-tools-$GENERAL_TOOLS_VER.tar.bz2"
+
+fi
+
 
 if [ ! -z "$BUILD_DKPRO_SRCDIR" ] ; then
 	SRCDIR="$BUILD_DKPRO_SRCDIR"
