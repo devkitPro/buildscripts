@@ -1,18 +1,3 @@
-diff --git a/gcc/Makefile.in b/gcc/Makefile.in
-index 6c5adc0bb..bf99d9883 100644
---- a/gcc/Makefile.in
-+++ b/gcc/Makefile.in
-@@ -1073,8 +1073,8 @@ ifeq ($(CXXDEPMODE),depmode=gcc3)
- # things like the go/%.o rule work properly; but we use $(*F) for the
- # file part, as we just want the file part of the stem, not the entire
- # file name.
--COMPILE = $(COMPILE.base) -MT $@ -MMD -MP -MF $(@D)/$(DEPDIR)/$(*F).TPo
--POSTCOMPILE = @mv $(@D)/$(DEPDIR)/$(*F).TPo $(@D)/$(DEPDIR)/$(*F).Po
-+COMPILE = $(COMPILE.base)
-+POSTCOMPILE =
- else
- COMPILE = source='$<' object='$@' libtool=no \
-     DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) $(COMPILE.base)
 diff --git a/gcc/config/aarch64/aarch64-elf-raw.h b/gcc/config/aarch64/aarch64-elf-raw.h
 index 909701788..6f7ef694f 100644
 --- a/gcc/config/aarch64/aarch64-elf-raw.h
