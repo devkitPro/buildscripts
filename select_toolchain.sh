@@ -19,6 +19,7 @@ do
   echo
   echo "1: devkitARM (gba gp32 ds)"
   echo "2: devkitPPC (gamecube wii)"
+  echo "3: devkitA64 (switch)"
   read VERSION
 
   if [ "$VERSION" -ne 1 -a "$VERSION" -ne 2 -a "$VERSION" -ne 3 ]
@@ -48,5 +49,15 @@ case "$VERSION" in
     package=devkitPPC
     target=powerpc-eabi
     toolchain=DEVKITPPC
+  ;;
+  "3" )
+    GCC_VER=6.3.0
+    BINUTILS_VER=2.28
+    NEWLIB_VER=2.5.0
+    GDB_VER=7.12
+    basedir='dka64'
+    package=devkitA64
+    target=aarch64-none-elf
+    toolchain=DEVKITA64
   ;;
 esac
