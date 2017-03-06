@@ -624,7 +624,7 @@ index 0000000..b6cdfae
 +m4_include([../acinclude.m4])
 diff --git a/libgloss/libsysbase/build_argv.c b/libgloss/libsysbase/build_argv.c
 new file mode 100644
-index 0000000..79d2006
+index 0000000..3ca95d5
 --- /dev/null
 +++ b/libgloss/libsysbase/build_argv.c
 @@ -0,0 +1,31 @@
@@ -646,13 +646,13 @@ index 0000000..79d2006
 +	char** argv = (char**)(((int)data + len + sizeof(char **)) & ~(sizeof(char **)-1));
 +	char* end = data + len - 1;
 +	int argCount = 0;
-+	
++
 +	do {
 +		argv[argCount++] = data;			// Add next arg to argv list
 +		while (*(data) && data < end) data++;		// Move to next NULL delimiter
 +		data++;						// Move to one after the NULL delimiter
 +	} while (data < end);
-+	
++
 +	*end = '\0';						// Force NULL terminator for last arg
 +
 +	argstruct->argv = argv;
@@ -661,7 +661,7 @@ index 0000000..79d2006
 +}
 diff --git a/libgloss/libsysbase/chdir.c b/libgloss/libsysbase/chdir.c
 new file mode 100644
-index 0000000..2a0fa03
+index 0000000..90d2dc5
 --- /dev/null
 +++ b/libgloss/libsysbase/chdir.c
 @@ -0,0 +1,201 @@
@@ -716,7 +716,7 @@ index 0000000..2a0fa03
 +		}
 +
 +		/* Grab the next directory name from extra */
-+		extraEnd = strchr (extra, DIRECTORY_SEPARATOR_CHAR); 
++		extraEnd = strchr (extra, DIRECTORY_SEPARATOR_CHAR);
 +		if (extraEnd == NULL) {
 +			extraEnd = strrchr (extra, '\0');
 +		} else {
@@ -728,12 +728,12 @@ index 0000000..2a0fa03
 +			break;
 +		}
 +
-+		if ((strncmp (extra, DIRECTORY_THIS, sizeof(DIRECTORY_THIS) - 1) == 0) 
++		if ((strncmp (extra, DIRECTORY_THIS, sizeof(DIRECTORY_THIS) - 1) == 0)
 +			&& ((extra[sizeof(DIRECTORY_THIS)-1] == DIRECTORY_SEPARATOR_CHAR)
 +				||(extra[sizeof(DIRECTORY_THIS)-1] == '\0')))
 +		{
 +			/* Don't copy anything */
-+		} else 	if ((strncmp (extra, DIRECTORY_PARENT, sizeof(DIRECTORY_PARENT) - 1) == 0) 
++		} else 	if ((strncmp (extra, DIRECTORY_PARENT, sizeof(DIRECTORY_PARENT) - 1) == 0)
 +			&& ((extra[sizeof(DIRECTORY_PARENT)-1] == DIRECTORY_SEPARATOR_CHAR)
 +				||(extra[sizeof(DIRECTORY_PARENT)-1] == '\0')))
 +		{
@@ -868,7 +868,7 @@ index 0000000..2a0fa03
 +}
 diff --git a/libgloss/libsysbase/chmod.c b/libgloss/libsysbase/chmod.c
 new file mode 100644
-index 0000000..ce79a2c
+index 0000000..3668b58
 --- /dev/null
 +++ b/libgloss/libsysbase/chmod.c
 @@ -0,0 +1,30 @@
@@ -886,7 +886,7 @@ index 0000000..ce79a2c
 +
 +	/* Get device from path name */
 +	dev = FindDevice(path);
-+	
++
 +	if (dev < 0) {
 +		r->_errno = ENODEV;
 +		ret = -1;
@@ -904,7 +904,7 @@ index 0000000..ce79a2c
 +
 diff --git a/libgloss/libsysbase/close.c b/libgloss/libsysbase/close.c
 new file mode 100644
-index 0000000..d3563fb
+index 0000000..a251e5b
 --- /dev/null
 +++ b/libgloss/libsysbase/close.c
 @@ -0,0 +1,49 @@
@@ -940,7 +940,7 @@ index 0000000..d3563fb
 +			dev = handle->device;
 +			handle->refcount--;
 +			if (handle->refcount == 0 ) {
-+				
++
 +				if(devoptab_list[dev]->close_r) {
 +					ptr->deviceData = devoptab_list[dev]->deviceData;
 +					ret = devoptab_list[dev]->close_r(ptr,handle->fileStruct);
@@ -5154,7 +5154,7 @@ index 0000000..874eec1
 +
 diff --git a/libgloss/libsysbase/configure.in b/libgloss/libsysbase/configure.in
 new file mode 100644
-index 0000000..c127df0
+index 0000000..f3b8380
 --- /dev/null
 +++ b/libgloss/libsysbase/configure.in
 @@ -0,0 +1,199 @@
@@ -5214,9 +5214,9 @@ index 0000000..c127df0
 +  d10v*)
 +	;;
 +  h8300*-*-*)
-+	;;	
++	;;
 +  h8500-*-*)
-+	;;	
++	;;
 +  i[3456]86-*-sco*)
 +	;;
 +  lm32-*-*)
@@ -5239,7 +5239,7 @@ index 0000000..c127df0
 +  v850*-*-*)
 +	;;
 +  w65-*-*)
-+	;;	
++	;;
 +  xstormy16-*-*)
 +	;;
 +  z8k-*-*)
@@ -5734,7 +5734,7 @@ index 0000000..c6b8c92
 +}
 diff --git a/libgloss/libsysbase/fork.c b/libgloss/libsysbase/fork.c
 new file mode 100644
-index 0000000..712b13e
+index 0000000..3aa75a3
 --- /dev/null
 +++ b/libgloss/libsysbase/fork.c
 @@ -0,0 +1,25 @@
@@ -5753,7 +5753,7 @@ index 0000000..712b13e
 +	   struct _reent * r) {
 +//---------------------------------------------------------------------------------
 +#else
-+//---------------------------------------------------------------------------------	
++//---------------------------------------------------------------------------------
 +int
 +_DEFUN (_fork, (),
 +        _NOARGS) {
@@ -6470,7 +6470,7 @@ index 0000000..4565909
 +char *fake_heap_start = (char*)0;
 diff --git a/libgloss/libsysbase/mkdir.c b/libgloss/libsysbase/mkdir.c
 new file mode 100644
-index 0000000..4175cf8
+index 0000000..b4fcbd3
 --- /dev/null
 +++ b/libgloss/libsysbase/mkdir.c
 @@ -0,0 +1,19 @@
@@ -6490,7 +6490,7 @@ index 0000000..4175cf8
 +	} else {
 +		r->_errno = ENOSYS;
 +	}
-+	
++
 +	return ret;
 +}
 diff --git a/libgloss/libsysbase/open.c b/libgloss/libsysbase/open.c
@@ -6613,7 +6613,7 @@ index 0000000..7f3f7f2
 +
 diff --git a/libgloss/libsysbase/rename.c b/libgloss/libsysbase/rename.c
 new file mode 100644
-index 0000000..7520d1d
+index 0000000..f8a0aa9
 --- /dev/null
 +++ b/libgloss/libsysbase/rename.c
 @@ -0,0 +1,41 @@
@@ -6655,7 +6655,7 @@ index 0000000..7520d1d
 +	} else {
 +		r->_errno = EXDEV;
 +	}
-+	
++
 +	return ret;
 +}
 diff --git a/libgloss/libsysbase/rmdir.c b/libgloss/libsysbase/rmdir.c
@@ -6774,7 +6774,7 @@ index 0000000..e474c47
 +
 diff --git a/libgloss/libsysbase/statvfs.c b/libgloss/libsysbase/statvfs.c
 new file mode 100644
-index 0000000..b3dec22
+index 0000000..84e2213
 --- /dev/null
 +++ b/libgloss/libsysbase/statvfs.c
 @@ -0,0 +1,24 @@
@@ -6799,12 +6799,12 @@ index 0000000..b3dec22
 +	} else {
 +		r->_errno = ENOSYS;
 +	}
-+	
++
 +	return ret;
 +}
 diff --git a/libgloss/libsysbase/syscall_support.c b/libgloss/libsysbase/syscall_support.c
 new file mode 100644
-index 0000000..70d717a
+index 0000000..939ec25
 --- /dev/null
 +++ b/libgloss/libsysbase/syscall_support.c
 @@ -0,0 +1,63 @@
@@ -6824,7 +6824,7 @@ index 0000000..70d717a
 +	NULL	// gettod_r
 +};
 +
-+int __libc_lock_init(int *lock,int recursive) { 
++int __libc_lock_init(int *lock,int recursive) {
 +
 +	if ( __syscalls.lock_init ) {
 +		return __syscalls.lock_init(lock, recursive);
@@ -6856,7 +6856,7 @@ index 0000000..70d717a
 +	if ( __syscalls.lock_acquire) {
 +		return __syscalls.lock_acquire(lock);
 +	}
-+	
++
 +	return 0;
 +}
 +
@@ -6873,7 +6873,7 @@ index 0000000..70d717a
 +}
 diff --git a/libgloss/libsysbase/times.c b/libgloss/libsysbase/times.c
 new file mode 100644
-index 0000000..67db6c7
+index 0000000..45e9781
 --- /dev/null
 +++ b/libgloss/libsysbase/times.c
 @@ -0,0 +1,21 @@
@@ -6890,7 +6890,7 @@ index 0000000..67db6c7
 +	struct tms *ptms) {
 +#else
 +clock_t _DEFUN (_times, (buf),
-+		struct tms *buf) { 
++		struct tms *buf) {
 +
 +	struct _reent *r = _REENT;
 +#endif
@@ -7007,7 +7007,7 @@ index 0000000..9a61639
 +
 diff --git a/libgloss/libsysbase/wait.c b/libgloss/libsysbase/wait.c
 new file mode 100644
-index 0000000..322c847
+index 0000000..f64bf13
 --- /dev/null
 +++ b/libgloss/libsysbase/wait.c
 @@ -0,0 +1,29 @@
@@ -7020,22 +7020,22 @@ index 0000000..322c847
 +#include <_syslist.h>
 +#include <errno.h>
 +
-+//---------------------------------------------------------------------------------	
++//---------------------------------------------------------------------------------
 +#ifdef REENTRANT_SYSCALLS_PROVIDED
-+//---------------------------------------------------------------------------------	
++//---------------------------------------------------------------------------------
 +int
 +_DEFUN (_wait_r, (r, status),
 +		struct _reent *r _AND
 +		int  *status) {
 +
 +#else
-+//---------------------------------------------------------------------------------	
++//---------------------------------------------------------------------------------
 +int
 +_DEFUN (_wait, (status),
 +	int  *status) {
 +	struct _reent *r = _REENT;
 +#endif
-+//---------------------------------------------------------------------------------	
++//---------------------------------------------------------------------------------
 +	r->_errno = ENOSYS;
 +	return -1;
 +}
