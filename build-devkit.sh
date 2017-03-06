@@ -142,6 +142,13 @@ fi
 echo use $MAKE as make
 export MAKE
 
+if NPROC=$(nproc); then
+	MAKEFLAGS="$MAKEFLAGS -j$(($NPROC * 2))"
+fi
+
+echo use \'$MAKEFLAGS\' as MAKEFLAGS
+export MAKEFLAGS
+
 #---------------------------------------------------------------------------------
 # Add installed devkit to the path, adjusting path on minsys
 #---------------------------------------------------------------------------------
