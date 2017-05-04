@@ -46,7 +46,7 @@ then
 	CXXFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
 	LDFLAGS_FOR_TARGET="" \
 	../../gcc-$GCC_VER/configure \
-		--enable-languages=c,c++,objc \
+		--enable-languages=c,c++ \
 		--with-gnu-as --with-gnu-ld --with-gcc \
 		--with-march=armv4t\
 		--enable-cxx-flags='-ffunction-sections' \
