@@ -1,0 +1,441 @@
+diff --git a/gdb/Makefile.in b/gdb/Makefile.in
+index 1d2dbaf3f7..2d24f09c1b 100644
+--- a/gdb/Makefile.in
++++ b/gdb/Makefile.in
+@@ -779,6 +779,7 @@ ALL_64_TARGET_OBS = \
+ ALL_TARGET_OBS = \
+ 	arc-tdep.o \
+ 	arm.o \
++	arm-3ds-tdep.o \
+ 	arm-bsd-tdep.o \
+ 	arm-get-next-pcs.o \
+ 	arm-linux.o \
+@@ -2487,6 +2488,7 @@ ALLDEPFILES = \
+ 	amd64-tdep.c \
+ 	arc-tdep.c \
+ 	arm.c \
++	arm-3ds-tdep.c \
+ 	arm-bsd-tdep.c \
+ 	arm-get-next-pcs.c \
+ 	arm-linux.c \
+diff --git a/gdb/arm-3ds-tdep.c b/gdb/arm-3ds-tdep.c
+new file mode 100644
+index 0000000000..ad014e28db
+--- /dev/null
++++ b/gdb/arm-3ds-tdep.c
+@@ -0,0 +1,197 @@
++/* Target-dependent code for 3DS. */
++
++/* This uses code from GDB, which license is: */
++
++/*
++   Copyright (C) 2002-2017 Free Software Foundation, Inc.
++
++   This file is part of GDB.
++
++   This program is free software; you can redistribute it and/or modify
++   it under the terms of the GNU General Public License as published by
++   the Free Software Foundation; either version 3 of the License, or
++   (at your option) any later version.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU General Public License for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
++
++#include "defs.h"
++#include "gdbcore.h"
++#include "target.h"
++#include "osabi.h"
++#include "xml-syscall.h"
++
++#include "arch/arm.h"
++#include "arch/arm-get-next-pcs.h"
++#include "arm-tdep.h"
++
++static const gdb_byte arm_3ds_arm_le_breakpoint[] = {0xff, 0x00, 0x00, 0xef};
++static const gdb_byte arm_3ds_thumb_le_breakpoint[] = {0xff, 0xdf};
++
++static CORE_ADDR
++  arm_3ds_get_next_pcs_syscall_next_pc (struct arm_get_next_pcs *self);
++
++/* Operation function pointers for get_next_pcs.  */
++static struct arm_get_next_pcs_ops arm_3ds_get_next_pcs_ops = {
++  arm_get_next_pcs_read_memory_unsigned_integer,
++  arm_3ds_get_next_pcs_syscall_next_pc,
++  arm_get_next_pcs_addr_bits_remove,
++  arm_get_next_pcs_is_thumb,
++  NULL,
++};
++
++static CORE_ADDR
++arm_3ds_get_next_pcs_syscall_next_pc (struct arm_get_next_pcs *self)
++{
++  CORE_ADDR next_pc = 0;
++  CORE_ADDR pc = regcache_read_pc (self->regcache);
++  int is_thumb = arm_is_thumb (self->regcache);
++  ULONGEST svc_number = 0;
++
++  if (is_thumb)
++    {
++      next_pc = pc + 2;
++    }
++  else
++    {
++      next_pc = pc + 4;
++    }
++
++  /* Addresses for calling Thumb functions have the bit 0 set.  */
++  if (is_thumb)
++    next_pc = MAKE_THUMB_ADDR (next_pc);
++
++  return next_pc;
++}
++
++static VEC (CORE_ADDR) *
++arm_3ds_software_single_step (struct regcache *regcache)
++{
++  struct gdbarch *gdbarch = get_regcache_arch (regcache);
++  struct arm_get_next_pcs next_pcs_ctx;
++  CORE_ADDR pc;
++  int i;
++  VEC (CORE_ADDR) *next_pcs = NULL;
++  struct cleanup *old_chain;
++
++  /* If the target does have hardware single step, GDB doesn't have
++     to bother software single step.  */
++  if (target_can_do_single_step () == 1)
++    return NULL;
++
++  old_chain = make_cleanup (VEC_cleanup (CORE_ADDR), &next_pcs);
++
++  arm_get_next_pcs_ctor (&next_pcs_ctx,
++			 &arm_3ds_get_next_pcs_ops,
++			 gdbarch_byte_order (gdbarch),
++			 gdbarch_byte_order_for_code (gdbarch),
++			 1,
++			 regcache);
++
++  next_pcs = arm_get_next_pcs (&next_pcs_ctx);
++
++  for (i = 0; VEC_iterate (CORE_ADDR, next_pcs, i, pc); i++)
++    {
++      pc = gdbarch_addr_bits_remove (gdbarch, pc);
++      VEC_replace (CORE_ADDR, next_pcs, i, pc);
++    }
++
++  discard_cleanups (old_chain);
++
++  return next_pcs;
++}
++
++static LONGEST
++arm_3ds_get_syscall_number (struct gdbarch *gdbarch,
++			      ptid_t ptid)
++{
++  struct regcache *regs = get_thread_regcache (ptid);
++
++  ULONGEST pc;
++  ULONGEST cpsr;
++  ULONGEST t_bit = arm_psr_thumb_bit (gdbarch);
++  int is_thumb;
++  ULONGEST svc_number = -1;
++
++  regcache_cooked_read_unsigned (regs, ARM_PC_REGNUM, &pc);
++  regcache_cooked_read_unsigned (regs, ARM_PS_REGNUM, &cpsr);
++  is_thumb = (cpsr & t_bit) != 0;
++
++  if (is_thumb)
++    {
++      enum bfd_endian byte_order_for_code =
++	gdbarch_byte_order_for_code (gdbarch);
++
++      /* PC gets incremented before the syscall-stop, so read the
++	 previous instruction.  */
++      unsigned long this_instr =
++	read_memory_unsigned_integer (pc - 2, 2, byte_order_for_code);
++
++      unsigned long svc_operand = (0x00ff & this_instr);
++      svc_number = svc_operand;
++    }
++  else
++    {
++      enum bfd_endian byte_order_for_code =
++	gdbarch_byte_order_for_code (gdbarch);
++
++      /* PC gets incremented before the syscall-stop, so read the
++	 previous instruction.  */
++      unsigned long this_instr =
++	read_memory_unsigned_integer (pc - 4, 4, byte_order_for_code);
++
++      unsigned long svc_operand = (0x000000ff & this_instr);
++      svc_number = svc_operand;
++    }
++
++  if (svc_number == 0xfe)
++    {
++      regcache_cooked_read_unsigned (regs, 12, &svc_number);
++    }
++
++  return svc_number;
++}
++
++static void
++arm_3ds_init_abi (struct gdbarch_info info,
++			    struct gdbarch *gdbarch)
++{
++  struct gdbarch_tdep *tdep = gdbarch_tdep (gdbarch);
++
++  switch (info.byte_order)
++    {
++    case BFD_ENDIAN_LITTLE:
++      tdep->arm_breakpoint = arm_3ds_arm_le_breakpoint;
++      tdep->thumb_breakpoint = arm_3ds_thumb_le_breakpoint;
++      tdep->arm_breakpoint_size = sizeof (arm_3ds_arm_le_breakpoint);
++      tdep->thumb_breakpoint_size = sizeof (arm_3ds_thumb_le_breakpoint);
++      break;
++
++    default:
++      internal_error (__FILE__, __LINE__,
++        _("arm_gdbarch_init: bad byte order"));
++    }
++  tdep->fp_model = ARM_FLOAT_VFP;
++
++  /* Single stepping.  */
++  set_gdbarch_software_single_step (gdbarch, arm_3ds_software_single_step);
++
++  /* `catch syscall' */
++  set_xml_syscall_file_name (gdbarch, "syscalls/arm-3ds.xml");
++  set_gdbarch_get_syscall_number (gdbarch, arm_3ds_get_syscall_number);
++}
++
++/* Provide a prototype to silence -Wmissing-prototypes.  */
++extern initialize_file_ftype _initialize_arm_3ds_tdep;
++
++void
++_initialize_arm_3ds_tdep (void)
++{
++  gdbarch_register_osabi (bfd_arch_arm, 0, GDB_OSABI_3DS,
++                          arm_3ds_init_abi);
++}
+diff --git a/gdb/configure.tgt b/gdb/configure.tgt
+index fdcb7b1d69..d8fd1622b8 100644
+--- a/gdb/configure.tgt
++++ b/gdb/configure.tgt
+@@ -119,8 +119,8 @@ arm*-*-symbianelf*)
+ 	gdb_target_obs="arm.o arm-get-next-pcs.o arm-tdep.o arm-symbian-tdep.o"
+ 	;;
+ arm*-*-*)
+-	# Target: ARM embedded system
+-	gdb_target_obs="arm.o arm-get-next-pcs.o arm-tdep.o"
++	# Target: ARM embedded system (+ 3DS)
++	gdb_target_obs="arm.o arm-get-next-pcs.o arm-tdep.o arm-3ds-tdep.o"
+ 	gdb_sim=../sim/arm/libsim.a
+ 	;;
+ 
+diff --git a/gdb/data-directory/Makefile.in b/gdb/data-directory/Makefile.in
+index 304d4b05c0..2cf8986d3a 100644
+--- a/gdb/data-directory/Makefile.in
++++ b/gdb/data-directory/Makefile.in
+@@ -63,7 +63,7 @@ GEN_SYSCALLS_FILES = \
+ 	sparc-linux.xml \
+ 	sparc64-linux.xml
+ 
+-SYSCALLS_FILES = gdb-syscalls.dtd freebsd.xml $(GEN_SYSCALLS_FILES)
++SYSCALLS_FILES = gdb-syscalls.dtd freebsd.xml arm-3ds.xml $(GEN_SYSCALLS_FILES)
+ 
+ PYTHON_DIR = python
+ PYTHON_INSTALL_DIR = $(DESTDIR)$(GDB_DATADIR)/$(PYTHON_DIR)
+diff --git a/gdb/defs.h b/gdb/defs.h
+index a0b586f401..a1508fd5b3 100644
+--- a/gdb/defs.h
++++ b/gdb/defs.h
+@@ -604,6 +604,7 @@ enum gdb_osabi
+   GDB_OSABI_LYNXOS178,
+   GDB_OSABI_NEWLIB,
+   GDB_OSABI_SDE,
++  GDB_OSABI_3DS,
+ 
+   GDB_OSABI_INVALID		/* keep this last */
+ };
+diff --git a/gdb/osabi.c b/gdb/osabi.c
+index 84fa9c0273..c1c4bb1672 100644
+--- a/gdb/osabi.c
++++ b/gdb/osabi.c
+@@ -79,6 +79,7 @@ static const struct osabi_names gdb_osabi_names[] =
+   { "LynxOS178", NULL },
+   { "Newlib", NULL },
+   { "SDE", NULL },
++  { "3DS", NULL },
+ 
+   { "<invalid>", NULL }
+ };
+diff --git a/gdb/syscalls/arm-3ds.xml b/gdb/syscalls/arm-3ds.xml
+new file mode 100644
+index 0000000000..48780b7bd5
+--- /dev/null
++++ b/gdb/syscalls/arm-3ds.xml
+@@ -0,0 +1,159 @@
++<?xml version="1.0"?>
++<!DOCTYPE syscalls_info SYSTEM "gdb-syscalls.dtd">
++<!-- This file is located inside GDB and is based on files which license are: -->
++<!-- Copyright (C) 2009-2017 Free Software Foundation, Inc.
++
++     Copying and distribution of this file, with or without modification,
++     are permitted in any medium without royalty provided the copyright
++     notice and this notice are preserved.  This file is offered as-is,
++     without any warranty. -->
++<syscalls_info>
++  <syscall name="ControlMemory" number="1" groups="memory"/>
++  <syscall name="QueryMemory" number="2" groups="memory"/>
++
++  <syscall name="ExitProcess" number="3" groups="process"/>
++  <syscall name="GetProcessAffinityMask" number="4" groups="process"/>
++  <syscall name="SetProcessAffinityMask" number="5" groups="process"/>
++  <syscall name="GetProcessIdealProcessor" number="6" groups="process"/>
++  <syscall name="SetProcessIdealProcessor" number="7" groups="process"/>
++
++  <syscall name="CreateThread" number="8" groups="thread"/>
++  <syscall name="ExitThread" number="9" groups="thread"/>
++  <syscall name="SleepThread" number="10" groups="thread"/>
++  <syscall name="GetThreadPriority" number="11" groups="thread"/>
++  <syscall name="SetThreadPriority" number="12" groups="thread"/>
++  <syscall name="GetThreadAffinityMask" number="13" groups="thread"/>
++  <syscall name="SetThreadAffinityMask" number="14" groups="thread"/> <!-- removed -->
++  <syscall name="GetThreadIdealProcessor" number="15" groups="thread"/>
++  <syscall name="SetThreadIdealProcessor" number="16" groups="thread"/> <!-- removed -->
++  <syscall name="GetCurrentProcessorNumber" number="17" groups="thread"/>
++  <syscall name="Run" number="18" groups="thread"/>
++
++  <syscall name="CreateMutex" number="19" groups="synchronization"/>
++  <syscall name="ReleaseMutex" number="20" groups="synchronization"/>
++  <syscall name="CreateSemaphore" number="21" groups="synchronization"/>
++  <syscall name="ReleaseSemaphore" number="22" groups="synchronization"/>
++  <syscall name="CreateEvent" number="23" groups="synchronization"/>
++  <syscall name="SignalEvent" number="24" groups="synchronization"/>
++  <syscall name="ClearEvent" number="25" groups="synchronization"/>
++  <syscall name="CreateTimer" number="26" groups="synchronization"/>
++  <syscall name="SetTimer" number="27" groups="synchronization"/>
++  <syscall name="CancelTimer" number="28" groups="synchronization"/>
++  <syscall name="ClearTimer" number="29" groups="synchronization"/>
++
++  <syscall name="CreateMemoryBlock" number="30" groups="memory,ipc"/>
++  <syscall name="MapMemoryBlock" number="31" groups="memory,ipc"/>
++  <syscall name="UnmapMemoryBlock" number="32" groups="memory,ipc"/>
++
++  <syscall name="CreateAddressArbiter" number="33" groups="memory,synchronization"/>
++  <syscall name="ArbitrateAddress" number="34" groups="memory,synchronization"/>
++
++  <syscall name="CloseHandle" number="35" groups="synchronization,ipc,memory,thread,process,debug"/>
++  <syscall name="WaitSynchronization" number="36" groups="synchronization,ipc,thread,process,debug"/>
++  <syscall name="WaitSynchronizationN" number="37" groups="synchronization,ipc,thread,process,debug"/>
++  <syscall name="SignalAndWait" number="38" groups="synchronization"/> <!-- removed -->
++  <syscall name="DuplicateHandle" number="39" groups="synchronization,ipc,memory,thread,process,debug"/>
++
++  <syscall name="GetSystemTick" number="40" groups="information"/>
++  <syscall name="GetHandleInfo" number="41" groups="information,synchronization,ipc,memory,thread,process,debug"/>
++  <syscall name="GetSystemInfo" number="42" groups="information"/>
++  <syscall name="GetProcessInfo" number="43" groups="information,process"/>
++  <syscall name="GetThreadInfo" number="44" groups="information,thread"/>
++
++  <syscall name="ConnectToPort" number="45" groups="ipc"/>
++  <syscall name="GetCFWInfo" number="46" groups="custom,information"/> <!-- deprecated -->
++  <syscall name="SendSyncRequest2" number="47" groups="ipc"/> <!-- removed -->
++  <syscall name="SendSyncRequest3" number="48" groups="ipc"/> <!-- removed -->
++  <syscall name="SendSyncRequest4" number="49" groups="ipc"/> <!-- removed -->
++  <syscall name="SendSyncRequest" number="50" groups="ipc"/> <!-- removed -->
++
++  <syscall name="OpenProcess" number="51" groups="process"/>
++  <syscall name="OpenThread" number="52" groups="thread"/>
++
++  <syscall name="GetProcessId" number="53" groups="process"/>
++  <syscall name="GetProcessIdOfThread" number="54" groups="process,thread"/>
++  <syscall name="GetThreadId" number="55" groups="thread"/>
++
++  <syscall name="GetResourceLimit" number="56" groups="process"/>
++  <syscall name="GetResourceLimitLimitValues" number="57" groups="process"/>
++  <syscall name="GetResourceLimitCurrentValues" number="58" groups="process"/>
++
++  <syscall name="GetThreadContext" number="59" groups="debug,thread"/> <!-- removed -->
++  <syscall name="Break" number="60" groups="debug"/>
++  <syscall name="OutputDebugString" number="61" groups="debug"/>
++  <syscall name="ControlPerformanceCounter" number="62" groups="debug"/>
++
++  <syscall name="CreatePort" number="71" groups="ipc"/>
++  <syscall name="CreateSessionToPort" number="72" groups="ipc"/>
++  <syscall name="CreateSession" number="73" groups="ipc"/>
++  <syscall name="AcceptSession" number="74" groups="ipc"/>
++  <syscall name="ReplyAndReceive1" number="75" groups="ipc"/>
++  <syscall name="ReplyAndReceive2" number="76" groups="ipc"/>
++  <syscall name="ReplyAndReceive3" number="77" groups="ipc"/>
++  <syscall name="ReplyAndReceive4" number="78" groups="ipc"/>
++  <syscall name="ReplyAndReceive" number="79" groups="ipc"/>
++
++  <syscall name="BindInterrupt" number="80" groups="io,synchronization"/>
++  <syscall name="UnbindInterrupt" number="81" groups="io,synchronization"/>
++  <syscall name="InvalidateProcessDataCache" number="82" groups="io,memory,process"/>
++  <syscall name="StoreProcessDataCache" number="83" groups="io,memory,process"/>
++  <syscall name="FlushProcessDataCache" number="84" groups="io,memory,process"/>
++
++  <syscall name="StartInterprocessDma" number="85" groups="io,memory,ipc"/>
++  <syscall name="StopDma" number="86" groups="io,memory,ipc"/>
++  <syscall name="GetDmaState" number="87" groups="io,memory,ipc"/>
++  <syscall name="RestartDma" number="88" groups="io,memory,ipc"/>
++
++  <syscall name="SetGpuProt" number="89" groups="io"/>
++  <syscall name="SetWifiEnabled" number="90" groups="io"/>
++
++  <syscall name="DebugActiveProcess" number="96" groups="debug,process"/>
++  <syscall name="BreakDebugProcess" number="97" groups="debug,process"/>
++  <syscall name="TerminateDebugProcess" number="98" groups="debug,process"/>
++  <syscall name="GetProcessDebugEvent" number="99" groups="debug"/>
++  <syscall name="ContinueDebugEvent" number="100" groups="debug"/>
++  <syscall name="GetProcessList" number="101" groups="information,debug,process"/>
++  <syscall name="GetThreadList" number="102" groups="information,debug,thread"/>
++  <syscall name="GetDebugThreadContext" number="103" groups="debug,thread"/>
++  <syscall name="SetDebugThreadContext" number="104" groups="debug,thread"/>
++  <syscall name="QueryDebugProcessMemory" number="105" groups="debug,process,memory"/>
++  <syscall name="ReadProcessMemory" number="106" groups="debug,process,memory"/>
++  <syscall name="WriteProcessMemory" number="107" groups="debug,process,memory"/>
++  <syscall name="SetHardwareBreakPoint" number="108" group="debug"/>
++  <syscall name="GetDebugThreadParam" number="109" group="debug,thread"/>
++
++  <syscall name="ControlProcessMemory" number="112" group="process,memory"/>
++  <syscall name="MapProcessMemory" number="113" group="process,memory"/>
++  <syscall name="UnmapProcessMemory" number="114" group="process,memory"/>
++
++  <syscall name="CreateCodeSet" number="115" group="process,memory"/>
++  <syscall name="RandomStub" number="116" group="process,memory"/> <!-- removed -->
++  <syscall name="CreateProcess" number="117" group="process"/>
++  <syscall name="TerminateProcess" number="118" group="process"/>
++  <syscall name="SetProcessResourceLimits" number="119" group="process"/>
++  <syscall name="CreateResourceLimit" number="120" group="process"/>
++  <syscall name="SetResourceLimitValues" number="121" group="process"/>
++  <syscall name="AddCodeSegment" number="122" group="process"/> <!-- removed -->
++
++  <syscall name="Backdoor" number="123" group="kernel"/>
++  <syscall name="KernelSetState" number="124" group="kernel"/>
++
++  <syscall name="QueryProcessMemory" number="125" group="process,memory"/>
++
++  <syscall name="CustomBackdoor" number="128" group="custom,kernel"/>
++
++  <syscall name="ConvertVAToPA" number="144" group="custom,io,memory"/>
++  <syscall name="FlushDataCacheRange" number="145" group="custom,io,memory"/>
++  <syscall name="FlushEntireDataCache" number="146" group="custom,io,memory"/>
++  <syscall name="InvalidateInstructionCacheRange" number="147" group="custom,io,memory"/>
++  <syscall name="InvalidateEntireInstructionCache" number="148" group="custom,io,memory"/>
++
++  <syscall name="MapProcessMemoryEx" number="160" group="custom,process,memory"/>
++  <syscall name="UnmapProcessMemoryEx" number="161" group="custom,process,memory"/>
++  <syscall name="ControlMemoryEx" number="162" group="custom,memory"/>
++
++  <syscall name="ControlService" number="176" group="custom,ipc"/>
++  <syscall name="CopyHandle" number="177" groups="custom,synchronization,ipc,thread,process,debug"/>
++  <syscall name="TranslateHandle" number="178" groups="custom,synchronization,ipc,thread,process,debug"/>
++
++</syscalls_info>
+
