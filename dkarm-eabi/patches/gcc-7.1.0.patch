@@ -38,7 +38,7 @@ diff -NBaur gcc-7.1.0/gcc/config/arm/t-arm-elf gcc-7.1.0-arm/gcc/config/arm/t-ar
  
 diff -NBaur gcc-7.1.0/gcc/config/arm/unknown-elf.h gcc-7.1.0-arm/gcc/config/arm/unknown-elf.h
 --- gcc-7.1.0/gcc/config/arm/unknown-elf.h	2017-01-01 12:07:43.000000000 +0000
-+++ gcc-7.1.0-arm/gcc/config/arm/unknown-elf.h	2017-05-03 12:58:45.387209969 +0100
++++ gcc-7.1.0-arm/gcc/config/arm/unknown-elf.h	2017-06-08 12:22:17.868509897 +0100
 @@ -29,7 +29,7 @@
  #endif
  
@@ -48,12 +48,17 @@ diff -NBaur gcc-7.1.0/gcc/config/arm/unknown-elf.h gcc-7.1.0-arm/gcc/config/arm/
  
  #undef  STARTFILE_SPEC
  #define STARTFILE_SPEC	\
-@@ -93,4 +93,4 @@
+@@ -93,4 +93,9 @@
     udivmoddi4, which will depend on the exception unwind routines,
     which will depend on abort, which is defined in libc.  */ 
  #undef LINK_GCC_C_SEQUENCE_SPEC
 -#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L --end-group"
 +#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
++
++/* The system headers under devkitARM are C++-aware.  */
++#undef NO_IMPLICIT_EXTERN_C
++#define NO_IMPLICIT_EXTERN_C
++
 diff -NBaur gcc-7.1.0/gcc/gcc.c gcc-7.1.0-arm/gcc/gcc.c
 --- gcc-7.1.0/gcc/gcc.c	2017-01-17 09:38:48.000000000 +0000
 +++ gcc-7.1.0-arm/gcc/gcc.c	2017-05-03 12:58:45.395210596 +0100
