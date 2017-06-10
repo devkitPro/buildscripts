@@ -57,7 +57,6 @@ GP32_TOOLS_VER=1.0.2
 LIBMIRKO_VER=0.9.7
 
 OSXMIN=${OSXMIN:-10.5}
-OSXSDKPATH=${OSXSDKPATH:-/Developer/SDKs/MacOSX10.5.sdk}
 
 #---------------------------------------------------------------------------------
 function extract_and_patch {
@@ -168,8 +167,12 @@ PLATFORM=`uname -s`
 
 case $PLATFORM in
 	Darwin )
-		cflags="-mmacosx-version-min=${OSXMIN} -isysroot ${OSXSDKPATH} -I/usr/local/include"
-		ldflags="-mmacosx-version-min=${OSXMIN} -Wl,-syslibroot,${OSXSDKPATH} -L/usr/local/lib"
+		cflags="-mmacosx-version-min=${OSXMIN} -I/usr/local/include"
+		ldflags="-mmacosx-version-min=${OSXMIN} -L/usr/local/lib"
+		if [ "x${OSXSDKPATH}x" != "xx" ]; then
+			cflags="$cflags -isysroot ${OSXSDKPATH}"
+			ldflags="$ldflags -Wl,-syslibroot,${OSXSDKPATH}"
+		fi
 		TESTCC=`cc -v 2>&1 | grep clang`
 		if [ "x${TESTCC}x" != "xx" ]; then
 			cflags="$cflags -fbracket-depth=512"
@@ -182,8 +185,10 @@ case $PLATFORM in
     ;;
 esac
 
+
 BUILDSCRIPTDIR=$(pwd)
 BUILDDIR=$(pwd)/.$package
+
 if [ ! -z $CROSSBUILD ]; then
 	BUILDDIR=$BUILDDIR-$CROSSBUILD
 fi

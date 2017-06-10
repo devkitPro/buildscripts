@@ -22,7 +22,7 @@ BUILD_DKPRO_PACKAGE=0
 #---------------------------------------------------------------------------------
 # Path to previously downloaded source packages, comment if not specified
 #---------------------------------------------------------------------------------
-#BUILD_DKPRO_SRCDIR=/d/projects/archives
+#BUILD_DKPRO_SRCDIR=~/projects/archives
 
 #---------------------------------------------------------------------------------
 # MAKEFLAGS for building - use number of processors for jobs
@@ -37,4 +37,10 @@ BUILD_DKPRO_PACKAGE=0
 #  1: Use defaults, don't pause for answers
 #---------------------------------------------------------------------------------
 BUILD_DKPRO_AUTOMATED=0
+
+
+#---------------------------------------------------------------------------------
+# set OSX SDK path if needed
+#---------------------------------------------------------------------------------
+#export OSXSDKPATH=/Library/Developer/CommandLineTools/SDKs/MacOSX10.12.sdk
 
