@@ -56,7 +56,7 @@ PICASSO_VER=2.6.2
 GP32_TOOLS_VER=1.0.3
 LIBMIRKO_VER=0.9.7
 
-OSXMIN=${OSXMIN:-10.5}
+OSXMIN=${OSXMIN:-10.9}
 
 #---------------------------------------------------------------------------------
 function extract_and_patch {
