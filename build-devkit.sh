@@ -276,13 +276,7 @@ if [ -f $scriptdir/build-tools.sh ]; then . $scriptdir/build-tools.sh || { echo 
 if [ -f $scriptdir/build-crtls.sh ]; then . $scriptdir/build-crtls.sh || { echo "Error building crtls"; exit 1; }; cd $BUILDSCRIPTDIR; fi
 
 if [ ! -z $CROSSBUILD ]; then
-	if [ $VERSION -ne 3 ]; then
-		cp -v $CROSSBINPATH/FreeImage.dll $prefix/bin
-	fi
-	if [ $VERSION -eq 1 ]; then
-		cp -v $CROSSBINPATH/libusb-1.0.dll $prefix/bin
-	fi
-	cp -v	$CROSSLIBPATH/*.dll $prefix/bin
+	cp -v	$CROSSBINPATH/*.dll $CROSSLIBPATH/*.dll $prefix/bin
 fi
 
 echo "stripping installed binaries"
