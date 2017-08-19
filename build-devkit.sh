@@ -1,6 +1,6 @@
 #!/bin/bash
 #---------------------------------------------------------------------------------
-#	devkitARM release 47
+#	devkitARM release 48
 #	devkitPPC release 29-1
 #	devkitA64 release 8
 #---------------------------------------------------------------------------------
@@ -200,7 +200,7 @@ fi
 patchdir=$(pwd)/$basedir/patches
 scriptdir=$(pwd)/$basedir/scripts
 
-archives="binutils-${BINUTILS_VER}.tar.bz2 gcc-${GCC_VER}.tar.bz2 newlib-${NEWLIB_VER}.tar.gz gdb-${GDB_VER}.tar.xz"
+archives="binutils-${BINUTILS_VER}.tar.bz2 gcc-${GCC_VER}.tar.xz newlib-${NEWLIB_VER}.tar.gz gdb-${GDB_VER}.tar.xz"
 
 if [ $VERSION -eq 1 ]; then
 
@@ -252,7 +252,7 @@ mkdir -p $BUILDDIR
 cd $BUILDDIR
 
 extract_and_patch binutils $BINUTILS_VER bz2
-extract_and_patch gcc $GCC_VER bz2
+extract_and_patch gcc $GCC_VER xz
 extract_and_patch newlib $NEWLIB_VER gz
 extract_and_patch gdb $GDB_VER xz
 
