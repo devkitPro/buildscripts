@@ -1,7 +1,6 @@
-diff --git a/gcc/config/aarch64/aarch64-elf-raw.h b/gcc/config/aarch64/aarch64-elf-raw.h
-index 909701788..6f7ef694f 100644
---- a/gcc/config/aarch64/aarch64-elf-raw.h
-+++ b/gcc/config/aarch64/aarch64-elf-raw.h
+diff -NBaur gcc-7.2.0/gcc/config/aarch64/aarch64-elf-raw.h gcc-7.2.0-aarch64/gcc/config/aarch64/aarch64-elf-raw.h
+--- gcc-7.2.0/gcc/config/aarch64/aarch64-elf-raw.h	2017-01-01 12:07:43.905435000 +0000
++++ gcc-7.2.0-aarch64/gcc/config/aarch64/aarch64-elf-raw.h	2017-09-11 09:44:35.042230491 +0100
 @@ -22,6 +22,7 @@
  #ifndef GCC_AARCH64_ELF_RAW_H
  #define GCC_AARCH64_ELF_RAW_H
@@ -10,11 +9,10 @@ index 909701788..6f7ef694f 100644
  #define STARTFILE_SPEC " crti%O%s crtbegin%O%s crt0%O%s"
  #define ENDFILE_SPEC \
    " crtend%O%s crtn%O%s " \
-diff --git a/gcc/config/aarch64/t-aarch64 b/gcc/config/aarch64/t-aarch64
-index 778e15c96..76aeaf7f6 100644
---- a/gcc/config/aarch64/t-aarch64
-+++ b/gcc/config/aarch64/t-aarch64
-@@ -67,5 +67,7 @@ cortex-a57-fma-steering.o: $(srcdir)/config/aarch64/cortex-a57-fma-steering.c \
+diff -NBaur gcc-7.2.0/gcc/config/aarch64/t-aarch64 gcc-7.2.0-aarch64/gcc/config/aarch64/t-aarch64
+--- gcc-7.2.0/gcc/config/aarch64/t-aarch64	2017-01-01 12:07:43.905435000 +0000
++++ gcc-7.2.0-aarch64/gcc/config/aarch64/t-aarch64	2017-09-11 09:44:35.042230491 +0100
+@@ -68,5 +68,7 @@
  		$(srcdir)/config/aarch64/cortex-a57-fma-steering.c
  
  comma=,
@@ -24,11 +22,10 @@ index 778e15c96..76aeaf7f6 100644
 +MULTILIB_DIRNAMES   = large
 +MULTILIB_REQUIRED   = mcmodel=large
 +MULTILIB_MATCHES    =
-diff --git a/gcc/gcc.c b/gcc/gcc.c
-index 0f042b0f1..00a79153e 100644
---- a/gcc/gcc.c
-+++ b/gcc/gcc.c
-@@ -778,6 +778,11 @@ proper position among the other output files.  */
+diff -NBaur gcc-7.2.0/gcc/gcc.c gcc-7.2.0-aarch64/gcc/gcc.c
+--- gcc-7.2.0/gcc/gcc.c	2017-06-22 12:38:56.224791000 +0100
++++ gcc-7.2.0-aarch64/gcc/gcc.c	2017-09-11 09:44:35.042230491 +0100
+@@ -779,6 +779,11 @@
  #endif
  #endif
  
@@ -40,7 +37,7 @@ index 0f042b0f1..00a79153e 100644
  /* config.h can define STARTFILE_SPEC to override the default crt0 files.  */
  #ifndef STARTFILE_SPEC
  #define STARTFILE_SPEC  \
-@@ -1062,6 +1067,7 @@ static const char *link_spec = LINK_SPEC;
+@@ -1074,6 +1079,7 @@
  static const char *lib_spec = LIB_SPEC;
  static const char *link_gomp_spec = "";
  static const char *libgcc_spec = LIBGCC_SPEC;
@@ -48,7 +45,7 @@ index 0f042b0f1..00a79153e 100644
  static const char *endfile_spec = ENDFILE_SPEC;
  static const char *startfile_spec = STARTFILE_SPEC;
  static const char *linker_name_spec = LINKER_NAME;
-@@ -1563,6 +1569,7 @@ static struct spec_list static_specs[] =
+@@ -1579,6 +1585,7 @@
    INIT_STATIC_SPEC ("lib",			&lib_spec),
    INIT_STATIC_SPEC ("link_gomp",		&link_gomp_spec),
    INIT_STATIC_SPEC ("libgcc",			&libgcc_spec),
@@ -56,11 +53,10 @@ index 0f042b0f1..00a79153e 100644
    INIT_STATIC_SPEC ("startfile",		&startfile_spec),
    INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
    INIT_STATIC_SPEC ("version",			&compiler_version),
-diff --git a/libcpp/Makefile.in b/libcpp/Makefile.in
-index a7d782803..e6741a5bd 100644
---- a/libcpp/Makefile.in
-+++ b/libcpp/Makefile.in
-@@ -208,8 +208,7 @@ ifeq ($(DEPMODE),depmode=gcc3)
+diff -NBaur gcc-7.2.0/libcpp/Makefile.in gcc-7.2.0-aarch64/libcpp/Makefile.in
+--- gcc-7.2.0/libcpp/Makefile.in	2017-08-14 09:03:31.162084275 +0100
++++ gcc-7.2.0-aarch64/libcpp/Makefile.in	2017-09-11 09:44:35.042230491 +0100
+@@ -208,8 +208,7 @@
  # Note that we put the dependencies into a .Tpo file, then move them
  # into place if the compile succeeds.  We need this because gcc does
  # not atomically write the dependency output file.
@@ -70,11 +66,21 @@ index a7d782803..e6741a5bd 100644
  else
  COMPILE = source='$<' object='$@' libtool=no DEPDIR=$(DEPDIR) $(DEPMODE) \
  	  $(depcomp) $(COMPILE.base)
-diff --git a/libgcc/Makefile.in b/libgcc/Makefile.in
-index f09b39b0e..45299e0ff 100644
---- a/libgcc/Makefile.in
-+++ b/libgcc/Makefile.in
-@@ -820,7 +820,7 @@ endif
+diff -NBaur gcc-7.2.0/libgcc/crtstuff.c gcc-7.2.0-aarch64/libgcc/crtstuff.c
+--- gcc-7.2.0/libgcc/crtstuff.c	2017-01-01 12:07:43.905435000 +0000
++++ gcc-7.2.0-aarch64/libgcc/crtstuff.c	2017-09-11 09:44:35.046230483 +0100
+@@ -47,6 +47,7 @@
+ 
+ /* Target machine header files require this define. */
+ #define IN_LIBGCC2
++#define USED_FOR_TARGET
+ 
+ /* FIXME: Including auto-host is incorrect, but until we have
+    identified the set of defines that need to go into auto-target.h,
+diff -NBaur gcc-7.2.0/libgcc/Makefile.in gcc-7.2.0-aarch64/libgcc/Makefile.in
+--- gcc-7.2.0/libgcc/Makefile.in	2017-04-19 09:08:44.446150000 +0100
++++ gcc-7.2.0-aarch64/libgcc/Makefile.in	2017-09-11 09:44:35.046230483 +0100
+@@ -844,7 +844,7 @@
  # libgcc_eh.a, only LIB2ADDEH matters.  If we do, only LIB2ADDEHSTATIC and
  # LIB2ADDEHSHARED matter.  (Usually all three are identical.)
  
@@ -83,15 +89,3 @@ index f09b39b0e..45299e0ff 100644
  
  ifeq ($(enable_shared),yes)
  
-diff --git a/libgcc/crtstuff.c b/libgcc/crtstuff.c
-index f3343fc4f..75e220ab4 100644
---- a/libgcc/crtstuff.c
-+++ b/libgcc/crtstuff.c
-@@ -47,6 +47,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
- 
- /* Target machine header files require this define. */
- #define IN_LIBGCC2
-+#define USED_FOR_TARGET
- 
- /* FIXME: Including auto-host is incorrect, but until we have
-    identified the set of defines that need to go into auto-target.h,
