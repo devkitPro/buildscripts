@@ -51,12 +51,12 @@ _start:
 	sub	r1, r1, r0
 	bl	ClearMem
 
-#ifndef VRAM
 	cmp	r10, #1
 	bne	NotTWL
 	ldr	r1, =__dsimode		@ set DSi mode flag
 	strb	r10, [r1]
 
+#ifndef VRAM
 	ldr	r1, =0x02ffe1d8		@ Get ARM7i LMA from header
 	ldr	r1, [r1]
 	ldr	r2, =__arm7i_start__

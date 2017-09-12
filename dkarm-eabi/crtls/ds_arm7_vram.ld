@@ -40,7 +40,7 @@ SECTIONS
 
 	.text :   /* ALIGN (4): */
 	{
-		*(.text .stub .text.* .gnu.linkonce.t.*)
+		*(.text .stub .text.* .twl .gnu.linkonce.t.*)
 		KEEP (*(.text.*personality*))
 		/* .gnu.warning sections are handled specially by elf32.em.  */
 		*(.gnu.warning)
@@ -139,13 +139,14 @@ SECTIONS
 	__arm7_end__ = .;
 
 
-	.bss ALIGN(4) :
+	.bss ALIGN(4) (NOLOAD) :
 	{
 		__bss_start = ABSOLUTE(.);
 		__bss_start__ = ABSOLUTE(.);
 		*(.dynbss)
 		*(.gnu.linkonce.b*)
 		*(.bss*)
+		*(.twl_bss)
 		*(COMMON)
 		. = ALIGN(4);    /* REQUIRED. LD is flaky without it. */
 		__bss_end__ = ABSOLUTE(.);
