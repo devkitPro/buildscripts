@@ -45,6 +45,7 @@ SECTIONS
 		*.twl*(.data)
 		*.twl*(.data.*)
 		*.twl*(.gnu.linkonce.d*)
+		. = ALIGN(4);
 		__arm7i_end__ = .;
 	} >twl_iwram AT>twl_ewram :arm7i
 
@@ -56,6 +57,7 @@ SECTIONS
 		*.twl.*(.gnu.linkonce.b*)
 		*.twl.*(.bss*)
 		*.twl.*(COMMON)
+		. = ALIGN(4);
 		__twl_bss_end__ = .;
 	} >twl_iwram :NONE
 
