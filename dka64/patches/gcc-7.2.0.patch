@@ -18,10 +18,10 @@ diff -NBaur gcc-7.2.0/gcc/config/aarch64/t-aarch64 gcc-7.2.0-aarch64/gcc/config/
  comma=,
 -MULTILIB_OPTIONS    = $(subst $(comma),/, $(patsubst %, mabi=%, $(subst $(comma),$(comma)mabi=,$(TM_MULTILIB_CONFIG))))
 -MULTILIB_DIRNAMES   = $(subst $(comma), ,$(TM_MULTILIB_CONFIG))
-+MULTILIB_OPTIONS    = mcmodel=large
-+MULTILIB_DIRNAMES   = large
-+MULTILIB_REQUIRED   = mcmodel=large
-+MULTILIB_MATCHES    =
++MULTILIB_OPTIONS    = mcmodel=large fPIC
++MULTILIB_DIRNAMES   = large pic
++MULTILIB_REQUIRED   = mcmodel=large fPIC
++MULTILIB_MATCHES    = fPIC=fpic fPIC=fpie fPIC=fPIE
 diff -NBaur gcc-7.2.0/gcc/gcc.c gcc-7.2.0-aarch64/gcc/gcc.c
 --- gcc-7.2.0/gcc/gcc.c	2017-06-22 12:38:56.224791000 +0100
 +++ gcc-7.2.0-aarch64/gcc/gcc.c	2017-09-11 09:44:35.042230491 +0100
