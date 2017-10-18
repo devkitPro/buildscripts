@@ -95,7 +95,7 @@ then
 	--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 	--prefix=$prefix\
 	--with-system-zlib\
-	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPPC release 30 alpha" \
+	--with-bugurl="https://github.com/devkitpro/buildscripts/issues" --with-pkgversion="devkitPPC release 30" \
 	$CROSS_PARAMS \
 	|| { echo "Error configuring gcc stage 1"; exit 1; }
 	touch configured-gcc

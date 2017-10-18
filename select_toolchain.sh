@@ -40,11 +40,12 @@ case "$VERSION" in
     toolchain=DEVKITARM
   ;;
   "2" )
-    GCC_VER=7.1.0
+    GCC_VER=6.4.0
     BINUTILS_VER=2.28
     MN_BINUTILS_VER=2.17
     NEWLIB_VER=2.5.0
-    GDB_VER=8.0
+    GDB_VER=8.0.1
+>>>>>>> update binutils, gcc & gdb versions
     basedir='dkppc'
     package=devkitPPC
     target=powerpc-eabi
