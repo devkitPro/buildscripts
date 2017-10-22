@@ -24,7 +24,7 @@ echo "https://sourceforge.net/tracker/?group_id=114505&atid=668553"
 echo
 
 
-GENERAL_TOOLS_VER=1.0.0
+GENERAL_TOOLS_VER=1.0.1
 
 LIBGBA_VER=0.5.0
 GBATOOLS_VER=1.0.0
