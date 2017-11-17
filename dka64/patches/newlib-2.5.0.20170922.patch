@@ -7451,7 +7451,7 @@ index 000000000..10a6a716d
 +#endif // __iosupp_h__
 +//---------------------------------------------------------------------------------
 diff --git a/newlib/libc/include/sys/lock.h b/newlib/libc/include/sys/lock.h
-index 42f9c4cd9..567fed56b 100644
+index 42f9c4cd9..a755d6443 100644
 --- a/newlib/libc/include/sys/lock.h
 +++ b/newlib/libc/include/sys/lock.h
 @@ -1,69 +1,66 @@
@@ -7488,10 +7488,10 @@ index 42f9c4cd9..567fed56b 100644
 +extern int __libc_lock_try_acquire_recursive(_LOCK_RECURSIVE_T *lock);
 +
 +#define __LOCK_INIT(CLASS,NAME) \
-+CLASS _LOCK_T NAME = 1;
++CLASS _LOCK_T NAME = 0;
 +
 +#define __LOCK_INIT_RECURSIVE(CLASS,NAME) \
-+CLASS _LOCK_RECURSIVE_T NAME = {1,0,0};
++CLASS _LOCK_RECURSIVE_T NAME = {0,0,0};
 +
 +#define __lock_init(NAME) \
 +	__libc_lock_init(&(NAME))
