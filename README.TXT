@@ -1,7 +1,7 @@
 devkitPro build scripts
 --------------------------
 
-This readme will guide you through building devkitARM, devkitPPC or devkitPSP
+This readme will guide you through building devkitARM, devkitPPC or devkitA64
 from source using a set of scripts.
 
 The windows versions of the toolchains are now cross compiled on linux using
@@ -40,6 +40,11 @@ sudo apt-get install  libfreeimage-dev zlib1g-dev libusb-dev libexpat1-dev
 Building gxtexconv for cube/wii needs GL/gl.h which can be obtained with
 
 sudo apt-get install mesa-common-dev
+
+Tools for devkitA64 require liblz4.
+
+sudo apt-get install liblz4-dev 
+
 
 For building the OSX versions we install the Xcode commandline tools and build
 pkg-config from source as well as static versions of the libraries listed above.
