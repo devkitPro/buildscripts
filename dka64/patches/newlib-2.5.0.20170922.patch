@@ -6973,10 +6973,10 @@ index 000000000..45e9781ca
 +
 diff --git a/libgloss/libsysbase/truncate.c b/libgloss/libsysbase/truncate.c
 new file mode 100644
-index 000000000..4ff1d27c8
+index 000000000..a6df19626
 --- /dev/null
 +++ b/libgloss/libsysbase/truncate.c
-@@ -0,0 +1,58 @@
+@@ -0,0 +1,56 @@
 +#include "config.h"
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -7002,12 +7002,10 @@ index 000000000..4ff1d27c8
 +	   devoptab_list[dev]->ftruncate_r)
 +	{
 +
-+		fd = __alloc_handle(sizeof(__handle) + devoptab_list[dev]->structSize );
++		fd = __alloc_handle(dev);
 +
 +		if ( -1 != fd ) {
 +			handle = __get_handle(fd);
-+			handle->device = dev;
-+			handle->fileStruct = ((void *)handle) + sizeof(__handle);
 +
 +			r->deviceData = devoptab_list[dev]->deviceData;
 +
