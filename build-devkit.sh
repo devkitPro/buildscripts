@@ -2,7 +2,7 @@
 #---------------------------------------------------------------------------------
 #	devkitARM release 47
 #	devkitPPC release 29-1
-#	devkitA64 alpha 2
+#	devkitA64 alpha 6
 #---------------------------------------------------------------------------------
 
 if [ 1 -eq 1 ] ; then
@@ -56,6 +56,10 @@ PICASSO_VER=2.6.2
 
 GP32_TOOLS_VER=1.0.3
 LIBMIRKO_VER=0.9.7
+
+SWITCH_TOOLS_VER=1.0.0
+SWITCH_CRTLS_VER=1.0.0
+LIBNX_VER=1.0.0
 
 OSXMIN=${OSXMIN:-10.9}
 
@@ -224,7 +228,7 @@ fi
 
 if [ $VERSION -eq 3 ]; then
 
-	hostarchives="general-tools-$GENERAL_TOOLS_VER.tar.bz2"
+	hostarchives="general-tools-$GENERAL_TOOLS_VER.tar.bz2 switch-tools-$SWITCH_TOOLS_VER.tar.bz2"
 
 fi
 
