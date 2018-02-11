@@ -30,10 +30,10 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=7.2.0
-    BINUTILS_VER=2.29.1
+    GCC_VER=7.3.0
+    BINUTILS_VER=2.30
     NEWLIB_VER=2.5.0
-    GDB_VER=8.0.1
+    GDB_VER=8.0
     basedir='dkarm-eabi'
     package=devkitARM
     target=arm-none-eabi
