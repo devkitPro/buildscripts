@@ -52,7 +52,7 @@ case "$VERSION" in
   ;;
   "3" )
     GCC_VER=7.3.0
-    BINUTILS_VER=2.29.1
+    BINUTILS_VER=2.30
     NEWLIB_VER=3.0.0
     GDB_VER=8.0
     basedir='dka64'
