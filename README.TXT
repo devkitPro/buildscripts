@@ -43,6 +43,8 @@ sudo apt-get install mesa-common-dev
 
 Tools for devkitA64 require liblz4.
 
+http://lz4.github.io/lz4/
+
 sudo apt-get install liblz4-dev 
 
 
