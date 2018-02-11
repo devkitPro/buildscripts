@@ -52,7 +52,8 @@ LIBCTRU_VER=1.4.0
 CITRO3D_VER=1.3.1
 TOOLS3DS_VER=1.1.4
 LINK3DS_VER=0.5.2
-PICASSO_VER=2.6.2
+PICASSO_VER=2.7.0
+TEX3DS_VER=1.0.0
 
 GP32_TOOLS_VER=1.0.3
 LIBMIRKO_VER=0.9.7
@@ -213,7 +214,7 @@ if [ $VERSION -eq 1 ]; then
 		dstools-$DSTOOLS_VER.tar.bz2 grit-$GRIT_VER.tar.bz2 ndstool-$NDSTOOL_VER.tar.bz2
 		general-tools-$GENERAL_TOOLS_VER.tar.bz2 dlditool-$DLDITOOL_VER.tar.bz2 mmutil-$MMUTIL_VER.tar.bz2
 		dfu-util-$DFU_UTIL_VER.tar.bz2 stlink-$STLINK_VER.tar.bz2 3dstools-$TOOLS3DS_VER.tar.bz2
-		picasso-$PICASSO_VER.tar.bz2 3dslink-$LINK3DS_VER.tar.bz2"
+		picasso-$PICASSO_VER.tar.bz2 tex3ds-$TEX3DS_VER.tar.bz2 3dslink-$LINK3DS_VER.tar.bz2"
 fi
 
 if [ $VERSION -eq 2 ]; then
