@@ -9,7 +9,7 @@
 #   0: User selects manually
 #   1: devkitARM
 #   2: devkitPPC
-#   3: devkitPSP
+#   3: devkitA64
 #---------------------------------------------------------------------------------
 BUILD_DKPRO_PACKAGE=0
 
