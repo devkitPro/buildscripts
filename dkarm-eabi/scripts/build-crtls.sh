@@ -3,27 +3,6 @@
 export DEVKITPRO=$TOOLPATH
 export DEVKITARM=$DEVKITPRO/devkitARM
 
-#---------------------------------------------------------------------------------
-# copy base rulesets
-#---------------------------------------------------------------------------------
-cp -v $BUILDSCRIPTDIR/dkarm-eabi/rules/* $prefix
-
-#---------------------------------------------------------------------------------
-# Install and build the gba crt
-#---------------------------------------------------------------------------------
-
-cp -v $BUILDSCRIPTDIR/dkarm-eabi/crtls/* $prefix/$target/lib/
-cd $prefix/$target/lib/
-$MAKE CRT=gba
-$MAKE CRT=gp32
-$MAKE CRT=er
-$MAKE CRT=gp32_gpsdk
-$MAKE CRT=ds_arm7
-$MAKE CRT=ds_arm9
-$MAKE CRT=ds_cart
-$MAKE ds_arm7_vram_crt0
-$MAKE 3dsx_crt0
-
 cd $BUILDDIR/libgba-$LIBGBA_VER
 $MAKE || { echo "error building libgba"; exit 1; }
 $MAKE install || { echo "error installing libgba"; exit 1; }
