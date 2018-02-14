@@ -284,7 +284,10 @@ done
 #---------------------------------------------------------------------------------
 if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh || { echo "Error building toolchain"; exit 1; }; cd $BUILDSCRIPTDIR; fi
 if [ -f $scriptdir/build-tools.sh ]; then . $scriptdir/build-tools.sh || { echo "Error building tools"; exit 1; }; cd $BUILDSCRIPTDIR; fi
-if [ -f $scriptdir/build-crtls.sh ]; then . $scriptdir/build-crtls.sh || { echo "Error building crtls"; exit 1; }; cd $BUILDSCRIPTDIR; fi
+
+if [ "$BUILD_DKPRO_SKIP_LIBRARIES" != "1" ] ; then
+	if [ -f $scriptdir/build-libs.sh ]; then . $scriptdir/build-libs.sh || { echo "Error building libraries"; exit 1; }; cd $BUILDSCRIPTDIR; fi
+fi
 
 if [ ! -z $CROSSBUILD ]; then
 	cp -v	$CROSSBINPATH/*.dll $CROSSLIBPATH/*.dll $prefix/bin
