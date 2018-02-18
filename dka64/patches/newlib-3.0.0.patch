@@ -7120,10 +7120,10 @@ index eb645868b..d536e0daa 100644
  	syscall_dir=syscalls
  	;;
 diff --git a/newlib/libc/include/stdio.h b/newlib/libc/include/stdio.h
-index cbc0fa989..8fb71e6f5 100644
+index cbc0fa989..5326f7259 100644
 --- a/newlib/libc/include/stdio.h
 +++ b/newlib/libc/include/stdio.h
-@@ -227,7 +227,7 @@ int	fgetpos (FILE *, _fpos_t *);
+@@ -227,13 +227,13 @@ int	fgetpos (FILE *, _fpos_t *);
  #else
  int	fgetpos (FILE *__restrict, fpos_t *__restrict);
  #endif
@@ -7132,15 +7132,25 @@ index cbc0fa989..8fb71e6f5 100644
  #ifdef _COMPILING_NEWLIB
  int	fsetpos (FILE *, const _fpos_t *);
  #else
-@@ -438,7 +438,7 @@ size_t	_fread_r (struct _reent *, void *__restrict, size_t _size, size_t _n, FIL
+ int	fsetpos (FILE *, const fpos_t *);
+ #endif
+-long	ftell ( FILE *);
++off_t	ftell ( FILE *);
+ void	rewind (FILE *);
+ void	clearerr (FILE *);
+ int	feof (FILE *);
+@@ -438,9 +438,9 @@ size_t	_fread_r (struct _reent *, void *__restrict, size_t _size, size_t _n, FIL
  size_t	_fread_unlocked_r (struct _reent *, void *__restrict, size_t _size, size_t _n, FILE *__restrict);
  int	_fscanf_r (struct _reent *, FILE *__restrict, const char *__restrict, ...)
                 _ATTRIBUTE ((__format__ (__scanf__, 3, 4)));
 -int	_fseek_r (struct _reent *, FILE *, long, int);
 +int	_fseek_r (struct _reent *, FILE *, off_t, int);
  int	_fseeko_r (struct _reent *, FILE *, _off_t, int);
- long	_ftell_r (struct _reent *, FILE *);
+-long	_ftell_r (struct _reent *, FILE *);
++off_t	_ftell_r (struct _reent *, FILE *);
  _off_t	_ftello_r (struct _reent *, FILE *);
+ void	_rewind_r (struct _reent *, FILE *);
+ size_t	_fwrite_r (struct _reent *, const void *__restrict, size_t _size, size_t _n, FILE *__restrict);
 diff --git a/newlib/libc/include/sys/config.h b/newlib/libc/include/sys/config.h
 index 2082dfdb1..e535f189b 100644
 --- a/newlib/libc/include/sys/config.h
@@ -7753,7 +7763,7 @@ index 000000000..4eb278e2f
 +
 +#endif /* _NEWLIB_STDIO_H */
 diff --git a/newlib/libc/reent/getreent.c b/newlib/libc/reent/getreent.c
-index 5fa98e96b..21029bbd1 100644
+index 5fa98e96b..ef8a15e1b 100644
 --- a/newlib/libc/reent/getreent.c
 +++ b/newlib/libc/reent/getreent.c
 @@ -1,3 +1,4 @@
@@ -7766,19 +7776,21 @@ index 5fa98e96b..21029bbd1 100644
  
  #endif
 +#endif
+\ No newline at end of file
 diff --git a/newlib/libc/reent/gettimeofdayr.c b/newlib/libc/reent/gettimeofdayr.c
-index 9b982a993..4c69dca4c 100644
+index 9b982a993..8c0aaac8c 100644
 --- a/newlib/libc/reent/gettimeofdayr.c
 +++ b/newlib/libc/reent/gettimeofdayr.c
-@@ -51,6 +51,7 @@ DESCRIPTION
+@@ -51,7 +51,7 @@ DESCRIPTION
  	Check libc.a to see if its available on yours.
  */
  
-+/*
- int
+-int
++/*int
  _gettimeofday_r (struct _reent *ptr,
       struct timeval *ptimeval,
-@@ -63,5 +64,5 @@ _gettimeofday_r (struct _reent *ptr,
+      void *ptimezone)
+@@ -63,5 +63,5 @@ _gettimeofday_r (struct _reent *ptr,
      ptr->_errno = errno;
    return ret;
  }
@@ -7833,7 +7845,7 @@ index b358d2b4a..29cec0229 100644
  	      /* no more input: return partial result */
  #ifdef __SCLE
 diff --git a/newlib/libc/stdio/fseek.c b/newlib/libc/stdio/fseek.c
-index 9b3ea986c..47c1d92d6 100644
+index 9b3ea986c..7c633e11f 100644
 --- a/newlib/libc/stdio/fseek.c
 +++ b/newlib/libc/stdio/fseek.c
 @@ -83,7 +83,7 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
@@ -7845,7 +7857,7 @@ index 9b3ea986c..47c1d92d6 100644
         int whence)
  {
    return _fseeko_r (ptr, fp, offset, whence);
-@@ -93,10 +93,11 @@ _fseek_r (struct _reent *ptr,
+@@ -93,7 +93,7 @@ _fseek_r (struct _reent *ptr,
  
  int
  fseek (register FILE *fp,
@@ -7854,12 +7866,30 @@ index 9b3ea986c..47c1d92d6 100644
         int whence)
  {
    return _fseek_r (_REENT, fp, offset, whence);
- }
+diff --git a/newlib/libc/stdio/ftell.c b/newlib/libc/stdio/ftell.c
+index e4a246199..f73baab68 100644
+--- a/newlib/libc/stdio/ftell.c
++++ b/newlib/libc/stdio/ftell.c
+@@ -82,7 +82,7 @@ static char sccsid[] = "%W% (Berkeley) %G%";
+ #include <errno.h>
+ #include "local.h"
  
-+
- #endif /* !_REENT_ONLY */
+-long
++off_t
+ _ftell_r (struct _reent *ptr,
+        register FILE * fp)
+ {
+@@ -99,7 +99,7 @@ _ftell_r (struct _reent *ptr,
+ 
+ #ifndef _REENT_ONLY
+ 
+-long
++off_t
+ ftell (register FILE * fp)
+ {
+   return _ftell_r (_REENT, fp);
 diff --git a/newlib/libc/stdio/vfprintf.c b/newlib/libc/stdio/vfprintf.c
-index c4bf2dbe3..df8b7eace 100644
+index c4bf2dbe3..d756df37d 100644
 --- a/newlib/libc/stdio/vfprintf.c
 +++ b/newlib/libc/stdio/vfprintf.c
 @@ -112,6 +112,8 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
@@ -7871,6 +7901,24 @@ index c4bf2dbe3..df8b7eace 100644
  #if defined(LIBC_SCCS) && !defined(lint)
  /*static char *sccsid = "from: @(#)vfprintf.c	5.50 (Berkeley) 12/16/92";*/
  static char *rcsid = "$Id$";
+@@ -1438,7 +1440,7 @@ reswitch:	switch (ch) {
+ string:
+ #endif
+ 			sign = '\0';
+-#ifndef __OPTIMIZE_SIZE__
++//#ifndef __OPTIMIZE_SIZE__
+ 			/* Behavior is undefined if the user passed a
+ 			   NULL string when precision is not 0.
+ 			   However, if we are not optimizing for size,
+@@ -1448,7 +1450,7 @@ string:
+ 				size = ((unsigned) prec > 6U) ? 6 : prec;
+ 			}
+ 			else
+-#endif /* __OPTIMIZE_SIZE__ */
++//#endif /* __OPTIMIZE_SIZE__ */
+ #ifdef _MB_CAPABLE
+ 			if (ch == 'S' || (flags & LONGINT)) {
+ 				mbstate_t ps;
 diff --git a/newlib/libc/stdio/vfscanf.c b/newlib/libc/stdio/vfscanf.c
 index b97235559..298f68a9c 100644
 --- a/newlib/libc/stdio/vfscanf.c
