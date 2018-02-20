@@ -3,17 +3,6 @@
 export DEVKITPPC=$TOOLPATH/devkitPPC
 export DEVKITPRO=$TOOLPATH
 
-#---------------------------------------------------------------------------------
-# Install and build the gamecube crt and libogc
-#---------------------------------------------------------------------------------
-
-echo "installing linkscripts ..."
-cp $BUILDSCRIPTDIR/dkppc/crtls/*.ld $prefix/$target/lib/
-#---------------------------------------------------------------------------------
-# copy base rulesets
-#---------------------------------------------------------------------------------
-cp $BUILDSCRIPTDIR/dkppc/rules/* $prefix
-
 cd $BUILDDIR/libogc-$LIBOGC_VER
 
 if [ ! -f installed ]; then
