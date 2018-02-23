@@ -56,13 +56,14 @@ then
 		--enable-threads --disable-win32-registry --disable-nls --disable-debug\
 		--disable-libmudflap --disable-libssp --disable-libgomp \
 		--disable-libstdcxx-pch \
+		--enable-libstdcxx-time \
 		--target=$target \
 		--with-newlib \
 		--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 		--prefix=$prefix \
 		--enable-lto $plugin_ld\
 		--with-system-zlib \
-		--with-bugurl="https://github.com/devkitPro/buildscripts/issues" --with-pkgversion="devkitA64 alpha 7" \
+		--with-bugurl="https://github.com/devkitPro/buildscripts/issues" --with-pkgversion="devkitA64 alpha 8" \
 		$CROSS_PARAMS \
 		|| { echo "Error configuring gcc"; exit 1; }
 	touch configured-gcc
