@@ -7265,6 +7265,20 @@ index a3fb5c0..1ead46b 100644
  #endif
 +
 +#endif // _dirent_h_
+diff --git a/newlib/libc/include/sys/features.h b/newlib/libc/include/sys/features.h
+index 2900b33..6efb54e 100644
+--- a/newlib/libc/include/sys/features.h
++++ b/newlib/libc/include/sys/features.h
+@@ -330,6 +330,9 @@ extern "C" {
+ #  define __SSP_FORTIFY_LEVEL 0
+ #endif
+ 
++#define _POSIX_MONOTONIC_CLOCK		200112L
++#define _POSIX_TIMERS			1
++
+ /* RTEMS adheres to POSIX -- 1003.1b with some features from annexes.  */
+ 
+ #ifdef __rtems__
 diff --git a/newlib/libc/include/sys/iosupport.h b/newlib/libc/include/sys/iosupport.h
 new file mode 100644
 index 0000000..cc3acdd
