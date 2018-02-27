@@ -7,15 +7,18 @@ UNAME_R	:=	$(shell uname -r)
 ifneq (,$(findstring Darwin,$(UNAME_S)))
 	export SHELL=/bin/bash
 endif
+
 #---------------------------------------------------------------------------------
 # path to tools
 #---------------------------------------------------------------------------------
-export PATH	:=	$(DEVKITPRO)/devkitA64/bin:$(PATH)
+DEVKITPATH=$(shell echo "$(DEVKITPRO)" | sed -e 's/^\([a-zA-Z]\):/\/\1/')
+export PATH	:=	$(DEVKITPATH)/devkitA64/bin:$(PATH)
 
 #---------------------------------------------------------------------------------
 # add portlibs path
 #---------------------------------------------------------------------------------
-export PORTLIBS_PATH	:=	$(DEVKITPRO)/portlibs
+export PORTLIBS_PATH	:=	$(DEVKITPATH)/portlibs
+
 
 #---------------------------------------------------------------------------------
 # the prefix on the compiler executables
