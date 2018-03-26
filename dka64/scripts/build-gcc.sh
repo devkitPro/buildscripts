@@ -63,7 +63,7 @@ then
 		--prefix=$prefix \
 		--enable-lto $plugin_ld\
 		--with-system-zlib \
-		--with-bugurl="https://github.com/devkitPro/buildscripts/issues" --with-pkgversion="devkitA64 alpha 8" \
+		--with-bugurl="https://github.com/devkitPro/buildscripts/issues" --with-pkgversion="devkitA64 release 8" \
 		$CROSS_PARAMS \
 		|| { echo "Error configuring gcc"; exit 1; }
 	touch configured-gcc
