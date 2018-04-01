@@ -5,10 +5,10 @@
 #	devkitA64 release 8
 #---------------------------------------------------------------------------------
 
-if [ 0 -eq 1 ] ; then
+if [ 1 -eq 1 ] ; then
 	echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support."
 	echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
-	echo "http://sourceforge.net/projects/devkitpro/files/buildscripts/"
+	echo "https://github.com/devkitPro/buildscripts/releases"
 	echo
 	echo "The scripts in the git repository are quite often dependent on things which currently only exist"
 	echo "on developer machines. This is not a bug, use stable releases."
@@ -19,8 +19,8 @@ echo "Please note, these scripts are provided as a courtesy, toolchains built wi
 echo "are for personal use only and may not be distributed by entities other than devkitPro."
 echo "See http://devkitpro.org/wiki/Trademarks"
 echo
-echo "Patches and improvements are of course welcome, please send these to the patch tracker"
-echo "https://sourceforge.net/tracker/?group_id=114505&atid=668553"
+echo "Patches and improvements are of course welcome, please submit a PR"
+echo "https://github.com/devkitPro/buildscripts/pulls"
 echo
 
 
