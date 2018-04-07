@@ -146,12 +146,21 @@ cd $BUILDDIR
 #---------------------------------------------------------------------------------
 cp -v $BUILDSCRIPTDIR/dkarm-eabi/rules/* $prefix
 
+
 #---------------------------------------------------------------------------------
-# Install and build the gba crt
+# set env variables
+#---------------------------------------------------------------------------------
+export DEVKITPRO=$TOOLPATH
+export DEVKITARM=$DEVKITPRO/devkitARM
+
+#---------------------------------------------------------------------------------
+# Install and build the crt0 files
 #---------------------------------------------------------------------------------
 
 cp -v $BUILDSCRIPTDIR/dkarm-eabi/crtls/* $prefix/$target/lib/
 cd $prefix/$target/lib/
+
+
 $MAKE CRT=gba
 $MAKE CRT=gp32
 $MAKE CRT=er
