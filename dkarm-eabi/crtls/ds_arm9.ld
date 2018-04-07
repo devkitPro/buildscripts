@@ -186,8 +186,7 @@ SECTIONS
 	{
 		__vectors_lma = LOADADDR(.vectors);
 		__vectors_start = ABSOLUTE(.);
-		*(.vectors)
-		*.vectors*(.text .stub .text.*)
+		KEEP(*(.vectors .vectors.*))
 		. = ALIGN(4);
 		__vectors_end = ABSOLUTE(.);
 	} >vectors AT>ewram :vectors = 0xff
