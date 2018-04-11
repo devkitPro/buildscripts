@@ -75,6 +75,9 @@ cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
+	pushd ../../gcc-$GCC_VER
+		./contrib/download_prerequisites
+		popd
 	CFLAGS="$cflags" \
 	CXXFLAGS="$cflags" \
 	LDFLAGS="$ldflags" \
