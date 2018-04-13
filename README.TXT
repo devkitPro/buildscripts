@@ -4,6 +4,11 @@ devkitPro build scripts
 This readme will guide you through building devkitARM, devkitPPC or devkitA64
 from source using a set of scripts.
 
+Please note that we can't guarantee that what you build with these scripts
+will function in the same way as the binaries we distribute. Where possible
+you should use the binary distributions. We also offer no support for any
+problems you may encounter with these scripts.
+
 The windows versions of the toolchains are now cross compiled on linux using
 mingw-w64
 
@@ -34,7 +39,7 @@ http://www.zlib.net
 http://www.libusb.org
 http://expat.sourceforge.net/
 
-sudo apt-get install  libfreeimage-dev zlib1g-dev libusb-dev libexpat1-dev
+sudo apt-get install  libfreeimage-dev zlib1g-dev libusb-dev libudev-dev libexpat1-dev
 
 
 Building gxtexconv for cube/wii needs GL/gl.h which can be obtained with
@@ -45,8 +50,10 @@ Tools for devkitA64 require liblz4.
 
 http://lz4.github.io/lz4/
 
-sudo apt-get install liblz4-dev 
+sudo apt-get install liblz4-dev
 
+The liblz4 with Ubuntu 14.04 isn't new enough. Either upgrade to at least 16.04 or
+build this from source.
 
 For building the OSX versions we install the Xcode commandline tools and build
 pkg-config from source as well as static versions of the libraries listed above.
