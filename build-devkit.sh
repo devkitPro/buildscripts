@@ -5,7 +5,7 @@
 #	devkitA64 release 8
 #---------------------------------------------------------------------------------
 
-if [ 1 -eq 1 ] ; then
+if [ 0 -eq 1 ] ; then
 	echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support."
 	echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
 	echo "https://github.com/devkitPro/buildscripts/releases"
