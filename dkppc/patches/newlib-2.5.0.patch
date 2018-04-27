@@ -989,7 +989,7 @@ index 0000000..48ce950
 +/* symbol prefix */
 +#undef __SYMBOL_PREFIX
 diff --git a/libgloss/libsysbase/configure b/libgloss/libsysbase/configure
-new file mode 100755
+new file mode 100644
 index 0000000..874eec1
 --- /dev/null
 +++ b/libgloss/libsysbase/configure
@@ -7622,6 +7622,93 @@ index 8572821..57dee54 100644
  {
    return __get_current_locale ()->ctype_ptr;
  }
+diff --git a/newlib/libc/machine/powerpc/Makefile.am b/newlib/libc/machine/powerpc/Makefile.am
+index e86afdf..007bd15 100644
+--- a/newlib/libc/machine/powerpc/Makefile.am
++++ b/newlib/libc/machine/powerpc/Makefile.am
+@@ -10,7 +10,7 @@ noinst_LIBRARIES = lib.a
+ 
+ AM_CFLAGS = -I $(srcdir)/../../stdio -I $(srcdir)/../../stdlib
+ 
+-lib_a_SOURCES = setjmp.S
++lib_a_SOURCES = setjmp.S access.c
+ lib_a_CCASFLAGS=$(AM_CCASFLAGS)
+ lib_a_CFLAGS=$(AM_CFLAGS)
+ lib_a_LIBADD = @extra_objs@
+diff --git a/newlib/libc/machine/powerpc/Makefile.in b/newlib/libc/machine/powerpc/Makefile.in
+index 73b0cc4..12044cb 100644
+--- a/newlib/libc/machine/powerpc/Makefile.in
++++ b/newlib/libc/machine/powerpc/Makefile.in
+@@ -68,7 +68,7 @@ CONFIG_CLEAN_VPATH_FILES =
+ LIBRARIES = $(noinst_LIBRARIES)
+ ARFLAGS = cru
+ lib_a_AR = $(AR) $(ARFLAGS)
+-am_lib_a_OBJECTS = lib_a-setjmp.$(OBJEXT)
++am_lib_a_OBJECTS = lib_a-setjmp.$(OBJEXT) lib_a-access.$(OBJEXT)
+ lib_a_OBJECTS = $(am_lib_a_OBJECTS)
+ DEFAULT_INCLUDES = -I.@am__isrc@
+ depcomp =
+@@ -196,7 +196,7 @@ INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
+ AM_CCASFLAGS = $(INCLUDES)
+ noinst_LIBRARIES = lib.a
+ AM_CFLAGS = -I $(srcdir)/../../stdio -I $(srcdir)/../../stdlib
+-lib_a_SOURCES = setjmp.S
++lib_a_SOURCES = setjmp.S access.c
+ lib_a_CCASFLAGS = $(AM_CCASFLAGS)
+ lib_a_CFLAGS = $(AM_CFLAGS)
+ lib_a_LIBADD = @extra_objs@
+@@ -280,6 +280,12 @@ lib_a-setjmp.obj: setjmp.S
+ .c.obj:
+ 	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+ 
++lib_a-access.o: access.c
++	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-access.o `test -f 'access.c' || echo '$(srcdir)/'`access.c
++
++lib_a-access.obj: access.c
++	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-access.obj `if test -f 'access.c'; then $(CYGPATH_W) 'access.c'; else $(CYGPATH_W) '$(srcdir)/access.c'; fi`
++
+ lib_a-vfprintf.o: vfprintf.c
+ 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-vfprintf.o `test -f 'vfprintf.c' || echo '$(srcdir)/'`vfprintf.c
+ 
+diff --git a/newlib/libc/machine/powerpc/access.c b/newlib/libc/machine/powerpc/access.c
+new file mode 100644
+index 0000000..980682e
+--- /dev/null
++++ b/newlib/libc/machine/powerpc/access.c
+@@ -0,0 +1,33 @@
++/* This is file ACCESS.C */
++/*
++ * Copyright (C) 1993 DJ Delorie
++ * All rights reserved.
++ *
++ * Redistribution, modification, and use in source and binary forms is permitted
++ * provided that the above copyright notice and following paragraph are
++ * duplicated in all such forms.
++ *
++ * This file is distributed WITHOUT ANY WARRANTY; without even the implied
++ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
++ */
++
++#include <fcntl.h>
++#include <sys/stat.h>
++#include <unistd.h>
++
++int access(const char *fn, int flags)
++{
++  struct stat s;
++  if (stat(fn, &s))
++    return -1;
++  if (s.st_mode & S_IFDIR)
++    return 0;
++  if (flags & W_OK)
++  {
++    if (s.st_mode & S_IWRITE)
++      return 0;
++    return -1;
++  }
++  return 0;
++}
++	
 diff --git a/newlib/libc/machine/powerpc/machine/_types.h b/newlib/libc/machine/powerpc/machine/_types.h
 new file mode 100644
 index 0000000..a7d63da
