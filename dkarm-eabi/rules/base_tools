@@ -11,7 +11,7 @@ endif
 # path to tools
 #---------------------------------------------------------------------------------
 DEVKITPATH=$(shell echo "$(DEVKITPRO)" | sed -e 's/^\([a-zA-Z]\):/\/\1/')
-export PATH	:=	$(DEVKITPATH)/devkitARM/bin:$(PATH)
+export PATH	:=	$(DEVKITPATH)/tools/bin:$(DEVKITPATH)/devkitARM/bin:$(PATH)
 
 #---------------------------------------------------------------------------------
 # the prefix on the compiler executables
