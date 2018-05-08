@@ -36,7 +36,18 @@ BUILD_DKPRO_SKIP_LIBRARIES=0
 #numcores=`getconf _NPROCESSORS_ONLN`
 #export MAKEFLAGS="$MAKEFLAGS -j${numcores}"
 
+
 #---------------------------------------------------------------------------------
+# Uncomment to skip building of tools
+#---------------------------------------------------------------------------------
+#BUILD_DKPRO_SKIP_TOOLS=1
+
+#---------------------------------------------------------------------------------
+# Uncomment to skip building of libraries
+#---------------------------------------------------------------------------------
+#BUILD_DKPRO_SKIP_LIBRARIES=1
+
+
 # Automated script execution
 #---------------------------------------------------------------------------------
 #  0: Ask to delete build folders & patched sources

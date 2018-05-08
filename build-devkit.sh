@@ -285,7 +285,7 @@ done
 #---------------------------------------------------------------------------------
 if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh || { echo "Error building toolchain"; exit 1; }; cd $BUILDSCRIPTDIR; fi
 
-if [ "$BUILD_DKPRO_SKIP_TOOLS" != 1 ] && [ -f $scriptdir/build-tools.sh ]; then
+if [ "$BUILD_DKPRO_SKIP_TOOLS" != "1" ] && [ -f $scriptdir/build-tools.sh ]; then
  . $scriptdir/build-tools.sh || { echo "Error building tools"; exit 1; }; cd $BUILDSCRIPTDIR;
 fi
 
