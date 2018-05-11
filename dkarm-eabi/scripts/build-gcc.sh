@@ -122,8 +122,8 @@ then
 	touch installed-newlib
 fi
 
-CC=$OLD_CC
-CXX=$OLD_CXX
+export CC=$OLD_CC
+export CXX=$OLD_CXX
 
 #---------------------------------------------------------------------------------
 # build and install the final compiler
