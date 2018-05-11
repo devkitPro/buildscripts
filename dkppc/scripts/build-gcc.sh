@@ -125,6 +125,11 @@ cd $target/newlib
 unset CFLAGS
 unset LDFLAGS
 
+OLD_CC=$CC
+OLD_CXX=$CXX
+unset CC
+unset CXX
+
 if [ ! -f configured-newlib ]
 then
 	CFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
@@ -147,6 +152,9 @@ then
 	$MAKE install -j1 || { echo "Error installing newlib"; exit 1; }
 	touch installed-newlib
 fi
+
+export CC=$OLD_CC
+export CXX=$OLD_CXX
 
 #---------------------------------------------------------------------------------
 # build and install the final compiler
