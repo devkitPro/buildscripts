@@ -97,6 +97,8 @@ then
 	--with-system-zlib\
 	--with-bugurl="https://github.com/devkitpro/buildscripts/issues" --with-pkgversion="devkitPPC release 30" \
 	$CROSS_PARAMS \
+	$CROSS_GCC_PARAMS \
+        CFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
 	|| { echo "Error configuring gcc stage 1"; exit 1; }
 	touch configured-gcc
 fi
