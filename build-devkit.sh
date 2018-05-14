@@ -35,10 +35,10 @@ DSWIFI_VER=0.4.2
 MAXMOD_VER=1.0.11
 FILESYSTEM_VER=0.9.13-1
 LIBFAT_VER=1.1.2
-DSTOOLS_VER=1.1.0
-GRIT_VER=0.8.14
-NDSTOOL_VER=2.1.0
-MMUTIL_VER=1.8.6
+DSTOOLS_VER=1.2.1
+GRIT_VER=0.8.15
+NDSTOOL_VER=2.1.1
+MMUTIL_VER=1.8.7
 
 DFU_UTIL_VER=0.9.1
 STLINK_VER=1.2.3
@@ -47,8 +47,9 @@ GAMECUBE_TOOLS_VER=1.0.2
 LIBOGC_VER=1.8.17
 WIILOAD_VER=0.5.1
 
-LIBCTRU_VER=1.4.0
-CITRO3D_VER=1.3.1
+LIBCTRU_VER=1.5.0
+CITRO3D_VER=1.4.0
+CITRO2D_VER=1.0.0
 TOOLS3DS_VER=1.1.4
 LINK3DS_VER=0.5.2
 PICASSO_VER=2.7.0
@@ -208,7 +209,8 @@ if [ $VERSION -eq 1 ]; then
 	targetarchives="libnds-src-${LIBNDS_VER}.tar.bz2 libgba-src-${LIBGBA_VER}.tar.bz2
 		libmirko-src-${LIBMIRKO_VER}.tar.bz2 dswifi-src-${DSWIFI_VER}.tar.bz2 maxmod-src-${MAXMOD_VER}.tar.bz2
 		default_arm7-src-${DEFAULT_ARM7_VER}.tar.bz2 libfilesystem-src-${FILESYSTEM_VER}.tar.bz2
-		libfat-src-${LIBFAT_VER}.tar.bz2 libctru-src-${LIBCTRU_VER}.tar.bz2  citro3d-src-${CITRO3D_VER}.tar.bz2"
+		libfat-src-${LIBFAT_VER}.tar.bz2 libctru-src-${LIBCTRU_VER}.tar.bz2  citro3d-src-${CITRO3D_VER}.tar.bz2
+		citro2d-src-${CITRO2D_VER}.tar.bz2"
 
 	hostarchives="gbatools-$GBATOOLS_VER.tar.bz2 gp32tools-$GP32_TOOLS_VER.tar.bz2
 		dstools-$DSTOOLS_VER.tar.bz2 grit-$GRIT_VER.tar.bz2 ndstool-$NDSTOOL_VER.tar.bz2
