@@ -4,7 +4,9 @@ endif
 
 include $(DEVKITARM)/base_rules
 
-PORTLIBS	:=	$(PORTLIBS_PATH)/armv6k $(PORTLIBS_PATH)/3ds
+PORTLIBS	:=	$(PORTLIBS_PATH)/3ds
+
+export PATH := $(PORTLIBS_PATH)/3ds/bin:$(PATH)
 
 CTRULIB	?=	$(DEVKITPRO)/libctru
 
