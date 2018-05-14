@@ -294,8 +294,8 @@ if [ "$BUILD_DKPRO_SKIP_LIBRARIES" != "1" ] && [ -f $scriptdir/build-libs.sh ]; 
   . $scriptdir/build-libs.sh || { echo "Error building libraries"; exit 1; }; cd $BUILDSCRIPTDIR;
 fi
 
-if [ ! -z $CROSSBUILD ]; then
-	cp -v	$CROSSBINPATH/*.dll $CROSSLIBPATH/*.dll $prefix/bin
+if [ ! -z $CROSSBUILD ] && grep -q "mingw" <<<"$CROSSBUILD" ; then
+	cp -v	$CROSSBINPATH//libwinpthread-1.dll $prefix/bin
 fi
 
 echo "stripping installed binaries"
