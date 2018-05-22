@@ -5,7 +5,7 @@
 #	devkitA64 release 9
 #---------------------------------------------------------------------------------
 
-if [ 1 -eq 0 ] ; then
+if [ 1 -eq 1 ] ; then
 	echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
 	echo "https://github.com/devkitPro/buildscripts/releases/latest"
 	echo
