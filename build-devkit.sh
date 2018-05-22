@@ -207,11 +207,11 @@ if [ $VERSION -eq 1 ]; then
 
 	targetarchives="libnds-src-${LIBNDS_VER}.tar.bz2 libgba-src-${LIBGBA_VER}.tar.bz2
 		libmirko-src-${LIBMIRKO_VER}.tar.bz2 dswifi-src-${DSWIFI_VER}.tar.bz2 maxmod-src-${MAXMOD_VER}.tar.bz2
-		default_arm7-src-${DEFAULT_ARM7_VER}.tar.bz2 libfilesystem-src-${FILESYSTEM_VER}.tar.bz2
+		default-arm7-src-${DEFAULT_ARM7_VER}.tar.bz2 libfilesystem-src-${FILESYSTEM_VER}.tar.bz2
 		libfat-src-${LIBFAT_VER}.tar.bz2 libctru-src-${LIBCTRU_VER}.tar.bz2  citro3d-src-${CITRO3D_VER}.tar.bz2
 		citro2d-src-${CITRO2D_VER}.tar.bz2"
 
-	hostarchives="gbatools-$GBATOOLS_VER.tar.bz2 gp32tools-$GP32_TOOLS_VER.tar.bz2
+	hostarchives="gba-tools-$GBATOOLS_VER.tar.bz2 gp32-tools-$GP32_TOOLS_VER.tar.bz2
 		dstools-$DSTOOLS_VER.tar.bz2 grit-$GRIT_VER.tar.bz2 ndstool-$NDSTOOL_VER.tar.bz2
 		general-tools-$GENERAL_TOOLS_VER.tar.bz2 mmutil-$MMUTIL_VER.tar.bz2
 		dfu-util-$DFU_UTIL_VER.tar.bz2 stlink-$STLINK_VER.tar.bz2 3dstools-$TOOLS3DS_VER.tar.bz2
@@ -245,7 +245,7 @@ for archive in $archives $targetarchives $hostarchives
 do
 	echo $archive
 	if [ ! -f $archive ]; then
-		$FETCH https://github.com/devkitPro/buildscripts/releases/download/sources/$archive || { echo "Error: Failed to download $archive"; exit 1; }
+		$FETCH https://downloads.devkitpro.org/$archive || { echo "Error: Failed to download $archive"; exit 1; }
 	fi
 done
 
