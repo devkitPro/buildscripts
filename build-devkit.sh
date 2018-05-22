@@ -185,8 +185,6 @@ case $PLATFORM in
     ;;
 	MINGW32* )
 		cflags="-D__USE_MINGW_ACCESS"
-# horrid hack to get -flto to work on windows
-		plugin_ld="--with-plugin-ld=ld"
     ;;
 esac
 

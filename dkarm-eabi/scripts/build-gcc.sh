@@ -60,7 +60,7 @@ then
 		--with-newlib \
 		--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 		--prefix=$prefix \
-		--enable-lto $plugin_ld\
+		--enable-lto\
 		--with-system-zlib \
 		--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 48" \
 		$CROSS_PARAMS \
