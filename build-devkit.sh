@@ -5,9 +5,9 @@
 #	devkitA64 release 9
 #---------------------------------------------------------------------------------
 
-if [ "scripts" != "enabled" ] ; then
+if [ 1 -eq 0 ] ; then
 	echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
-	echo "https://github.com/devkitPro/buildscripts/releases"
+	echo "https://github.com/devkitPro/buildscripts/releases/latest"
 	echo
 	echo "The scripts in the git repository may be dependent on things which currently only exist"
 	echo "on developer machines. This is not a bug, use stable releases."
