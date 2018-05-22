@@ -57,8 +57,8 @@ TEX3DS_VER=1.0.0
 GP32_TOOLS_VER=1.0.3
 LIBMIRKO_VER=0.9.7
 
-SWITCH_TOOLS_VER=1.2.0
-LIBNX_VER=1.0.0
+SWITCH_TOOLS_VER=1.4.0
+LIBNX_VER=1.2.1
 
 OSXMIN=${OSXMIN:-10.9}
 
@@ -229,6 +229,8 @@ fi
 
 if [ $VERSION -eq 3 ]; then
 
+	targetarchives=" libnx-src-${LIBNX_VER}.tar.bz2"
+
 	hostarchives="general-tools-$GENERAL_TOOLS_VER.tar.bz2 switch-tools-$SWITCH_TOOLS_VER.tar.bz2"
 
 fi
@@ -322,5 +324,13 @@ fi
 
 
 echo
-echo "note: Add the following to your environment;  DEVKITPRO=$TOOLPATH $toolchain=$TOOLPATH/$package"
+echo "note: Add the following to your environment;"
+echo
+echo "  DEVKITPRO=$TOOLPATH"
+if [ "$toolchain" != "DEVKITA64" ]; then
+echo "  $toolchain=$TOOLPATH/$package"
+fi
+echo
+echo "add $TOOLPATH/tools/bin to your PATH"
+echo
 echo
