@@ -86,6 +86,11 @@ fi
 unset CFLAGS
 cd $BUILDDIR
 
+OLD_CC=$CC
+OLDCXX=$CXX
+unset CC
+unset CXX
+
 #---------------------------------------------------------------------------------
 # build and install newlib
 #---------------------------------------------------------------------------------
@@ -117,6 +122,9 @@ then
 	$MAKE install -j1 || { echo "Error installing newlib"; exit 1; }
 	touch installed-newlib
 fi
+
+export CC=$OLD_CC
+export CXX=$OLD_CXX
 
 #---------------------------------------------------------------------------------
 # build and install the final compiler
