@@ -1,6 +1,32 @@
-diff -NBaur gcc-8.1.0/gcc/config/rs6000/rs6000.h gcc-8.1.0-ppc/gcc/config/rs6000/rs6000.h
---- gcc-8.1.0/gcc/config/rs6000/rs6000.h	2018-04-10 18:59:52.000000000 +0100
-+++ gcc-8.1.0-ppc/gcc/config/rs6000/rs6000.h	2018-05-14 03:54:39.523821687 +0100
+diff --git a/config/gthr.m4 b/config/gthr.m4
+index 7b29f1f..814104f 100644
+--- a/config/gthr.m4
++++ b/config/gthr.m4
+@@ -12,6 +12,7 @@ AC_DEFUN([GCC_AC_THREAD_HEADER],
+ [
+ case $1 in
+     aix)	thread_header=config/rs6000/gthr-aix.h ;;
++    dkp)	thread_header=config/rs6000/gthr-dkp.h ;;
+     dce)	thread_header=config/pa/gthr-dce.h ;;
+     lynx)	thread_header=config/gthr-lynx.h ;;
+     mipssde)	thread_header=config/mips/gthr-mipssde.h ;;
+diff --git a/gcc/config.gcc b/gcc/config.gcc
+index a5defb0..d714072 100644
+--- a/gcc/config.gcc
++++ b/gcc/config.gcc
+@@ -2459,7 +2459,7 @@ powerpc-xilinx-eabi*)
+ 	use_gcc_stdint=wrap
+ 	;;
+ powerpc-*-eabi*)
+-	tm_file="${tm_file} dbxelf.h elfos.h usegas.h freebsd-spec.h newlib-stdint.h rs6000/sysv4.h rs6000/eabi.h"
++	tm_file="${tm_file} dbxelf.h elfos.h usegas.h freebsd-spec.h newlib-stdint.h rs6000/sysv4.h rs6000/eabi.h rs6000/750cl.h"
+ 	extra_options="${extra_options} rs6000/sysv4.opt"
+ 	tmake_file="rs6000/t-fprules rs6000/t-ppcgas rs6000/t-ppccomm"
+ 	use_gcc_stdint=wrap
+diff --git a/gcc/config/rs6000/rs6000.h b/gcc/config/rs6000/rs6000.h
+index b9b58a8..7c86ac6 100644
+--- a/gcc/config/rs6000/rs6000.h
++++ b/gcc/config/rs6000/rs6000.h
 @@ -205,6 +205,7 @@
    { "asm_cpu_476",		ASM_CPU_476_SPEC },			\
    SUBTARGET_EXTRA_SPECS
@@ -9,7 +35,7 @@ diff -NBaur gcc-8.1.0/gcc/config/rs6000/rs6000.h gcc-8.1.0-ppc/gcc/config/rs6000
  /* -mcpu=native handling only makes sense with compiler running on
     an PowerPC chip.  If changing this condition, also change
     the condition in driver-rs6000.c.  */
-@@ -219,6 +220,8 @@
+@@ -219,6 +220,8 @@ extern const char *host_detect_local_cpu (int argc, const char **argv);
  #else
  #define ASM_CPU_NATIVE_SPEC "%(asm_default)"
  #endif
@@ -18,10 +44,11 @@ diff -NBaur gcc-8.1.0/gcc/config/rs6000/rs6000.h gcc-8.1.0-ppc/gcc/config/rs6000
  
  #ifndef CC1_CPU_SPEC
  #ifdef HAVE_LOCAL_CPU_DETECT
-diff -NBaur gcc-8.1.0/gcc/config/rs6000/sysv4.h gcc-8.1.0-ppc/gcc/config/rs6000/sysv4.h
---- gcc-8.1.0/gcc/config/rs6000/sysv4.h	2018-01-03 10:03:58.000000000 +0000
-+++ gcc-8.1.0-ppc/gcc/config/rs6000/sysv4.h	2018-05-14 03:54:39.539914747 +0100
-@@ -565,7 +565,12 @@
+diff --git a/gcc/config/rs6000/sysv4.h b/gcc/config/rs6000/sysv4.h
+index bb19d0d..ff5f80b 100644
+--- a/gcc/config/rs6000/sysv4.h
++++ b/gcc/config/rs6000/sysv4.h
+@@ -565,7 +565,12 @@ ENDIAN_SELECT(" -mbig", " -mlittle", DEFAULT_ASM_ENDIAN)
  
  /* Default starting address if specified.  */
  #define LINK_START_SPEC "\
@@ -35,7 +62,7 @@ diff -NBaur gcc-8.1.0/gcc/config/rs6000/sysv4.h gcc-8.1.0-ppc/gcc/config/rs6000/
    myellowknife : %(link_start_yellowknife) ; \
    mmvme        : %(link_start_mvme)        ; \
    msim         : %(link_start_sim)         ; \
-@@ -596,7 +601,9 @@
+@@ -596,7 +601,9 @@ ENDIAN_SELECT(" -mbig", " -mlittle", DEFAULT_ASM_ENDIAN)
  
  /* Any specific OS flags.  */
  #define LINK_OS_SPEC "\
@@ -46,7 +73,7 @@ diff -NBaur gcc-8.1.0/gcc/config/rs6000/sysv4.h gcc-8.1.0-ppc/gcc/config/rs6000/
    myellowknife : %(link_os_yellowknife) ; \
    mmvme        : %(link_os_mvme)        ; \
    msim         : %(link_os_sim)         ; \
-@@ -614,7 +621,11 @@
+@@ -614,7 +621,11 @@ ENDIAN_SELECT(" -mbig", " -mlittle", DEFAULT_ASM_ENDIAN)
  /* Override rs6000.h definition.  */
  #undef	CPP_SPEC
  #define	CPP_SPEC "%{posix: -D_POSIX_SOURCE} \
@@ -59,7 +86,7 @@ diff -NBaur gcc-8.1.0/gcc/config/rs6000/sysv4.h gcc-8.1.0-ppc/gcc/config/rs6000/
    myellowknife : %(cpp_os_yellowknife) ; \
    mmvme        : %(cpp_os_mvme)        ; \
    msim         : %(cpp_os_sim)         ; \
-@@ -628,7 +639,11 @@
+@@ -628,7 +639,11 @@ ENDIAN_SELECT(" -mbig", " -mlittle", DEFAULT_ASM_ENDIAN)
  
  #undef	STARTFILE_SPEC
  #define	STARTFILE_SPEC "\
@@ -72,7 +99,7 @@ diff -NBaur gcc-8.1.0/gcc/config/rs6000/sysv4.h gcc-8.1.0-ppc/gcc/config/rs6000/
    myellowknife : %(startfile_yellowknife) ; \
    mmvme        : %(startfile_mvme)        ; \
    msim         : %(startfile_sim)         ; \
-@@ -642,7 +657,9 @@
+@@ -642,7 +657,9 @@ ENDIAN_SELECT(" -mbig", " -mlittle", DEFAULT_ASM_ENDIAN)
  
  #undef	LIB_SPEC
  #define	LIB_SPEC "\
@@ -83,7 +110,7 @@ diff -NBaur gcc-8.1.0/gcc/config/rs6000/sysv4.h gcc-8.1.0-ppc/gcc/config/rs6000/
    myellowknife : %(lib_yellowknife) ; \
    mmvme        : %(lib_mvme)        ; \
    msim         : %(lib_sim)         ; \
-@@ -652,11 +669,13 @@
+@@ -652,11 +669,13 @@ ENDIAN_SELECT(" -mbig", " -mlittle", DEFAULT_ASM_ENDIAN)
    mcall-openbsd: %(lib_openbsd)     ; \
                 : %(lib_default)     }"
  
@@ -99,7 +126,7 @@ diff -NBaur gcc-8.1.0/gcc/config/rs6000/sysv4.h gcc-8.1.0-ppc/gcc/config/rs6000/
    myellowknife : %(endfile_yellowknife) ; \
    mmvme        : %(endfile_mvme)        ; \
    msim         : %(endfile_sim)         ; \
-@@ -672,16 +691,33 @@
+@@ -672,16 +691,33 @@ ENDIAN_SELECT(" -mbig", " -mlittle", DEFAULT_ASM_ENDIAN)
  
  /* Motorola ADS support.  */
  #define LIB_ADS_SPEC "--start-group -lads -lc --end-group"
@@ -133,7 +160,7 @@ diff -NBaur gcc-8.1.0/gcc/config/rs6000/sysv4.h gcc-8.1.0-ppc/gcc/config/rs6000/
  
  /* Motorola Yellowknife support.  */
  #define LIB_YELLOWKNIFE_SPEC "--start-group -lyk -lc --end-group"
-@@ -882,6 +918,8 @@
+@@ -882,6 +918,8 @@ ncrtn.o%s"
  #undef	SUBTARGET_EXTRA_SPECS
  #define	SUBTARGET_EXTRA_SPECS						\
    { "crtsavres_default",	CRTSAVRES_DEFAULT_SPEC },		\
@@ -142,7 +169,7 @@ diff -NBaur gcc-8.1.0/gcc/config/rs6000/sysv4.h gcc-8.1.0-ppc/gcc/config/rs6000/
    { "lib_ads",			LIB_ADS_SPEC },				\
    { "lib_yellowknife",		LIB_YELLOWKNIFE_SPEC },			\
    { "lib_mvme",			LIB_MVME_SPEC },			\
-@@ -891,6 +929,8 @@
+@@ -891,6 +929,8 @@ ncrtn.o%s"
    { "lib_netbsd",		LIB_NETBSD_SPEC },			\
    { "lib_openbsd",		LIB_OPENBSD_SPEC },			\
    { "lib_default",		LIB_DEFAULT_SPEC },			\
@@ -151,7 +178,7 @@ diff -NBaur gcc-8.1.0/gcc/config/rs6000/sysv4.h gcc-8.1.0-ppc/gcc/config/rs6000/
    { "startfile_ads",		STARTFILE_ADS_SPEC },			\
    { "startfile_yellowknife",	STARTFILE_YELLOWKNIFE_SPEC },		\
    { "startfile_mvme",		STARTFILE_MVME_SPEC },			\
-@@ -900,6 +940,8 @@
+@@ -900,6 +940,8 @@ ncrtn.o%s"
    { "startfile_netbsd",		STARTFILE_NETBSD_SPEC },		\
    { "startfile_openbsd",	STARTFILE_OPENBSD_SPEC },		\
    { "startfile_default",	STARTFILE_DEFAULT_SPEC },		\
@@ -160,7 +187,7 @@ diff -NBaur gcc-8.1.0/gcc/config/rs6000/sysv4.h gcc-8.1.0-ppc/gcc/config/rs6000/
    { "endfile_ads",		ENDFILE_ADS_SPEC },			\
    { "endfile_yellowknife",	ENDFILE_YELLOWKNIFE_SPEC },		\
    { "endfile_mvme",		ENDFILE_MVME_SPEC },			\
-@@ -911,7 +953,12 @@
+@@ -911,7 +953,12 @@ ncrtn.o%s"
    { "endfile_default",		ENDFILE_DEFAULT_SPEC },			\
    { "link_shlib",		LINK_SHLIB_SPEC },			\
    { "link_start",		LINK_START_SPEC },			\
@@ -173,7 +200,7 @@ diff -NBaur gcc-8.1.0/gcc/config/rs6000/sysv4.h gcc-8.1.0-ppc/gcc/config/rs6000/
    { "link_start_yellowknife",	LINK_START_YELLOWKNIFE_SPEC },		\
    { "link_start_mvme",		LINK_START_MVME_SPEC },			\
    { "link_start_sim",		LINK_START_SIM_SPEC },			\
-@@ -921,6 +968,8 @@
+@@ -921,6 +968,8 @@ ncrtn.o%s"
    { "link_start_openbsd",	LINK_START_OPENBSD_SPEC },		\
    { "link_start_default",	LINK_START_DEFAULT_SPEC },		\
    { "link_os",			LINK_OS_SPEC },				\
@@ -182,7 +209,7 @@ diff -NBaur gcc-8.1.0/gcc/config/rs6000/sysv4.h gcc-8.1.0-ppc/gcc/config/rs6000/
    { "link_os_ads",		LINK_OS_ADS_SPEC },			\
    { "link_os_yellowknife",	LINK_OS_YELLOWKNIFE_SPEC },		\
    { "link_os_mvme",		LINK_OS_MVME_SPEC },			\
-@@ -932,6 +981,10 @@
+@@ -932,6 +981,10 @@ ncrtn.o%s"
    { "link_os_default",		LINK_OS_DEFAULT_SPEC },			\
    { "cc1_secure_plt_default",	CC1_SECURE_PLT_DEFAULT_SPEC },		\
    { "link_secure_plt",		LINK_SECURE_PLT_SPEC },			\
@@ -193,10 +220,11 @@ diff -NBaur gcc-8.1.0/gcc/config/rs6000/sysv4.h gcc-8.1.0-ppc/gcc/config/rs6000/
    { "cpp_os_ads",		CPP_OS_ADS_SPEC },			\
    { "cpp_os_yellowknife",	CPP_OS_YELLOWKNIFE_SPEC },		\
    { "cpp_os_mvme",		CPP_OS_MVME_SPEC },			\
-diff -NBaur gcc-8.1.0/gcc/config/rs6000/sysv4.opt gcc-8.1.0-ppc/gcc/config/rs6000/sysv4.opt
---- gcc-8.1.0/gcc/config/rs6000/sysv4.opt	2018-04-11 16:25:42.000000000 +0100
-+++ gcc-8.1.0-ppc/gcc/config/rs6000/sysv4.opt	2018-05-14 03:54:39.539914747 +0100
-@@ -124,6 +124,30 @@
+diff --git a/gcc/config/rs6000/sysv4.opt b/gcc/config/rs6000/sysv4.opt
+index 34fea0d..9451447 100644
+--- a/gcc/config/rs6000/sysv4.opt
++++ b/gcc/config/rs6000/sysv4.opt
+@@ -124,6 +124,30 @@ mads
  Target RejectNegative
  Link with libads.a, libc.a and crt0.o.
  
@@ -227,48 +255,36 @@ diff -NBaur gcc-8.1.0/gcc/config/rs6000/sysv4.opt gcc-8.1.0-ppc/gcc/config/rs600
  myellowknife
  Target RejectNegative
  Link with libyk.a, libc.a and crt0.o.
-diff -NBaur gcc-8.1.0/gcc/config.gcc gcc-8.1.0-ppc/gcc/config.gcc
---- gcc-8.1.0/gcc/config.gcc	2018-04-27 20:31:35.000000000 +0100
-+++ gcc-8.1.0-ppc/gcc/config.gcc	2018-05-14 03:58:47.902895652 +0100
-@@ -2459,7 +2459,7 @@
- 	use_gcc_stdint=wrap
- 	;;
- powerpc-*-eabi*)
--	tm_file="${tm_file} dbxelf.h elfos.h usegas.h freebsd-spec.h newlib-stdint.h rs6000/sysv4.h rs6000/eabi.h"
-+	tm_file="${tm_file} dbxelf.h elfos.h usegas.h freebsd-spec.h newlib-stdint.h rs6000/sysv4.h rs6000/eabi.h rs6000/750cl.h"
- 	extra_options="${extra_options} rs6000/sysv4.opt"
- 	tmake_file="rs6000/t-fprules rs6000/t-ppcgas rs6000/t-ppccomm"
- 	use_gcc_stdint=wrap
-diff -NBaur gcc-8.1.0/gcc/Makefile.in gcc-8.1.0-ppc/gcc/Makefile.in
---- gcc-8.1.0/gcc/Makefile.in	2018-03-09 15:24:44.000000000 +0000
-+++ gcc-8.1.0-ppc/gcc/Makefile.in	2018-05-14 03:54:39.539914747 +0100
-@@ -1098,8 +1098,8 @@
- # things like the go/%.o rule work properly; but we use $(*F) for the
- # file part, as we just want the file part of the stem, not the entire
- # file name.
--COMPILE = $(COMPILE.base) -MT $@ -MMD -MP -MF $(@D)/$(DEPDIR)/$(*F).TPo
--POSTCOMPILE = @mv $(@D)/$(DEPDIR)/$(*F).TPo $(@D)/$(DEPDIR)/$(*F).Po
-+COMPILE = $(COMPILE.base)
-+POSTCOMPILE =
- else
- COMPILE = source='$<' object='$@' libtool=no \
-     DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) $(COMPILE.base)
-diff -NBaur gcc-8.1.0/libcpp/Makefile.in gcc-8.1.0-ppc/libcpp/Makefile.in
---- gcc-8.1.0/libcpp/Makefile.in	2018-05-02 09:19:58.000000000 +0100
-+++ gcc-8.1.0-ppc/libcpp/Makefile.in	2018-05-14 03:54:39.543938012 +0100
-@@ -208,8 +208,7 @@
- # Note that we put the dependencies into a .Tpo file, then move them
- # into place if the compile succeeds.  We need this because gcc does
- # not atomically write the dependency output file.
--COMPILE = $(COMPILE.base) -o $@ -MT $@ -MMD -MP -MF $(DEPDIR)/$*.Tpo
--POSTCOMPILE = @mv $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-+COMPILE = $(COMPILE.base) -o $@
- else
- COMPILE = source='$<' object='$@' libtool=no DEPDIR=$(DEPDIR) $(DEPMODE) \
- 	  $(depcomp) $(COMPILE.base)
-diff -NBaur gcc-8.1.0/libgcc/config/rs6000/crtrestvr.S gcc-8.1.0-ppc/libgcc/config/rs6000/crtrestvr.S
---- gcc-8.1.0/libgcc/config/rs6000/crtrestvr.S	2018-01-03 10:03:58.000000000 +0000
-+++ gcc-8.1.0-ppc/libgcc/config/rs6000/crtrestvr.S	2018-05-14 03:54:39.543938012 +0100
+diff --git a/gcc/configure b/gcc/configure
+index 6121e16..6584112 100755
+--- a/gcc/configure
++++ b/gcc/configure
+@@ -11692,7 +11692,7 @@ case ${enable_threads} in
+     # default
+     target_thread_file='single'
+     ;;
+-  aix | dce | lynx | mipssde | posix | rtems | \
++  aix | dce | dkp | lynx | mipssde | posix | rtems | \
+   single | tpf | vxworks | win32)
+     target_thread_file=${enable_threads}
+     ;;
+diff --git a/gcc/configure.ac b/gcc/configure.ac
+index b066cc6..c42b3ef 100644
+--- a/gcc/configure.ac
++++ b/gcc/configure.ac
+@@ -1611,7 +1611,7 @@ case ${enable_threads} in
+     # default
+     target_thread_file='single'
+     ;;
+-  aix | dce | lynx | mipssde | posix | rtems | \
++  aix | dce | dkp | lynx | mipssde | posix | rtems | \
+   single | tpf | vxworks | win32)
+     target_thread_file=${enable_threads}
+     ;;
+diff --git a/libgcc/config/rs6000/crtrestvr.S b/libgcc/config/rs6000/crtrestvr.S
+index ba2b262..8d86610 100644
+--- a/libgcc/config/rs6000/crtrestvr.S
++++ b/libgcc/config/rs6000/crtrestvr.S
 @@ -24,7 +24,7 @@
  
  /* On PowerPC64 Linux, these functions are provided by the linker.  */
@@ -278,14 +294,15 @@ diff -NBaur gcc-8.1.0/libgcc/config/rs6000/crtrestvr.S gcc-8.1.0-ppc/libgcc/conf
  #undef __ALTIVEC__
  #define __ALTIVEC__ 1
  	#include "ppc-asm.h"
-@@ -86,3 +86,4 @@
+@@ -86,3 +86,4 @@ FUNC_END(_restvr_20)
  CFI_ENDPROC
  
  #endif
 +#endif
-diff -NBaur gcc-8.1.0/libgcc/config/rs6000/crtsavevr.S gcc-8.1.0-ppc/libgcc/config/rs6000/crtsavevr.S
---- gcc-8.1.0/libgcc/config/rs6000/crtsavevr.S	2018-01-03 10:03:58.000000000 +0000
-+++ gcc-8.1.0-ppc/libgcc/config/rs6000/crtsavevr.S	2018-05-14 03:54:39.543938012 +0100
+diff --git a/libgcc/config/rs6000/crtsavevr.S b/libgcc/config/rs6000/crtsavevr.S
+index 077e33f..b7be68b 100644
+--- a/libgcc/config/rs6000/crtsavevr.S
++++ b/libgcc/config/rs6000/crtsavevr.S
 @@ -24,7 +24,7 @@
  
  /* On PowerPC64 Linux, these functions are provided by the linker.  */
@@ -295,15 +312,584 @@ diff -NBaur gcc-8.1.0/libgcc/config/rs6000/crtsavevr.S gcc-8.1.0-ppc/libgcc/conf
  #undef __ALTIVEC__
  #define __ALTIVEC__ 1
  	#include "ppc-asm.h"
-@@ -86,3 +86,4 @@
+@@ -86,3 +86,4 @@ FUNC_END(_savevr_20)
  CFI_ENDPROC
  
  #endif
 +#endif
-diff -NBaur gcc-8.1.0/libgcc/crtstuff.c gcc-8.1.0-ppc/libgcc/crtstuff.c
---- gcc-8.1.0/libgcc/crtstuff.c	2018-01-03 10:03:58.000000000 +0000
-+++ gcc-8.1.0-ppc/libgcc/crtstuff.c	2018-05-14 03:54:39.543938012 +0100
-@@ -47,6 +47,7 @@
+diff --git a/libgcc/config/rs6000/gthr-dkp.c b/libgcc/config/rs6000/gthr-dkp.c
+new file mode 100644
+index 0000000..94d6ba9
+--- /dev/null
++++ b/libgcc/config/rs6000/gthr-dkp.c
+@@ -0,0 +1,349 @@
++/* Threads compatibility routines for libgcc2 and libobjc.  */
++/* Compile this one with gcc.  */
++/* Copyright (C) 1997-2016 Free Software Foundation, Inc.
++
++This file is part of GCC.
++
++GCC is free software; you can redistribute it and/or modify it under
++the terms of the GNU General Public License as published by the Free
++Software Foundation; either version 3, or (at your option) any later
++version.
++
++GCC is distributed in the hope that it will be useful, but WITHOUT ANY
++WARRANTY; without even the implied warranty of MERCHANTABILITY or
++FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++for more details.
++
++Under Section 7 of GPL version 3, you are granted additional
++permissions described in the GCC Runtime Library Exception, version
++3.1, as published by the Free Software Foundation.
++
++You should have received a copy of the GNU General Public License and
++a copy of the GCC Runtime Library Exception along with this program;
++see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
++<http://www.gnu.org/licenses/>.  */
++
++#include "gthr-dkp.h"
++#include <stddef.h>
++
++__gthread_impl_t __gthread_impl = {
++  NULL, // active
++  NULL, // create
++  NULL, // join
++  NULL, // detach
++  NULL, // equal
++  NULL, // self
++  NULL, // yield
++  NULL, // once
++  NULL, // key_create
++  NULL, // key_delete
++  NULL, // getspecific
++  NULL, // setspecific
++  NULL, // mutex_init_function
++  NULL, // mutex_destroy
++  NULL, // mutex_lock
++  NULL, // mutex_trylock
++  NULL, // mutex_unlock
++  NULL, // recursive_mutex_init_function
++  NULL, // recursive_mutex_lock
++  NULL, // recursive_mutex_trylock
++  NULL, // recursive_mutex_unlock
++  NULL, // recursive_mutex_destroy
++  NULL, // cond_init_function
++  NULL, // cond_broadcast
++  NULL, // cond_signal
++  NULL, // cond_wait
++  NULL, // cond_timedwait
++  NULL, // cond_wait_recursive
++  NULL, // cond_destroy
++};
++
++int
++__gthread_active_p (void)
++{
++  if (!__gthread_impl.active) {
++    return 0;
++  }
++
++  return __gthread_impl.active();
++}
++
++int
++__gthread_create (__gthread_t *__threadid, void *(*__func) (void*),
++                  void *__args)
++{
++  if (!__gthread_impl.create) {
++    return -1;
++  }
++
++  return __gthread_impl.create(__threadid, __func, __args);
++}
++
++int
++__gthread_join (__gthread_t __threadid, void **__value_ptr)
++{
++  if (!__gthread_impl.join) {
++    return -1;
++  }
++
++  return __gthread_impl.join(__threadid, __value_ptr);
++}
++
++int
++__gthread_detach (__gthread_t __threadid)
++{
++  if (!__gthread_impl.detach) {
++    return -1;
++  }
++
++  return __gthread_impl.detach(__threadid);
++}
++
++int
++__gthread_equal (__gthread_t __t1, __gthread_t __t2)
++{
++  if (!__gthread_impl.equal) {
++    return -1;
++  }
++
++  return __gthread_impl.equal(__t1, __t2);
++}
++
++__gthread_t
++__gthread_self (void)
++{
++  if (!__gthread_impl.self) {
++    __gthread_t result = { 0 };
++    return result;
++  }
++
++  return __gthread_impl.self();
++}
++
++int
++__gthread_yield (void)
++{
++  if (!__gthread_impl.yield) {
++    return -1;
++  }
++
++  return __gthread_impl.yield();
++}
++
++int
++__gthread_once (__gthread_once_t *__once, void (*__func) (void))
++{
++  if (!__gthread_impl.once) {
++    return -1;
++  }
++
++  return __gthread_impl.once(__once, __func);
++}
++
++int
++__gthread_key_create (__gthread_key_t *__key, void (*__dtor) (void *))
++{
++  if (!__gthread_impl.key_create) {
++    return -1;
++  }
++
++  return __gthread_impl.key_create(__key, __dtor);
++}
++
++int
++__gthread_key_delete (__gthread_key_t __key)
++{
++  if (!__gthread_impl.key_delete) {
++    return -1;
++  }
++
++  return __gthread_impl.key_delete(__key);
++}
++
++void *
++__gthread_getspecific (__gthread_key_t __key)
++{
++  if (!__gthread_impl.getspecific) {
++    return NULL;
++  }
++
++  return __gthread_impl.getspecific(__key);
++}
++
++int
++__gthread_setspecific (__gthread_key_t __key, const void *__ptr)
++{
++  if (!__gthread_impl.setspecific) {
++    return -1;
++  }
++
++  return __gthread_impl.setspecific(__key, __ptr);
++}
++
++void
++__gthread_mutex_init_function (__gthread_mutex_t *__mutex)
++{
++  if (__gthread_impl.mutex_init_function) {
++    __gthread_impl.mutex_init_function(__mutex);
++  }
++}
++
++int
++__gthread_mutex_destroy (__gthread_mutex_t *__mutex)
++{
++  if (!__gthread_impl.mutex_destroy) {
++    return -1;
++  }
++
++  return __gthread_impl.mutex_destroy(__mutex);
++}
++
++int
++__gthread_mutex_lock (__gthread_mutex_t *__mutex)
++{
++  if (!__gthread_impl.mutex_lock) {
++    return -1;
++  }
++
++  return __gthread_impl.mutex_lock(__mutex);
++}
++
++int
++__gthread_mutex_trylock (__gthread_mutex_t *__mutex)
++{
++  if (!__gthread_impl.mutex_trylock) {
++    return -1;
++  }
++
++  return __gthread_impl.mutex_trylock(__mutex);
++}
++
++int
++__gthread_mutex_unlock (__gthread_mutex_t *__mutex)
++{
++  if (!__gthread_impl.mutex_unlock) {
++    return -1;
++  }
++
++  return __gthread_impl.mutex_unlock(__mutex);
++}
++
++int
++__gthread_recursive_mutex_init_function (__gthread_recursive_mutex_t *__mutex)
++{
++  if (!__gthread_impl.recursive_mutex_init_function) {
++    return -1;
++  }
++
++  return __gthread_impl.recursive_mutex_init_function(__mutex);
++}
++
++int
++__gthread_recursive_mutex_lock (__gthread_recursive_mutex_t *__mutex)
++{
++  if (!__gthread_impl.recursive_mutex_lock) {
++    return -1;
++  }
++
++  return __gthread_impl.recursive_mutex_lock(__mutex);
++}
++
++int
++__gthread_recursive_mutex_trylock (__gthread_recursive_mutex_t *__mutex)
++{
++  if (!__gthread_impl.recursive_mutex_trylock) {
++    return -1;
++  }
++
++  return __gthread_impl.recursive_mutex_trylock(__mutex);
++}
++
++int
++__gthread_recursive_mutex_unlock (__gthread_recursive_mutex_t *__mutex)
++{
++  if (!__gthread_impl.recursive_mutex_unlock) {
++    return -1;
++  }
++
++  return __gthread_impl.recursive_mutex_unlock(__mutex);
++}
++
++int
++__gthread_recursive_mutex_destroy (__gthread_recursive_mutex_t *__mutex)
++{
++  if (!__gthread_impl.recursive_mutex_destroy) {
++    return -1;
++  }
++
++  return __gthread_impl.recursive_mutex_destroy(__mutex);
++}
++
++void
++__gthread_cond_init_function (__gthread_cond_t *__cond)
++{
++  if (__gthread_impl.cond_init_function) {
++    __gthread_impl.cond_init_function(__cond);
++  }
++}
++
++int
++__gthread_cond_broadcast (__gthread_cond_t *__cond)
++{
++  if (!__gthread_impl.cond_broadcast) {
++    return -1;
++  }
++
++  return __gthread_impl.cond_broadcast(__cond);
++}
++
++int
++__gthread_cond_signal (__gthread_cond_t *__cond)
++{
++  if (!__gthread_impl.cond_signal) {
++    return -1;
++  }
++
++  return __gthread_impl.cond_signal(__cond);
++}
++
++int
++__gthread_cond_wait (__gthread_cond_t *__cond, __gthread_mutex_t *__mutex)
++{
++  if (!__gthread_impl.cond_wait) {
++    return -1;
++  }
++
++  return __gthread_impl.cond_wait(__cond, __mutex);
++}
++
++int
++__gthread_cond_timedwait (__gthread_cond_t *__cond, __gthread_mutex_t *__mutex,
++                          const __gthread_time_t *__abs_timeout)
++{
++  if (!__gthread_impl.cond_timedwait) {
++    return -1;
++  }
++
++  return __gthread_impl.cond_timedwait(__cond, __mutex, __abs_timeout);
++}
++
++int
++__gthread_cond_wait_recursive (__gthread_cond_t *__cond,
++                               __gthread_recursive_mutex_t *__mutex)
++{
++  if (!__gthread_impl.cond_wait_recursive) {
++    return -1;
++  }
++
++  return __gthread_impl.cond_wait_recursive(__cond, __mutex);
++}
++
++int
++__gthread_cond_destroy (__gthread_cond_t* __cond)
++{
++  if (!__gthread_impl.cond_destroy) {
++    return -1;
++  }
++
++  return __gthread_impl.cond_destroy(__cond);
++}
+diff --git a/libgcc/config/rs6000/gthr-dkp.h b/libgcc/config/rs6000/gthr-dkp.h
+new file mode 100644
+index 0000000..281c19d
+--- /dev/null
++++ b/libgcc/config/rs6000/gthr-dkp.h
+@@ -0,0 +1,185 @@
++/* Threads compatibility routines for libgcc2 and libobjc.  */
++/* Compile this one with gcc.  */
++/* Copyright (C) 1997-2016 Free Software Foundation, Inc.
++
++This file is part of GCC.
++
++GCC is free software; you can redistribute it and/or modify it under
++the terms of the GNU General Public License as published by the Free
++Software Foundation; either version 3, or (at your option) any later
++version.
++
++GCC is distributed in the hope that it will be useful, but WITHOUT ANY
++WARRANTY; without even the implied warranty of MERCHANTABILITY or
++FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++for more details.
++
++Under Section 7 of GPL version 3, you are granted additional
++permissions described in the GCC Runtime Library Exception, version
++3.1, as published by the Free Software Foundation.
++
++You should have received a copy of the GNU General Public License and
++a copy of the GCC Runtime Library Exception along with this program;
++see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
++<http://www.gnu.org/licenses/>.  */
++
++#ifndef _GLIBCXX_GCC_GTHR_DKP_H
++#define _GLIBCXX_GCC_GTHR_DKP_H
++
++#define __GTHREADS 1
++#define __GTHREADS_CXX0X 1
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++typedef void *                      __gthread_t;
++typedef struct { int padding[7]; }  __gthread_cond_t;
++typedef struct { int padding; }     __gthread_key_t;
++typedef struct { int padding[11]; } __gthread_mutex_t;
++typedef struct { int padding; }     __gthread_once_t;
++typedef struct { int padding[11]; } __gthread_recursive_mutex_t;
++typedef struct timespec             __gthread_time_t;
++
++#define __GTHREAD_HAS_COND 1
++#define _GTHREAD_USE_MUTEX_TIMEDLOCK 0
++
++#define __GTHREAD_ONCE_INIT { 0 }
++#define __GTHREAD_TIME_INIT { 0, 0 }
++
++#define __GTHREAD_COND_INIT_FUNCTION __gthread_cond_init_function
++#define __GTHREAD_MUTEX_INIT_FUNCTION __gthread_mutex_init_function
++#define __GTHREAD_RECURSIVE_MUTEX_INIT_FUNCTION __gthread_recursive_mutex_init_function
++
++typedef struct {
++  int (*active) (void);
++  int (*create) (__gthread_t *__threadid, void *(*__func) (void*),
++                 void *__args);
++  int (*join) (__gthread_t __threadid, void **__value_ptr);
++  int (*detach) (__gthread_t __threadid);
++  int (*equal) (__gthread_t __t1, __gthread_t __t2);
++  __gthread_t (*self) (void);
++  int (*yield) (void);
++  int (*once) (__gthread_once_t *__once, void (*__func) (void));
++  int (*key_create) (__gthread_key_t *__key, void (*__dtor) (void *));
++  int (*key_delete) (__gthread_key_t __key);
++  void * (*getspecific) (__gthread_key_t __key);
++  int (*setspecific) (__gthread_key_t __key, const void *__ptr);
++  void (*mutex_init_function) (__gthread_mutex_t *__mutex);
++  int (*mutex_destroy) (__gthread_mutex_t *__mutex);
++  int (*mutex_lock) (__gthread_mutex_t *__mutex);
++  int (*mutex_trylock) (__gthread_mutex_t *__mutex);
++  int (*mutex_unlock) (__gthread_mutex_t *__mutex);
++  int (*recursive_mutex_init_function) (__gthread_recursive_mutex_t *__mutex);
++  int (*recursive_mutex_lock) (__gthread_recursive_mutex_t *__mutex);
++  int (*recursive_mutex_trylock) (__gthread_recursive_mutex_t *__mutex);
++  int (*recursive_mutex_unlock) (__gthread_recursive_mutex_t *__mutex);
++  int (*recursive_mutex_destroy) (__gthread_recursive_mutex_t *__mutex);
++  void (*cond_init_function) (__gthread_cond_t *__cond);
++  int (*cond_broadcast) (__gthread_cond_t *__cond);
++  int (*cond_signal) (__gthread_cond_t *__cond);
++  int (*cond_wait) (__gthread_cond_t *__cond, __gthread_mutex_t *__mutex);
++  int (*cond_timedwait) (__gthread_cond_t *__cond, __gthread_mutex_t *__mutex,
++                         const __gthread_time_t *__abs_timeout);
++  int (*cond_wait_recursive) (__gthread_cond_t *__cond,
++                              __gthread_recursive_mutex_t *__mutex);
++  int (*cond_destroy) (__gthread_cond_t* __cond);
++} __gthread_impl_t;
++
++extern __gthread_impl_t __gthread_impl;
++
++int
++__gthread_active_p (void);
++
++int
++__gthread_create (__gthread_t *__threadid, void *(*__func) (void*),
++                  void *__args);
++
++int
++__gthread_join (__gthread_t __threadid, void **__value_ptr);
++
++int
++__gthread_detach (__gthread_t __threadid);
++
++int
++__gthread_equal (__gthread_t __t1, __gthread_t __t2);
++
++__gthread_t
++__gthread_self (void);
++
++int
++__gthread_yield (void);
++
++int
++__gthread_once (__gthread_once_t *__once, void (*__func) (void));
++
++int
++__gthread_key_create (__gthread_key_t *__key, void (*__dtor) (void *));
++
++int
++__gthread_key_delete (__gthread_key_t __key);
++
++void *
++__gthread_getspecific (__gthread_key_t __key);
++
++int
++__gthread_setspecific (__gthread_key_t __key, const void *__ptr);
++
++void
++__gthread_mutex_init_function (__gthread_mutex_t *__mutex);
++
++int
++__gthread_mutex_destroy (__gthread_mutex_t *__mutex);
++
++int
++__gthread_mutex_lock (__gthread_mutex_t *__mutex);
++
++int
++__gthread_mutex_trylock (__gthread_mutex_t *__mutex);
++
++int
++__gthread_mutex_unlock (__gthread_mutex_t *__mutex);
++
++int
++__gthread_recursive_mutex_init_function (__gthread_recursive_mutex_t *__mutex);
++
++int
++__gthread_recursive_mutex_lock (__gthread_recursive_mutex_t *__mutex);
++
++int
++__gthread_recursive_mutex_trylock (__gthread_recursive_mutex_t *__mutex);
++
++int
++__gthread_recursive_mutex_unlock (__gthread_recursive_mutex_t *__mutex);
++
++int
++__gthread_recursive_mutex_destroy (__gthread_recursive_mutex_t *__mutex);
++
++void
++__gthread_cond_init_function (__gthread_cond_t *__cond);
++
++int
++__gthread_cond_broadcast (__gthread_cond_t *__cond);
++
++int
++__gthread_cond_signal (__gthread_cond_t *__cond);
++
++int
++__gthread_cond_wait (__gthread_cond_t *__cond, __gthread_mutex_t *__mutex);
++
++int
++__gthread_cond_timedwait (__gthread_cond_t *__cond, __gthread_mutex_t *__mutex,
++                          const __gthread_time_t *__abs_timeout);
++
++int
++__gthread_cond_wait_recursive (__gthread_cond_t *__cond,
++                               __gthread_recursive_mutex_t *__mutex);
++
++int
++__gthread_cond_destroy (__gthread_cond_t* __cond);
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* ! _GLIBCXX_GCC_GTHR_DKP_H */
+diff --git a/libgcc/config/rs6000/t-ppccomm b/libgcc/config/rs6000/t-ppccomm
+index fb812d3..7f6669d 100644
+--- a/libgcc/config/rs6000/t-ppccomm
++++ b/libgcc/config/rs6000/t-ppccomm
+@@ -1,4 +1,5 @@
+ LIB2ADD += $(srcdir)/config/rs6000/ibm-ldouble.c \
++	   $(srcdir)/config/rs6000/gthr-dkp.c \
+ 	   $(srcdir)/config/rs6000/tramp.S
+ 
+ # This can't end up in shared libgcc
+diff --git a/libgcc/configure b/libgcc/configure
+index b2f3f87..c6f93f8 100644
+--- a/libgcc/configure
++++ b/libgcc/configure
+@@ -5442,6 +5442,7 @@ tm_file="${tm_file_}"
+ 
+ case $target_thread_file in
+     aix)	thread_header=config/rs6000/gthr-aix.h ;;
++    dkp)	thread_header=config/rs6000/gthr-dkp.h ;;
+     dce)	thread_header=config/pa/gthr-dce.h ;;
+     lynx)	thread_header=config/gthr-lynx.h ;;
+     mipssde)	thread_header=config/mips/gthr-mipssde.h ;;
+diff --git a/libgcc/crtstuff.c b/libgcc/crtstuff.c
+index 5e89445..f234745 100644
+--- a/libgcc/crtstuff.c
++++ b/libgcc/crtstuff.c
+@@ -47,6 +47,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
  
  /* Target machine header files require this define. */
  #define IN_LIBGCC2
@@ -311,3 +897,15 @@ diff -NBaur gcc-8.1.0/libgcc/crtstuff.c gcc-8.1.0-ppc/libgcc/crtstuff.c
  
  /* FIXME: Including auto-host is incorrect, but until we have
     identified the set of defines that need to go into auto-target.h,
+diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
+index ba094be..ac53ee6 100755
+--- a/libstdc++-v3/configure
++++ b/libstdc++-v3/configure
+@@ -15178,6 +15178,7 @@ $as_echo "$target_thread_file" >&6; }
+ 
+ case $target_thread_file in
+     aix)	thread_header=config/rs6000/gthr-aix.h ;;
++    dkp)	thread_header=config/rs6000/gthr-dkp.h ;;
+     dce)	thread_header=config/pa/gthr-dce.h ;;
+     lynx)	thread_header=config/gthr-lynx.h ;;
+     mipssde)	thread_header=config/mips/gthr-mipssde.h ;;
