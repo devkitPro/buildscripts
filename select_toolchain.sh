@@ -43,7 +43,7 @@ case "$VERSION" in
     GCC_VER=8.1.0
     BINUTILS_VER=2.30
     MN_BINUTILS_VER=2.17
-    NEWLIB_VER=2.5.0
+    NEWLIB_VER=3.0.0
     GDB_VER=8.0.1
     basedir='dkppc'
     package=devkitPPC
