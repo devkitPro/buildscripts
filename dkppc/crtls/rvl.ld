@@ -104,7 +104,12 @@ SECTIONS
 
 	.rodata   : { *(.rodata) *(.rodata.*) *(.gnu.linkonce.r.*) } :data
 	.rodata1   : { *(.rodata1) }
-	.sdata2   : { *(.sdata2) *(.sdata2.*) *(.gnu.linkonce.s2.*) }
+	.sdata2   : {
+		PROVIDE(_SDA2_BASE_ = .);
+		*(.sdata2)
+		*(.sdata2.*)
+		*(.gnu.linkonce.s2.*)
+	}
 	.sbss2   : { *(.sbss2) *(.sbss2.*) *(.gnu.linkonce.sb2.*) }
   /* Adjust the address for the data segment.  We want to adjust up to
      the same address within the page on the next page up.  */
@@ -185,6 +190,7 @@ SECTIONS
 
 	.sdata     :
 	{
+		PROVIDE(_SDA_BASE_ = .);
 		*(.sdata)
 		*(.sdata.*)
 		*(.gnu.linkonce.s.*)
