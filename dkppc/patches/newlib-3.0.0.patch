@@ -46,7 +46,7 @@ index 6da164352..0375cabbc 100644
  AC_SUBST(AS)
 diff --git a/libgloss/libsysbase/Makefile.in b/libgloss/libsysbase/Makefile.in
 new file mode 100644
-index 000000000..df90d2f57
+index 000000000..376d620b8
 --- /dev/null
 +++ b/libgloss/libsysbase/Makefile.in
 @@ -0,0 +1,148 @@
@@ -118,7 +118,7 @@ index 000000000..df90d2f57
 +
 +# object files needed
 +OBJS = abort.o iosupport.o clocks.o close.o environ.o execve.o fork.o fstat.o getpid.o gettod.o \
-+	isatty.o kill.o link.o lseek.o open.o read.o sbrk.o stat.o times.o \
++	isatty.o kill.o link.o lseek.o nanosleep.o open.o read.o sbrk.o sleep.o stat.o usleep.o times.o \
 +	unlink.o wait.o write.o _exit.o malloc_vars.o \
 +	chdir.o mkdir.o rename.o build_argv.o statvfs.o \
 +	flock.o syscall_support.o handle_manager.o truncate.o ftruncate.o dirent.o fsync.o \
@@ -902,7 +902,7 @@ index 000000000..3668b5801
 +
 diff --git a/libgloss/libsysbase/clocks.c b/libgloss/libsysbase/clocks.c
 new file mode 100644
-index 000000000..7cec3bc11
+index 000000000..01cfee469
 --- /dev/null
 +++ b/libgloss/libsysbase/clocks.c
 @@ -0,0 +1,34 @@
@@ -922,7 +922,7 @@ index 000000000..7cec3bc11
 +
 +int clock_settime(clockid_t clock_id, const struct timespec *tp)
 +{
-+   if ( __syscalls.clock_gettime ) {
++   if ( __syscalls.clock_settime ) {
 +      return __syscalls.clock_settime(clock_id, tp);
 +   } else {
 +      errno = ENOSYS;
@@ -6476,6 +6476,26 @@ index 000000000..b4fcbd3d7
 +
 +	return ret;
 +}
+diff --git a/libgloss/libsysbase/nanosleep.c b/libgloss/libsysbase/nanosleep.c
+new file mode 100644
+index 000000000..3c96fc61b
+--- /dev/null
++++ b/libgloss/libsysbase/nanosleep.c
+@@ -0,0 +1,14 @@
++#include <errno.h>
++#include <time.h>
++#include <sys/iosupport.h>
++
++int nanosleep(const struct timespec *req, struct timespec *rem)
++{
++   if ( __syscalls.nanosleep ) {
++      return __syscalls.nanosleep(req, rem);
++   } else {
++      *rem = *req;
++      errno = ENOSYS;
++      return -1;
++   }
++}
 diff --git a/libgloss/libsysbase/open.c b/libgloss/libsysbase/open.c
 new file mode 100644
 index 000000000..877f907e1
@@ -6682,6 +6702,30 @@ index 000000000..e2bdb9edc
 +
 +}
 \ No newline at end of file
+diff --git a/libgloss/libsysbase/sleep.c b/libgloss/libsysbase/sleep.c
+new file mode 100644
+index 000000000..f3aa97954
+--- /dev/null
++++ b/libgloss/libsysbase/sleep.c
+@@ -0,0 +1,18 @@
++/* Copied from libc/posix/sleep.c, removed the check for HAVE_NANOSLEEP */
++
++/* Written 2000 by Werner Almesberger */
++
++#include <errno.h>
++#include <time.h>
++#include <unistd.h>
++
++unsigned sleep(unsigned seconds)
++{
++    struct timespec ts;
++
++    ts.tv_sec = seconds;
++    ts.tv_nsec = 0;
++    if (!nanosleep(&ts,&ts)) return 0;
++    if (errno == EINTR) return ts.tv_sec;
++    return -1;
++}
 diff --git a/libgloss/libsysbase/stat.c b/libgloss/libsysbase/stat.c
 new file mode 100644
 index 000000000..4c2e5414e
@@ -6757,10 +6801,10 @@ index 000000000..84e221340
 +}
 diff --git a/libgloss/libsysbase/syscall_support.c b/libgloss/libsysbase/syscall_support.c
 new file mode 100644
-index 000000000..939ec2533
+index 000000000..f02714764
 --- /dev/null
 +++ b/libgloss/libsysbase/syscall_support.c
-@@ -0,0 +1,63 @@
+@@ -0,0 +1,67 @@
 +#include <sys/iosupport.h>
 +
 +//---------------------------------------------------------------------------------
@@ -6774,7 +6818,11 @@ index 000000000..939ec2533
 +	NULL,	// malloc_lock
 +	NULL,	// malloc_unlock
 +	NULL,	// exit
-+	NULL	// gettod_r
++	NULL,	// gettod_r
++	NULL,	// clock_gettime
++	NULL,	// clock_settime
++	NULL,	// clock_getres
++	NULL	// nanosleep
 +};
 +
 +int __libc_lock_init(int *lock,int recursive) {
@@ -6948,6 +6996,30 @@ index 000000000..55932bc25
 +	return ret;
 +}
 +
+diff --git a/libgloss/libsysbase/usleep.c b/libgloss/libsysbase/usleep.c
+new file mode 100644
+index 000000000..b54714775
+--- /dev/null
++++ b/libgloss/libsysbase/usleep.c
+@@ -0,0 +1,18 @@
++/* Copied from libc/posix/sleep.c, removed the check for HAVE_NANOSLEEP */
++
++/* Written 2000 by Werner Almesberger */
++
++#include <errno.h>
++#include <time.h>
++#include <unistd.h>
++
++int usleep(useconds_t useconds)
++{
++	struct timespec ts;
++
++	ts.tv_sec = (long int)useconds / 1000000;
++	ts.tv_nsec = ((long int)useconds % 1000000) * 1000;
++	if (!nanosleep(&ts,&ts)) return 0;
++	if (errno == EINTR) return ts.tv_sec;
++	return -1;
++}
 diff --git a/libgloss/libsysbase/wait.c b/libgloss/libsysbase/wait.c
 new file mode 100644
 index 000000000..b65f9039c
@@ -7237,10 +7309,10 @@ index 2900b332f..6efb54eb3 100644
  #ifdef __rtems__
 diff --git a/newlib/libc/include/sys/iosupport.h b/newlib/libc/include/sys/iosupport.h
 new file mode 100644
-index 000000000..8034ada6f
+index 000000000..90c637194
 --- /dev/null
 +++ b/newlib/libc/include/sys/iosupport.h
-@@ -0,0 +1,105 @@
+@@ -0,0 +1,106 @@
 +//---------------------------------------------------------------------------------
 +#ifndef __iosupp_h__
 +#define __iosupp_h__
@@ -7324,6 +7396,7 @@ index 000000000..8034ada6f
 +	int (*clock_gettime)(clockid_t clock_id, struct timespec *tp);
 +	int (*clock_settime)(clockid_t clock_id, const struct timespec *tp);
 +	int (*clock_getres)(clockid_t clock_id, struct timespec *res);
++	int (*nanosleep)(const struct timespec *req, struct timespec *rem);
 +} __syscalls_t;
 +
 +extern __syscalls_t __syscalls;
