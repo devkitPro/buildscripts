@@ -90,6 +90,7 @@ then
 	--disable-libstdcxx-pch \
 	--disable-libstdcxx-verbose \
 	--enable-libstdcxx-time=yes \
+	--enable-libstdcxx-filesystem-ts \
 	--enable-cxx-flags='-ffunction-sections -fdata-sections' \
 	--target=$target \
 	--with-newlib \
