@@ -56,6 +56,8 @@ then
 	--disable-dependency-tracking \
 	--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitPSP release 17" \
 	$CROSS_PARAMS \
+	MAKEINFO=missing \
+	MISSING=texinfo \
 	|| { echo "Error configuring gcc"; exit 1; }
 	touch configured-gcc
 fi
@@ -174,28 +176,30 @@ cd $BUILDDIR
 #---------------------------------------------------------------------------------
 # build and install the debugger
 #---------------------------------------------------------------------------------
-mkdir -p $target/gdb
-cd $target/gdb
-
-if [ ! -f configured-gdb ]
-then
-	CFLAGS=$cflags LDFLAGS=$ldflags ../../gdb-$GDB_VER/configure \
-	--disable-nls --prefix=$prefix --target=$target --disable-werror \
-	--disable-dependency-tracking \
-	$CROSS_PARAMS \
-	|| { echo "Error configuring gdb"; exit 1; }
-	touch configured-gdb
-fi
-
-if [ ! -f built-gdb ]
-then
-	$MAKE || { echo "Error building gdb"; exit 1; }
-	touch built-gdb
-fi
-
-if [ ! -f installed-gdb ]
-then
-	$MAKE install || { echo "Error installing gdb"; exit 1; }
-	touch installed-gdb
-fi
+#mkdir -p $target/gdb
+#cd $target/gdb
+#
+#if [ ! -f configured-gdb ]
+#then
+#	CFLAGS=$cflags LDFLAGS=$ldflags ../../gdb-$GDB_VER/configure \
+#	--disable-nls --prefix=$prefix --target=$target --disable-werror \
+#	--disable-dependency-tracking \
+#	$CROSS_PARAMS \
+#	MAKEINFO=missing \
+#	MISSING=texinfo \
+#	|| { echo "Error configuring gdb"; exit 1; }
+#	touch configured-gdb
+#fi
+#
+#if [ ! -f built-gdb ]
+#then
+#	$MAKE || { echo "Error building gdb"; exit 1; }
+#	touch built-gdb
+#fi
+#
+#if [ ! -f installed-gdb ]
+#then
+#	$MAKE install || { echo "Error installing gdb"; exit 1; }
+#	touch installed-gdb
+#fi
 

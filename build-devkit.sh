@@ -6,7 +6,7 @@
 #	devkitPSP release 17
 #---------------------------------------------------------------------------------
 
-if [ 1 -eq 1 ] ; then
+if [ 0 -eq 1 ] ; then
 	echo "Currently in release cycle, proceed with caution, do not report problems, do not ask for support."
 	echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
 	echo "http://sourceforge.net/projects/devkitpro/files/buildscripts/"
@@ -181,7 +181,7 @@ BUILDDIR=$(pwd)/.$package
 if [ ! -z $CROSSBUILD ]; then
 	BUILDDIR=$BUILDDIR-$CROSSBUILD
 fi
-DEVKITPRO_URL="http://downloads.sourceforge.net/devkitpro"
+DEVKITPRO_URL="https://downloads.devkitpro.org"
 
 patchdir=$(pwd)/$basedir/patches
 scriptdir=$(pwd)/$basedir/scripts
@@ -218,7 +218,7 @@ for archive in $archives $targetarchives $hostarchives
 do
 	echo $archive
 	if [ ! -f $archive ]; then
-		$FETCH http://downloads.sf.net/devkitpro/$archive || { echo "Error: Failed to download $archive"; exit 1; }
+		$FETCH $DEVKITPRO_URL/$archive || { echo "Error: Failed to download $archive"; exit 1; }
 	fi
 done
 
