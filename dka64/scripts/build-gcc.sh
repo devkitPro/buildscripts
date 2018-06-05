@@ -46,7 +46,7 @@ then
 	CXXFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
 	LDFLAGS_FOR_TARGET="" \
 	../../gcc-$GCC_VER/configure \
-		--enable-languages=c,c++ \
+		--enable-languages=c,c++,lto \
 		--with-gnu-as --with-gnu-ld --with-gcc \
 		--with-march=armv8\
 		--enable-cxx-flags='-ffunction-sections' \
@@ -57,13 +57,14 @@ then
 		--disable-libmudflap --disable-libssp --disable-libgomp \
 		--disable-libstdcxx-pch \
 		--enable-libstdcxx-time \
+		--enable-libstdcxx-filesystem-ts \
 		--target=$target \
 		--with-newlib \
 		--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 		--prefix=$prefix \
 		--enable-lto $plugin_ld\
 		--with-system-zlib \
-		--with-bugurl="https://github.com/devkitPro/buildscripts/issues" --with-pkgversion="devkitA64 release 9" \
+		--with-bugurl="https://github.com/devkitPro/buildscripts/issues" --with-pkgversion="devkitA64 release 10" \
 		$CROSS_PARAMS \
 		$CROSS_GCC_PARAMS \
 		|| { echo "Error configuring gcc"; exit 1; }

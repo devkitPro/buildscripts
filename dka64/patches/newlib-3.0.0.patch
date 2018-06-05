@@ -1,5 +1,5 @@
 diff --git a/libgloss/configure b/libgloss/configure
-index aa6f8f8..0e85798 100755
+index aa6f8f834..0e8579890 100755
 --- a/libgloss/configure
 +++ b/libgloss/configure
 @@ -2594,6 +2594,8 @@ if test "${config_libnosys}" = "true"; then
@@ -12,7 +12,7 @@ index aa6f8f8..0e85798 100755
  
  ac_config_commands="$ac_config_commands depfiles"
 diff --git a/libgloss/configure.in b/libgloss/configure.in
-index 6da1643..f18f174 100644
+index 6da164352..f18f17447 100644
 --- a/libgloss/configure.in
 +++ b/libgloss/configure.in
 @@ -2,6 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
@@ -33,7 +33,7 @@ index 6da1643..f18f174 100644
  AS=${AS-as}
 diff --git a/libgloss/libsysbase/Makefile.in b/libgloss/libsysbase/Makefile.in
 new file mode 100644
-index 0000000..9eca37c
+index 000000000..48145392a
 --- /dev/null
 +++ b/libgloss/libsysbase/Makefile.in
 @@ -0,0 +1,148 @@
@@ -105,11 +105,11 @@ index 0000000..9eca37c
 +
 +# object files needed
 +OBJS = abort.o iosupport.o clocks.o close.o environ.o execve.o fork.o fstat.o getpid.o gettod.o \
-+	isatty.o kill.o link.o lseek.o open.o read.o sbrk.o stat.o times.o \
++	isatty.o kill.o link.o lseek.o lstat.o nanosleep.o open.o read.o sbrk.o sleep.o stat.o usleep.o times.o \
 +	unlink.o wait.o write.o _exit.o malloc_vars.o \
 +	chdir.o mkdir.o rename.o statvfs.o \
 +	flock.o syscall_support.o handle_manager.o truncate.o ftruncate.o dirent.o fsync.o \
-+	fchmod.o chmod.o getreent.o rmdir.o
++	fchmod.o chmod.o getreent.o rmdir.o utime.o
 +
 +# Object files specific to particular targets.
 +EVALOBJS = ${OBJS}
@@ -187,7 +187,7 @@ index 0000000..9eca37c
 +	$(SHELL) config.status --recheck
 diff --git a/libgloss/libsysbase/_exit.c b/libgloss/libsysbase/_exit.c
 new file mode 100644
-index 0000000..e5cb5a9
+index 000000000..e5cb5a9ed
 --- /dev/null
 +++ b/libgloss/libsysbase/_exit.c
 @@ -0,0 +1,17 @@
@@ -210,7 +210,7 @@ index 0000000..e5cb5a9
 +}
 diff --git a/libgloss/libsysbase/abort.c b/libgloss/libsysbase/abort.c
 new file mode 100644
-index 0000000..9272e22
+index 000000000..9272e22c9
 --- /dev/null
 +++ b/libgloss/libsysbase/abort.c
 @@ -0,0 +1,8 @@
@@ -224,7 +224,7 @@ index 0000000..9272e22
 +
 diff --git a/libgloss/libsysbase/acconfig.h b/libgloss/libsysbase/acconfig.h
 new file mode 100644
-index 0000000..200ea78
+index 000000000..200ea7873
 --- /dev/null
 +++ b/libgloss/libsysbase/acconfig.h
 @@ -0,0 +1,29 @@
@@ -259,7 +259,7 @@ index 0000000..200ea78
 +#undef __SYMBOL_PREFIX
 diff --git a/libgloss/libsysbase/aclocal.m4 b/libgloss/libsysbase/aclocal.m4
 new file mode 100644
-index 0000000..b6cdfae
+index 000000000..b6cdfaeb8
 --- /dev/null
 +++ b/libgloss/libsysbase/aclocal.m4
 @@ -0,0 +1,344 @@
@@ -609,7 +609,7 @@ index 0000000..b6cdfae
 +m4_include([../acinclude.m4])
 diff --git a/libgloss/libsysbase/chdir.c b/libgloss/libsysbase/chdir.c
 new file mode 100644
-index 0000000..90d2dc5
+index 000000000..90d2dc5b7
 --- /dev/null
 +++ b/libgloss/libsysbase/chdir.c
 @@ -0,0 +1,201 @@
@@ -816,7 +816,7 @@ index 0000000..90d2dc5
 +}
 diff --git a/libgloss/libsysbase/chmod.c b/libgloss/libsysbase/chmod.c
 new file mode 100644
-index 0000000..3668b58
+index 000000000..3668b5801
 --- /dev/null
 +++ b/libgloss/libsysbase/chmod.c
 @@ -0,0 +1,30 @@
@@ -852,7 +852,7 @@ index 0000000..3668b58
 +
 diff --git a/libgloss/libsysbase/clocks.c b/libgloss/libsysbase/clocks.c
 new file mode 100644
-index 0000000..7cec3bc
+index 000000000..01cfee469
 --- /dev/null
 +++ b/libgloss/libsysbase/clocks.c
 @@ -0,0 +1,34 @@
@@ -872,7 +872,7 @@ index 0000000..7cec3bc
 +
 +int clock_settime(clockid_t clock_id, const struct timespec *tp)
 +{
-+   if ( __syscalls.clock_gettime ) {
++   if ( __syscalls.clock_settime ) {
 +      return __syscalls.clock_settime(clock_id, tp);
 +   } else {
 +      errno = ENOSYS;
@@ -892,7 +892,7 @@ index 0000000..7cec3bc
 +
 diff --git a/libgloss/libsysbase/close.c b/libgloss/libsysbase/close.c
 new file mode 100644
-index 0000000..931ad07
+index 000000000..931ad07b1
 --- /dev/null
 +++ b/libgloss/libsysbase/close.c
 @@ -0,0 +1,46 @@
@@ -944,7 +944,7 @@ index 0000000..931ad07
 +}
 diff --git a/libgloss/libsysbase/config.h.in b/libgloss/libsysbase/config.h.in
 new file mode 100644
-index 0000000..48ce950
+index 000000000..48ce950b4
 --- /dev/null
 +++ b/libgloss/libsysbase/config.h.in
 @@ -0,0 +1,25 @@
@@ -975,7 +975,7 @@ index 0000000..48ce950
 +#undef __SYMBOL_PREFIX
 diff --git a/libgloss/libsysbase/configure b/libgloss/libsysbase/configure
 new file mode 100644
-index 0000000..aa653c2
+index 000000000..aa653c235
 --- /dev/null
 +++ b/libgloss/libsysbase/configure
 @@ -0,0 +1,4160 @@
@@ -5141,7 +5141,7 @@ index 0000000..aa653c2
 +
 diff --git a/libgloss/libsysbase/configure.in b/libgloss/libsysbase/configure.in
 new file mode 100644
-index 0000000..da85a3f
+index 000000000..da85a3f46
 --- /dev/null
 +++ b/libgloss/libsysbase/configure.in
 @@ -0,0 +1,202 @@
@@ -5349,7 +5349,7 @@ index 0000000..da85a3f
 +
 diff --git a/libgloss/libsysbase/dirent.c b/libgloss/libsysbase/dirent.c
 new file mode 100644
-index 0000000..0ad2902
+index 000000000..0ad29029c
 --- /dev/null
 +++ b/libgloss/libsysbase/dirent.c
 @@ -0,0 +1,255 @@
@@ -5610,7 +5610,7 @@ index 0000000..0ad2902
 +}
 diff --git a/libgloss/libsysbase/environ.c b/libgloss/libsysbase/environ.c
 new file mode 100644
-index 0000000..1c485b2
+index 000000000..1c485b26f
 --- /dev/null
 +++ b/libgloss/libsysbase/environ.c
 @@ -0,0 +1,6 @@
@@ -5622,7 +5622,7 @@ index 0000000..1c485b2
 +char **environ = __env;
 diff --git a/libgloss/libsysbase/execve.c b/libgloss/libsysbase/execve.c
 new file mode 100644
-index 0000000..82e7013
+index 000000000..82e70139f
 --- /dev/null
 +++ b/libgloss/libsysbase/execve.c
 @@ -0,0 +1,30 @@
@@ -5658,7 +5658,7 @@ index 0000000..82e7013
 +
 diff --git a/libgloss/libsysbase/fchmod.c b/libgloss/libsysbase/fchmod.c
 new file mode 100644
-index 0000000..5c5831c
+index 000000000..5c5831cdf
 --- /dev/null
 +++ b/libgloss/libsysbase/fchmod.c
 @@ -0,0 +1,31 @@
@@ -5695,7 +5695,7 @@ index 0000000..5c5831c
 +}
 diff --git a/libgloss/libsysbase/flock.c b/libgloss/libsysbase/flock.c
 new file mode 100644
-index 0000000..c6b8c92
+index 000000000..c6b8c92ad
 --- /dev/null
 +++ b/libgloss/libsysbase/flock.c
 @@ -0,0 +1,21 @@
@@ -5722,7 +5722,7 @@ index 0000000..c6b8c92
 +}
 diff --git a/libgloss/libsysbase/fork.c b/libgloss/libsysbase/fork.c
 new file mode 100644
-index 0000000..efb6a34
+index 000000000..efb6a3496
 --- /dev/null
 +++ b/libgloss/libsysbase/fork.c
 @@ -0,0 +1,21 @@
@@ -5749,7 +5749,7 @@ index 0000000..efb6a34
 +}
 diff --git a/libgloss/libsysbase/fstat.c b/libgloss/libsysbase/fstat.c
 new file mode 100644
-index 0000000..e32b067
+index 000000000..e32b06755
 --- /dev/null
 +++ b/libgloss/libsysbase/fstat.c
 @@ -0,0 +1,44 @@
@@ -5799,7 +5799,7 @@ index 0000000..e32b067
 +}
 diff --git a/libgloss/libsysbase/fsync.c b/libgloss/libsysbase/fsync.c
 new file mode 100644
-index 0000000..fb06cb6
+index 000000000..fb06cb6d1
 --- /dev/null
 +++ b/libgloss/libsysbase/fsync.c
 @@ -0,0 +1,34 @@
@@ -5839,7 +5839,7 @@ index 0000000..fb06cb6
 +}
 diff --git a/libgloss/libsysbase/ftruncate.c b/libgloss/libsysbase/ftruncate.c
 new file mode 100644
-index 0000000..2cc03a3
+index 000000000..2cc03a3d9
 --- /dev/null
 +++ b/libgloss/libsysbase/ftruncate.c
 @@ -0,0 +1,34 @@
@@ -5879,7 +5879,7 @@ index 0000000..2cc03a3
 +}
 diff --git a/libgloss/libsysbase/getpid.c b/libgloss/libsysbase/getpid.c
 new file mode 100644
-index 0000000..fdce14b
+index 000000000..fdce14b5f
 --- /dev/null
 +++ b/libgloss/libsysbase/getpid.c
 @@ -0,0 +1,19 @@
@@ -5904,7 +5904,7 @@ index 0000000..fdce14b
 +
 diff --git a/libgloss/libsysbase/getreent.c b/libgloss/libsysbase/getreent.c
 new file mode 100644
-index 0000000..028d0eb
+index 000000000..028d0eb77
 --- /dev/null
 +++ b/libgloss/libsysbase/getreent.c
 @@ -0,0 +1,20 @@
@@ -5930,7 +5930,7 @@ index 0000000..028d0eb
 +
 diff --git a/libgloss/libsysbase/gettod.c b/libgloss/libsysbase/gettod.c
 new file mode 100644
-index 0000000..9d5b747
+index 000000000..9d5b74724
 --- /dev/null
 +++ b/libgloss/libsysbase/gettod.c
 @@ -0,0 +1,33 @@
@@ -5969,7 +5969,7 @@ index 0000000..9d5b747
 +
 diff --git a/libgloss/libsysbase/handle_manager.c b/libgloss/libsysbase/handle_manager.c
 new file mode 100644
-index 0000000..f3fcc88
+index 000000000..f3fcc88f7
 --- /dev/null
 +++ b/libgloss/libsysbase/handle_manager.c
 @@ -0,0 +1,173 @@
@@ -6148,10 +6148,10 @@ index 0000000..f3fcc88
 +}
 diff --git a/libgloss/libsysbase/iosupport.c b/libgloss/libsysbase/iosupport.c
 new file mode 100644
-index 0000000..4f13127
+index 000000000..948c6ef93
 --- /dev/null
 +++ b/libgloss/libsysbase/iosupport.c
-@@ -0,0 +1,138 @@
+@@ -0,0 +1,140 @@
 +#include <stdlib.h>
 +#include <string.h>
 +#include <ctype.h>
@@ -6202,6 +6202,8 @@ index 0000000..4f13127
 +	NULL,		// chmod_r
 +	NULL,		// fchmod_r
 +	NULL,		// rmdir_r
++	NULL,		// lstat_r
++	NULL,		// utimes_r
 +};
 +
 +//---------------------------------------------------------------------------------
@@ -6292,7 +6294,7 @@ index 0000000..4f13127
 +
 diff --git a/libgloss/libsysbase/isatty.c b/libgloss/libsysbase/isatty.c
 new file mode 100644
-index 0000000..280a457
+index 000000000..280a4579a
 --- /dev/null
 +++ b/libgloss/libsysbase/isatty.c
 @@ -0,0 +1,17 @@
@@ -6315,7 +6317,7 @@ index 0000000..280a457
 +}
 diff --git a/libgloss/libsysbase/kill.c b/libgloss/libsysbase/kill.c
 new file mode 100644
-index 0000000..13bd0fb
+index 000000000..13bd0fba1
 --- /dev/null
 +++ b/libgloss/libsysbase/kill.c
 @@ -0,0 +1,21 @@
@@ -6342,7 +6344,7 @@ index 0000000..13bd0fb
 +}
 diff --git a/libgloss/libsysbase/link.c b/libgloss/libsysbase/link.c
 new file mode 100644
-index 0000000..1675e5c
+index 000000000..1675e5c24
 --- /dev/null
 +++ b/libgloss/libsysbase/link.c
 @@ -0,0 +1,33 @@
@@ -6381,7 +6383,7 @@ index 0000000..1675e5c
 +
 diff --git a/libgloss/libsysbase/lseek.c b/libgloss/libsysbase/lseek.c
 new file mode 100644
-index 0000000..eb232c8
+index 000000000..eb232c86b
 --- /dev/null
 +++ b/libgloss/libsysbase/lseek.c
 @@ -0,0 +1,45 @@
@@ -6430,9 +6432,46 @@ index 0000000..eb232c8
 +	return ret;
 +
 +}
+diff --git a/libgloss/libsysbase/lstat.c b/libgloss/libsysbase/lstat.c
+new file mode 100644
+index 000000000..fc393430b
+--- /dev/null
++++ b/libgloss/libsysbase/lstat.c
+@@ -0,0 +1,31 @@
++#include "config.h"
++#include <_ansi.h>
++#include <_syslist.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <sys/iosupport.h>
++#include <errno.h>
++
++
++//---------------------------------------------------------------------------------
++int lstat (const char *__restrict __path, struct stat *__restrict __buf ) {
++//---------------------------------------------------------------------------------
++	struct _reent *r = _REENT;
++	int dev,ret;
++
++	dev = FindDevice(__path);
++
++	if(dev!=-1) {
++		if (devoptab_list[dev]->lstat_r) {
++			r->deviceData = devoptab_list[dev]->deviceData;
++			ret = devoptab_list[dev]->lstat_r(r,__path,__buf);
++		} else {
++			r->_errno=ENOSYS;
++		}
++	} else {
++		ret = -1;
++		r->_errno = ENODEV;
++	}
++	return ret;
++}
++
 diff --git a/libgloss/libsysbase/malloc_vars.c b/libgloss/libsysbase/malloc_vars.c
 new file mode 100644
-index 0000000..4565909
+index 000000000..456590956
 --- /dev/null
 +++ b/libgloss/libsysbase/malloc_vars.c
 @@ -0,0 +1,2 @@
@@ -6440,7 +6479,7 @@ index 0000000..4565909
 +char *fake_heap_start = (char*)0;
 diff --git a/libgloss/libsysbase/mkdir.c b/libgloss/libsysbase/mkdir.c
 new file mode 100644
-index 0000000..b4fcbd3
+index 000000000..b4fcbd3d7
 --- /dev/null
 +++ b/libgloss/libsysbase/mkdir.c
 @@ -0,0 +1,19 @@
@@ -6463,9 +6502,29 @@ index 0000000..b4fcbd3
 +
 +	return ret;
 +}
+diff --git a/libgloss/libsysbase/nanosleep.c b/libgloss/libsysbase/nanosleep.c
+new file mode 100644
+index 000000000..3c96fc61b
+--- /dev/null
++++ b/libgloss/libsysbase/nanosleep.c
+@@ -0,0 +1,14 @@
++#include <errno.h>
++#include <time.h>
++#include <sys/iosupport.h>
++
++int nanosleep(const struct timespec *req, struct timespec *rem)
++{
++   if ( __syscalls.nanosleep ) {
++      return __syscalls.nanosleep(req, rem);
++   } else {
++      *rem = *req;
++      errno = ENOSYS;
++      return -1;
++   }
++}
 diff --git a/libgloss/libsysbase/open.c b/libgloss/libsysbase/open.c
 new file mode 100644
-index 0000000..f8d98fd
+index 000000000..f8d98fd3b
 --- /dev/null
 +++ b/libgloss/libsysbase/open.c
 @@ -0,0 +1,53 @@
@@ -6524,7 +6583,7 @@ index 0000000..f8d98fd
 +}
 diff --git a/libgloss/libsysbase/read.c b/libgloss/libsysbase/read.c
 new file mode 100644
-index 0000000..838a8c7
+index 000000000..838a8c796
 --- /dev/null
 +++ b/libgloss/libsysbase/read.c
 @@ -0,0 +1,39 @@
@@ -6569,7 +6628,7 @@ index 0000000..838a8c7
 +
 diff --git a/libgloss/libsysbase/rename.c b/libgloss/libsysbase/rename.c
 new file mode 100644
-index 0000000..97a056a
+index 000000000..97a056a72
 --- /dev/null
 +++ b/libgloss/libsysbase/rename.c
 @@ -0,0 +1,34 @@
@@ -6609,7 +6668,7 @@ index 0000000..97a056a
 +}
 diff --git a/libgloss/libsysbase/rmdir.c b/libgloss/libsysbase/rmdir.c
 new file mode 100644
-index 0000000..2692a29
+index 000000000..2692a2997
 --- /dev/null
 +++ b/libgloss/libsysbase/rmdir.c
 @@ -0,0 +1,25 @@
@@ -6640,7 +6699,7 @@ index 0000000..2692a29
 +}
 diff --git a/libgloss/libsysbase/sbrk.c b/libgloss/libsysbase/sbrk.c
 new file mode 100644
-index 0000000..5dd550c
+index 000000000..5dd550c5c
 --- /dev/null
 +++ b/libgloss/libsysbase/sbrk.c
 @@ -0,0 +1,60 @@
@@ -6704,9 +6763,33 @@ index 0000000..5dd550c
 +	heap_start += incr;
 +	return (caddr_t) prev_heap_start;
 +}
+diff --git a/libgloss/libsysbase/sleep.c b/libgloss/libsysbase/sleep.c
+new file mode 100644
+index 000000000..f3aa97954
+--- /dev/null
++++ b/libgloss/libsysbase/sleep.c
+@@ -0,0 +1,18 @@
++/* Copied from libc/posix/sleep.c, removed the check for HAVE_NANOSLEEP */
++
++/* Written 2000 by Werner Almesberger */
++
++#include <errno.h>
++#include <time.h>
++#include <unistd.h>
++
++unsigned sleep(unsigned seconds)
++{
++    struct timespec ts;
++
++    ts.tv_sec = seconds;
++    ts.tv_nsec = 0;
++    if (!nanosleep(&ts,&ts)) return 0;
++    if (errno == EINTR) return ts.tv_sec;
++    return -1;
++}
 diff --git a/libgloss/libsysbase/stat.c b/libgloss/libsysbase/stat.c
 new file mode 100644
-index 0000000..d0ad002
+index 000000000..d0ad00202
 --- /dev/null
 +++ b/libgloss/libsysbase/stat.c
 @@ -0,0 +1,38 @@
@@ -6750,7 +6833,7 @@ index 0000000..d0ad002
 +
 diff --git a/libgloss/libsysbase/statvfs.c b/libgloss/libsysbase/statvfs.c
 new file mode 100644
-index 0000000..84e2213
+index 000000000..84e221340
 --- /dev/null
 +++ b/libgloss/libsysbase/statvfs.c
 @@ -0,0 +1,24 @@
@@ -6780,10 +6863,10 @@ index 0000000..84e2213
 +}
 diff --git a/libgloss/libsysbase/syscall_support.c b/libgloss/libsysbase/syscall_support.c
 new file mode 100644
-index 0000000..044f12d
+index 000000000..53fead72a
 --- /dev/null
 +++ b/libgloss/libsysbase/syscall_support.c
-@@ -0,0 +1,99 @@
+@@ -0,0 +1,103 @@
 +#include <sys/iosupport.h>
 +
 +//---------------------------------------------------------------------------------
@@ -6803,6 +6886,10 @@ index 0000000..044f12d
 +	NULL,	// lock_release_recursive
 +	NULL,	// lock_close_recursive
 +	NULL,	// __getreent
++	NULL,	// clock_gettime
++	NULL,	// clock_settime
++	NULL,	// clock_getres
++	NULL,	// nanosleep
 +};
 +
 +void __libc_lock_init(_LOCK_T *lock) {
@@ -6885,7 +6972,7 @@ index 0000000..044f12d
 +
 diff --git a/libgloss/libsysbase/times.c b/libgloss/libsysbase/times.c
 new file mode 100644
-index 0000000..79484e7
+index 000000000..79484e7f4
 --- /dev/null
 +++ b/libgloss/libsysbase/times.c
 @@ -0,0 +1,17 @@
@@ -6908,7 +6995,7 @@ index 0000000..79484e7
 +
 diff --git a/libgloss/libsysbase/truncate.c b/libgloss/libsysbase/truncate.c
 new file mode 100644
-index 0000000..8495259
+index 000000000..849525990
 --- /dev/null
 +++ b/libgloss/libsysbase/truncate.c
 @@ -0,0 +1,54 @@
@@ -6968,7 +7055,7 @@ index 0000000..8495259
 +}
 diff --git a/libgloss/libsysbase/unlink.c b/libgloss/libsysbase/unlink.c
 new file mode 100644
-index 0000000..7920b79
+index 000000000..7920b79ac
 --- /dev/null
 +++ b/libgloss/libsysbase/unlink.c
 @@ -0,0 +1,34 @@
@@ -7006,9 +7093,84 @@ index 0000000..7920b79
 +	return ret;
 +}
 +
+diff --git a/libgloss/libsysbase/usleep.c b/libgloss/libsysbase/usleep.c
+new file mode 100644
+index 000000000..b54714775
+--- /dev/null
++++ b/libgloss/libsysbase/usleep.c
+@@ -0,0 +1,18 @@
++/* Copied from libc/posix/sleep.c, removed the check for HAVE_NANOSLEEP */
++
++/* Written 2000 by Werner Almesberger */
++
++#include <errno.h>
++#include <time.h>
++#include <unistd.h>
++
++int usleep(useconds_t useconds)
++{
++	struct timespec ts;
++
++	ts.tv_sec = (long int)useconds / 1000000;
++	ts.tv_nsec = ((long int)useconds % 1000000) * 1000;
++	if (!nanosleep(&ts,&ts)) return 0;
++	if (errno == EINTR) return ts.tv_sec;
++	return -1;
++}
+diff --git a/libgloss/libsysbase/utime.c b/libgloss/libsysbase/utime.c
+new file mode 100644
+index 000000000..f72bf9fc6
+--- /dev/null
++++ b/libgloss/libsysbase/utime.c
+@@ -0,0 +1,45 @@
++#include "config.h"
++
++#include <errno.h>
++#include <stdio.h>
++#include <time.h>
++#include <utime.h>
++#include <sys/iosupport.h>
++
++int utimes(const char *filename, const struct timeval times[2])
++{
++        struct _reent *r = _REENT;
++        int dev,ret;
++
++        dev = FindDevice(filename);
++
++        if(dev!=-1) {
++                if (devoptab_list[dev]->utimes_r) {
++                        r->deviceData = devoptab_list[dev]->deviceData;
++                        ret = devoptab_list[dev]->utimes_r(r,filename,times);
++                } else {
++                        r->_errno=ENOSYS;
++                }
++        } else {
++                ret = -1;
++                r->_errno = ENODEV;
++        }
++        return ret;
++
++
++
++}
++
++
++int utime(const char *filename, const struct utimbuf *times)
++{
++        struct timeval t[2];
++        if (times) {
++                t[0].tv_sec  = times->actime;
++                t[0].tv_usec = 0;
++                t[1].tv_sec  = times->modtime;
++                t[1].tv_usec = 0;
++        }
++
++        return utimes(filename, t);
++}
 diff --git a/libgloss/libsysbase/wait.c b/libgloss/libsysbase/wait.c
 new file mode 100644
-index 0000000..247486e
+index 000000000..247486e42
 --- /dev/null
 +++ b/libgloss/libsysbase/wait.c
 @@ -0,0 +1,24 @@
@@ -7038,7 +7200,7 @@ index 0000000..247486e
 +
 diff --git a/libgloss/libsysbase/warning.h b/libgloss/libsysbase/warning.h
 new file mode 100644
-index 0000000..2c29982
+index 000000000..2c2998250
 --- /dev/null
 +++ b/libgloss/libsysbase/warning.h
 @@ -0,0 +1,43 @@
@@ -7087,7 +7249,7 @@ index 0000000..2c29982
 +#endif /* __WARNING_H__ */
 diff --git a/libgloss/libsysbase/write.c b/libgloss/libsysbase/write.c
 new file mode 100644
-index 0000000..61de918
+index 000000000..61de918bc
 --- /dev/null
 +++ b/libgloss/libsysbase/write.c
 @@ -0,0 +1,38 @@
@@ -7130,7 +7292,7 @@ index 0000000..61de918
 +	return ret;
 +}
 diff --git a/newlib/configure.host b/newlib/configure.host
-index eb64586..d536e0d 100644
+index eb645868b..d536e0daa 100644
 --- a/newlib/configure.host
 +++ b/newlib/configure.host
 @@ -624,13 +624,25 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
@@ -7159,40 +7321,8 @@ index eb64586..d536e0d 100644
    arm*-*-pe)
  	syscall_dir=syscalls
  	;;
-diff --git a/newlib/libc/include/stdio.h b/newlib/libc/include/stdio.h
-index cbc0fa9..5326f72 100644
---- a/newlib/libc/include/stdio.h
-+++ b/newlib/libc/include/stdio.h
-@@ -227,13 +227,13 @@ int	fgetpos (FILE *, _fpos_t *);
- #else
- int	fgetpos (FILE *__restrict, fpos_t *__restrict);
- #endif
--int	fseek (FILE *, long, int);
-+int	fseek (FILE *, off_t, int);
- #ifdef _COMPILING_NEWLIB
- int	fsetpos (FILE *, const _fpos_t *);
- #else
- int	fsetpos (FILE *, const fpos_t *);
- #endif
--long	ftell ( FILE *);
-+off_t	ftell ( FILE *);
- void	rewind (FILE *);
- void	clearerr (FILE *);
- int	feof (FILE *);
-@@ -438,9 +438,9 @@ size_t	_fread_r (struct _reent *, void *__restrict, size_t _size, size_t _n, FIL
- size_t	_fread_unlocked_r (struct _reent *, void *__restrict, size_t _size, size_t _n, FILE *__restrict);
- int	_fscanf_r (struct _reent *, FILE *__restrict, const char *__restrict, ...)
-                _ATTRIBUTE ((__format__ (__scanf__, 3, 4)));
--int	_fseek_r (struct _reent *, FILE *, long, int);
-+int	_fseek_r (struct _reent *, FILE *, off_t, int);
- int	_fseeko_r (struct _reent *, FILE *, _off_t, int);
--long	_ftell_r (struct _reent *, FILE *);
-+off_t	_ftell_r (struct _reent *, FILE *);
- _off_t	_ftello_r (struct _reent *, FILE *);
- void	_rewind_r (struct _reent *, FILE *);
- size_t	_fwrite_r (struct _reent *, const void *__restrict, size_t _size, size_t _n, FILE *__restrict);
 diff --git a/newlib/libc/include/sys/config.h b/newlib/libc/include/sys/config.h
-index 2082dfd..e535f18 100644
+index 2082dfdb1..e535f189b 100644
 --- a/newlib/libc/include/sys/config.h
 +++ b/newlib/libc/include/sys/config.h
 @@ -4,6 +4,9 @@
@@ -7206,7 +7336,7 @@ index 2082dfd..e535f18 100644
  #define MALLOC_ALIGNMENT 16
  #endif
 diff --git a/newlib/libc/include/sys/dirent.h b/newlib/libc/include/sys/dirent.h
-index a3fb5c0..1ead46b 100644
+index a3fb5c02c..1ead46ba0 100644
 --- a/newlib/libc/include/sys/dirent.h
 +++ b/newlib/libc/include/sys/dirent.h
 @@ -1,13 +1,52 @@
@@ -7266,7 +7396,7 @@ index a3fb5c0..1ead46b 100644
 +
 +#endif // _dirent_h_
 diff --git a/newlib/libc/include/sys/features.h b/newlib/libc/include/sys/features.h
-index 2900b33..6efb54e 100644
+index 2900b332f..6efb54eb3 100644
 --- a/newlib/libc/include/sys/features.h
 +++ b/newlib/libc/include/sys/features.h
 @@ -330,6 +330,9 @@ extern "C" {
@@ -7281,10 +7411,10 @@ index 2900b33..6efb54e 100644
  #ifdef __rtems__
 diff --git a/newlib/libc/include/sys/iosupport.h b/newlib/libc/include/sys/iosupport.h
 new file mode 100644
-index 0000000..cc3acdd
+index 000000000..ee14d2610
 --- /dev/null
 +++ b/newlib/libc/include/sys/iosupport.h
-@@ -0,0 +1,109 @@
+@@ -0,0 +1,112 @@
 +//---------------------------------------------------------------------------------
 +#ifndef __iosupp_h__
 +#define __iosupp_h__
@@ -7350,6 +7480,8 @@ index 0000000..cc3acdd
 +	int (*chmod_r)(struct _reent *r, const char *path, mode_t mode);
 +	int (*fchmod_r)(struct _reent *r, void *fd, mode_t mode);
 +	int (*rmdir_r)(struct _reent *r, const char *name);
++	int (*lstat_r)(struct _reent *r, const char *file, struct stat *st);
++	int (*utimes_r)(struct _reent *r, const char *filename, const struct timeval times[2]);
 +
 +} devoptab_t;
 +
@@ -7373,6 +7505,7 @@ index 0000000..cc3acdd
 +	int (*clock_gettime)(clockid_t clock_id, struct timespec *tp);
 +	int (*clock_settime)(clockid_t clock_id, const struct timespec *tp);
 +	int (*clock_getres)(clockid_t clock_id, struct timespec *res);
++	int (*nanosleep)(const struct timespec *req, struct timespec *rem);
 +} __syscalls_t;
 +
 +extern __syscalls_t __syscalls;
@@ -7395,7 +7528,7 @@ index 0000000..cc3acdd
 +#endif // __iosupp_h__
 +//---------------------------------------------------------------------------------
 diff --git a/newlib/libc/include/sys/lock.h b/newlib/libc/include/sys/lock.h
-index 5289049..a755d64 100644
+index 528904957..a755d6443 100644
 --- a/newlib/libc/include/sys/lock.h
 +++ b/newlib/libc/include/sys/lock.h
 @@ -1,69 +1,66 @@
@@ -7530,7 +7663,7 @@ index 5289049..a755d64 100644
 -#endif /* __SYS_LOCK_H__ */
 +#endif // __SYS_LOCK_H__
 diff --git a/newlib/libc/include/sys/reent.h b/newlib/libc/include/sys/reent.h
-index 1ef2261..ce3721a 100644
+index 1ef226194..ce3721a14 100644
 --- a/newlib/libc/include/sys/reent.h
 +++ b/newlib/libc/include/sys/reent.h
 @@ -416,6 +416,8 @@ struct _reent
@@ -7550,9 +7683,24 @@ index 1ef2261..ce3721a 100644
  };
  
  #ifdef _REENT_GLOBAL_STDIO_STREAMS
+diff --git a/newlib/libc/include/sys/stat.h b/newlib/libc/include/sys/stat.h
+index eee98db64..aed9c1746 100644
+--- a/newlib/libc/include/sys/stat.h
++++ b/newlib/libc/include/sys/stat.h
+@@ -152,8 +152,9 @@ int	mkfifo (const char *__path, mode_t __mode );
+ int	stat (const char *__restrict __path, struct stat *__restrict __sbuf );
+ mode_t	umask (mode_t __mask );
+ 
+-#if defined (__SPU__) || defined(__rtems__) || defined(__CYGWIN__) && !defined(__INSIDE_CYGWIN__)
+ int	lstat (const char *__restrict __path, struct stat *__restrict __buf );
++
++#if defined (__SPU__) || defined(__rtems__) || defined(__CYGWIN__) && !defined(__INSIDE_CYGWIN__)
+ int	mknod (const char *__path, mode_t __mode, dev_t __dev );
+ #endif
+ 
 diff --git a/newlib/libc/include/sys/statvfs.h b/newlib/libc/include/sys/statvfs.h
 new file mode 100644
-index 0000000..380329d
+index 000000000..380329d34
 --- /dev/null
 +++ b/newlib/libc/include/sys/statvfs.h
 @@ -0,0 +1,35 @@
@@ -7592,8 +7740,34 @@ index 0000000..380329d
 +
 +#endif // _SYS_STATVFS_H
 \ No newline at end of file
+diff --git a/newlib/libc/include/sys/utime.h b/newlib/libc/include/sys/utime.h
+index 5e937f103..635a7a6b8 100644
+--- a/newlib/libc/include/sys/utime.h
++++ b/newlib/libc/include/sys/utime.h
+@@ -9,12 +9,19 @@
+ extern "C" {
+ #endif
+ 
+-struct utimbuf 
++struct utimbuf
+ {
+   time_t actime;
+-  time_t modtime; 
++  time_t modtime;
+ };
+ 
++/* Functions */
++
++int utime(
++  const char           *path,
++  const struct utimbuf *times
++);
++
+ #ifdef __cplusplus
+ };
+ #endif
 diff --git a/newlib/libc/locale/locale.c b/newlib/libc/locale/locale.c
-index baa5451..a11f894 100644
+index baa5451a6..a11f89473 100644
 --- a/newlib/libc/locale/locale.c
 +++ b/newlib/libc/locale/locale.c
 @@ -91,7 +91,7 @@ beginning with <<"LC_">>.
@@ -7714,7 +7888,7 @@ index baa5451..a11f894 100644
    return __get_current_locale ()->ctype_ptr;
  }
 diff --git a/newlib/libc/machine/aarch64/Makefile.am b/newlib/libc/machine/aarch64/Makefile.am
-index e8b8197..011f69d 100644
+index e8b8197fa..011f69d69 100644
 --- a/newlib/libc/machine/aarch64/Makefile.am
 +++ b/newlib/libc/machine/aarch64/Makefile.am
 @@ -9,6 +9,7 @@ AM_CCASFLAGS = $(INCLUDES)
@@ -7726,7 +7900,7 @@ index e8b8197..011f69d 100644
  lib_a_SOURCES += memchr.S
  lib_a_SOURCES += memcmp-stub.c
 diff --git a/newlib/libc/machine/aarch64/Makefile.in b/newlib/libc/machine/aarch64/Makefile.in
-index 39b23a1..9695124 100644
+index 39b23a1ce..969512471 100644
 --- a/newlib/libc/machine/aarch64/Makefile.in
 +++ b/newlib/libc/machine/aarch64/Makefile.in
 @@ -69,22 +69,22 @@ LIBRARIES = $(noinst_LIBRARIES)
@@ -7792,7 +7966,7 @@ index 39b23a1..9695124 100644
  
 diff --git a/newlib/libc/machine/aarch64/access.c b/newlib/libc/machine/aarch64/access.c
 new file mode 100644
-index 0000000..980682e
+index 000000000..980682ef3
 --- /dev/null
 +++ b/newlib/libc/machine/aarch64/access.c
 @@ -0,0 +1,33 @@
@@ -7830,7 +8004,7 @@ index 0000000..980682e
 +}
 +	
 diff --git a/newlib/libc/machine/arm/Makefile.am b/newlib/libc/machine/arm/Makefile.am
-index 9bd35e7..7311300 100644
+index 9bd35e733..731130092 100644
 --- a/newlib/libc/machine/arm/Makefile.am
 +++ b/newlib/libc/machine/arm/Makefile.am
 @@ -11,7 +11,9 @@ noinst_LIBRARIES = lib.a
@@ -7845,7 +8019,7 @@ index 9bd35e7..7311300 100644
  lib_a_SOURCES += memchr.S
  lib_a_SOURCES += memcpy-stub.c
 diff --git a/newlib/libc/machine/arm/Makefile.in b/newlib/libc/machine/arm/Makefile.in
-index d9dbcd5..43712f8 100644
+index d9dbcd5c3..43712f813 100644
 --- a/newlib/libc/machine/arm/Makefile.in
 +++ b/newlib/libc/machine/arm/Makefile.in
 @@ -75,10 +75,10 @@ am_lib_a_OBJECTS = lib_a-setjmp.$(OBJEXT) lib_a-strcmp.$(OBJEXT) \
@@ -7889,7 +8063,7 @@ index d9dbcd5..43712f8 100644
  
 diff --git a/newlib/libc/machine/arm/sync_synchronize.c b/newlib/libc/machine/arm/sync_synchronize.c
 new file mode 100644
-index 0000000..3acc9e0
+index 000000000..3acc9e094
 --- /dev/null
 +++ b/newlib/libc/machine/arm/sync_synchronize.c
 @@ -0,0 +1,10 @@
@@ -7905,7 +8079,7 @@ index 0000000..3acc9e0
 +#endif
 diff --git a/newlib/libc/machine/arm/sys/stdio.h b/newlib/libc/machine/arm/sys/stdio.h
 new file mode 100644
-index 0000000..4eb278e
+index 000000000..4eb278e2f
 --- /dev/null
 +++ b/newlib/libc/machine/arm/sys/stdio.h
 @@ -0,0 +1,27 @@
@@ -7937,7 +8111,7 @@ index 0000000..4eb278e
 +
 +#endif /* _NEWLIB_STDIO_H */
 diff --git a/newlib/libc/reent/getreent.c b/newlib/libc/reent/getreent.c
-index 5fa98e9..ef8a15e 100644
+index 5fa98e96b..ef8a15e1b 100644
 --- a/newlib/libc/reent/getreent.c
 +++ b/newlib/libc/reent/getreent.c
 @@ -1,3 +1,4 @@
@@ -7952,7 +8126,7 @@ index 5fa98e9..ef8a15e 100644
 +#endif
 \ No newline at end of file
 diff --git a/newlib/libc/reent/gettimeofdayr.c b/newlib/libc/reent/gettimeofdayr.c
-index 9b982a9..8c0aaac 100644
+index 9b982a993..8c0aaac8c 100644
 --- a/newlib/libc/reent/gettimeofdayr.c
 +++ b/newlib/libc/reent/gettimeofdayr.c
 @@ -51,7 +51,7 @@ DESCRIPTION
@@ -7972,7 +8146,7 @@ index 9b982a9..8c0aaac 100644
 +*/
  #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */
 diff --git a/newlib/libc/stdio/fread.c b/newlib/libc/stdio/fread.c
-index b358d2b..29cec02 100644
+index b358d2b4a..29cec0229 100644
 --- a/newlib/libc/stdio/fread.c
 +++ b/newlib/libc/stdio/fread.c
 @@ -135,7 +135,7 @@ crlf_r (struct _reent * ptr,
@@ -8018,52 +8192,8 @@ index b358d2b..29cec02 100644
  	    {
  	      /* no more input: return partial result */
  #ifdef __SCLE
-diff --git a/newlib/libc/stdio/fseek.c b/newlib/libc/stdio/fseek.c
-index 9b3ea98..7c633e1 100644
---- a/newlib/libc/stdio/fseek.c
-+++ b/newlib/libc/stdio/fseek.c
-@@ -83,7 +83,7 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
- int
- _fseek_r (struct _reent *ptr,
-        register FILE *fp,
--       long offset,
-+       off_t offset,
-        int whence)
- {
-   return _fseeko_r (ptr, fp, offset, whence);
-@@ -93,7 +93,7 @@ _fseek_r (struct _reent *ptr,
- 
- int
- fseek (register FILE *fp,
--       long offset,
-+       off_t offset,
-        int whence)
- {
-   return _fseek_r (_REENT, fp, offset, whence);
-diff --git a/newlib/libc/stdio/ftell.c b/newlib/libc/stdio/ftell.c
-index e4a2461..f73baab 100644
---- a/newlib/libc/stdio/ftell.c
-+++ b/newlib/libc/stdio/ftell.c
-@@ -82,7 +82,7 @@ static char sccsid[] = "%W% (Berkeley) %G%";
- #include <errno.h>
- #include "local.h"
- 
--long
-+off_t
- _ftell_r (struct _reent *ptr,
-        register FILE * fp)
- {
-@@ -99,7 +99,7 @@ _ftell_r (struct _reent *ptr,
- 
- #ifndef _REENT_ONLY
- 
--long
-+off_t
- ftell (register FILE * fp)
- {
-   return _ftell_r (_REENT, fp);
 diff --git a/newlib/libc/stdio/vfprintf.c b/newlib/libc/stdio/vfprintf.c
-index c4bf2db..d756df3 100644
+index c4bf2dbe3..d756df37d 100644
 --- a/newlib/libc/stdio/vfprintf.c
 +++ b/newlib/libc/stdio/vfprintf.c
 @@ -112,6 +112,8 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
@@ -8094,7 +8224,7 @@ index c4bf2db..d756df3 100644
  			if (ch == 'S' || (flags & LONGINT)) {
  				mbstate_t ps;
 diff --git a/newlib/libc/stdio/vfscanf.c b/newlib/libc/stdio/vfscanf.c
-index b972355..298f68a 100644
+index b97235559..298f68a9c 100644
 --- a/newlib/libc/stdio/vfscanf.c
 +++ b/newlib/libc/stdio/vfscanf.c
 @@ -74,6 +74,8 @@ These are GNU extensions.
@@ -8107,7 +8237,7 @@ index b972355..298f68a 100644
  #include <reent.h>
  #include <newlib.h>
 diff --git a/newlib/libc/stdio/vfwprintf.c b/newlib/libc/stdio/vfwprintf.c
-index 980b31e..722be90 100644
+index 980b31e3b..722be905e 100644
 --- a/newlib/libc/stdio/vfwprintf.c
 +++ b/newlib/libc/stdio/vfwprintf.c
 @@ -92,6 +92,9 @@ SEEALSO
@@ -8121,7 +8251,7 @@ index 980b31e..722be90 100644
  
  #ifdef INTEGER_ONLY
 diff --git a/newlib/libc/stdio/vfwscanf.c b/newlib/libc/stdio/vfwscanf.c
-index c3470a1..626f137 100644
+index c3470a15c..626f13723 100644
 --- a/newlib/libc/stdio/vfwscanf.c
 +++ b/newlib/libc/stdio/vfwscanf.c
 @@ -74,6 +74,9 @@ PORTABILITY
@@ -8135,7 +8265,7 @@ index c3470a1..626f137 100644
  #include <reent.h>
  #include <newlib.h>
 diff --git a/newlib/libc/stdlib/mbtowc_r.c b/newlib/libc/stdlib/mbtowc_r.c
-index 920a7ea..ba5ee76 100644
+index 920a7ea3c..ba5ee7652 100644
 --- a/newlib/libc/stdlib/mbtowc_r.c
 +++ b/newlib/libc/stdlib/mbtowc_r.c
 @@ -7,6 +7,7 @@
@@ -8148,7 +8278,7 @@ index 920a7ea..ba5ee76 100644
          wchar_t       *__restrict pwc,
 diff --git a/newlib/libc/sys/arm/include/machine/_types.h b/newlib/libc/sys/arm/include/machine/_types.h
 new file mode 100644
-index 0000000..40092f9
+index 000000000..40092f99f
 --- /dev/null
 +++ b/newlib/libc/sys/arm/include/machine/_types.h
 @@ -0,0 +1,19 @@
@@ -8173,7 +8303,7 @@ index 0000000..40092f9
 +
 diff --git a/newlib/libc/sys/arm/sys/lock.h b/newlib/libc/sys/arm/sys/lock.h
 new file mode 100644
-index 0000000..567fed5
+index 000000000..567fed56b
 --- /dev/null
 +++ b/newlib/libc/sys/arm/sys/lock.h
 @@ -0,0 +1,66 @@
@@ -8244,7 +8374,7 @@ index 0000000..567fed5
 +
 +#endif // __SYS_LOCK_H__
 diff --git a/newlib/libc/sys/arm/sys/param.h b/newlib/libc/sys/arm/sys/param.h
-index 5b9464c..e8969b9 100644
+index 5b9464cca..e8969b954 100644
 --- a/newlib/libc/sys/arm/sys/param.h
 +++ b/newlib/libc/sys/arm/sys/param.h
 @@ -19,6 +19,8 @@
