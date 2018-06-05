@@ -10,7 +10,7 @@ cd $target/binutils
 
 if [ ! -f configured-binutils ]
 then
-	CFLAGS=$cflags LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
+	CPPFLAGS="$cppflags $CPPFLAGS" LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
         --prefix=$prefix --target=$target --disable-nls --disable-werror \
 	--enable-lto --enable-plugins --enable-gold \
 	$CROSS_PARAMS \
@@ -39,8 +39,7 @@ cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
-	CFLAGS="$cflags" \
-	CXXFLAGS="$cflags" \
+	CPPFLAGS="$cppflags $CPPFLAGS" \
 	LDFLAGS="$ldflags" \
 	CFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
 	CXXFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
@@ -194,8 +193,7 @@ PLATFORM=`uname -s`
 
 if [ ! -f configured-gdb ]
 then
-	CFLAGS="$cflags" \
-	CXXFLAGS="$cflags" \
+	CPPFLAGS="$cppflags $CPPFLAGS" \
 	LDFLAGS="$ldflags" \
 	../../gdb-$GDB_VER/configure \
 	--disable-nls --prefix=$prefix --target=$target --disable-werror \

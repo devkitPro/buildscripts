@@ -175,21 +175,25 @@ PLATFORM=`uname -s`
 
 case $PLATFORM in
 	Darwin )
-		cflags="-mmacosx-version-min=${OSXMIN} -I/usr/local/include"
+		cppflags="-mmacosx-version-min=${OSXMIN} -I/usr/local/include"
 		ldflags="-mmacosx-version-min=${OSXMIN} -L/usr/local/lib"
 		if [ "x${OSXSDKPATH}x" != "xx" ]; then
-			cflags="$cflags -isysroot ${OSXSDKPATH}"
+			cppflags="$cppflags -isysroot ${OSXSDKPATH}"
 			ldflags="$ldflags -Wl,-syslibroot,${OSXSDKPATH}"
 		fi
 		TESTCC=`cc -v 2>&1 | grep clang`
 		if [ "x${TESTCC}x" != "xx" ]; then
-			cflags="$cflags -fbracket-depth=512"
+			cppflags="$cppflags -fbracket-depth=512"
 		fi
     ;;
 	MINGW32* )
-		cflags="-D__USE_MINGW_ACCESS"
+		cppflags="-D__USE_MINGW_ACCESS"
     ;;
 esac
+
+if [ ! -z $CROSSBUILD ] && grep -q "mingw" <<<"$CROSSBUILD" ; then
+	cppflags="-D__USE_MINGW_ACCESS -D__USE_MINGW_ANSI_STDIO=1"
+fi
 
 
 BUILDSCRIPTDIR=$(pwd)
