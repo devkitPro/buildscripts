@@ -12,7 +12,7 @@ if [ ! -f configured-binutils ]
 then
 	CFLAGS=$cflags LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
         --prefix=$prefix --target=$target --disable-nls --disable-werror \
-	--enable-lto --enable-plugins --enable-poison-system-directories \
+	--enable-lto --enable-plugins --enable-gold \
 	$CROSS_PARAMS \
         || { echo "Error configuring binutils"; exit 1; }
 	touch configured-binutils
@@ -56,13 +56,15 @@ then
 		--enable-threads --disable-win32-registry --disable-nls --disable-debug\
 		--disable-libmudflap --disable-libssp --disable-libgomp \
 		--disable-libstdcxx-pch \
+		--enable-libstdcxx-time=yes \
+		--enable-libstdcxx-filesystem-ts \
 		--target=$target \
 		--with-newlib \
 		--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 		--prefix=$prefix \
 		--enable-lto\
 		--with-system-zlib \
-		--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 48" \
+		--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 49" \
 		$CROSS_PARAMS \
 		$CROSS_GCC_PARAMS \
 		|| { echo "Error configuring gcc"; exit 1; }
