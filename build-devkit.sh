@@ -2,7 +2,7 @@
 #---------------------------------------------------------------------------------
 #	devkitARM release 48
 #	devkitPPC release 30
-#	devkitA64 release 9
+#	devkitA64 release 10
 #---------------------------------------------------------------------------------
 
 if [ 1 -eq 1 ] ; then
@@ -152,6 +152,7 @@ TOOLPATH=$(echo $INSTALLDIR | sed -e 's/^\([a-zA-Z]\):/\/\1/')
 export PATH=$PATH:$TOOLPATH/$package/bin
 
 if [ ! -z $CROSSBUILD ]; then
+	toolsprefix=$INSTALLDIR/$CROSSBUILD/tools
 	prefix=$INSTALLDIR/$CROSSBUILD/$package
 	toolsprefix=$INSTALLDIR/$CROSSBUILD/tools
 	CROSS_PARAMS="--build=`./config.guess` --host=$CROSSBUILD"
