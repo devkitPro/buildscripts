@@ -33,7 +33,7 @@ index 6da164352..f18f17447 100644
  AS=${AS-as}
 diff --git a/libgloss/libsysbase/Makefile.in b/libgloss/libsysbase/Makefile.in
 new file mode 100644
-index 000000000..eaa11f765
+index 000000000..0d2be31c6
 --- /dev/null
 +++ b/libgloss/libsysbase/Makefile.in
 @@ -0,0 +1,148 @@
@@ -109,7 +109,7 @@ index 000000000..eaa11f765
 +	unlink.o wait.o write.o _exit.o malloc_vars.o \
 +	chdir.o mkdir.o rename.o build_argv.o statvfs.o \
 +	flock.o syscall_support.o handle_manager.o truncate.o ftruncate.o dirent.o fsync.o \
-+	fchmod.o chmod.o getreent.o rmdir.o utime.o
++	fchmod.o chmod.o getreent.o rmdir.o utime.o scandir.o
 +
 +# Object files specific to particular targets.
 +EVALOBJS = ${OBJS}
@@ -6795,6 +6795,86 @@ index 000000000..5dd550c5c
 +	heap_start += incr;
 +	return (caddr_t) prev_heap_start;
 +}
+diff --git a/libgloss/libsysbase/scandir.c b/libgloss/libsysbase/scandir.c
+new file mode 100644
+index 000000000..1333df4b2
+--- /dev/null
++++ b/libgloss/libsysbase/scandir.c
+@@ -0,0 +1,74 @@
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <stddef.h>
++#include <dirent.h>
++#include <stdlib.h>
++#include <string.h>
++#include <errno.h>
++
++/*
++ * The DIRSIZ macro gives the minimum record length which will hold
++ * the directory entry.  This requires the amount of space in struct dirent
++ * without the d_name field, plus enough space for the name with a terminating
++ * null byte (dp->d_namlen+1), rounded up to a 4 byte boundary.
++ */
++#undef DIRSIZ
++#ifdef _DIRENT_HAVE_D_NAMLEN
++#define DIRSIZ(dp) \
++    (offsetof (struct dirent, d_name) + (((dp)->d_namlen+1 + 3) &~ 3))
++#else
++#define DIRSIZ(dp) \
++    (offsetof (struct dirent, d_name) + ((strlen((dp)->d_name)+1 + 3) &~ 3))
++#endif
++
++int
++scandir (const char *dirname,
++	struct dirent ***namelist,
++	int (*filter) __P((const struct dirent *)),
++	int (*compar) __P((const struct dirent **, const struct dirent **)))
++{
++	DIR *d = opendir(dirname);
++
++	if (!d) return -1;
++
++	struct dirent *de, **names = NULL, **tmp;
++	size_t cnt = 0, len = 0;
++
++	while (de = readdir(d)) {
++		if (filter && ! filter(de)) continue;
++		if (cnt >= len) {
++			len = 2*len+1;
++			if (len > SIZE_MAX/sizeof(*names)) break;
++			tmp = realloc(names, len * sizeof(*names));
++			if (!tmp) break;
++			names = tmp;
++		}
++		names[cnt] = malloc(DIRSIZ(de));
++		if (!names[cnt]) break;
++		memcpy(names[cnt++], de, DIRSIZ(de));
++	}
++
++	closedir(d);
++
++	if(errno) {
++		if (names) while(cnt-- > 0) free(names[cnt]);
++		free(names);
++		return -1;
++	}
++
++	if (compar) qsort(names, cnt, sizeof(*names), (int (*)(const void *, const void *))compar);
++
++	*namelist = names;
++	return cnt;
++}
++
++/*
++ * Alphabetic order comparison routine for those who want it.
++ */
++int
++alphasort (const struct dirent **d1,
++       const struct dirent **d2)
++{
++       return(strcmp((*d1)->d_name, (*d2)->d_name));
++}
++
 diff --git a/libgloss/libsysbase/sleep.c b/libgloss/libsysbase/sleep.c
 new file mode 100644
 index 000000000..f3aa97954
@@ -7370,10 +7450,10 @@ index 2082dfdb1..e535f189b 100644
  #define MALLOC_ALIGNMENT 16
  #endif
 diff --git a/newlib/libc/include/sys/dirent.h b/newlib/libc/include/sys/dirent.h
-index a3fb5c02c..1ead46ba0 100644
+index a3fb5c02c..5debd1525 100644
 --- a/newlib/libc/include/sys/dirent.h
 +++ b/newlib/libc/include/sys/dirent.h
-@@ -1,13 +1,52 @@
+@@ -1,13 +1,58 @@
  /* <dirent.h> includes <sys/dirent.h>, which is this file.  On a
     system which supports <dirent.h>, this file is overridden by
     dirent.h in the libc/sys/.../sys directory.  On a system which does
@@ -7423,6 +7503,12 @@ index a3fb5c02c..1ead46ba0 100644
 +	void rewinddir(DIR *dirp);
 +	void seekdir(DIR *dirp, long int loc);
 +	long int telldir(DIR *dirp);
++
++	int scandir(const char *dirp, struct dirent ***namelist,
++		int (*filter)(const struct dirent *),
++		int (*compar)(const struct dirent **, const struct dirent **));
++
++	int alphasort(const struct dirent **a, const struct dirent **b);
 +
  #ifdef __cplusplus
  }
@@ -8047,6 +8133,38 @@ index c3470a15c..626f13723 100644
  #include <_ansi.h>
  #include <reent.h>
  #include <newlib.h>
+diff --git a/newlib/libc/stdlib/aligned_alloc.c b/newlib/libc/stdlib/aligned_alloc.c
+index 88413ce86..24029a6f7 100644
+--- a/newlib/libc/stdlib/aligned_alloc.c
++++ b/newlib/libc/stdlib/aligned_alloc.c
+@@ -1,5 +1,5 @@
+ /*-
+- * Copyright (c) 2015 embedded brains GmbH
++ * Copyright (c) 2018 Dave Murphy
+  * All rights reserved.
+  *
+  * Redistribution and use in source and binary forms, with or without
+@@ -25,14 +25,15 @@
+  */
+ 
+ #include <stdlib.h>
++#include <malloc.h>
++#include <errno.h>
+ 
+ void *
+ aligned_alloc(size_t alignment, size_t size)
+ {
+-	void *p;
+-	int error;
++	if ((alignment !=0) && !(alignment & (alignment - 1 )) && !(size & (alignment - 1)))
++		return memalign(alignment,size);
+ 
+-	error = posix_memalign(&p, alignment, size);
+-
+-	return (error == 0 ? p : NULL);
++	errno = EINVAL;
++	return (void*)NULL;
+ }
 diff --git a/newlib/libc/stdlib/mbtowc_r.c b/newlib/libc/stdlib/mbtowc_r.c
 index 920a7ea3c..ba5ee7652 100644
 --- a/newlib/libc/stdlib/mbtowc_r.c
