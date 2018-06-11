@@ -13,6 +13,7 @@ then
 	CPPFLAGS="$cppflags $CPPFLAGS" LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
         --prefix=$prefix --target=$target --disable-nls --disable-werror \
 	--enable-lto --enable-plugins --enable-gold \
+	--enable-poison-system-directories \
 	$CROSS_PARAMS \
         || { echo "Error configuring binutils"; exit 1; }
 	touch configured-binutils
