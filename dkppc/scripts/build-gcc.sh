@@ -82,7 +82,7 @@ then
 	CXXFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
 	LDFLAGS_FOR_TARGET="" \
 	../../gcc-$GCC_VER/configure \
-	--enable-languages=c,c++ \
+	--enable-languages=c,c++,objc,lto \
 	--enable-lto \
 	--with-cpu=750 \
 	--disable-nls --disable-shared --enable-threads=dkp --disable-multilib \
