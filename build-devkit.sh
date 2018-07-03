@@ -1,11 +1,11 @@
 #!/bin/bash
 #---------------------------------------------------------------------------------
 #	devkitARM release 49
-#	devkitPPC release 31
+#	devkitPPC release 32
 #	devkitA64 release 10
 #---------------------------------------------------------------------------------
 
-if [ 1 -eq 1 ] ; then
+if [ 0 -eq 1 ] ; then
 	echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
 	echo "https://github.com/devkitPro/buildscripts/releases/latest"
 	echo
