@@ -2,10 +2,10 @@
 #---------------------------------------------------------------------------------
 #	devkitARM release 49
 #	devkitPPC release 32
-#	devkitA64 release 10
+#	devkitA64 release 11
 #---------------------------------------------------------------------------------
 
-if [ 1 -eq 1 ] ; then
+if [ 0 -eq 1 ] ; then
 	echo "Please use the latest release buildscripts unless advised otherwise by devkitPro staff."
 	echo "https://github.com/devkitPro/buildscripts/releases/latest"
 	echo
@@ -57,8 +57,8 @@ TEX3DS_VER=1.0.0
 GP32_TOOLS_VER=1.0.3
 LIBMIRKO_VER=0.9.8
 
-SWITCH_TOOLS_VER=1.4.0
-LIBNX_VER=1.2.1
+SWITCH_TOOLS_VER=1.4.1
+LIBNX_VER=1.3.0
 
 OSXMIN=${OSXMIN:-10.9}
 
