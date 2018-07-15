@@ -609,10 +609,10 @@ index 000000000..b6cdfaeb8
 +m4_include([../acinclude.m4])
 diff --git a/libgloss/libsysbase/chdir.c b/libgloss/libsysbase/chdir.c
 new file mode 100644
-index 000000000..90d2dc5b7
+index 000000000..b94f6a8b4
 --- /dev/null
 +++ b/libgloss/libsysbase/chdir.c
-@@ -0,0 +1,201 @@
+@@ -0,0 +1,200 @@
 +#include <unistd.h>
 +#include <limits.h>
 +#include <reent.h>
@@ -712,11 +712,10 @@ index 000000000..90d2dc5b7
 +		extra += extraSize;
 +	} while (extraSize != 0);
 +
-+	if (pathEnd[-1] != DIRECTORY_SEPARATOR_CHAR) {
-+		pathEnd[0] = DIRECTORY_SEPARATOR_CHAR;
-+		pathEnd[1] = 0;
-+		pathEnd += 1;
-+	}
++        if (strlen(path) > 2 ) {
++                if (pathEnd[-1] == DIRECTORY_SEPARATOR_CHAR && pathEnd[-2] != ':')
++                        pathEnd[-1] = '\0';
++        }
 +
 +	return 0;
 +}
@@ -5349,10 +5348,10 @@ index 000000000..da85a3f46
 +
 diff --git a/libgloss/libsysbase/dirent.c b/libgloss/libsysbase/dirent.c
 new file mode 100644
-index 000000000..0ad29029c
+index 000000000..7d1f4545d
 --- /dev/null
 +++ b/libgloss/libsysbase/dirent.c
-@@ -0,0 +1,255 @@
+@@ -0,0 +1,256 @@
 +#include <malloc.h>
 +#include <errno.h>
 +#include <string.h>
@@ -5562,6 +5561,7 @@ index 000000000..0ad29029c
 +
 +	strncpy (entry->d_name, filename, sizeof(entry->d_name));
 +	entry->d_ino = st.st_ino;
++	entry->d_type = S_ISDIR(st.st_mode)?DT_DIR:DT_REG;
 +
 +	*result = entry;
 +	return 0;
@@ -7416,10 +7416,10 @@ index 2082dfdb1..e535f189b 100644
  #define MALLOC_ALIGNMENT 16
  #endif
 diff --git a/newlib/libc/include/sys/dirent.h b/newlib/libc/include/sys/dirent.h
-index a3fb5c02c..5debd1525 100644
+index a3fb5c02c..79df5cf61 100644
 --- a/newlib/libc/include/sys/dirent.h
 +++ b/newlib/libc/include/sys/dirent.h
-@@ -1,13 +1,58 @@
+@@ -1,13 +1,65 @@
  /* <dirent.h> includes <sys/dirent.h>, which is this file.  On a
     system which supports <dirent.h>, this file is overridden by
     dirent.h in the libc/sys/.../sys directory.  On a system which does
@@ -7431,7 +7431,6 @@ index a3fb5c02c..5debd1525 100644
 +#ifndef _dirent_h_
 +#define _dirent_h_
 +
-+#include <sys/iosupport.h>
 +#include <sys/types.h>
 +#include <sys/syslimits.h>
 +
@@ -7444,37 +7443,45 @@ index a3fb5c02c..5debd1525 100644
 +#define	DT_LNK		10
 +#define	DT_SOCK		12
 +#define	DT_WHT		14
++
++#define _DIRENT_HAVE_D_TYPE
  
  #ifdef __cplusplus
  extern "C" {
  #endif
 -#error "<dirent.h> not supported"
 +
-+	struct dirent {
-+		ino_t	d_ino;
-+		unsigned char  d_type;
-+		char	d_name[NAME_MAX+1];
-+	};
++struct dirent {
++	ino_t	d_ino;
++	unsigned char  d_type;
++	char	d_name[NAME_MAX+1];
++};
 +
-+	typedef struct {
-+		long int        position;
-+		DIR_ITER*       dirData;
-+		struct dirent   fileData;
-+	} DIR;
++/* Directory iterator for mantaining state between dir* calls */
++typedef struct {
++    int device;
++    void *dirStruct;
++} DIR_ITER;
 +
-+	int closedir(DIR *dirp);
-+	DIR *opendir(const char *dirname);
-+	struct dirent *readdir(DIR *dirp);
-+	int readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result);
-+	void rewinddir(DIR *dirp);
-+	void seekdir(DIR *dirp, long int loc);
-+	long int telldir(DIR *dirp);
++typedef struct {
++	long int        position;
++	DIR_ITER*       dirData;
++	struct dirent   fileData;
++} DIR;
 +
-+	int scandir(const char *dirp, struct dirent ***namelist,
-+		int (*filter)(const struct dirent *),
-+		int (*compar)(const struct dirent **, const struct dirent **));
++int closedir(DIR *dirp);
++DIR *opendir(const char *dirname);
++struct dirent *readdir(DIR *dirp);
++int readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result);
++void rewinddir(DIR *dirp);
++void seekdir(DIR *dirp, long int loc);
++long int telldir(DIR *dirp);
 +
-+	int alphasort(const struct dirent **a, const struct dirent **b);
++int scandir(const char *dirp, struct dirent ***namelist,
++	int (*filter)(const struct dirent *),
++	int (*compar)(const struct dirent **, const struct dirent **));
++
++int alphasort(const struct dirent **a, const struct dirent **b);
 +
  #ifdef __cplusplus
  }
@@ -7497,10 +7504,10 @@ index 2900b332f..6efb54eb3 100644
  #ifdef __rtems__
 diff --git a/newlib/libc/include/sys/iosupport.h b/newlib/libc/include/sys/iosupport.h
 new file mode 100644
-index 000000000..ee14d2610
+index 000000000..e177ccf8e
 --- /dev/null
 +++ b/newlib/libc/include/sys/iosupport.h
-@@ -0,0 +1,112 @@
+@@ -0,0 +1,106 @@
 +//---------------------------------------------------------------------------------
 +#ifndef __iosupp_h__
 +#define __iosupp_h__
@@ -7514,6 +7521,7 @@ index 000000000..ee14d2610
 +#include <sys/stat.h>
 +#include <sys/statvfs.h>
 +#include <time.h>
++#include <dirent.h>
 +
 +enum	{
 +	STD_IN,
@@ -7522,18 +7530,11 @@ index 000000000..ee14d2610
 +	STD_MAX = 16
 +};
 +
-+
 +typedef struct {
 +	unsigned int device;
 +	unsigned int refcount;
 +	void *fileStruct;
 +} __handle;
-+
-+/* Directory iterator for mantaining state between dir* calls */
-+typedef struct {
-+    int device;
-+    void *dirStruct;
-+} DIR_ITER;
 +
 +typedef struct {
 +	const char *name;
