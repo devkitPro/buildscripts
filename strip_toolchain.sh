@@ -27,5 +27,5 @@ fi
 #---------------------------------------------------------------------------------
 TOOLPATH=$(echo $INSTALLDIR | sed -e 's/^\([a-zA-Z]\):/\/\1/')
 export PATH=$PATH:$TOOLPATH/$package/bin
-
+export prefix=$INSTALLDIR/$CROSSBUILD/$package
 . ./strip_bins.sh
