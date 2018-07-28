@@ -1,0 +1,199 @@
+diff --git a/gcc/config.gcc b/gcc/config.gcc
+index 532c33f4c2b..c8a8bc698a7 100644
+--- a/gcc/config.gcc
++++ b/gcc/config.gcc
+@@ -945,6 +945,7 @@ aarch64*-*-elf | aarch64*-*-fuchsia* | aarch64*-*-rtems*)
+ 	case $target in
+ 	aarch64-*-elf*)
+ 		use_gcc_stdint=wrap
++		tm_defines="${tm_defines}  TARGET_DEFAULT_ASYNC_UNWIND_TABLES=1"
+ 		;;
+         aarch64-*-fuchsia*)
+                 tm_file="${tm_file} fuchsia.h"
+diff --git a/gcc/config/aarch64/aarch64-elf-raw.h b/gcc/config/aarch64/aarch64-elf-raw.h
+index c074238df06..ef503ddd5a6 100644
+--- a/gcc/config/aarch64/aarch64-elf-raw.h
++++ b/gcc/config/aarch64/aarch64-elf-raw.h
+@@ -22,6 +22,7 @@
+ #ifndef GCC_AARCH64_ELF_RAW_H
+ #define GCC_AARCH64_ELF_RAW_H
+ 
++#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
+ #define STARTFILE_SPEC " crti%O%s crtbegin%O%s crt0%O%s"
+ #define ENDFILE_SPEC \
+   " crtend%O%s crtn%O%s " \
+diff --git a/gcc/config/aarch64/aarch64-opts.h b/gcc/config/aarch64/aarch64-opts.h
+index 7a5c6d7664f..687793841de 100644
+--- a/gcc/config/aarch64/aarch64-opts.h
++++ b/gcc/config/aarch64/aarch64-opts.h
+@@ -48,6 +48,12 @@ enum aarch64_tls_type {
+   TLS_DESCRIPTORS
+ };
+ 
++/* Which thread pointer access sequence to use.  */
++enum aarch64_tp_type {
++  TP_HARD,
++  TP_SOFT
++};
++
+ /* The code model defines the address generation strategy.
+    Most have a PIC and non-PIC variant.  */
+ enum aarch64_code_model {
+diff --git a/gcc/config/aarch64/aarch64.c b/gcc/config/aarch64/aarch64.c
+index 175f13dc264..733ab473cbd 100644
+--- a/gcc/config/aarch64/aarch64.c
++++ b/gcc/config/aarch64/aarch64.c
+@@ -11979,8 +11979,24 @@ aarch64_load_tp (rtx target)
+       || !register_operand (target, Pmode))
+     target = gen_reg_rtx (Pmode);
+ 
+-  /* Can return in any reg.  */
+-  emit_insn (gen_aarch64_load_tp_hard (target));
++  if (TARGET_HARD_TP)
++    {
++      /* Can return in any reg.  */
++      emit_insn (gen_aarch64_load_tp_hard (target));
++    }
++  else
++    {
++      /* Always returned in r0.  Immediately copy the result into a pseudo,
++	 otherwise other uses of r0 (e.g. setting up function arguments) may
++	 clobber the value.  */
++
++      rtx tmp;
++
++      emit_insn (gen_aarch64_load_tp_soft ());
++
++      tmp = gen_rtx_REG (DImode, R0_REGNUM);
++      emit_move_insn (target, tmp);
++    }
+   return target;
+ }
+ 
+diff --git a/gcc/config/aarch64/aarch64.h b/gcc/config/aarch64/aarch64.h
+index 976f9afae54..73263bcb5e7 100644
+--- a/gcc/config/aarch64/aarch64.h
++++ b/gcc/config/aarch64/aarch64.h
+@@ -957,6 +957,10 @@ typedef struct
+ /* Check TLS Descriptors mechanism is selected.  */
+ #define TARGET_TLS_DESC (aarch64_tls_dialect == TLS_DESCRIPTORS)
+ 
++/* Check selected thread pointer access sequence to use.  */
++#define TARGET_HARD_TP (target_thread_pointer == TP_HARD)
++#define TARGET_SOFT_TP (target_thread_pointer == TP_SOFT)
++
+ extern enum aarch64_code_model aarch64_cmodel;
+ 
+ /* When using the tiny addressing model conditional and unconditional branches
+diff --git a/gcc/config/aarch64/aarch64.md b/gcc/config/aarch64/aarch64.md
+index 32a0e1f3685..783c655acf0 100644
+--- a/gcc/config/aarch64/aarch64.md
++++ b/gcc/config/aarch64/aarch64.md
+@@ -5693,11 +5693,22 @@
+ (define_insn "aarch64_load_tp_hard"
+   [(set (match_operand:DI 0 "register_operand" "=r")
+ 	(unspec:DI [(const_int 0)] UNSPEC_TLS))]
+-  ""
+-  "mrs\\t%0, tpidr_el0"
++  "TARGET_HARD_TP"
++  "mrs\\t%0, tpidr_el0\\t// aarch64_load_tp_hard"
+   [(set_attr "type" "mrs")]
+ )
+ 
++(define_insn "aarch64_load_tp_soft"
++  [(set (reg:DI 0) (unspec:DI [(const_int 0)] UNSPEC_TLS))
++   (clobber (reg:DI IP0_REGNUM))
++   (clobber (reg:DI IP1_REGNUM))
++   (clobber (reg:DI LR_REGNUM))
++   (clobber (reg:CC CC_REGNUM))]
++  "TARGET_SOFT_TP"
++  "bl\\t__aarch64_read_tp\\t// aarch64_load_tp_soft"
++  [(set_attr "type" "branch")]
++)
++
+ ;; The TLS ABI specifically requires that the compiler does not schedule
+ ;; instructions in the TLS stubs, in order to enable linker relaxation.
+ ;; Therefore we treat the stubs as an atomic sequence.
+diff --git a/gcc/config/aarch64/aarch64.opt b/gcc/config/aarch64/aarch64.opt
+index 52eaf8c6f40..52bccddc6e3 100644
+--- a/gcc/config/aarch64/aarch64.opt
++++ b/gcc/config/aarch64/aarch64.opt
+@@ -115,6 +115,20 @@ Enum(aarch64_tls_size) String(32) Value(32)
+ EnumValue
+ Enum(aarch64_tls_size) String(48) Value(48)
+ 
++mtp=
++Target RejectNegative Joined Enum(aarch64_tp_type) Var(target_thread_pointer) Init(TP_HARD)
++Specify how to access the thread pointer.
++
++Enum
++Name(aarch64_tp_type) Type(enum aarch64_tp_type)
++Valid arguments to -mtp=:
++
++EnumValue
++Enum(aarch64_tp_type) String(hard) Value(TP_HARD)
++
++EnumValue
++Enum(aarch64_tp_type) String(soft) Value(TP_SOFT)
++
+ march=
+ Target RejectNegative ToLower Joined Var(aarch64_arch_string)
+ -march=ARCH	Use features of architecture ARCH.
+diff --git a/gcc/config/aarch64/t-aarch64 b/gcc/config/aarch64/t-aarch64
+index 0be1f0d63aa..a54068bfd96 100644
+--- a/gcc/config/aarch64/t-aarch64
++++ b/gcc/config/aarch64/t-aarch64
+@@ -68,5 +68,7 @@ cortex-a57-fma-steering.o: $(srcdir)/config/aarch64/cortex-a57-fma-steering.c \
+ 		$(srcdir)/config/aarch64/cortex-a57-fma-steering.c
+ 
+ comma=,
+-MULTILIB_OPTIONS    = $(subst $(comma),/, $(patsubst %, mabi=%, $(subst $(comma),$(comma)mabi=,$(TM_MULTILIB_CONFIG))))
+-MULTILIB_DIRNAMES   = $(subst $(comma), ,$(TM_MULTILIB_CONFIG))
++MULTILIB_OPTIONS    = mcmodel=large fPIC
++MULTILIB_DIRNAMES   = large pic
++MULTILIB_REQUIRED   = mcmodel=large fPIC
++MULTILIB_MATCHES    = fPIC=fpic fPIC=fpie fPIC=fPIE
+diff --git a/gcc/gcc.c b/gcc/gcc.c
+index a716f708259..6a11011dba7 100644
+--- a/gcc/gcc.c
++++ b/gcc/gcc.c
+@@ -786,6 +786,11 @@ proper position among the other output files.  */
+ #endif
+ #endif
+ 
++#ifndef LIBGLOSS_SPEC
++# define LIBGLOSS_SPEC "-lsysbase"
++#endif
++
++
+ /* config.h can define STARTFILE_SPEC to override the default crt0 files.  */
+ #ifndef STARTFILE_SPEC
+ #define STARTFILE_SPEC  \
+@@ -1081,6 +1086,7 @@ static const char *link_spec = LINK_SPEC;
+ static const char *lib_spec = LIB_SPEC;
+ static const char *link_gomp_spec = "";
+ static const char *libgcc_spec = LIBGCC_SPEC;
++static const char *libgloss_spec = LIBGLOSS_SPEC;
+ static const char *endfile_spec = ENDFILE_SPEC;
+ static const char *startfile_spec = STARTFILE_SPEC;
+ static const char *linker_name_spec = LINKER_NAME;
+@@ -1577,6 +1583,7 @@ static struct spec_list static_specs[] =
+   INIT_STATIC_SPEC ("lib",			&lib_spec),
+   INIT_STATIC_SPEC ("link_gomp",		&link_gomp_spec),
+   INIT_STATIC_SPEC ("libgcc",			&libgcc_spec),
++  INIT_STATIC_SPEC ("libgloss",			&libgloss_spec),
+   INIT_STATIC_SPEC ("startfile",		&startfile_spec),
+   INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
+   INIT_STATIC_SPEC ("version",			&compiler_version),
+diff --git a/libgcc/crtstuff.c b/libgcc/crtstuff.c
+index 5e894455e16..f2347455de0 100644
+--- a/libgcc/crtstuff.c
++++ b/libgcc/crtstuff.c
+@@ -47,6 +47,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+ 
+ /* Target machine header files require this define. */
+ #define IN_LIBGCC2
++#define USED_FOR_TARGET
+ 
+ /* FIXME: Including auto-host is incorrect, but until we have
+    identified the set of defines that need to go into auto-target.h,
