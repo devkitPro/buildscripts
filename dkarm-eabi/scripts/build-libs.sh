@@ -40,6 +40,9 @@ $MAKE || { echo "error building libctru"; exit 1; }
 $MAKE install || { echo "error installing libctru"; exit 1; }
 
 cd $BUILDDIR/citro3d-$CITRO3D_VER
-$MAKE || { echo "error building libctru"; exit 1; }
-$MAKE install || { echo "error installing libctru"; exit 1; }
+$MAKE || { echo "error building citro3d"; exit 1; }
+$MAKE install || { echo "error installing citro3d"; exit 1; }
 
+cd $BUILDDIR/citro2d-$CITRO2D_VER
+$MAKE || { echo "error building citro2d"; exit 1; }
+$MAKE install || { echo "error installing citro2d"; exit 1; }
