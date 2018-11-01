@@ -1,7 +1,8 @@
-diff -NBaur gcc-8.1.0/gcc/config/arm/arm-cpus.in gcc-8.1.0-arm/gcc/config/arm/arm-cpus.in
---- gcc-8.1.0/gcc/config/arm/arm-cpus.in	2018-01-11 15:21:26.000000000 +0000
-+++ gcc-8.1.0-arm/gcc/config/arm/arm-cpus.in	2018-05-11 01:05:33.648236777 +0000
-@@ -393,7 +393,7 @@
+diff --git a/gcc/config/arm/arm-cpus.in b/gcc/config/arm/arm-cpus.in
+index 545321b0bbe..63ed77af8fd 100644
+--- a/gcc/config/arm/arm-cpus.in
++++ b/gcc/config/arm/arm-cpus.in
+@@ -395,7 +395,7 @@ begin arch armv6k
   tune for mpcore
   tune flags CO_PROC
   base 6K
@@ -10,9 +11,10 @@ diff -NBaur gcc-8.1.0/gcc/config/arm/arm-cpus.in gcc-8.1.0-arm/gcc/config/arm/ar
   option fp add VFPv2 FP_DBL
   optalias vfpv2 fp
   option nofp remove ALL_FP
-diff -NBaur gcc-8.1.0/gcc/config/arm/t-arm-elf gcc-8.1.0-arm/gcc/config/arm/t-arm-elf
---- gcc-8.1.0/gcc/config/arm/t-arm-elf	2018-01-11 15:21:26.000000000 +0000
-+++ gcc-8.1.0-arm/gcc/config/arm/t-arm-elf	2018-05-10 23:15:13.124566279 +0000
+diff --git a/gcc/config/arm/t-arm-elf b/gcc/config/arm/t-arm-elf
+index 9ec5bf065ac..9ab3ffb109d 100644
+--- a/gcc/config/arm/t-arm-elf
++++ b/gcc/config/arm/t-arm-elf
 @@ -1,4 +1,4 @@
 -# Copyright (C) 1998-2018 Free Software Foundation, Inc.
 +# Copyright (C) 1998-2017 Free Software Foundation, Inc.
@@ -105,25 +107,22 @@ diff -NBaur gcc-8.1.0/gcc/config/arm/t-arm-elf gcc-8.1.0-arm/gcc/config/arm/t-ar
 -
 -MULTILIB_MATCHES     += $(foreach FPARCH, $(v7a_fps), \
 -		          march?armv7+fp=march?armv7-a+$(FPARCH))
- 
+-
 -MULTILIB_MATCHES     += $(foreach FPARCH, $(v7ve_fps), \
 -		          march?armv7+fp=march?armv7ve+$(FPARCH))
-+MULTILIB_REQUIRED    = mthumb mbig-endian mthumb/mbig-endian march=armv6k/mfloat-abi=hard 
- 
+-
 -MULTILIB_MATCHES     += $(foreach ARCH, $(all_v7_a_r), \
 -			  march?armv7+fp=march?$(ARCH) \
 -			  march?armv7+fp=march?$(ARCH)+fp)
- 
+-
 -MULTILIB_MATCHES     += $(foreach ARCH, $(all_v8_archs), \
 -			  march?armv7+fp=march?$(ARCH) \
 -			  $(foreach FPARCH, $(v8_fps), \
 -			    march?armv7+fp=march?$(ARCH)+$(FPARCH)))
-+MULTILIB_MATCHES    += march?armv6k=mtune?mpcore
-+MULTILIB_MATCHES    += march?armv6k=mcpu?mpcore
- 
+-
 -MULTILIB_MATCHES     += $(foreach ARCH, armv7e-m armv8-m.mainline, \
 -			  march?armv7+fp=march?$(ARCH)+fp.dp)
- 
+-
 -# PART 4 - Reuse rules
  
 -MULTILIB_REUSE	     += mthumb=mthumb/mfpu.auto
@@ -135,6 +134,14 @@ diff -NBaur gcc-8.1.0/gcc/config/arm/t-arm-elf gcc-8.1.0-arm/gcc/config/arm/t-ar
 -MULTILIB_REUSE	     += mthumb/mfpu.auto/march.armv7+fp/mfloat-abi.hard=mthumb/march.armv7+fp/mfloat-abi.hard
 -MULTILIB_REUSE	     += mthumb/mfpu.auto/march.armv7+fp/mfloat-abi.hard=mfpu.auto/march.armv7+fp/mfloat-abi.hard
 -MULTILIB_REUSE	     += mthumb/mfpu.auto/march.armv7+fp/mfloat-abi.hard=march.armv7+fp/mfloat-abi.hard
++MULTILIB_REQUIRED    = mthumb mbig-endian mthumb/mbig-endian march=armv6k/mfloat-abi=hard 
++
++
++MULTILIB_MATCHES    += march?armv6k=mtune?mpcore
++MULTILIB_MATCHES    += march?armv6k=mcpu?mpcore
++
++
++
 +#MULTILIB_OPTIONS     += mcpu=fa526/mcpu=fa626/mcpu=fa606te/mcpu=fa626te/mcpu=fmp626/mcpu=fa726te
 +#MULTILIB_DIRNAMES    += fa526 fa626 fa606te fa626te fmp626 fa726te
 +#MULTILIB_EXCEPTIONS  += *mthumb*/*mcpu=fa526 *mthumb*/*mcpu=fa626
@@ -202,9 +209,10 @@ diff -NBaur gcc-8.1.0/gcc/config/arm/t-arm-elf gcc-8.1.0-arm/gcc/config/arm/t-ar
 +# MULTILIB_MATCHES    += mcpu?arm7=mcpu?arm600
 +# MULTILIB_MATCHES    += mcpu?arm7=mcpu?arm610
 +# MULTILIB_MATCHES    += mcpu?arm7=mcpu?arm620
-diff -NBaur gcc-8.1.0/gcc/config/arm/unknown-elf.h gcc-8.1.0-arm/gcc/config/arm/unknown-elf.h
---- gcc-8.1.0/gcc/config/arm/unknown-elf.h	2018-01-03 10:03:58.000000000 +0000
-+++ gcc-8.1.0-arm/gcc/config/arm/unknown-elf.h	2018-05-10 23:01:02.432676190 +0000
+diff --git a/gcc/config/arm/unknown-elf.h b/gcc/config/arm/unknown-elf.h
+index 12dd0931b08..59584fe64bc 100644
+--- a/gcc/config/arm/unknown-elf.h
++++ b/gcc/config/arm/unknown-elf.h
 @@ -29,7 +29,7 @@
  #endif
  
@@ -225,10 +233,11 @@ diff -NBaur gcc-8.1.0/gcc/config/arm/unknown-elf.h gcc-8.1.0-arm/gcc/config/arm/
 +#undef NO_IMPLICIT_EXTERN_C
 +#define NO_IMPLICIT_EXTERN_C
 +
-diff -NBaur gcc-8.1.0/gcc/gcc.c gcc-8.1.0-arm/gcc/gcc.c
---- gcc-8.1.0/gcc/gcc.c	2018-02-09 06:44:06.000000000 +0000
-+++ gcc-8.1.0-arm/gcc/gcc.c	2018-05-10 23:01:02.440676328 +0000
-@@ -786,6 +786,11 @@
+diff --git a/gcc/gcc.c b/gcc/gcc.c
+index a716f708259..6a11011dba7 100644
+--- a/gcc/gcc.c
++++ b/gcc/gcc.c
+@@ -786,6 +786,11 @@ proper position among the other output files.  */
  #endif
  #endif
  
@@ -240,7 +249,7 @@ diff -NBaur gcc-8.1.0/gcc/gcc.c gcc-8.1.0-arm/gcc/gcc.c
  /* config.h can define STARTFILE_SPEC to override the default crt0 files.  */
  #ifndef STARTFILE_SPEC
  #define STARTFILE_SPEC  \
-@@ -1081,6 +1086,7 @@
+@@ -1081,6 +1086,7 @@ static const char *link_spec = LINK_SPEC;
  static const char *lib_spec = LIB_SPEC;
  static const char *link_gomp_spec = "";
  static const char *libgcc_spec = LIBGCC_SPEC;
@@ -248,7 +257,7 @@ diff -NBaur gcc-8.1.0/gcc/gcc.c gcc-8.1.0-arm/gcc/gcc.c
  static const char *endfile_spec = ENDFILE_SPEC;
  static const char *startfile_spec = STARTFILE_SPEC;
  static const char *linker_name_spec = LINKER_NAME;
-@@ -1577,6 +1583,7 @@
+@@ -1577,6 +1583,7 @@ static struct spec_list static_specs[] =
    INIT_STATIC_SPEC ("lib",			&lib_spec),
    INIT_STATIC_SPEC ("link_gomp",		&link_gomp_spec),
    INIT_STATIC_SPEC ("libgcc",			&libgcc_spec),
@@ -256,19 +265,21 @@ diff -NBaur gcc-8.1.0/gcc/gcc.c gcc-8.1.0-arm/gcc/gcc.c
    INIT_STATIC_SPEC ("startfile",		&startfile_spec),
    INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
    INIT_STATIC_SPEC ("version",			&compiler_version),
-diff -NBaur gcc-8.1.0/libgcc/config/arm/t-bpabi gcc-8.1.0-arm/libgcc/config/arm/t-bpabi
---- gcc-8.1.0/libgcc/config/arm/t-bpabi	2012-08-17 15:06:06.000000000 +0000
-+++ gcc-8.1.0-arm/libgcc/config/arm/t-bpabi	2018-05-10 23:01:02.440676328 +0000
-@@ -17,4 +17,4 @@
+diff --git a/libgcc/config/arm/t-bpabi b/libgcc/config/arm/t-bpabi
+index dddddc7c444..c2502597953 100644
+--- a/libgcc/config/arm/t-bpabi
++++ b/libgcc/config/arm/t-bpabi
+@@ -17,4 +17,4 @@ SHLIB_MAPFILES += $(srcdir)/config/arm/libgcc-bpabi.ver
  # On ARM, specifying -fnon-call-exceptions will needlessly pull in
  # the unwinder in simple programs which use 64-bit division.  Omitting
  # the option is safe.
 -LIB2_DIVMOD_EXCEPTION_FLAGS := -fexceptions
 +LIB2_DIVMOD_EXCEPTION_FLAGS := -fno-exceptions
-diff -NBaur gcc-8.1.0/libgcc/crtstuff.c gcc-8.1.0-arm/libgcc/crtstuff.c
---- gcc-8.1.0/libgcc/crtstuff.c	2018-01-03 10:03:58.000000000 +0000
-+++ gcc-8.1.0-arm/libgcc/crtstuff.c	2018-05-10 23:01:02.440676328 +0000
-@@ -47,7 +47,7 @@
+diff --git a/libgcc/crtstuff.c b/libgcc/crtstuff.c
+index 5e894455e16..f81c9c6a64c 100644
+--- a/libgcc/crtstuff.c
++++ b/libgcc/crtstuff.c
+@@ -47,7 +47,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
  
  /* Target machine header files require this define. */
  #define IN_LIBGCC2
@@ -277,15 +288,3 @@ diff -NBaur gcc-8.1.0/libgcc/crtstuff.c gcc-8.1.0-arm/libgcc/crtstuff.c
  /* FIXME: Including auto-host is incorrect, but until we have
     identified the set of defines that need to go into auto-target.h,
     this will have to do.  */
-diff -NBaur gcc-8.1.0/libgcc/Makefile.in gcc-8.1.0-arm/libgcc/Makefile.in
---- gcc-8.1.0/libgcc/Makefile.in	2018-01-03 10:03:58.000000000 +0000
-+++ gcc-8.1.0-arm/libgcc/Makefile.in	2018-05-10 23:01:02.440676328 +0000
-@@ -847,7 +847,7 @@
- # libgcc_eh.a, only LIB2ADDEH matters.  If we do, only LIB2ADDEHSTATIC and
- # LIB2ADDEHSHARED matter.  (Usually all three are identical.)
- 
--c_flags := -fexceptions
-+c_flags := -fno-exceptions
- 
- ifeq ($(enable_shared),yes)
- 

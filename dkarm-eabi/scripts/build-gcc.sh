@@ -12,7 +12,7 @@ if [ ! -f configured-binutils ]
 then
 	CPPFLAGS="$cppflags $CPPFLAGS" LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
         --prefix=$prefix --target=$target --disable-nls --disable-werror \
-	--enable-lto --enable-plugins --enable-gold \
+	--enable-lto --enable-plugins \
 	--enable-poison-system-directories \
 	$CROSS_PARAMS \
         || { echo "Error configuring binutils"; exit 1; }
@@ -64,7 +64,7 @@ then
 		--prefix=$prefix \
 		--enable-lto\
 		--with-system-zlib \
-		--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 49" \
+		--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 50" \
 		$CROSS_PARAMS \
 		$CROSS_GCC_PARAMS \
 		|| { echo "Error configuring gcc"; exit 1; }
