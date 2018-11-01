@@ -44,7 +44,7 @@ case "$VERSION" in
     BINUTILS_VER=2.31.1
     MN_BINUTILS_VER=2.17
     NEWLIB_VER=3.0.0
-    GDB_VER=8.0.1
+    GDB_VER=8.2
     basedir='dkppc'
     package=devkitPPC
     target=powerpc-eabi
