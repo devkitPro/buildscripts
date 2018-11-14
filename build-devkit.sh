@@ -18,6 +18,9 @@ echo "Please note, these scripts are provided as a courtesy, toolchains built wi
 echo "are for personal use only and may not be distributed by entities other than devkitPro."
 echo "See http://devkitpro.org/wiki/Trademarks"
 echo
+echo "Users should use devkitPro pacman to maintain toolchain installations where possible"
+echo "See https://devkitpro.org/wiki/devkitPro_pacman"
+echo
 echo "Patches and improvements are of course welcome, please submit a PR"
 echo "https://github.com/devkitPro/buildscripts/pulls"
 echo
