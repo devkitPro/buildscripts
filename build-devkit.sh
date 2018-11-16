@@ -154,11 +154,13 @@ export MAKE
 TOOLPATH=$(echo $INSTALLDIR | sed -e 's/^\([a-zA-Z]\):/\/\1/')
 export PATH=$PATH:$TOOLPATH/$package/bin
 
+CROSS_PARAMS="--build=`./config.guess`"
+
 if [ ! -z $CROSSBUILD ]; then
 	toolsprefix=$INSTALLDIR/$CROSSBUILD/tools
 	prefix=$INSTALLDIR/$CROSSBUILD/$package
 	toolsprefix=$INSTALLDIR/$CROSSBUILD/tools
-	CROSS_PARAMS="--build=`./config.guess` --host=$CROSSBUILD"
+	CROSS_PARAMS="$CROSS_PARAMS --host=$CROSSBUILD"
 	CROSS_GCC_PARAMS="--with-gmp=$CROSSPATH --with-mpfr=$CROSSPATH --with-mpc=$CROSSPATH"
 else
 	toolsprefix=$INSTALLDIR/tools
