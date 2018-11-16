@@ -7531,7 +7531,7 @@ index 2900b332f..6efb54eb3 100644
  #ifdef __rtems__
 diff --git a/newlib/libc/include/sys/iosupport.h b/newlib/libc/include/sys/iosupport.h
 new file mode 100644
-index 000000000..ee14d2610
+index 000000000..dfed4107e
 --- /dev/null
 +++ b/newlib/libc/include/sys/iosupport.h
 @@ -0,0 +1,112 @@
@@ -7553,7 +7553,7 @@ index 000000000..ee14d2610
 +	STD_IN,
 +	STD_OUT,
 +	STD_ERR,
-+	STD_MAX = 16
++	STD_MAX = 35
 +};
 +
 +
