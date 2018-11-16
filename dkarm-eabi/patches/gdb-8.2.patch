@@ -1,29 +1,7 @@
-diff --git a/gdb/Makefile.in b/gdb/Makefile.in
-index 1d2dbaf3f7..2d24f09c1b 100644
---- a/gdb/Makefile.in
-+++ b/gdb/Makefile.in
-@@ -779,6 +779,7 @@ ALL_64_TARGET_OBS = \
- ALL_TARGET_OBS = \
- 	arc-tdep.o \
- 	arm.o \
-+	arm-3ds-tdep.o \
- 	arm-bsd-tdep.o \
- 	arm-get-next-pcs.o \
- 	arm-linux.o \
-@@ -2487,6 +2488,7 @@ ALLDEPFILES = \
- 	amd64-tdep.c \
- 	arc-tdep.c \
- 	arm.c \
-+	arm-3ds-tdep.c \
- 	arm-bsd-tdep.c \
- 	arm-get-next-pcs.c \
- 	arm-linux.c \
-diff --git a/gdb/arm-3ds-tdep.c b/gdb/arm-3ds-tdep.c
-new file mode 100644
-index 0000000000..ad014e28db
---- /dev/null
-+++ b/gdb/arm-3ds-tdep.c
-@@ -0,0 +1,197 @@
+diff -NBaur gdb-8.2/gdb/arm-3ds-tdep.c gdb-8.2-3ds/gdb/arm-3ds-tdep.c
+--- gdb-8.2/gdb/arm-3ds-tdep.c	1970-01-01 01:00:00.000000000 +0100
++++ gdb-8.2-3ds/gdb/arm-3ds-tdep.c	2018-11-15 22:55:21.916968907 +0000
+@@ -0,0 +1,157 @@
 +/* Target-dependent code for 3DS. */
 +
 +/* This uses code from GDB, which license is: */
@@ -95,48 +73,11 @@ index 0000000000..ad014e28db
 +  return next_pc;
 +}
 +
-+static VEC (CORE_ADDR) *
-+arm_3ds_software_single_step (struct regcache *regcache)
-+{
-+  struct gdbarch *gdbarch = get_regcache_arch (regcache);
-+  struct arm_get_next_pcs next_pcs_ctx;
-+  CORE_ADDR pc;
-+  int i;
-+  VEC (CORE_ADDR) *next_pcs = NULL;
-+  struct cleanup *old_chain;
-+
-+  /* If the target does have hardware single step, GDB doesn't have
-+     to bother software single step.  */
-+  if (target_can_do_single_step () == 1)
-+    return NULL;
-+
-+  old_chain = make_cleanup (VEC_cleanup (CORE_ADDR), &next_pcs);
-+
-+  arm_get_next_pcs_ctor (&next_pcs_ctx,
-+			 &arm_3ds_get_next_pcs_ops,
-+			 gdbarch_byte_order (gdbarch),
-+			 gdbarch_byte_order_for_code (gdbarch),
-+			 1,
-+			 regcache);
-+
-+  next_pcs = arm_get_next_pcs (&next_pcs_ctx);
-+
-+  for (i = 0; VEC_iterate (CORE_ADDR, next_pcs, i, pc); i++)
-+    {
-+      pc = gdbarch_addr_bits_remove (gdbarch, pc);
-+      VEC_replace (CORE_ADDR, next_pcs, i, pc);
-+    }
-+
-+  discard_cleanups (old_chain);
-+
-+  return next_pcs;
-+}
-+
 +static LONGEST
 +arm_3ds_get_syscall_number (struct gdbarch *gdbarch,
-+			      ptid_t ptid)
++			      thread_info *thread)
 +{
-+  struct regcache *regs = get_thread_regcache (ptid);
++  struct regcache *regs = get_thread_regcache (thread);
 +
 +  ULONGEST pc;
 +  ULONGEST cpsr;
@@ -205,15 +146,12 @@ index 0000000000..ad014e28db
 +  tdep->fp_model = ARM_FLOAT_VFP;
 +
 +  /* Single stepping.  */
-+  set_gdbarch_software_single_step (gdbarch, arm_3ds_software_single_step);
++  set_gdbarch_software_single_step (gdbarch, arm_software_single_step);
 +
 +  /* `catch syscall' */
 +  set_xml_syscall_file_name (gdbarch, "syscalls/arm-3ds.xml");
 +  set_gdbarch_get_syscall_number (gdbarch, arm_3ds_get_syscall_number);
 +}
-+
-+/* Provide a prototype to silence -Wmissing-prototypes.  */
-+extern initialize_file_ftype _initialize_arm_3ds_tdep;
 +
 +void
 +_initialize_arm_3ds_tdep (void)
@@ -221,26 +159,22 @@ index 0000000000..ad014e28db
 +  gdbarch_register_osabi (bfd_arch_arm, 0, GDB_OSABI_3DS,
 +                          arm_3ds_init_abi);
 +}
-diff --git a/gdb/configure.tgt b/gdb/configure.tgt
-index fdcb7b1d69..d8fd1622b8 100644
---- a/gdb/configure.tgt
-+++ b/gdb/configure.tgt
-@@ -119,8 +119,8 @@ arm*-*-symbianelf*)
- 	gdb_target_obs="arm.o arm-get-next-pcs.o arm-tdep.o arm-symbian-tdep.o"
- 	;;
- arm*-*-*)
--	# Target: ARM embedded system
--	gdb_target_obs="arm.o arm-get-next-pcs.o arm-tdep.o"
-+	# Target: ARM embedded system (+ 3DS)
-+	gdb_target_obs="arm.o arm-get-next-pcs.o arm-tdep.o arm-3ds-tdep.o"
- 	gdb_sim=../sim/arm/libsim.a
+diff -NBaur gdb-8.2/gdb/configure.tgt gdb-8.2-3ds/gdb/configure.tgt
+--- gdb-8.2/gdb/configure.tgt	2018-09-05 08:44:28.000000000 +0100
++++ gdb-8.2-3ds/gdb/configure.tgt	2018-11-15 22:47:17.337689978 +0000
+@@ -61,7 +61,7 @@
  	;;
  
-diff --git a/gdb/data-directory/Makefile.in b/gdb/data-directory/Makefile.in
-index 304d4b05c0..2cf8986d3a 100644
---- a/gdb/data-directory/Makefile.in
-+++ b/gdb/data-directory/Makefile.in
-@@ -63,7 +63,7 @@ GEN_SYSCALLS_FILES = \
+ arm*-*-*)
+-	cpu_obs="arch/arm.o arch/arm-get-next-pcs.o arm-tdep.o";;
++	cpu_obs="arch/arm.o arch/arm-get-next-pcs.o arm-tdep.o arm-3ds-tdep.o";;
+ 
+ hppa*-*-*)
+ 	# Target: HP PA-RISC
+diff -NBaur gdb-8.2/gdb/data-directory/Makefile.in gdb-8.2-3ds/gdb/data-directory/Makefile.in
+--- gdb-8.2/gdb/data-directory/Makefile.in	2018-01-05 04:07:23.000000000 +0000
++++ gdb-8.2-3ds/gdb/data-directory/Makefile.in	2018-11-15 22:42:36.840956065 +0000
+@@ -63,7 +63,7 @@
  	sparc-linux.xml \
  	sparc64-linux.xml
  
@@ -249,11 +183,10 @@ index 304d4b05c0..2cf8986d3a 100644
  
  PYTHON_DIR = python
  PYTHON_INSTALL_DIR = $(DESTDIR)$(GDB_DATADIR)/$(PYTHON_DIR)
-diff --git a/gdb/defs.h b/gdb/defs.h
-index a0b586f401..a1508fd5b3 100644
---- a/gdb/defs.h
-+++ b/gdb/defs.h
-@@ -604,6 +604,7 @@ enum gdb_osabi
+diff -NBaur gdb-8.2/gdb/defs.h gdb-8.2-3ds/gdb/defs.h
+--- gdb-8.2/gdb/defs.h	2018-09-05 08:27:32.000000000 +0100
++++ gdb-8.2-3ds/gdb/defs.h	2018-11-15 22:42:36.840956065 +0000
+@@ -495,6 +495,7 @@
    GDB_OSABI_LYNXOS178,
    GDB_OSABI_NEWLIB,
    GDB_OSABI_SDE,
@@ -261,11 +194,29 @@ index a0b586f401..a1508fd5b3 100644
  
    GDB_OSABI_INVALID		/* keep this last */
  };
-diff --git a/gdb/osabi.c b/gdb/osabi.c
-index 84fa9c0273..c1c4bb1672 100644
---- a/gdb/osabi.c
-+++ b/gdb/osabi.c
-@@ -79,6 +79,7 @@ static const struct osabi_names gdb_osabi_names[] =
+diff -NBaur gdb-8.2/gdb/Makefile.in gdb-8.2-3ds/gdb/Makefile.in
+--- gdb-8.2/gdb/Makefile.in	2018-09-05 08:44:28.000000000 +0100
++++ gdb-8.2-3ds/gdb/Makefile.in	2018-11-15 22:45:01.628931262 +0000
+@@ -684,6 +684,7 @@
+ 	arch/arm-linux.o \
+ 	arch/i386.o \
+ 	arch/ppc-linux-common.o \
++	arm-3ds-tdep.o \
+ 	arm-bsd-tdep.o \
+ 	arm-fbsd-tdep.o \
+ 	arm-linux-tdep.o \
+@@ -2213,6 +2214,7 @@
+ 	amd64-tdep.c \
+ 	arc-tdep.c \
+ 	arm.c \
++	arm-3ds-tdep.c \
+ 	arm-bsd-tdep.c \
+ 	arm-fbsd-nat.c \
+ 	arm-fbsd-tdep.c \
+diff -NBaur gdb-8.2/gdb/osabi.c gdb-8.2-3ds/gdb/osabi.c
+--- gdb-8.2/gdb/osabi.c	2018-09-05 08:27:13.000000000 +0100
++++ gdb-8.2-3ds/gdb/osabi.c	2018-11-15 22:42:36.840956065 +0000
+@@ -80,6 +80,7 @@
    { "LynxOS178", NULL },
    { "Newlib", NULL },
    { "SDE", NULL },
@@ -273,11 +224,9 @@ index 84fa9c0273..c1c4bb1672 100644
  
    { "<invalid>", NULL }
  };
-diff --git a/gdb/syscalls/arm-3ds.xml b/gdb/syscalls/arm-3ds.xml
-new file mode 100644
-index 0000000000..48780b7bd5
---- /dev/null
-+++ b/gdb/syscalls/arm-3ds.xml
+diff -NBaur gdb-8.2/gdb/syscalls/arm-3ds.xml gdb-8.2-3ds/gdb/syscalls/arm-3ds.xml
+--- gdb-8.2/gdb/syscalls/arm-3ds.xml	1970-01-01 01:00:00.000000000 +0100
++++ gdb-8.2-3ds/gdb/syscalls/arm-3ds.xml	2018-11-15 22:42:36.840956065 +0000
 @@ -0,0 +1,159 @@
 +<?xml version="1.0"?>
 +<!DOCTYPE syscalls_info SYSTEM "gdb-syscalls.dtd">
@@ -438,4 +387,3 @@ index 0000000000..48780b7bd5
 +  <syscall name="TranslateHandle" number="178" groups="custom,synchronization,ipc,thread,process,debug"/>
 +
 +</syscalls_info>
-
