@@ -46,8 +46,9 @@ DFU_UTIL_VER=0.9.1
 STLINK_VER=1.2.3
 
 GAMECUBE_TOOLS_VER=1.0.2
-LIBOGC_VER=1.8.20
+LIBOGC_VER=1.8.21
 WIILOAD_VER=0.5.1
+DKPPC_RULES_VER=1.0.0
 
 LIBCTRU_VER=1.5.0
 CITRO3D_VER=1.4.0
@@ -234,7 +235,7 @@ if [ $VERSION -eq 2 ]; then
 
 	hostarchives="gamecube-tools-$GAMECUBE_TOOLS_VER.tar.bz2 wiiload-$WIILOAD_VER.tar.bz2 general-tools-$GENERAL_TOOLS_VER.tar.bz2"
 
-	archives="binutils-${MN_BINUTILS_VER}.tar.bz2 $archives"
+	archives="binutils-${MN_BINUTILS_VER}.tar.bz2 devkitppc-rules-$DKPPC_RULES_VER.tar.xz $archives"
 fi
 
 if [ $VERSION -eq 3 ]; then
@@ -304,6 +305,8 @@ fi
 if [ "$BUILD_DKPRO_SKIP_LIBRARIES" != "1" ] && [ -f $scriptdir/build-libs.sh ]; then
   . $scriptdir/build-libs.sh || { echo "Error building libraries"; exit 1; }; cd $BUILDSCRIPTDIR;
 fi
+
+cd $BUILDSCRIPTDIR
 
 if [ ! -z $CROSSBUILD ] && grep -q "mingw" <<<"$CROSSBUILD" ; then
 	cp -v	$CROSSBINPATH//libwinpthread-1.dll $prefix/bin
