@@ -7407,10 +7407,10 @@ index eb645868b..b9a006453 100644
    powerpc*-*-linux* | \
    powerpc*-*-rtem* | \
 diff --git a/newlib/libc/include/sys/dirent.h b/newlib/libc/include/sys/dirent.h
-index a3fb5c02c..b42f0b3b1 100644
+index a3fb5c02c..adb8e1083 100644
 --- a/newlib/libc/include/sys/dirent.h
 +++ b/newlib/libc/include/sys/dirent.h
-@@ -4,10 +4,56 @@
+@@ -4,10 +4,57 @@
     not support <dirent.h>, we will get this file which uses #error to force
     an error.  */
  
@@ -7419,6 +7419,7 @@ index a3fb5c02c..b42f0b3b1 100644
 +
 +#include <sys/types.h>
 +#include <sys/syslimits.h>
++#include <sys/iosupport.h>
 +
 +#define _DIRENT_HAVE_D_TYPE
 +
@@ -7445,7 +7446,7 @@ index a3fb5c02c..b42f0b3b1 100644
 +
 +	typedef struct {
 +		long int        position;
-+		void*           dirData;
++		DIR_ITER*           dirData;
 +		struct dirent   fileData;
 +	} DIR;
 +
@@ -7484,7 +7485,7 @@ index 2900b332f..6efb54eb3 100644
  #ifdef __rtems__
 diff --git a/newlib/libc/include/sys/iosupport.h b/newlib/libc/include/sys/iosupport.h
 new file mode 100644
-index 000000000..649fc2630
+index 000000000..8b6d8da30
 --- /dev/null
 +++ b/newlib/libc/include/sys/iosupport.h
 @@ -0,0 +1,108 @@
@@ -7500,7 +7501,7 @@ index 000000000..649fc2630
 +#include <reent.h>
 +#include <sys/stat.h>
 +#include <sys/statvfs.h>
-+#include <time.h>
++#include <sys/time.h>
 +
 +enum	{
 +	STD_IN,
