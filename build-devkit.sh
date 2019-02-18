@@ -30,6 +30,7 @@ GENERAL_TOOLS_VER=1.0.2
 
 LIBGBA_VER=0.5.1
 GBATOOLS_VER=1.1.0
+DKARM_RULES_VER=1.0.0
 
 LIBNDS_VER=1.7.2
 DEFAULT_ARM7_VER=0.7.4
@@ -227,6 +228,8 @@ if [ $VERSION -eq 1 ]; then
 		general-tools-$GENERAL_TOOLS_VER.tar.bz2 mmutil-$MMUTIL_VER.tar.bz2
 		dfu-util-$DFU_UTIL_VER.tar.bz2 stlink-$STLINK_VER.tar.bz2 3dstools-$TOOLS3DS_VER.tar.bz2
 		picasso-$PICASSO_VER.tar.bz2 tex3ds-$TEX3DS_VER.tar.bz2 3dslink-$LINK3DS_VER.tar.bz2"
+
+	archives="devkitarm-rules-$DKARM_RULES_VER.tar.xz $archives"
 fi
 
 if [ $VERSION -eq 2 ]; then
