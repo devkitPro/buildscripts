@@ -19,20 +19,12 @@ make install
 #---------------------------------------------------------------------------------
 # Install and build the crt0 files
 #---------------------------------------------------------------------------------
+cd $BUILDDIR
 
-cp -v $BUILDSCRIPTDIR/dkarm-eabi/crtls/* $prefix/$target/lib/
-cd $prefix/$target/lib/
-
-
-$MAKE CRT=gba
-$MAKE CRT=gp32
-$MAKE CRT=er
-$MAKE CRT=gp32_gpsdk
-$MAKE CRT=ds_arm7
-$MAKE CRT=ds_arm9
-$MAKE CRT=ds_cart
-$MAKE ds_arm7_vram_crt0
-$MAKE 3dsx_crt0
+mkdir -p crtls
+cd crtls
+tar -xvf $SRCDIR/devkitarm-crtls-$DKARM_CRTLS_VER.tar.xz
+make install
 
 cd $BUILDDIR/libgba-$LIBGBA_VER
 $MAKE || { echo "error building libgba"; exit 1; }
