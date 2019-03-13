@@ -39,7 +39,7 @@ http://www.zlib.net
 http://www.libusb.org
 http://expat.sourceforge.net/
 
-sudo apt-get install  libfreeimage-dev zlib1g-dev libusb-dev libudev-dev libexpat1-dev
+sudo apt-get install libfreeimage-dev zlib1g-dev libusb-dev libudev-dev libexpat1-dev
 
 
 Building gxtexconv for cube/wii needs GL/gl.h which can be obtained with
