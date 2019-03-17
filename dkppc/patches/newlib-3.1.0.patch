@@ -1,8 +1,8 @@
 diff --git a/libgloss/configure b/libgloss/configure
-index aa6f8f834..0e8579890 100755
+index 1a4033dce..ba7aea7b0 100755
 --- a/libgloss/configure
 +++ b/libgloss/configure
-@@ -2594,6 +2594,8 @@ if test "${config_libnosys}" = "true"; then
+@@ -2599,6 +2599,8 @@ if test "${config_libnosys}" = "true"; then
  
  fi
  
@@ -12,7 +12,7 @@ index aa6f8f834..0e8579890 100755
  
  ac_config_commands="$ac_config_commands depfiles"
 diff --git a/libgloss/configure.in b/libgloss/configure.in
-index 6da164352..0375cabbc 100644
+index 41843eed1..689e8b3ad 100644
 --- a/libgloss/configure.in
 +++ b/libgloss/configure.in
 @@ -2,6 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
@@ -33,7 +33,7 @@ index 6da164352..0375cabbc 100644
  case "${target}" in
    aarch64*-*-*)
  	AC_CONFIG_SUBDIRS(aarch64)
-@@ -188,6 +192,10 @@ if test "${config_libnosys}" = "true"; then
+@@ -191,6 +195,10 @@ if test "${config_libnosys}" = "true"; then
    AC_CONFIG_SUBDIRS([libnosys])
  fi
  
@@ -7389,10 +7389,10 @@ index 000000000..bd25d775d
 +	exit ( main(__system_argv->argc,__system_argv->argv) );
 +}
 diff --git a/newlib/configure.host b/newlib/configure.host
-index eb645868b..b9a006453 100644
+index 6c49cb750..f30edc1a3 100644
 --- a/newlib/configure.host
 +++ b/newlib/configure.host
-@@ -797,7 +797,12 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
+@@ -832,7 +832,12 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
  	default_newlib_io_long_long="yes"
  	newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES"
  	;;
@@ -7470,7 +7470,7 @@ index a3fb5c02c..adb8e1083 100644
 +
 +#endif // _dirent_h_
 diff --git a/newlib/libc/include/sys/features.h b/newlib/libc/include/sys/features.h
-index 2900b332f..6efb54eb3 100644
+index f28dd071b..96980676d 100644
 --- a/newlib/libc/include/sys/features.h
 +++ b/newlib/libc/include/sys/features.h
 @@ -330,6 +330,9 @@ extern "C" {
@@ -7598,7 +7598,7 @@ index 000000000..8b6d8da30
 +#endif // __iosupp_h__
 +//---------------------------------------------------------------------------------
 diff --git a/newlib/libc/include/sys/reent.h b/newlib/libc/include/sys/reent.h
-index 1ef226194..ce3721a14 100644
+index 6e55e1c1f..6e0c1c9cf 100644
 --- a/newlib/libc/include/sys/reent.h
 +++ b/newlib/libc/include/sys/reent.h
 @@ -416,6 +416,8 @@ struct _reent
@@ -7609,8 +7609,8 @@ index 1ef226194..ce3721a14 100644
 +  void *deviceData;
  };
  
- extern const struct __sFILE_fake __sf_fake_stdin;
-@@ -647,6 +649,7 @@ struct _reent
+ #ifdef _REENT_GLOBAL_STDIO_STREAMS
+@@ -686,6 +688,7 @@ struct _reent
  # ifndef _REENT_GLOBAL_STDIO_STREAMS
    __FILE __sf[3];  		/* first three file descriptors */
  # endif
@@ -7721,10 +7721,10 @@ index 5e937f103..635a7a6b8 100644
  };
  #endif
 diff --git a/newlib/libc/locale/locale.c b/newlib/libc/locale/locale.c
-index baa5451a6..236746f54 100644
+index 4c343e462..835b3a712 100644
 --- a/newlib/libc/locale/locale.c
 +++ b/newlib/libc/locale/locale.c
-@@ -165,15 +165,18 @@ No supporting OS subroutines are required.
+@@ -166,15 +166,18 @@ No supporting OS subroutines are required.
  #include "../ctype/ctype_.h"
  #include "../stdlib/local.h"
  
@@ -7743,7 +7743,7 @@ index baa5451a6..236746f54 100644
  #ifdef _MB_CAPABLE
  /*
   * Category names for getenv()
-@@ -193,7 +196,11 @@ static char *categories[_LC_LAST] = {
+@@ -194,7 +197,11 @@ static char *categories[_LC_LAST] = {
   * Default locale per POSIX.  Can be overridden on a per-target base.
   */
  #ifndef DEFAULT_LOCALE
@@ -7756,7 +7756,7 @@ index baa5451a6..236746f54 100644
  #endif
  
  #ifdef _MB_CAPABLE
-@@ -206,8 +213,13 @@ char __default_locale[ENCODING_LEN + 1] = DEFAULT_LOCALE;
+@@ -207,8 +214,13 @@ char __default_locale[ENCODING_LEN + 1] = DEFAULT_LOCALE;
  const struct __locale_t __C_locale =
  {
    { "C", "C", "C", "C", "C", "C", "C", },
@@ -7770,7 +7770,7 @@ index baa5451a6..236746f54 100644
    0,
    DEFAULT_CTYPE_PTR,
    {
-@@ -218,9 +230,15 @@ const struct __locale_t __C_locale =
+@@ -219,9 +231,15 @@ const struct __locale_t __C_locale =
      CHAR_MAX, CHAR_MAX
    },
  #ifndef __HAVE_LOCALE_INFO__
@@ -7786,7 +7786,7 @@ index baa5451a6..236746f54 100644
  #else /* __HAVE_LOCALE_INFO__ */
    {
      { NULL, NULL },			/* LC_ALL */
-@@ -239,10 +257,11 @@ const struct __locale_t __C_locale =
+@@ -240,10 +258,11 @@ const struct __locale_t __C_locale =
  };
  #endif /* _MB_CAPABLE */
  
@@ -7799,7 +7799,7 @@ index baa5451a6..236746f54 100644
    __utf8_wctomb,
    __utf8_mbtowc,
  #else
-@@ -259,9 +278,15 @@ struct __locale_t __global_locale =
+@@ -260,9 +279,15 @@ struct __locale_t __global_locale =
      CHAR_MAX, CHAR_MAX
    },
  #ifndef __HAVE_LOCALE_INFO__
@@ -7815,7 +7815,7 @@ index baa5451a6..236746f54 100644
  #else /* __HAVE_LOCALE_INFO__ */
    {
      { NULL, NULL },			/* LC_ALL */
-@@ -982,6 +1007,7 @@ __locale_ctype_ptr_l (struct __locale_t *locale)
+@@ -990,6 +1015,7 @@ __locale_ctype_ptr_l (struct __locale_t *locale)
  
  const char *
  __locale_ctype_ptr (void)
@@ -7823,6 +7823,34 @@ index baa5451a6..236746f54 100644
  {
    return __get_current_locale ()->ctype_ptr;
  }
+diff --git a/newlib/libc/locale/setlocale.h b/newlib/libc/locale/setlocale.h
+index a0c80843a..efabdcfc4 100644
+--- a/newlib/libc/locale/setlocale.h
++++ b/newlib/libc/locale/setlocale.h
+@@ -217,11 +217,7 @@ __get_global_locale ()
+ _ELIDABLE_INLINE struct __locale_t *
+ __get_locale_r (struct _reent *r)
+ {
+-#ifdef __HAVE_LOCALE_INFO__
+   return r->_locale;
+-#else
+-  return __get_global_locale();
+-#endif
+ }
+ 
+ /* In POSIX terms the current locale is the locale used by all functions
+@@ -231,11 +227,7 @@ __get_locale_r (struct _reent *r)
+ _ELIDABLE_INLINE struct __locale_t *
+ __get_current_locale (void)
+ {
+-#ifdef __HAVE_LOCALE_INFO__
+   return _REENT->_locale ?: __get_global_locale ();
+-#else
+-  return __get_global_locale();
+-#endif
+ }
+ 
+ /* Only access fixed "C" locale using this function.  Fake for !_MB_CAPABLE
 diff --git a/newlib/libc/machine/powerpc/Makefile.am b/newlib/libc/machine/powerpc/Makefile.am
 index e86afdf1c..007bd1567 100644
 --- a/newlib/libc/machine/powerpc/Makefile.am
@@ -8024,10 +8052,10 @@ index 000000000..04ebd1ee0
 +#endif /* _NEWLIB_STDIO_H */
 +
 diff --git a/newlib/libc/misc/init.c b/newlib/libc/misc/init.c
-index c85d6020f..1beb783b8 100644
+index 95f1a7422..c797d2e64 100644
 --- a/newlib/libc/misc/init.c
 +++ b/newlib/libc/misc/init.c
-@@ -40,4 +40,8 @@ __libc_init_array (void)
+@@ -44,4 +44,8 @@ __libc_init_array (void)
    for (i = 0; i < count; i++)
      __init_array_start[i] ();
  }
