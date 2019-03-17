@@ -1,5 +1,5 @@
 diff --git a/config/gthr.m4 b/config/gthr.m4
-index 7b29f1f3327..814104f32a2 100644
+index 7b29f1f..814104f 100644
 --- a/config/gthr.m4
 +++ b/config/gthr.m4
 @@ -12,6 +12,7 @@ AC_DEFUN([GCC_AC_THREAD_HEADER],
@@ -11,10 +11,10 @@ index 7b29f1f3327..814104f32a2 100644
      lynx)	thread_header=config/gthr-lynx.h ;;
      mipssde)	thread_header=config/mips/gthr-mipssde.h ;;
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index 532c33f4c2b..bb87330bbbe 100644
+index 7af8e02..dc58cab 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
-@@ -2461,7 +2461,7 @@ powerpc-xilinx-eabi*)
+@@ -2464,7 +2464,7 @@ powerpc-xilinx-eabi*)
  	use_gcc_stdint=wrap
  	;;
  powerpc-*-eabi*)
@@ -24,7 +24,7 @@ index 532c33f4c2b..bb87330bbbe 100644
  	tmake_file="rs6000/t-fprules rs6000/t-ppcgas rs6000/t-ppccomm"
  	use_gcc_stdint=wrap
 diff --git a/gcc/config/newlib-stdint.h b/gcc/config/newlib-stdint.h
-index f46e797d610..fd39e64c38d 100644
+index f46e797..fd39e64 100644
 --- a/gcc/config/newlib-stdint.h
 +++ b/gcc/config/newlib-stdint.h
 @@ -25,7 +25,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
@@ -37,7 +37,7 @@ index f46e797d610..fd39e64c38d 100644
  
  #define SIG_ATOMIC_TYPE "int"
 diff --git a/gcc/config/rs6000/rs6000.h b/gcc/config/rs6000/rs6000.h
-index b83b304e3eb..b85359edcfc 100644
+index b83b304..b85359e 100644
 --- a/gcc/config/rs6000/rs6000.h
 +++ b/gcc/config/rs6000/rs6000.h
 @@ -212,6 +212,7 @@
@@ -57,8 +57,39 @@ index b83b304e3eb..b85359edcfc 100644
  
  #ifndef CC1_CPU_SPEC
  #ifdef HAVE_LOCAL_CPU_DETECT
+diff --git a/gcc/config/rs6000/rs6000.md b/gcc/config/rs6000/rs6000.md
+index 4d69c1d..af2d7b5 100644
+--- a/gcc/config/rs6000/rs6000.md
++++ b/gcc/config/rs6000/rs6000.md
+@@ -5625,19 +5625,19 @@
+     tmp = gen_reg_rtx (DImode);
+ 
+   emit_insn (gen_fctiwz_<mode> (tmp, src));
+-  if (MEM_P (dest))
++  if (TARGET_POWERPC64 && (TARGET_MFPGPR || TARGET_DIRECT_MOVE))
+     {
+-      dest = rs6000_address_for_fpconvert (dest);
+-      emit_insn (gen_stfiwx (dest, tmp));
++      dest = gen_lowpart (DImode, dest);
++      emit_move_insn (dest, tmp);
+       DONE;
+     }
+-  else if (TARGET_POWERPC64 && (TARGET_MFPGPR || TARGET_DIRECT_MOVE))
++   else if (MEM_P (dest) && MEM_ALIGN (dest) >= 32)
+     {
+-      dest = gen_lowpart (DImode, dest);
+-      emit_move_insn (dest, tmp);
++      dest = rs6000_address_for_fpconvert (dest);
++      emit_insn (gen_stfiwx (dest, tmp));
+       DONE;
+     }
+-  else
++   else
+     {
+       rtx stack = rs6000_allocate_stack_temp (SImode, false, true);
+       emit_insn (gen_stfiwx (stack, tmp));
 diff --git a/gcc/config/rs6000/sysv4.h b/gcc/config/rs6000/sysv4.h
-index bb19d0dcd41..74d1e474432 100644
+index bb19d0d..74d1e47 100644
 --- a/gcc/config/rs6000/sysv4.h
 +++ b/gcc/config/rs6000/sysv4.h
 @@ -565,7 +565,11 @@ ENDIAN_SELECT(" -mbig", " -mlittle", DEFAULT_ASM_ENDIAN)
@@ -216,7 +247,7 @@ index bb19d0dcd41..74d1e474432 100644
    { "cpp_os_yellowknife",	CPP_OS_YELLOWKNIFE_SPEC },		\
    { "cpp_os_mvme",		CPP_OS_MVME_SPEC },			\
 diff --git a/gcc/config/rs6000/sysv4.opt b/gcc/config/rs6000/sysv4.opt
-index 34fea0ddd08..084a8ae435e 100644
+index 34fea0d..084a8ae 100644
 --- a/gcc/config/rs6000/sysv4.opt
 +++ b/gcc/config/rs6000/sysv4.opt
 @@ -124,6 +124,26 @@ mads
@@ -247,7 +278,7 @@ index 34fea0ddd08..084a8ae435e 100644
  Target RejectNegative
  Link with libyk.a, libc.a and crt0.o.
 diff --git a/gcc/configure b/gcc/configure
-index 6121e163259..6584112e6a1 100755
+index 6121e16..6584112 100755
 --- a/gcc/configure
 +++ b/gcc/configure
 @@ -11692,7 +11692,7 @@ case ${enable_threads} in
@@ -260,7 +291,7 @@ index 6121e163259..6584112e6a1 100755
      target_thread_file=${enable_threads}
      ;;
 diff --git a/gcc/configure.ac b/gcc/configure.ac
-index b066cc609e1..c42b3ef5fc6 100644
+index b066cc6..c42b3ef 100644
 --- a/gcc/configure.ac
 +++ b/gcc/configure.ac
 @@ -1611,7 +1611,7 @@ case ${enable_threads} in
@@ -273,7 +304,7 @@ index b066cc609e1..c42b3ef5fc6 100644
      target_thread_file=${enable_threads}
      ;;
 diff --git a/libgcc/config/rs6000/crtrestvr.S b/libgcc/config/rs6000/crtrestvr.S
-index ba2b2623301..8d866107142 100644
+index ba2b262..8d86610 100644
 --- a/libgcc/config/rs6000/crtrestvr.S
 +++ b/libgcc/config/rs6000/crtrestvr.S
 @@ -24,7 +24,7 @@
@@ -291,7 +322,7 @@ index ba2b2623301..8d866107142 100644
  #endif
 +#endif
 diff --git a/libgcc/config/rs6000/crtsavevr.S b/libgcc/config/rs6000/crtsavevr.S
-index 077e33f34d5..b7be68b710f 100644
+index 077e33f..b7be68b 100644
 --- a/libgcc/config/rs6000/crtsavevr.S
 +++ b/libgcc/config/rs6000/crtsavevr.S
 @@ -24,7 +24,7 @@
@@ -310,7 +341,7 @@ index 077e33f34d5..b7be68b710f 100644
 +#endif
 diff --git a/libgcc/config/rs6000/gthr-dkp.c b/libgcc/config/rs6000/gthr-dkp.c
 new file mode 100644
-index 00000000000..94d6ba94ec0
+index 0000000..94d6ba9
 --- /dev/null
 +++ b/libgcc/config/rs6000/gthr-dkp.c
 @@ -0,0 +1,349 @@
@@ -665,7 +696,7 @@ index 00000000000..94d6ba94ec0
 +}
 diff --git a/libgcc/config/rs6000/gthr-dkp.h b/libgcc/config/rs6000/gthr-dkp.h
 new file mode 100644
-index 00000000000..281c19d2a60
+index 0000000..281c19d
 --- /dev/null
 +++ b/libgcc/config/rs6000/gthr-dkp.h
 @@ -0,0 +1,185 @@
@@ -855,7 +886,7 @@ index 00000000000..281c19d2a60
 +
 +#endif /* ! _GLIBCXX_GCC_GTHR_DKP_H */
 diff --git a/libgcc/config/rs6000/t-ppccomm b/libgcc/config/rs6000/t-ppccomm
-index fb812d3801f..7f6669d530f 100644
+index fb812d3..7f6669d 100644
 --- a/libgcc/config/rs6000/t-ppccomm
 +++ b/libgcc/config/rs6000/t-ppccomm
 @@ -1,4 +1,5 @@
@@ -865,7 +896,7 @@ index fb812d3801f..7f6669d530f 100644
  
  # This can't end up in shared libgcc
 diff --git a/libgcc/configure b/libgcc/configure
-index b2f3f870844..c6f93f8b3ac 100644
+index b2f3f87..c6f93f8 100644
 --- a/libgcc/configure
 +++ b/libgcc/configure
 @@ -5442,6 +5442,7 @@ tm_file="${tm_file_}"
@@ -877,7 +908,7 @@ index b2f3f870844..c6f93f8b3ac 100644
      lynx)	thread_header=config/gthr-lynx.h ;;
      mipssde)	thread_header=config/mips/gthr-mipssde.h ;;
 diff --git a/libgcc/crtstuff.c b/libgcc/crtstuff.c
-index 5e894455e16..f2347455de0 100644
+index 5e89445..f234745 100644
 --- a/libgcc/crtstuff.c
 +++ b/libgcc/crtstuff.c
 @@ -47,6 +47,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
@@ -889,10 +920,10 @@ index 5e894455e16..f2347455de0 100644
  /* FIXME: Including auto-host is incorrect, but until we have
     identified the set of defines that need to go into auto-target.h,
 diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
-index fbc9daeb195..90c15adda62 100755
+index 5535bfa..9f86d5d 100755
 --- a/libstdc++-v3/configure
 +++ b/libstdc++-v3/configure
-@@ -15178,6 +15178,7 @@ $as_echo "$target_thread_file" >&6; }
+@@ -15180,6 +15180,7 @@ $as_echo "$target_thread_file" >&6; }
  
  case $target_thread_file in
      aix)	thread_header=config/rs6000/gthr-aix.h ;;

@@ -97,7 +97,7 @@ then
 	--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 	--prefix=$prefix\
 	--with-system-zlib\
-	--with-bugurl="https://github.com/devkitpro/buildscripts/issues" --with-pkgversion="devkitPPC release 34" \
+	--with-bugurl="https://github.com/devkitpro/buildscripts/issues" --with-pkgversion="devkitPPC release 35" \
 	$CROSS_PARAMS \
 	$CROSS_GCC_PARAMS \
         CFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
