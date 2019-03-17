@@ -1,0 +1,60 @@
+diff -NBaur gdb-8.2.1/gdb/dtrace-probe.c gdb-8.2.1-apple/gdb/dtrace-probe.c
+--- gdb-8.2.1/gdb/dtrace-probe.c	2018-12-23 05:51:54.000000000 +0000
++++ gdb-8.2.1-apple/gdb/dtrace-probe.c	2019-02-19 17:30:16.449175937 +0000
+@@ -100,7 +100,7 @@
+ 
+ /* DTrace static_probe_ops.  */
+ 
+-const dtrace_static_probe_ops dtrace_static_probe_ops;
++const dtrace_static_probe_ops dtrace_static_probe_ops = {};
+ 
+ /* The following structure represents a dtrace probe.  */
+ 
+diff -NBaur gdb-8.2.1/gdb/probe.c gdb-8.2.1-apple/gdb/probe.c
+--- gdb-8.2.1/gdb/probe.c	2018-12-23 05:51:54.000000000 +0000
++++ gdb-8.2.1-apple/gdb/probe.c	2019-02-19 17:31:05.266578008 +0000
+@@ -60,7 +60,7 @@
+ 
+ /* Static operations associated with a generic probe.  */
+ 
+-const any_static_probe_ops any_static_probe_ops;
++const any_static_probe_ops any_static_probe_ops = {};
+ 
+ /* A helper for parse_probes that decodes a probe specification in
+    SEARCH_PSPACE.  It appends matching SALs to RESULT.  */
+diff -NBaur gdb-8.2.1/gdb/record-btrace.c gdb-8.2.1-apple/gdb/record-btrace.c
+--- gdb-8.2.1/gdb/record-btrace.c	2018-12-23 05:51:54.000000000 +0000
++++ gdb-8.2.1-apple/gdb/record-btrace.c	2019-02-19 17:31:33.301731324 +0000
+@@ -144,7 +144,7 @@
+ 
+ /* Token associated with a new-thread observer enabling branch tracing
+    for the new thread.  */
+-static const gdb::observers::token record_btrace_thread_observer_token;
++static const gdb::observers::token record_btrace_thread_observer_token = {};
+ 
+ /* Memory access types used in set/show record btrace replay-memory-access.  */
+ static const char replay_memory_access_read_only[] = "read-only";
+diff -NBaur gdb-8.2.1/gdb/stap-probe.c gdb-8.2.1-apple/gdb/stap-probe.c
+--- gdb-8.2.1/gdb/stap-probe.c	2018-12-23 05:51:54.000000000 +0000
++++ gdb-8.2.1-apple/gdb/stap-probe.c	2019-02-19 17:29:35.744567941 +0000
+@@ -119,7 +119,7 @@
+ 
+ /* SystemTap static_probe_ops.  */
+ 
+-const stap_static_probe_ops stap_static_probe_ops;
++const stap_static_probe_ops stap_static_probe_ops = {};
+ 
+ class stap_probe : public probe
+ {
+diff -NBaur gdb-8.2.1/gdb/tui/tui-hooks.c gdb-8.2.1-apple/gdb/tui/tui-hooks.c
+--- gdb-8.2.1/gdb/tui/tui-hooks.c	2018-12-23 05:51:54.000000000 +0000
++++ gdb-8.2.1-apple/gdb/tui/tui-hooks.c	2019-02-19 17:28:53.178460364 +0000
+@@ -205,7 +205,7 @@
+ 
+ /* Token associated with observers registered while TUI hooks are
+    installed.  */
+-static const gdb::observers::token tui_observers_token;
++static const gdb::observers::token tui_observers_token = {};
+ 
+ /* Attach or detach a single observer, according to ATTACH.  */
+ 
