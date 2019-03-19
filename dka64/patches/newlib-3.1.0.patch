@@ -9196,6 +9196,34 @@ index 4c343e462..c04493460 100644
  {
    return __get_current_locale ()->ctype_ptr;
  }
+diff --git a/newlib/libc/locale/setlocale.h b/newlib/libc/locale/setlocale.h
+index a0c80843a..efabdcfc4 100644
+--- a/newlib/libc/locale/setlocale.h
++++ b/newlib/libc/locale/setlocale.h
+@@ -217,11 +217,7 @@ __get_global_locale ()
+ _ELIDABLE_INLINE struct __locale_t *
+ __get_locale_r (struct _reent *r)
+ {
+-#ifdef __HAVE_LOCALE_INFO__
+   return r->_locale;
+-#else
+-  return __get_global_locale();
+-#endif
+ }
+ 
+ /* In POSIX terms the current locale is the locale used by all functions
+@@ -231,11 +227,7 @@ __get_locale_r (struct _reent *r)
+ _ELIDABLE_INLINE struct __locale_t *
+ __get_current_locale (void)
+ {
+-#ifdef __HAVE_LOCALE_INFO__
+   return _REENT->_locale ?: __get_global_locale ();
+-#else
+-  return __get_global_locale();
+-#endif
+ }
+ 
+ /* Only access fixed "C" locale using this function.  Fake for !_MB_CAPABLE
 diff --git a/newlib/libc/machine/aarch64/Makefile.am b/newlib/libc/machine/aarch64/Makefile.am
 index e8b8197fa..011f69d69 100644
 --- a/newlib/libc/machine/aarch64/Makefile.am
