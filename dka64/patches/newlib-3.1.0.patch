@@ -6958,16 +6958,23 @@ index 000000000..f8d98fd3b
 +}
 diff --git a/libgloss/libsysbase/pthread.c b/libgloss/libsysbase/pthread.c
 new file mode 100755
-index 000000000..e4240af87
+index 000000000..ff84cd355
 --- /dev/null
 +++ b/libgloss/libsysbase/pthread.c
-@@ -0,0 +1,662 @@
+@@ -0,0 +1,1083 @@
 +#include <pthread.h>
++#include <semaphore.h>
 +#include <errno.h>
 +#include <stdlib.h>
 +#include <string.h>
 +#include <sys/time.h>
 +#include <sys/iosupport.h>
++
++static inline uint64_t
++__pthread_abstime_to_ns (const struct timespec *__abstime)
++{
++	return __abstime ? abstimespec2nsec(CLOCK_REALTIME, __abstime) : UINT64_MAX;
++}
 +
 +int
 +pthread_atfork (void (*prepare)(void), void (*parent)(void), void (*child)(void))
@@ -7046,10 +7053,10 @@ index 000000000..e4240af87
 +		case PTHREAD_MUTEX_NORMAL:
 +		case PTHREAD_MUTEX_ERRORCHECK:
 +		case PTHREAD_MUTEX_DEFAULT:
-+			__lock_init(__mutex->normal);
++			__mutex->normal = __LOCK_INITIALIZER;
 +			break;
 +		case PTHREAD_MUTEX_RECURSIVE:
-+			__lock_init_recursive(__mutex->recursive);
++			__mutex->recursive = __LOCK_INITIALIZER_RECURSIVE;
 +			break;
 +		default:
 +			return EINVAL;
@@ -7202,7 +7209,8 @@ index 000000000..e4240af87
 +		return EINVAL;
 +
 +	__cond->clock_id = __attr->clock_id;
-+	return __cond_init(__cond->cond);
++	__cond->cond = __COND_INITIALIZER;
++	return 0;
 +}
 +
 +int
@@ -7605,6 +7613,419 @@ index 000000000..e4240af87
 +			cur->_routine(cur->_arg);
 +		pthread_setspecific(__pthread_cleanup_key, cur->_previous);
 +	}
++}
++
++//-----------------------------------------------------------------------------
++// Barrier
++//-----------------------------------------------------------------------------
++
++int
++pthread_barrierattr_init (pthread_barrierattr_t *__attr)
++{
++	if (!__attr)
++		return EINVAL;
++	return 0;
++}
++
++int
++pthread_barrierattr_destroy (pthread_barrierattr_t *__attr)
++{
++	if (!__attr)
++		return EINVAL;
++	return 0;
++}
++
++int
++pthread_barrierattr_getpshared (const pthread_barrierattr_t *__attr, int *__pshared)
++{
++	return ENOSYS;
++}
++
++int
++pthread_barrierattr_setpshared (pthread_barrierattr_t *__attr, int __pshared)
++{
++	return ENOSYS;
++}
++
++int
++pthread_barrier_init (pthread_barrier_t *__barrier, const pthread_barrierattr_t *__attr, unsigned __count)
++{
++	if (!__barrier || !__count)
++		return EINVAL;
++
++	__barrier->lock = __LOCK_INITIALIZER;
++	__barrier->cond = __COND_INITIALIZER;
++	__barrier->reload = __count;
++	__barrier->counter = __count;
++	__barrier->cycle = 0;
++	return 0;
++}
++
++int
++pthread_barrier_destroy (pthread_barrier_t *__barrier)
++{
++	if (!__barrier)
++		return EINVAL;
++	return 0;
++}
++
++int
++pthread_barrier_wait (pthread_barrier_t *__barrier)
++{
++	if (!__barrier)
++		return EINVAL;
++
++	__lock_acquire(__barrier->lock);
++
++	int is_last_thread = !--__barrier->counter;
++	if (is_last_thread) {
++		__barrier->cycle ++;
++		__barrier->counter = __barrier->reload;
++		__cond_broadcast(__barrier->cond);
++	} else {
++		unsigned my_cycle = __barrier->cycle;
++		do
++			__cond_wait(__barrier->cond, __barrier->lock, UINT64_MAX);
++		while (__barrier->cycle == my_cycle);
++	}
++
++	__lock_release(__barrier->lock);
++	return is_last_thread ? PTHREAD_BARRIER_SERIAL_THREAD : 0;
++}
++
++//-----------------------------------------------------------------------------
++// Read/write lock
++//-----------------------------------------------------------------------------
++
++int
++pthread_rwlockattr_init (pthread_rwlockattr_t *__attr)
++{
++	if (!__attr)
++		return EINVAL;
++	return 0;
++}
++
++int
++pthread_rwlockattr_destroy (pthread_rwlockattr_t *__attr)
++{
++	if (!__attr)
++		return EINVAL;
++	return 0;
++}
++
++int
++pthread_rwlockattr_getpshared (const pthread_rwlockattr_t *__attr, int *__pshared)
++{
++	return ENOSYS;
++}
++
++int
++pthread_rwlockattr_setpshared (pthread_rwlockattr_t *__attr, int __pshared)
++{
++	return ENOSYS;
++}
++
++int
++pthread_rwlock_init (pthread_rwlock_t *__rwlock, const pthread_rwlockattr_t *__attr)
++{
++	if (!__rwlock)
++		return EINVAL;
++	*__rwlock = PTHREAD_RWLOCK_INITIALIZER;
++	return 0;
++}
++
++int
++pthread_rwlock_destroy (pthread_rwlock_t *__rwlock)
++{
++	if (!__rwlock)
++		return EINVAL;
++	return 0;
++}
++
++static int
++__pthread_rwlock_rdlock_common (pthread_rwlock_t *__rwlock, const struct timespec *__abstime)
++{
++	int rc = 0;
++	__lock_acquire(__rwlock->lock);
++
++	while (__rwlock->cnt_w) {
++		rc = __cond_wait(__rwlock->cond_w, __rwlock->lock, __pthread_abstime_to_ns(__abstime));
++		if (rc) break;
++	}
++
++	if (!rc)
++		__rwlock->cnt_r ++;
++
++	__lock_release(__rwlock->lock);
++	return rc;
++}
++
++int
++pthread_rwlock_rdlock (pthread_rwlock_t *__rwlock)
++{
++	if (!__rwlock)
++		return EINVAL;
++	return __pthread_rwlock_rdlock_common(__rwlock, NULL);
++}
++
++int
++pthread_rwlock_tryrdlock (pthread_rwlock_t *__rwlock)
++{
++	if (!__rwlock)
++		return EINVAL;
++
++	__lock_acquire(__rwlock->lock);
++
++	int failed = __rwlock->cnt_w != 0;
++	if (!failed)
++		__rwlock->cnt_r ++;
++
++	__lock_release(__rwlock->lock);
++	return failed ? EBUSY : 0;
++}
++
++int
++pthread_rwlock_timedrdlock (pthread_rwlock_t *__rwlock, const struct timespec *__abstime)
++{
++	if (!__rwlock || !__abstime)
++		return EINVAL;
++	return __pthread_rwlock_rdlock_common(__rwlock, __abstime);
++}
++
++int
++pthread_rwlock_unlock (pthread_rwlock_t *__rwlock)
++{
++	if (!__rwlock)
++		return EINVAL;
++
++	__lock_acquire(__rwlock->lock);
++
++	if (__rwlock->cnt_w != 2) {
++		if (!--__rwlock->cnt_r)
++			__cond_broadcast(__rwlock->cond_r);
++	} else {
++		__rwlock->cnt_w = 0;
++		__cond_broadcast(__rwlock->cond_w);
++	}
++
++	__lock_release(__rwlock->lock);
++	return 0;
++}
++
++static int
++__pthread_rwlock_wrlock_common (pthread_rwlock_t *__rwlock, const struct timespec *__abstime)
++{
++	int rc = 0;
++	__lock_acquire(__rwlock->lock);
++
++	while (__rwlock->cnt_w) {
++		rc = __cond_wait(__rwlock->cond_w, __rwlock->lock, __pthread_abstime_to_ns(__abstime));
++		if (rc) break;
++	}
++
++	if (!rc) {
++		__rwlock->cnt_w = 1;
++
++		while (__rwlock->cnt_r) {
++			rc = __cond_wait(__rwlock->cond_r, __rwlock->lock, __pthread_abstime_to_ns(__abstime));
++			if (rc) break;
++		}
++
++		if (rc) {
++			__rwlock->cnt_w = 0;
++			__cond_broadcast(__rwlock->cond_w);
++		} else
++			__rwlock->cnt_w = 2;
++	}
++
++	__lock_release(__rwlock->lock);
++	return rc;
++}
++
++int
++pthread_rwlock_wrlock (pthread_rwlock_t *__rwlock)
++{
++	if (!__rwlock)
++		return EINVAL;
++	return __pthread_rwlock_wrlock_common(__rwlock, NULL);
++}
++
++int
++pthread_rwlock_trywrlock (pthread_rwlock_t *__rwlock)
++{
++	if (!__rwlock)
++		return EINVAL;
++
++	__lock_acquire(__rwlock->lock);
++
++	int failed = __rwlock->cnt_w != 0 || __rwlock->cnt_r != 0;
++	if (!failed)
++		__rwlock->cnt_w = 2;
++
++	__lock_release(__rwlock->lock);
++	return failed ? EBUSY : 0;
++}
++
++int
++pthread_rwlock_timedwrlock (pthread_rwlock_t *__rwlock, const struct timespec *__abstime)
++{
++	if (!__rwlock || !__abstime)
++		return EINVAL;
++	return __pthread_rwlock_wrlock_common(__rwlock, __abstime);
++}
++
++//-----------------------------------------------------------------------------
++// semaphore.h
++//-----------------------------------------------------------------------------
++
++int
++sem_close(sem_t *__sem)
++{
++	errno = ENOSYS;
++	return -1;
++}
++
++int
++sem_destroy(sem_t *__sem)
++{
++	if (!__sem) {
++		errno = EINVAL;
++		return -1;
++	}
++	return 0;
++}
++
++int
++sem_getvalue(sem_t *__sem, int *__sval)
++{
++	if (!__sem || !__sval) {
++		errno = EINVAL;
++		return -1;
++	}
++
++	__lock_acquire(__sem->lock);
++	*__sval = __sem->value;
++	__lock_release(__sem->lock);
++	return 0;
++}
++
++int
++sem_init(sem_t *__sem, int __pshared, unsigned int __value)
++{
++	if (!__sem || __value > SEM_VALUE_MAX) {
++		errno = EINVAL;
++		return -1;
++	}
++	if (__pshared) {
++		errno = ENOSYS;
++		return -1;
++	}
++
++	__sem->lock = __LOCK_INITIALIZER;
++	__sem->cond = __COND_INITIALIZER;
++	__sem->value = __value;
++	return 0;
++}
++
++sem_t *
++sem_open(const char *__name, int __oflag, ...)
++{
++	errno = ENOSYS;
++	return SEM_FAILED;
++}
++
++int
++sem_post(sem_t *__sem)
++{
++	if (!__sem) {
++		errno = EINVAL;
++		return -1;
++	}
++
++	__lock_acquire(__sem->lock);
++	if (__sem->value++ < 0)
++		__cond_signal(__sem->cond);
++	__lock_release(__sem->lock);
++	return 0;
++}
++
++static int
++__sem_wait_common(sem_t *__sem, const struct timespec *__abstime)
++{
++	int rc = 0;
++	__lock_acquire(__sem->lock);
++
++	__sem->value --;
++	if (__sem->value < 0)
++		rc = __cond_wait(__sem->cond, __sem->lock, __pthread_abstime_to_ns(__abstime));
++	if (rc) {
++		if (__sem->value < 0)
++			__sem->value ++;
++		else
++			rc = 0;
++	}
++
++	__lock_release(__sem->lock);
++
++	if (rc) {
++		errno = rc;
++		return -1;
++	}
++
++	return 0;
++}
++
++int
++sem_timedwait(sem_t *__sem, const struct timespec *__abstime)
++{
++	if (!__sem || !__abstime) {
++		errno = EINVAL;
++		return -1;
++	}
++
++	return __sem_wait_common(__sem, __abstime);
++}
++
++int
++sem_trywait(sem_t *__sem)
++{
++	if (!__sem) {
++		errno = EINVAL;
++		return -1;
++	}
++
++	__lock_acquire(__sem->lock);
++
++	int failed = __sem->value <= 0;
++	if (!failed)
++		__sem->value --;
++
++	__lock_release(__sem->lock);
++
++	if (failed) {
++		errno = EAGAIN;
++		return -1;
++	}
++
++	return 0;
++}
++
++int
++sem_unlink(const char *__name)
++{
++	errno = ENOSYS;
++	return -1;
++}
++
++int
++sem_wait(sem_t *__sem)
++{
++	if (!__sem) {
++		errno = EINVAL;
++		return -1;
++	}
++
++	return __sem_wait_common(__sem, NULL);
 +}
 +
 +//-----------------------------------------------------------------------------
@@ -8410,8 +8831,83 @@ index 893a5d064..da4b3a1ee 100644
  /* Reentrant ANSI C functions.  */
  #ifndef __math_68881
  extern long double atanl (long double);
+diff --git a/newlib/libc/include/semaphore.h b/newlib/libc/include/semaphore.h
+new file mode 100755
+index 000000000..4afb0e419
+--- /dev/null
++++ b/newlib/libc/include/semaphore.h
+@@ -0,0 +1,69 @@
++/*
++ * Copyright (c) 2010 David Xu <davidxu@freebsd.org>
++ *
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice unmodified, this list of conditions, and the following
++ *    disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
++ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
++ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
++ * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
++ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
++ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
++ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ *
++ * $FreeBSD: head/include/semaphore.h 314424 2017-02-28 21:47:00Z vangyzen $
++ */
++
++/* semaphore.h: POSIX 1003.1b semaphores */
++
++#ifndef _SEMAPHORE_H_
++#define _SEMAPHORE_H_
++
++#include <sys/features.h>
++
++#if defined(_POSIX_SEMAPHORES)
++
++#include <limits.h>
++#include <sys/cdefs.h>
++#include <sys/lock.h>
++#include <sys/_types.h>
++#include <sys/_timespec.h>
++
++typedef struct {
++	_LOCK_T  lock;
++	_COND_T  cond;
++	int      value;
++} sem_t;
++
++#define SEM_VALUE_MAX	INT_MAX
++#define	SEM_FAILED	((sem_t *)0)
++
++__BEGIN_DECLS
++int	 sem_close(sem_t *);
++int	 sem_destroy(sem_t *);
++int	 sem_getvalue(sem_t * __restrict, int * __restrict);
++int	 sem_init(sem_t *, int, unsigned int);
++sem_t	*sem_open(const char *, int, ...);
++int	 sem_post(sem_t *);
++int	 sem_timedwait(sem_t * __restrict, const struct timespec * __restrict);
++int	 sem_trywait(sem_t *);
++int	 sem_unlink(const char *);
++int	 sem_wait(sem_t *);
++__END_DECLS
++
++#endif /* defined(_POSIX_SEMAPHORES) */
++
++#endif /* !_SEMAPHORE_H_ */
 diff --git a/newlib/libc/include/sys/_pthreadtypes.h b/newlib/libc/include/sys/_pthreadtypes.h
-index 75e9e1cbf..a3642c951 100644
+index 75e9e1cbf..dc63dbe6a 100644
 --- a/newlib/libc/include/sys/_pthreadtypes.h
 +++ b/newlib/libc/include/sys/_pthreadtypes.h
 @@ -18,19 +18,18 @@
@@ -8533,7 +9029,7 @@ index 75e9e1cbf..a3642c951 100644
  #if defined(_POSIX_THREAD_PROCESS_SHARED)
    int      process_shared;    /* allow this to be shared amongst processes */
  #endif
-@@ -190,11 +175,10 @@ typedef struct {
+@@ -190,19 +175,23 @@ typedef struct {
  typedef __uint32_t pthread_key_t;        /* thread-specific data keys */
  
  typedef struct {
@@ -8547,6 +9043,42 @@ index 75e9e1cbf..a3642c951 100644
  #endif /* defined(_POSIX_THREADS) || __POSIX_VISIBLE >= 199506 */
  
  /* POSIX Barrier Types */
+ 
+ #if defined(_POSIX_BARRIERS)
+-typedef __uint32_t pthread_barrier_t;        /* POSIX Barrier Object */
+ typedef struct {
+-  int   is_initialized;  /* is this structure initialized? */
++  _LOCK_T  lock;
++  _COND_T  cond;
++  unsigned reload;
++  unsigned counter;
++  unsigned cycle;
++} pthread_barrier_t;        /* POSIX Barrier Object */
++typedef struct {
+ #if defined(_POSIX_THREAD_PROCESS_SHARED)
+   int   process_shared;       /* allow this to be shared amongst processes */
+ #endif
+@@ -218,12 +207,17 @@ typedef __uint32_t pthread_spinlock_t;        /* POSIX Spin Lock Object */
+ /* POSIX Reader/Writer Lock Types */
+ 
+ #if defined(_POSIX_READER_WRITER_LOCKS)
+-typedef __uint32_t pthread_rwlock_t;         /* POSIX RWLock Object */
++typedef struct {
++  _LOCK_T  lock;
++  _COND_T  cond_r;
++  _COND_T  cond_w;
++  uint32_t cnt_r : 30;
++  uint32_t cnt_w : 2;
++} pthread_rwlock_t;         /* POSIX RWLock Object */
+ 
+-#define _PTHREAD_RWLOCK_INITIALIZER ((pthread_rwlock_t) 0xFFFFFFFF)
++#define _PTHREAD_RWLOCK_INITIALIZER ((pthread_rwlock_t){ __LOCK_INITIALIZER, __COND_INITIALIZER, __COND_INITIALIZER, 0, 0 })
+ 
+ typedef struct {
+-  int   is_initialized;       /* is this structure initialized? */
+ #if defined(_POSIX_THREAD_PROCESS_SHARED)
+   int   process_shared;       /* allow this to be shared amongst processes */
+ #endif
 diff --git a/newlib/libc/include/sys/_timespec.h b/newlib/libc/include/sys/_timespec.h
 index 7609e4a46..6017a5e3d 100644
 --- a/newlib/libc/include/sys/_timespec.h
@@ -8645,10 +9177,10 @@ index a3fb5c02c..b208de4a7 100644
 +
 +#endif // _dirent_h_
 diff --git a/newlib/libc/include/sys/features.h b/newlib/libc/include/sys/features.h
-index f28dd071b..00d4194b6 100644
+index f28dd071b..ab3780ee2 100644
 --- a/newlib/libc/include/sys/features.h
 +++ b/newlib/libc/include/sys/features.h
-@@ -330,6 +330,13 @@ extern "C" {
+@@ -330,6 +330,16 @@ extern "C" {
  #  define __SSP_FORTIFY_LEVEL 0
  #endif
  
@@ -8656,6 +9188,9 @@ index f28dd071b..00d4194b6 100644
 +#define _POSIX_MONOTONIC_CLOCK		200112L
 +#define _POSIX_TIMERS			1
 +#define _POSIX_THREADS				1
++#define _POSIX_SEMAPHORES		1
++#define _POSIX_BARRIERS                 200112L
++#define _POSIX_READER_WRITER_LOCKS      200112L
 +#define _UNIX98_THREAD_MUTEX_ATTRIBUTES         1
 +#endif
 +
@@ -9529,6 +10064,19 @@ index b358d2b4a..29cec0229 100644
  	    {
  	      /* no more input: return partial result */
  #ifdef __SCLE
+diff --git a/newlib/libc/stdio/local.h b/newlib/libc/stdio/local.h
+index 53694aa1c..79a8f4666 100644
+--- a/newlib/libc/stdio/local.h
++++ b/newlib/libc/stdio/local.h
+@@ -56,7 +56,7 @@
+    the appropriate _newlib_XXX_exit macro. */
+ 
+ #if !defined (__SINGLE_THREAD__) && defined (_POSIX_THREADS) \
+-    && !defined (__rtems__)
++    && !defined (__rtems__) && !defined (__DEVKITA64__)
+ #define _STDIO_WITH_THREAD_CANCELLATION_SUPPORT
+ #endif
+ 
 diff --git a/newlib/libc/stdio/vfprintf.c b/newlib/libc/stdio/vfprintf.c
 index c4bf2dbe3..d756df37d 100644
 --- a/newlib/libc/stdio/vfprintf.c
