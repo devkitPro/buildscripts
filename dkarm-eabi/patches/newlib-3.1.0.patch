@@ -33,7 +33,7 @@ index 41843eed1..dc0e2a5fd 100644
  AS=${AS-as}
 diff --git a/libgloss/libsysbase/Makefile.in b/libgloss/libsysbase/Makefile.in
 new file mode 100644
-index 000000000..0d2be31c6
+index 000000000..7ee40deec
 --- /dev/null
 +++ b/libgloss/libsysbase/Makefile.in
 @@ -0,0 +1,148 @@
@@ -104,7 +104,7 @@ index 000000000..0d2be31c6
 +	else t='$(program_transform_name)'; echo objcopy | sed -e $$t ; fi`
 +
 +# object files needed
-+OBJS = abort.o iosupport.o clocks.o close.o environ.o execve.o fork.o fstat.o getpid.o gettod.o \
++OBJS = abort.o iosupport.o clocks.o environ.o execve.o fork.o fstat.o getpid.o gettod.o \
 +	isatty.o kill.o link.o lseek.o lstat.o nanosleep.o open.o read.o sbrk.o sleep.o stat.o usleep.o times.o \
 +	unlink.o wait.o write.o _exit.o malloc_vars.o \
 +	chdir.o mkdir.o rename.o build_argv.o statvfs.o \
@@ -927,58 +927,6 @@ index 000000000..01cfee469
 +   }
 +}
 +
-diff --git a/libgloss/libsysbase/close.c b/libgloss/libsysbase/close.c
-new file mode 100644
-index 000000000..931ad07b1
---- /dev/null
-+++ b/libgloss/libsysbase/close.c
-@@ -0,0 +1,46 @@
-+#include "config.h"
-+#include <_ansi.h>
-+#include <_syslist.h>
-+#include <stdio.h>
-+#include <errno.h>
-+
-+#include <sys/iosupport.h>
-+
-+#ifdef REENTRANT_SYSCALLS_PROVIDED
-+//---------------------------------------------------------------------------------
-+int _close_r(struct _reent *ptr, int fileDesc) {
-+//---------------------------------------------------------------------------------
-+#else
-+//---------------------------------------------------------------------------------
-+int _close(int fileDesc) {
-+//---------------------------------------------------------------------------------
-+	struct _reent *ptr = _REENT;
-+#endif
-+	int ret = -1;
-+	unsigned int dev = 0;
-+
-+	if(fileDesc!=-1) {
-+
-+		__handle *handle = __get_handle(fileDesc);
-+
-+		if ( handle != NULL) {
-+			dev = handle->device;
-+			handle->refcount--;
-+			if (handle->refcount == 0 ) {
-+
-+				if(devoptab_list[dev]->close_r) {
-+					ptr->deviceData = devoptab_list[dev]->deviceData;
-+					ret = devoptab_list[dev]->close_r(ptr,handle->fileStruct);
-+				}
-+				else
-+					ret = 0;
-+
-+				__release_handle(fileDesc);
-+			} else {
-+				ret = 0;
-+			}
-+
-+		}
-+	}
-+	return ret;
-+}
 diff --git a/libgloss/libsysbase/config.h.in b/libgloss/libsysbase/config.h.in
 new file mode 100644
 index 000000000..48ce950b4
@@ -1012,7 +960,7 @@ index 000000000..48ce950b4
 +#undef __SYMBOL_PREFIX
 diff --git a/libgloss/libsysbase/configure b/libgloss/libsysbase/configure
 new file mode 100644
-index 000000000..c4b5a79b6
+index 000000000..7fe331552
 --- /dev/null
 +++ b/libgloss/libsysbase/configure
 @@ -0,0 +1,4158 @@
@@ -1599,7 +1547,7 @@ index 000000000..c4b5a79b6
 +PACKAGE_BUGREPORT=
 +PACKAGE_URL=
 +
-+ac_unique_file="close.c"
++ac_unique_file="abort.c"
 +ac_subst_vars='LTLIBOBJS
 +LIBOBJS
 +host_makefile_frag_path
@@ -5176,7 +5124,7 @@ index 000000000..c4b5a79b6
 +
 diff --git a/libgloss/libsysbase/configure.in b/libgloss/libsysbase/configure.in
 new file mode 100644
-index 000000000..bf276a413
+index 000000000..3da91ed98
 --- /dev/null
 +++ b/libgloss/libsysbase/configure.in
 @@ -0,0 +1,199 @@
@@ -5195,7 +5143,7 @@ index 000000000..bf276a413
 +# Process this file with autoconf to produce a configure script.
 +#
 +AC_PREREQ(2.59)
-+AC_INIT(close.c)
++AC_INIT(abort.c)
 +AC_CONFIG_HEADER(config.h)
 +
 +if test "${enable_shared}" = "yes" ; then
@@ -6001,10 +5949,13 @@ index 000000000..9d5b74724
 +
 diff --git a/libgloss/libsysbase/handle_manager.c b/libgloss/libsysbase/handle_manager.c
 new file mode 100644
-index 000000000..f3fcc88f7
+index 000000000..6bf9ab89e
 --- /dev/null
 +++ b/libgloss/libsysbase/handle_manager.c
-@@ -0,0 +1,173 @@
+@@ -0,0 +1,229 @@
++#include "config.h"
++#include <_ansi.h>
++#include <_syslist.h>
 +#include <stdlib.h>
 +#include <stdio.h>
 +#include <errno.h>
@@ -6025,7 +5976,7 @@ index 000000000..f3fcc88f7
 +
 +__LOCK_INIT(static, __hndl_lock);
 +
-+void __free_handle(__handle *handle) {
++static void __free_handle(__handle *handle) {
 +
 +	if ( NULL != handle
 +	&& handle != &__stdin_handle
@@ -6093,8 +6044,11 @@ index 000000000..f3fcc88f7
 +
 +	if ( fd < 0 || fd >= MAX_HANDLES ) return NULL;
 +
-+	return handles[fd];
++	__lock_acquire (__hndl_lock);
++	__handle *handle = handles[fd];
++	__lock_release (__hndl_lock);
 +
++	return handle;
 +}
 +
 +int dup(int oldfd) {
@@ -6126,57 +6080,107 @@ index 000000000..f3fcc88f7
 +
 +int dup2(int oldfd, int newfd) {
 +
-+
-+	__lock_acquire (__hndl_lock);
-+
 +	if ( newfd < 0 || newfd >= MAX_HANDLES ||
++		 oldfd < 0 || oldfd >= MAX_HANDLES) {
 +
-+		 oldfd < 0 || oldfd >= MAX_HANDLES ||
-+		 handles[oldfd] == NULL ) {
-+
-+		__lock_release (__hndl_lock);
 +		errno = EBADF;
 +
 +		return -1;
 +	}
 +
 +	if ( newfd == oldfd ) {
-+		__lock_release (__hndl_lock);
 +		return newfd;
 +	}
 +
++	__lock_acquire (__hndl_lock);
++
++	if ( handles[oldfd] == NULL ) {
++		__lock_release (__hndl_lock);
++		errno = EBADF;
++
++		return -1;
++	}
 +
 +	__handle *handle = handles[newfd];
-+
-+	if ( NULL != handle ) {
-+
-+		handle->refcount--;
-+
-+	}
 +
 +	handles[newfd] = handles[oldfd];
 +	handles[newfd]->refcount++;
 +
-+	__lock_release (__hndl_lock);
++	if ( handle ) {
 +
-+	if ( NULL != handle ) {
++		int ref = --handle->refcount;
++		__lock_release (__hndl_lock);
 +
-+		if (handle->refcount == 0 ) {
++		if ( ref == 0 ) {
 +
-+			if( devoptab_list[handle->device]->close_r != NULL) {
++			if ( devoptab_list[handle->device]->close_r ) {
 +
++				_REENT->deviceData = devoptab_list[handle->device]->deviceData;
 +				devoptab_list[handle->device]->close_r(_REENT,handle->fileStruct);
 +
-+			} else {
-+
-+				__free_handle(handle);
-+
 +			}
++
++			__free_handle(handle);
 +		}
++
++	} else {
++
++		__lock_release (__hndl_lock);
++
 +	}
 +
 +	return newfd;
++}
 +
++#ifdef REENTRANT_SYSCALLS_PROVIDED
++//---------------------------------------------------------------------------------
++int _close_r(struct _reent *ptr, int fd) {
++//---------------------------------------------------------------------------------
++#else
++//---------------------------------------------------------------------------------
++int _close(int fd) {
++//---------------------------------------------------------------------------------
++	struct _reent *ptr = _REENT;
++#endif
++	int ret = 0;
++
++	if (fd < 0 || fd >= MAX_HANDLES) {
++
++		ptr->_errno = EBADF;
++		return -1;
++
++	}
++
++	__lock_acquire (__hndl_lock);
++
++	__handle *handle = handles[fd];
++
++	if ( !handle ) {
++
++		__lock_release (__hndl_lock);
++		ptr->_errno = EBADF;
++		return -1;
++
++	}
++
++	int ref = --handle->refcount;
++	handles[fd] = NULL;
++
++	__lock_release (__hndl_lock);
++
++	if ( ref == 0 ) {
++
++		if ( devoptab_list[handle->device]->close_r ) {
++
++			ptr->deviceData = devoptab_list[handle->device]->deviceData;
++			ret = devoptab_list[handle->device]->close_r(ptr,handle->fileStruct);
++
++		}
++
++		__free_handle(handle);
++	}
++
++	return ret;
 +}
 diff --git a/libgloss/libsysbase/iosupport.c b/libgloss/libsysbase/iosupport.c
 new file mode 100644
