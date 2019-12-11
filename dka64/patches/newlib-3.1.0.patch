@@ -6555,10 +6555,10 @@ index 000000000..13bd0fba1
 +}
 diff --git a/libgloss/libsysbase/link.c b/libgloss/libsysbase/link.c
 new file mode 100644
-index 000000000..1675e5c24
+index 000000000..162f70f63
 --- /dev/null
 +++ b/libgloss/libsysbase/link.c
-@@ -0,0 +1,33 @@
+@@ -0,0 +1,36 @@
 +#include "config.h"
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -6572,11 +6572,14 @@ index 000000000..1675e5c24
 +int _link(const char *existing, const char *new) {
 +	struct _reent *r = _REENT;
 +#endif
-+	int ret;
++	int ret = -1;
 +	int sourceDev = FindDevice(existing);
 +	int destDev = FindDevice(new);
 +
-+	ret = -1;
++	if (sourceDev == -1 || destDev == -1 ) {
++		r->_errno = ENODEV;
++		return ret;
++	}
 +
 +	if ( sourceDev == destDev) {
 +		if (devoptab_list[destDev]->link_r) {
@@ -6854,26 +6857,30 @@ index 000000000..456590956
 +char *fake_heap_start = (char*)0;
 diff --git a/libgloss/libsysbase/mkdir.c b/libgloss/libsysbase/mkdir.c
 new file mode 100644
-index 000000000..b4fcbd3d7
+index 000000000..19742b774
 --- /dev/null
 +++ b/libgloss/libsysbase/mkdir.c
-@@ -0,0 +1,19 @@
+@@ -0,0 +1,23 @@
 +#include <reent.h>
 +#include <sys/iosupport.h>
 +#include <errno.h>
 +
 +int mkdir (const char *path, mode_t mode) {
 +	struct _reent *r = _REENT;
-+	int ret;
-+	int dev = FindDevice(path);
-+	ret = -1;
++	int ret = -1;
 +
-+	if (devoptab_list[dev]->mkdir_r) {
-+		r->deviceData = devoptab_list[dev]->deviceData;
-+		ret = devoptab_list[dev]->mkdir_r(r, path, mode);
-+	} else {
-+		r->_errno = ENOSYS;
-+	}
++        int dev = FindDevice(path);
++
++        if(dev!=-1) {
++                if(devoptab_list[dev]->mkdir_r) {
++                        r->deviceData = devoptab_list[dev]->deviceData;
++                        ret = devoptab_list[dev]->mkdir_r(r,path,mode);
++                } else {
++                        r->_errno = ENOSYS;
++                }
++        } else {
++                r->_errno =     ENODEV;
++        }
 +
 +	return ret;
 +}
@@ -8092,10 +8099,10 @@ index 000000000..838a8c796
 +
 diff --git a/libgloss/libsysbase/rename.c b/libgloss/libsysbase/rename.c
 new file mode 100644
-index 000000000..97a056a72
+index 000000000..b54e0ce7c
 --- /dev/null
 +++ b/libgloss/libsysbase/rename.c
-@@ -0,0 +1,34 @@
+@@ -0,0 +1,37 @@
 +#include "config.h"
 +#include <reent.h>
 +#include <sys/iosupport.h>
@@ -8111,11 +8118,14 @@ index 000000000..97a056a72
 +#endif
 +	struct _reent *r = _REENT;
 +
-+	int ret;
++	int ret = -1;
 +	int sourceDev = FindDevice(existing);
 +	int destDev = FindDevice(newName);
 +
-+	ret = -1;
++        if (sourceDev == -1 || destDev == -1 ) {
++                r->_errno = ENODEV;
++                return ret;
++        }
 +
 +	if ( sourceDev == destDev) {
 +		if (devoptab_list[destDev]->rename_r) {
@@ -8229,10 +8239,10 @@ index 000000000..5dd550c5c
 +}
 diff --git a/libgloss/libsysbase/scandir.c b/libgloss/libsysbase/scandir.c
 new file mode 100644
-index 000000000..1333df4b2
+index 000000000..5c673af52
 --- /dev/null
 +++ b/libgloss/libsysbase/scandir.c
-@@ -0,0 +1,74 @@
+@@ -0,0 +1,76 @@
 +#include <sys/types.h>
 +#include <sys/stat.h>
 +#include <stddef.h>
@@ -8262,6 +8272,8 @@ index 000000000..1333df4b2
 +	int (*filter) __P((const struct dirent *)),
 +	int (*compar) __P((const struct dirent **, const struct dirent **)))
 +{
++	errno = 0;
++
 +	DIR *d = opendir(dirname);
 +
 +	if (!d) return -1;
@@ -9330,10 +9342,10 @@ index 000000000..82d2e3576
 +#endif // __iosupp_h__
 +//---------------------------------------------------------------------------------
 diff --git a/newlib/libc/include/sys/lock.h b/newlib/libc/include/sys/lock.h
-index 528904957..30cb099e6 100644
+index 528904957..e49f77b75 100644
 --- a/newlib/libc/include/sys/lock.h
 +++ b/newlib/libc/include/sys/lock.h
-@@ -1,69 +1,97 @@
+@@ -1,69 +1,105 @@
  #ifndef __SYS_LOCK_H__
  #define __SYS_LOCK_H__
  
@@ -9342,19 +9354,68 @@ index 528904957..30cb099e6 100644
 -#include <newlib.h>
  #include <_ansi.h>
 +#include <stdint.h>
-+
+ 
+-#if !defined(_RETARGETABLE_LOCKING)
 +typedef int32_t _LOCK_T;
-+
+ 
+-typedef int _LOCK_T;
+-typedef int _LOCK_RECURSIVE_T;
 +struct __lock_t {
 +	_LOCK_T lock;
 +	uint32_t thread_tag;
 +	uint32_t counter;
 +};
-+
+ 
+-#define __LOCK_INIT(class,lock) static int lock = 0;
+-#define __LOCK_INIT_RECURSIVE(class,lock) static int lock = 0;
+-#define __lock_init(lock) ((void) 0)
+-#define __lock_init_recursive(lock) ((void) 0)
+-#define __lock_close(lock) ((void) 0)
+-#define __lock_close_recursive(lock) ((void) 0)
+-#define __lock_acquire(lock) ((void) 0)
+-#define __lock_acquire_recursive(lock) ((void) 0)
+-#define __lock_try_acquire(lock) ((void) 0)
+-#define __lock_try_acquire_recursive(lock) ((void) 0)
+-#define __lock_release(lock) ((void) 0)
+-#define __lock_release_recursive(lock) ((void) 0)
 +typedef struct __lock_t _LOCK_RECURSIVE_T;
-+
+ 
+-#else
 +typedef uint32_t _COND_T;
-+
+ 
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+ 
+-struct __lock;
+-typedef struct __lock * _LOCK_T;
+-#define _LOCK_RECURSIVE_T _LOCK_T
+-
+-#define __LOCK_INIT(class,lock) extern struct __lock __lock_ ## lock; \
+-	class _LOCK_T lock = &__lock_ ## lock
+-#define __LOCK_INIT_RECURSIVE(class,lock) __LOCK_INIT(class,lock)
+-
+-extern void __retarget_lock_init(_LOCK_T *lock);
+-#define __lock_init(lock) __retarget_lock_init(&lock)
+-extern void __retarget_lock_init_recursive(_LOCK_T *lock);
+-#define __lock_init_recursive(lock) __retarget_lock_init_recursive(&lock)
+-extern void __retarget_lock_close(_LOCK_T lock);
+-#define __lock_close(lock) __retarget_lock_close(lock)
+-extern void __retarget_lock_close_recursive(_LOCK_T lock);
+-#define __lock_close_recursive(lock) __retarget_lock_close_recursive(lock)
+-extern void __retarget_lock_acquire(_LOCK_T lock);
+-#define __lock_acquire(lock) __retarget_lock_acquire(lock)
+-extern void __retarget_lock_acquire_recursive(_LOCK_T lock);
+-#define __lock_acquire_recursive(lock) __retarget_lock_acquire_recursive(lock)
+-extern int __retarget_lock_try_acquire(_LOCK_T lock);
+-#define __lock_try_acquire(lock) __retarget_lock_try_acquire(lock)
+-extern int __retarget_lock_try_acquire_recursive(_LOCK_T lock);
+-#define __lock_try_acquire_recursive(lock) \
+-  __retarget_lock_try_acquire_recursive(lock)
+-extern void __retarget_lock_release(_LOCK_T lock);
+-#define __lock_release(lock) __retarget_lock_release(lock)
+-extern void __retarget_lock_release_recursive(_LOCK_T lock);
+-#define __lock_release_recursive(lock) __retarget_lock_release_recursive(lock)
 +extern void __libc_lock_init(_LOCK_T *lock);
 +extern void __libc_lock_init_recursive(_LOCK_RECURSIVE_T *lock);
 +extern void __libc_lock_close(_LOCK_T *lock);
@@ -9374,7 +9435,12 @@ index 528904957..30cb099e6 100644
 +extern int __libc_cond_broadcast(_COND_T *cond);
 +extern int __libc_cond_wait(_COND_T *cond, _LOCK_T *lock, uint64_t timeout_ns);
 +extern int __libc_cond_wait_recursive(_COND_T *cond, _LOCK_RECURSIVE_T *lock, uint64_t timeout_ns);
-+
+ 
+ #ifdef __cplusplus
+ }
+ #endif
+ 
+-#endif /* !defined(_RETARGETABLE_LOCKING) */
 +#define __LOCK_INITIALIZER ((_LOCK_T)0)
 +#define __LOCK_INITIALIZER_RECURSIVE ((_LOCK_RECURSIVE_T){__LOCK_INITIALIZER,0,0})
 +#define __COND_INITIALIZER ((_COND_T)0)
@@ -9433,66 +9499,6 @@ index 528904957..30cb099e6 100644
 +#define __cond_wait_recursive(NAME, LOCK, TIMEOUT) \
 +	__libc_cond_wait_recursive(&(NAME), &(LOCK), (TIMEOUT))
  
--#if !defined(_RETARGETABLE_LOCKING)
--
--typedef int _LOCK_T;
--typedef int _LOCK_RECURSIVE_T;
--
--#define __LOCK_INIT(class,lock) static int lock = 0;
--#define __LOCK_INIT_RECURSIVE(class,lock) static int lock = 0;
--#define __lock_init(lock) ((void) 0)
--#define __lock_init_recursive(lock) ((void) 0)
--#define __lock_close(lock) ((void) 0)
--#define __lock_close_recursive(lock) ((void) 0)
--#define __lock_acquire(lock) ((void) 0)
--#define __lock_acquire_recursive(lock) ((void) 0)
--#define __lock_try_acquire(lock) ((void) 0)
--#define __lock_try_acquire_recursive(lock) ((void) 0)
--#define __lock_release(lock) ((void) 0)
--#define __lock_release_recursive(lock) ((void) 0)
--
--#else
--
--#ifdef __cplusplus
--extern "C" {
--#endif
--
--struct __lock;
--typedef struct __lock * _LOCK_T;
--#define _LOCK_RECURSIVE_T _LOCK_T
--
--#define __LOCK_INIT(class,lock) extern struct __lock __lock_ ## lock; \
--	class _LOCK_T lock = &__lock_ ## lock
--#define __LOCK_INIT_RECURSIVE(class,lock) __LOCK_INIT(class,lock)
--
--extern void __retarget_lock_init(_LOCK_T *lock);
--#define __lock_init(lock) __retarget_lock_init(&lock)
--extern void __retarget_lock_init_recursive(_LOCK_T *lock);
--#define __lock_init_recursive(lock) __retarget_lock_init_recursive(&lock)
--extern void __retarget_lock_close(_LOCK_T lock);
--#define __lock_close(lock) __retarget_lock_close(lock)
--extern void __retarget_lock_close_recursive(_LOCK_T lock);
--#define __lock_close_recursive(lock) __retarget_lock_close_recursive(lock)
--extern void __retarget_lock_acquire(_LOCK_T lock);
--#define __lock_acquire(lock) __retarget_lock_acquire(lock)
--extern void __retarget_lock_acquire_recursive(_LOCK_T lock);
--#define __lock_acquire_recursive(lock) __retarget_lock_acquire_recursive(lock)
--extern int __retarget_lock_try_acquire(_LOCK_T lock);
--#define __lock_try_acquire(lock) __retarget_lock_try_acquire(lock)
--extern int __retarget_lock_try_acquire_recursive(_LOCK_T lock);
--#define __lock_try_acquire_recursive(lock) \
--  __retarget_lock_try_acquire_recursive(lock)
--extern void __retarget_lock_release(_LOCK_T lock);
--#define __lock_release(lock) __retarget_lock_release(lock)
--extern void __retarget_lock_release_recursive(_LOCK_T lock);
--#define __lock_release_recursive(lock) __retarget_lock_release_recursive(lock)
--
--#ifdef __cplusplus
--}
--#endif
--
--#endif /* !defined(_RETARGETABLE_LOCKING) */
--
 -#endif /* __SYS_LOCK_H__ */
 +#endif // __SYS_LOCK_H__
 diff --git a/newlib/libc/include/sys/reent.h b/newlib/libc/include/sys/reent.h

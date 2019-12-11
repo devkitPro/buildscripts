@@ -1,8 +1,8 @@
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index 7af8e028104..90a3a50f624 100644
+index ddd3b8f4d9d..014df2e5a59 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
-@@ -945,6 +945,12 @@ aarch64*-*-elf | aarch64*-*-fuchsia* | aarch64*-*-rtems*)
+@@ -985,6 +985,12 @@ aarch64*-*-elf | aarch64*-*-fuchsia* | aarch64*-*-rtems*)
  	case $target in
  	aarch64-*-elf*)
  		use_gcc_stdint=wrap
@@ -16,7 +16,7 @@ index 7af8e028104..90a3a50f624 100644
          aarch64-*-fuchsia*)
                  tm_file="${tm_file} fuchsia.h"
 diff --git a/gcc/config/aarch64/aarch64-elf-raw.h b/gcc/config/aarch64/aarch64-elf-raw.h
-index c074238df06..ef503ddd5a6 100644
+index bbebd0ef029..8f38510402f 100644
 --- a/gcc/config/aarch64/aarch64-elf-raw.h
 +++ b/gcc/config/aarch64/aarch64-elf-raw.h
 @@ -22,6 +22,7 @@
@@ -28,7 +28,7 @@ index c074238df06..ef503ddd5a6 100644
  #define ENDFILE_SPEC \
    " crtend%O%s crtn%O%s " \
 diff --git a/gcc/config/aarch64/aarch64-opts.h b/gcc/config/aarch64/aarch64-opts.h
-index 7a5c6d7664f..687793841de 100644
+index 4b07d296a11..037985f1d86 100644
 --- a/gcc/config/aarch64/aarch64-opts.h
 +++ b/gcc/config/aarch64/aarch64-opts.h
 @@ -48,6 +48,12 @@ enum aarch64_tls_type {
@@ -45,10 +45,10 @@ index 7a5c6d7664f..687793841de 100644
     Most have a PIC and non-PIC variant.  */
  enum aarch64_code_model {
 diff --git a/gcc/config/aarch64/aarch64.c b/gcc/config/aarch64/aarch64.c
-index 349ca0c047b..5c03c42c28e 100644
+index 6b25d9cbfae..39c7026a90c 100644
 --- a/gcc/config/aarch64/aarch64.c
 +++ b/gcc/config/aarch64/aarch64.c
-@@ -12005,8 +12005,24 @@ aarch64_load_tp (rtx target)
+@@ -13186,8 +13186,24 @@ aarch64_load_tp (rtx target)
        || !register_operand (target, Pmode))
      target = gen_reg_rtx (Pmode);
  
@@ -76,10 +76,10 @@ index 349ca0c047b..5c03c42c28e 100644
  }
  
 diff --git a/gcc/config/aarch64/aarch64.h b/gcc/config/aarch64/aarch64.h
-index 976f9afae54..73263bcb5e7 100644
+index fc6df970c2e..705c6de868f 100644
 --- a/gcc/config/aarch64/aarch64.h
 +++ b/gcc/config/aarch64/aarch64.h
-@@ -957,6 +957,10 @@ typedef struct
+@@ -1006,6 +1006,10 @@ typedef struct
  /* Check TLS Descriptors mechanism is selected.  */
  #define TARGET_TLS_DESC (aarch64_tls_dialect == TLS_DESCRIPTORS)
  
@@ -91,10 +91,10 @@ index 976f9afae54..73263bcb5e7 100644
  
  /* When using the tiny addressing model conditional and unconditional branches
 diff --git a/gcc/config/aarch64/aarch64.md b/gcc/config/aarch64/aarch64.md
-index 32a0e1f3685..783c655acf0 100644
+index 5a1894063a1..7c9d9452659 100644
 --- a/gcc/config/aarch64/aarch64.md
 +++ b/gcc/config/aarch64/aarch64.md
-@@ -5693,11 +5693,22 @@
+@@ -6583,11 +6583,22 @@
  (define_insn "aarch64_load_tp_hard"
    [(set (match_operand:DI 0 "register_operand" "=r")
  	(unspec:DI [(const_int 0)] UNSPEC_TLS))]
@@ -120,10 +120,10 @@ index 32a0e1f3685..783c655acf0 100644
  ;; instructions in the TLS stubs, in order to enable linker relaxation.
  ;; Therefore we treat the stubs as an atomic sequence.
 diff --git a/gcc/config/aarch64/aarch64.opt b/gcc/config/aarch64/aarch64.opt
-index 52eaf8c6f40..52bccddc6e3 100644
+index 7719c3b6352..cd32a639b16 100644
 --- a/gcc/config/aarch64/aarch64.opt
 +++ b/gcc/config/aarch64/aarch64.opt
-@@ -115,6 +115,20 @@ Enum(aarch64_tls_size) String(32) Value(32)
+@@ -118,6 +118,21 @@ Enum(aarch64_tls_size) String(32) Value(32)
  EnumValue
  Enum(aarch64_tls_size) String(48) Value(48)
  
@@ -141,19 +141,22 @@ index 52eaf8c6f40..52bccddc6e3 100644
 +EnumValue
 +Enum(aarch64_tp_type) String(soft) Value(TP_SOFT)
 +
++
  march=
  Target RejectNegative ToLower Joined Var(aarch64_arch_string)
- -march=ARCH	Use features of architecture ARCH.
+ Use features of architecture ARCH.
 diff --git a/gcc/config/aarch64/t-aarch64 b/gcc/config/aarch64/t-aarch64
-index 0be1f0d63aa..a54068bfd96 100644
+index ee471f8983f..aedaefdd62d 100644
 --- a/gcc/config/aarch64/t-aarch64
 +++ b/gcc/config/aarch64/t-aarch64
-@@ -68,5 +68,7 @@ cortex-a57-fma-steering.o: $(srcdir)/config/aarch64/cortex-a57-fma-steering.c \
- 		$(srcdir)/config/aarch64/cortex-a57-fma-steering.c
+@@ -100,6 +100,8 @@ aarch64-bti-insert.o: $(srcdir)/config/aarch64/aarch64-bti-insert.c \
+ 	$(COMPILER) -c $(ALL_COMPILERFLAGS) $(ALL_CPPFLAGS) $(INCLUDES) \
+ 		$(srcdir)/config/aarch64/aarch64-bti-insert.c
  
- comma=,
+-comma=,
 -MULTILIB_OPTIONS    = $(subst $(comma),/, $(patsubst %, mabi=%, $(subst $(comma),$(comma)mabi=,$(TM_MULTILIB_CONFIG))))
 -MULTILIB_DIRNAMES   = $(subst $(comma), ,$(TM_MULTILIB_CONFIG))
++ comma=,
 +MULTILIB_OPTIONS    = mcmodel=large fPIC
 +MULTILIB_DIRNAMES   = large pic
 +MULTILIB_REQUIRED   = mcmodel=large fPIC
@@ -231,10 +234,10 @@ index 00000000000..9acbbf9d27c
 +
 +; This comment is to ensure we retain the blank line above.
 diff --git a/gcc/gcc.c b/gcc/gcc.c
-index a716f708259..6a11011dba7 100644
+index 4f57765b012..2899202cc05 100644
 --- a/gcc/gcc.c
 +++ b/gcc/gcc.c
-@@ -786,6 +786,11 @@ proper position among the other output files.  */
+@@ -794,6 +794,11 @@ proper position among the other output files.  */
  #endif
  #endif
  
@@ -246,7 +249,7 @@ index a716f708259..6a11011dba7 100644
  /* config.h can define STARTFILE_SPEC to override the default crt0 files.  */
  #ifndef STARTFILE_SPEC
  #define STARTFILE_SPEC  \
-@@ -1081,6 +1086,7 @@ static const char *link_spec = LINK_SPEC;
+@@ -1086,6 +1091,7 @@ static const char *link_spec = LINK_SPEC;
  static const char *lib_spec = LIB_SPEC;
  static const char *link_gomp_spec = "";
  static const char *libgcc_spec = LIBGCC_SPEC;
@@ -254,7 +257,7 @@ index a716f708259..6a11011dba7 100644
  static const char *endfile_spec = ENDFILE_SPEC;
  static const char *startfile_spec = STARTFILE_SPEC;
  static const char *linker_name_spec = LINKER_NAME;
-@@ -1577,6 +1583,7 @@ static struct spec_list static_specs[] =
+@@ -1583,6 +1589,7 @@ static struct spec_list static_specs[] =
    INIT_STATIC_SPEC ("lib",			&lib_spec),
    INIT_STATIC_SPEC ("link_gomp",		&link_gomp_spec),
    INIT_STATIC_SPEC ("libgcc",			&libgcc_spec),
@@ -263,7 +266,7 @@ index a716f708259..6a11011dba7 100644
    INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
    INIT_STATIC_SPEC ("version",			&compiler_version),
 diff --git a/libgcc/crtstuff.c b/libgcc/crtstuff.c
-index 5e894455e16..f2347455de0 100644
+index 4927a9f8977..8311b6a7f5e 100644
 --- a/libgcc/crtstuff.c
 +++ b/libgcc/crtstuff.c
 @@ -47,6 +47,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
@@ -275,7 +278,7 @@ index 5e894455e16..f2347455de0 100644
  /* FIXME: Including auto-host is incorrect, but until we have
     identified the set of defines that need to go into auto-target.h,
 diff --git a/libgcc/gthr.h b/libgcc/gthr.h
-index 88b0178f9e3..e94fcf9d721 100644
+index 67826419882..d9f01c6c371 100644
 --- a/libgcc/gthr.h
 +++ b/libgcc/gthr.h
 @@ -136,7 +136,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
@@ -288,10 +291,10 @@ index 88b0178f9e3..e94fcf9d721 100644
  #define GTHREAD_USE_WEAK 0
  #endif
 diff --git a/libstdc++-v3/include/Makefile.am b/libstdc++-v3/include/Makefile.am
-index 77e6dc2f6be..3a102997371 100644
+index 1deacb80ca2..0de11c15a3a 100644
 --- a/libstdc++-v3/include/Makefile.am
 +++ b/libstdc++-v3/include/Makefile.am
-@@ -1293,6 +1293,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
+@@ -1338,6 +1338,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
  	    -e '/^#/s/\(${uppercase}${uppercase}*\)/_GLIBCXX_\1/g' \
  	    -e 's/_GLIBCXX_SUPPORTS_WEAK/__GXX_WEAK__/g' \
  	    -e 's/_GLIBCXX___MINGW32_GLIBCXX___/__MINGW32__/g' \
@@ -300,10 +303,10 @@ index 77e6dc2f6be..3a102997371 100644
  	    < $< > $@
  
 diff --git a/libstdc++-v3/include/Makefile.in b/libstdc++-v3/include/Makefile.in
-index 948a5c1f1c5..ee8e240f6c5 100644
+index bc475c6dd90..bfa3e71898a 100644
 --- a/libstdc++-v3/include/Makefile.in
 +++ b/libstdc++-v3/include/Makefile.in
-@@ -1719,6 +1719,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
+@@ -1817,6 +1817,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
  	    -e '/^#/s/\(${uppercase}${uppercase}*\)/_GLIBCXX_\1/g' \
  	    -e 's/_GLIBCXX_SUPPORTS_WEAK/__GXX_WEAK__/g' \
  	    -e 's/_GLIBCXX___MINGW32_GLIBCXX___/__MINGW32__/g' \
