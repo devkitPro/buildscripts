@@ -40,7 +40,7 @@ case "$VERSION" in
     toolchain=DEVKITARM
   ;;
   "2" )
-    GCC_VER=8.3.0
+    GCC_VER=8.4.0
     BINUTILS_VER=2.32
     MN_BINUTILS_VER=2.17
     NEWLIB_VER=3.1.0
