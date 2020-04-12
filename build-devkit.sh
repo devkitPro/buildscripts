@@ -26,33 +26,11 @@ echo "https://github.com/devkitPro/buildscripts/pulls"
 echo
 
 
-GENERAL_TOOLS_VER=1.0.2
 
-GBATOOLS_VER=1.1.0
 DKARM_RULES_VER=1.0.0
 DKARM_CRTLS_VER=1.0.0
 
-DSTOOLS_VER=1.2.1
-GRIT_VER=0.8.15
-NDSTOOL_VER=2.1.1
-MMUTIL_VER=1.8.7
-
-DFU_UTIL_VER=0.9.1
-STLINK_VER=1.2.3
-
-GAMECUBE_TOOLS_VER=1.0.2
-WIILOAD_VER=0.5.1
 DKPPC_RULES_VER=1.0.0
-
-TOOLS3DS_VER=1.1.4
-LINK3DS_VER=0.5.2
-PICASSO_VER=2.7.0
-TEX3DS_VER=1.0.0
-
-GP32_TOOLS_VER=1.0.3
-LIBMIRKO_VER=0.9.8
-
-SWITCH_TOOLS_VER=1.4.1
 
 OSXMIN=${OSXMIN:-10.9}
 
@@ -206,27 +184,14 @@ archives="binutils-${BINUTILS_VER}.tar.xz gcc-${GCC_VER}.tar.xz newlib-${NEWLIB_
 
 if [ $VERSION -eq 1 ]; then
 
-	hostarchives="gba-tools-$GBATOOLS_VER.tar.bz2 gp32-tools-$GP32_TOOLS_VER.tar.bz2
-		dstools-$DSTOOLS_VER.tar.bz2 grit-$GRIT_VER.tar.bz2 ndstool-$NDSTOOL_VER.tar.bz2
-		general-tools-$GENERAL_TOOLS_VER.tar.bz2 mmutil-$MMUTIL_VER.tar.bz2
-		dfu-util-$DFU_UTIL_VER.tar.bz2 stlink-$STLINK_VER.tar.bz2 3dstools-$TOOLS3DS_VER.tar.bz2
-		picasso-$PICASSO_VER.tar.bz2 tex3ds-$TEX3DS_VER.tar.bz2 3dslink-$LINK3DS_VER.tar.bz2"
-
 	archives="devkitarm-rules-$DKARM_RULES_VER.tar.xz devkitarm-crtls-$DKARM_CRTLS_VER.tar.xz $archives"
 fi
 
 if [ $VERSION -eq 2 ]; then
 
-	hostarchives="gamecube-tools-$GAMECUBE_TOOLS_VER.tar.bz2 wiiload-$WIILOAD_VER.tar.bz2 general-tools-$GENERAL_TOOLS_VER.tar.bz2"
-
 	archives="binutils-${MN_BINUTILS_VER}.tar.bz2 devkitppc-rules-$DKPPC_RULES_VER.tar.xz $archives"
 fi
 
-if [ $VERSION -eq 3 ]; then
-
-	hostarchives="general-tools-$GENERAL_TOOLS_VER.tar.bz2 switch-tools-$SWITCH_TOOLS_VER.tar.bz2"
-
-fi
 
 
 if [ ! -z "$BUILD_DKPRO_SRCDIR" ] ; then
@@ -236,7 +201,7 @@ else
 fi
 
 cd "$SRCDIR"
-for archive in $archives $hostarchives
+for archive in $archives
 do
 	echo $archive
 	if [ ! -f $archive ]; then
@@ -257,22 +222,10 @@ if [ $VERSION -eq 2 ]; then
 	extract_and_patch binutils $MN_BINUTILS_VER bz2
 fi
 
-for archive in $hostarchives
-do
-	destdir=$(echo $archive | sed -e 's/\(.*\)-src-\(.*\)\.tar\.bz2/\1-\2/' )
-	if [ ! -d $destdir ]; then
-		tar -xjf "$SRCDIR/$archive"
-	fi
-done
-
 #---------------------------------------------------------------------------------
 # Build and install devkit components
 #---------------------------------------------------------------------------------
 if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh || { echo "Error building toolchain"; exit 1; }; cd $BUILDSCRIPTDIR; fi
-
-if [ "$BUILD_DKPRO_SKIP_TOOLS" != "1" ] && [ -f $scriptdir/build-tools.sh ]; then
- . $scriptdir/build-tools.sh || { echo "Error building tools"; exit 1; }; cd $BUILDSCRIPTDIR;
-fi
 
 cd $BUILDSCRIPTDIR
 
