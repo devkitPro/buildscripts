@@ -230,7 +230,8 @@ if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh || { echo "Err
 cd $BUILDSCRIPTDIR
 
 if [ ! -z $CROSSBUILD ] && grep -q "mingw" <<<"$CROSSBUILD" ; then
-	cp -v	$CROSSBINPATH//libwinpthread-1.dll $prefix/bin
+	cp -v	$CROSSBINPATH/libwinpthread-1.dll $prefix/bin/
+	cp -v	$CROSSBINPATH/libwinpthread-1.dll $prefix/libexec/gcc/$target/$GCC_VER/
 fi
 
 echo "stripping installed binaries"
