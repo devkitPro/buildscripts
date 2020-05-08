@@ -64,7 +64,7 @@ then
 		--prefix=$prefix \
 		--enable-lto\
 		--with-system-zlib \
-		--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 53" \
+		--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 54" \
 		$CROSS_PARAMS \
 		$CROSS_GCC_PARAMS \
 		|| { echo "Error configuring gcc"; exit 1; }
