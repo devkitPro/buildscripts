@@ -59,12 +59,12 @@ then
 		--enable-libstdcxx-time \
 		--enable-libstdcxx-filesystem-ts \
 		--target=$target \
-		--with-newlib \
+		--with-newlib=yes \
 		--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 		--prefix=$prefix \
 		--enable-lto $plugin_ld\
 		--with-system-zlib \
-		--with-bugurl="https://github.com/devkitPro/buildscripts/issues" --with-pkgversion="devkitA64 release 14" \
+		--with-bugurl="https://github.com/devkitPro/buildscripts/issues" --with-pkgversion="devkitA64 release 15" \
 		$CROSS_PARAMS \
 		$CROSS_GCC_PARAMS \
 		|| { echo "Error configuring gcc"; exit 1; }
