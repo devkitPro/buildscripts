@@ -53,8 +53,8 @@ case "$VERSION" in
   "3" )
     GCC_VER=10.1.0
     BINUTILS_VER=2.32
-    GDB_VER=8.2.1
     NEWLIB_VER=3.3.0
+    GDB_VER=9.1
     basedir='dka64'
     package=devkitA64
     target=aarch64-none-elf
