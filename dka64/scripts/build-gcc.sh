@@ -161,6 +161,7 @@ PLATFORM=`uname -s`
 
 if [ ! -f configured-gdb ]
 then
+	CPPFLAGS="$cppflags" \
 	CFLAGS="$cflags" \
 	CXXFLAGS="$cflags" \
 	LDFLAGS="$ldflags" \
