@@ -219,14 +219,17 @@ extract_and_patch gcc $GCC_VER xz
 extract_and_patch newlib $NEWLIB_VER gz
 extract_and_patch gdb $GDB_VER xz
 
-if [ $VERSION -eq 2 ]; then
-	extract_and_patch binutils $MN_BINUTILS_VER bz2
-fi
+if [ $VERSION -eq 2 ]; then extract_and_patch binutils $MN_BINUTILS_VER bz2; fi
 
 #---------------------------------------------------------------------------------
 # Build and install devkit components
 #---------------------------------------------------------------------------------
 if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh || { echo "Error building toolchain"; exit 1; }; cd $BUILDSCRIPTDIR; fi
+
+
+if [ "$BUILD_DKPRO_SKIP_CRTLS" != "1" ] && [ -f $scriptdir/build-crtls.sh ]; then
+  . $scriptdir/build-crtls.sh || { echo "Error building crtls & rules"; exit 1; }; cd $BUILDSCRIPTDIR;
+fi
 
 cd $BUILDSCRIPTDIR
 
