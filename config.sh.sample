@@ -31,9 +31,9 @@ BUILD_DKPRO_PACKAGE=0
 #export MAKEFLAGS="$MAKEFLAGS -j${numcores}"
 
 #---------------------------------------------------------------------------------
-# Uncomment to skip building of tools
+# Uncomment to skip building of crtls and rules files
 #---------------------------------------------------------------------------------
-#BUILD_DKPRO_SKIP_TOOLS=1
+#BUILD_DKPRO_SKIP_CRTLS=1
 
 # Automated script execution
 #---------------------------------------------------------------------------------
