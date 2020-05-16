@@ -46,7 +46,7 @@ index f38d5298e..db6b33ab8 100644
  AC_SUBST(AS)
 diff --git a/libgloss/libsysbase/Makefile.in b/libgloss/libsysbase/Makefile.in
 new file mode 100644
-index 000000000..183f9acc7
+index 000000000..bd69599a8
 --- /dev/null
 +++ b/libgloss/libsysbase/Makefile.in
 @@ -0,0 +1,148 @@
@@ -121,8 +121,8 @@ index 000000000..183f9acc7
 +	isatty.o kill.o link.o lseek.o lstat.o nanosleep.o open.o read.o sbrk.o sleep.o stat.o usleep.o times.o \
 +	unlink.o wait.o write.o _exit.o malloc_vars.o \
 +	chdir.o mkdir.o rename.o build_argv.o statvfs.o \
-+	flock.o syscall_support.o handle_manager.o truncate.o ftruncate.o dirent.o fsync.o \
-+	fchmod.o chmod.o rmdir.o utime.o scandir.o
++	flock.o handle_manager.o truncate.o ftruncate.o dirent.o fsync.o \
++	fchmod.o chmod.o rmdir.o utime.o scandir.o syscall_support.o
 +
 +# Object files specific to particular targets.
 +EVALOBJS = ${OBJS}
@@ -143,10 +143,10 @@ index 000000000..183f9acc7
 +AR_FLAGS = qc
 +
 +.c.o:
-+	$(CC) $(CFLAGS_FOR_TARGET) -O2 $(INCLUDES) -c $(CFLAGS) $<
++	$(CC) $(CFLAGS_FOR_TARGET) -D_BUILDING_LIBSYSBASE -O2 $(INCLUDES) -c $(CFLAGS) $<
 +
 +.C.o:
-+	$(CC) $(CFLAGS_FOR_TARGET) -O2 $(INCLUDES) -c $(CFLAGS) $<
++	$(CC) $(CFLAGS_FOR_TARGET) -D_BUILDING_LIBSYSBASE -O2 $(INCLUDES) -c $(CFLAGS) $<
 +.s.o:
 +	$(AS) $(ASFLAGS_FOR_TARGET) $(INCLUDES) $(ASFLAGS) -o $*.o $<
 +
@@ -200,7 +200,7 @@ index 000000000..183f9acc7
 +	$(SHELL) config.status --recheck
 diff --git a/libgloss/libsysbase/_exit.c b/libgloss/libsysbase/_exit.c
 new file mode 100644
-index 000000000..e5cb5a9ed
+index 000000000..6effb1105
 --- /dev/null
 +++ b/libgloss/libsysbase/_exit.c
 @@ -0,0 +1,17 @@
@@ -215,8 +215,8 @@ index 000000000..e5cb5a9ed
 +void _exit(int rc)
 +{
 +
-+	if ( __syscalls.exit ) {
-+		__syscalls.exit(rc);
++	if ( __has_syscall(exit) ) {
++		__syscall_exit(rc);
 +	}
 +
 +	while(1);
@@ -903,7 +903,7 @@ index 000000000..3668b5801
 +
 diff --git a/libgloss/libsysbase/clocks.c b/libgloss/libsysbase/clocks.c
 new file mode 100644
-index 000000000..01cfee469
+index 000000000..b36b5c079
 --- /dev/null
 +++ b/libgloss/libsysbase/clocks.c
 @@ -0,0 +1,34 @@
@@ -913,8 +913,8 @@ index 000000000..01cfee469
 +
 +int clock_gettime(clockid_t clock_id, struct timespec *tp)
 +{
-+   if ( __syscalls.clock_gettime ) {
-+      return __syscalls.clock_gettime(clock_id, tp);
++   if ( __has_syscall(clock_gettime) ) {
++      return __syscall_clock_gettime(clock_id, tp);
 +   } else {
 +      errno = ENOSYS;
 +      return -1;
@@ -923,8 +923,8 @@ index 000000000..01cfee469
 +
 +int clock_settime(clockid_t clock_id, const struct timespec *tp)
 +{
-+   if ( __syscalls.clock_settime ) {
-+      return __syscalls.clock_settime(clock_id, tp);
++   if ( __has_syscall(clock_settime) ) {
++      return __syscall_clock_settime(clock_id, tp);
 +   } else {
 +      errno = ENOSYS;
 +      return -1;
@@ -933,8 +933,8 @@ index 000000000..01cfee469
 +
 +int clock_getres (clockid_t clock_id, struct timespec *res)
 +{
-+   if ( __syscalls.clock_getres ) {
-+      return __syscalls.clock_getres(clock_id, res);
++   if ( __has_syscall(clock_getres) ) {
++      return __syscall_clock_getres(clock_id, res);
 +   } else {
 +      errno = ENOSYS;
 +      return -1;
@@ -5938,7 +5938,7 @@ index 000000000..ec3b84037
 +
 diff --git a/libgloss/libsysbase/gettod.c b/libgloss/libsysbase/gettod.c
 new file mode 100644
-index 000000000..11dc528fa
+index 000000000..ee8947f51
 --- /dev/null
 +++ b/libgloss/libsysbase/gettod.c
 @@ -0,0 +1,26 @@
@@ -5961,7 +5961,7 @@ index 000000000..11dc528fa
 +	struct _reent *ptr = _REENT;
 +#endif
 +
-+	if ( __syscalls.gettod_r ) return __syscalls.gettod_r(ptr, ptimeval, ptimezone);
++	if ( __has_syscall(gettod_r) ) return __syscall_gettod_r(ptr, ptimeval, ptimezone);
 +
 +	ptr->_errno = ENOSYS;
 +	return -1;
@@ -6518,7 +6518,7 @@ index 000000000..b4fcbd3d7
 +}
 diff --git a/libgloss/libsysbase/nanosleep.c b/libgloss/libsysbase/nanosleep.c
 new file mode 100644
-index 000000000..3c96fc61b
+index 000000000..a233b9df6
 --- /dev/null
 +++ b/libgloss/libsysbase/nanosleep.c
 @@ -0,0 +1,14 @@
@@ -6528,8 +6528,8 @@ index 000000000..3c96fc61b
 +
 +int nanosleep(const struct timespec *req, struct timespec *rem)
 +{
-+   if ( __syscalls.nanosleep ) {
-+      return __syscalls.nanosleep(req, rem);
++   if ( __has_syscall(nanosleep) ) {
++      return __syscall_nanosleep(req, rem);
 +   } else {
 +      *rem = *req;
 +      errno = ENOSYS;
@@ -6711,7 +6711,7 @@ index 000000000..2692a2997
 +}
 diff --git a/libgloss/libsysbase/sbrk.c b/libgloss/libsysbase/sbrk.c
 new file mode 100644
-index 000000000..e2bdb9edc
+index 000000000..83d922d85
 --- /dev/null
 +++ b/libgloss/libsysbase/sbrk.c
 @@ -0,0 +1,26 @@
@@ -6731,8 +6731,8 @@ index 000000000..e2bdb9edc
 +#endif
 +
 +
-+	if ( __syscalls.sbrk_r ) {
-+		return __syscalls.sbrk_r(ptr, incr);
++	if ( __has_syscall(sbrk_r) ) {
++		return __syscall_sbrk_r(ptr, incr);
 +	} else {
 +
 +		ptr->_errno = ENOMEM;
@@ -6922,34 +6922,16 @@ index 000000000..84e221340
 +}
 diff --git a/libgloss/libsysbase/syscall_support.c b/libgloss/libsysbase/syscall_support.c
 new file mode 100644
-index 000000000..f02714764
+index 000000000..39e75fd0b
 --- /dev/null
 +++ b/libgloss/libsysbase/syscall_support.c
-@@ -0,0 +1,67 @@
+@@ -0,0 +1,49 @@
 +#include <sys/iosupport.h>
-+
-+//---------------------------------------------------------------------------------
-+__syscalls_t __syscalls = {
-+//---------------------------------------------------------------------------------
-+	NULL,	// sbrk
-+	NULL,	// lock_init
-+	NULL,	// lock_close
-+	NULL,	// lock_release
-+	NULL,	// lock_acquire
-+	NULL,	// malloc_lock
-+	NULL,	// malloc_unlock
-+	NULL,	// exit
-+	NULL,	// gettod_r
-+	NULL,	// clock_gettime
-+	NULL,	// clock_settime
-+	NULL,	// clock_getres
-+	NULL	// nanosleep
-+};
 +
 +int __libc_lock_init(int *lock,int recursive) {
 +
-+	if ( __syscalls.lock_init ) {
-+		return __syscalls.lock_init(lock, recursive);
++	if ( __has_syscall(lock_init) ) {
++		return __syscall_lock_init(lock, recursive);
 +	}
 +
 +	return 0;
@@ -6957,8 +6939,8 @@ index 000000000..f02714764
 +
 +int __libc_lock_close( int *lock ) {
 +
-+	if ( __syscalls.lock_close) {
-+		return __syscalls.lock_close(lock);
++	if ( __has_syscall(lock_close)) {
++		return __syscall_lock_close(lock);
 +	}
 +
 +	return 0;
@@ -6966,8 +6948,8 @@ index 000000000..f02714764
 +
 +int __libc_lock_release( int *lock ) {
 +
-+	if ( __syscalls.lock_release) {
-+		return __syscalls.lock_release(lock);
++	if ( __has_syscall(lock_release)) {
++		return __syscall_lock_release(lock);
 +	}
 +
 +	return 0;
@@ -6975,22 +6957,22 @@ index 000000000..f02714764
 +
 +int __libc_lock_acquire( int *lock ) {
 +
-+	if ( __syscalls.lock_acquire) {
-+		return __syscalls.lock_acquire(lock);
++	if ( __has_syscall(lock_acquire)) {
++		return __syscall_lock_acquire(lock);
 +	}
 +
 +	return 0;
 +}
 +
 +void __malloc_lock( struct _reent *ptr ) {
-+	if ( __syscalls.malloc_lock) {
-+		__syscalls.malloc_lock(ptr);
++	if ( __has_syscall(malloc_lock) ){
++		__syscall_malloc_lock(ptr);
 +	}
 +}
 +
 +void __malloc_unlock( struct _reent *ptr ) {
-+	if ( __syscalls.malloc_unlock) {
-+		__syscalls.malloc_unlock(ptr);
++	if ( __has_syscall(malloc_unlock)) {
++		__syscall_malloc_unlock(ptr);
 +	}
 +}
 diff --git a/libgloss/libsysbase/times.c b/libgloss/libsysbase/times.c
@@ -7486,10 +7468,10 @@ index 218807178..c9efd7d03 100644
  #ifdef __rtems__
 diff --git a/newlib/libc/include/sys/iosupport.h b/newlib/libc/include/sys/iosupport.h
 new file mode 100644
-index 000000000..8b6d8da30
+index 000000000..9bec9e473
 --- /dev/null
 +++ b/newlib/libc/include/sys/iosupport.h
-@@ -0,0 +1,108 @@
+@@ -0,0 +1,117 @@
 +//---------------------------------------------------------------------------------
 +#ifndef __iosupp_h__
 +#define __iosupp_h__
@@ -7523,6 +7505,7 @@ index 000000000..8b6d8da30
 +    int device;
 +    void *dirStruct;
 +} DIR_ITER;
++
 +
 +typedef struct {
 +	const char *name;
@@ -7562,23 +7545,31 @@ index 000000000..8b6d8da30
 +
 +extern const devoptab_t *devoptab_list[];
 +
-+typedef struct {
-+	void *(*sbrk_r) (struct _reent *ptr, ptrdiff_t incr);
-+	int (*lock_init) (int *lock,int recursive);
-+	int (*lock_close) (int *lock);
-+	int (*lock_release) (int *lock);
-+	int (*lock_acquire) (int *lock);
-+	void (*malloc_lock) (struct _reent *ptr);
-+	void (*malloc_unlock) (struct _reent *ptr);
-+	void (*exit) ( int rc );
-+	int (*gettod_r) (struct _reent *ptr, struct timeval *tp, struct timezone *tz);
-+	int (*clock_gettime)(clockid_t clock_id, struct timespec *tp);
-+	int (*clock_settime)(clockid_t clock_id, const struct timespec *tp);
-+	int (*clock_getres)(clockid_t clock_id, struct timespec *res);
-+	int (*nanosleep)(const struct timespec *req, struct timespec *rem);
-+} __syscalls_t;
++#ifdef _BUILDING_LIBSYSBASE
++#define __SYSCALL(_name) __attribute__((weak)) __syscall_##_name
++#define __has_syscall(_name) (&__syscall_##_name)
++#else
++#define __SYSCALL(_name) __syscall_##_name
++#endif
 +
-+extern __syscalls_t __syscalls;
++void *__SYSCALL(sbrk_r) (struct _reent *ptr, ptrdiff_t incr);
++int  __SYSCALL(lock_init) (int *lock,int recursive);
++
++int  __SYSCALL(lock_close) (int *lock);
++int  __SYSCALL(lock_release) (int *lock);
++int  __SYSCALL(lock_acquire) (int *lock);
++void __SYSCALL(malloc_lock) (struct _reent *ptr);
++void __SYSCALL(malloc_unlock) (struct _reent *ptr);
++
++void __SYSCALL(exit)(int rc);
++
++int  __SYSCALL(gettod_r)(struct _reent *ptr, struct timeval *tp, struct timezone *tz);
++int __SYSCALL(clock_gettime)(clockid_t clock_id, struct timespec *tp);
++int __SYSCALL(clock_settime)(clockid_t clock_id, const struct timespec *tp);
++int __SYSCALL(clock_getres)(clockid_t clock_id, struct timespec *res);
++int __SYSCALL(nanosleep)(const struct timespec *req, struct timespec *rem);
++
++#undef __SYSCALL
 +
 +int AddDevice( const devoptab_t* device);
 +int FindDevice(const char* name);
@@ -8105,21 +8096,37 @@ index 022992b8d..bdf4c7bb0 100644
    fp->_flags = flags;
    fp->_cookie = (void *) fp;
 diff --git a/newlib/libc/stdio/fread.c b/newlib/libc/stdio/fread.c
-index b358d2b4a..9cab2180e 100644
+index b358d2b4a..95493cd66 100644
 --- a/newlib/libc/stdio/fread.c
 +++ b/newlib/libc/stdio/fread.c
-@@ -225,7 +225,31 @@ _fread_r (struct _reent * ptr,
+@@ -187,7 +187,6 @@ _fread_r (struct _reent * ptr,
+ 	  int rc = 0;
+ 	  /* save fp buffering state */
+ 	  void *old_base = fp->_bf._base;
+-	  void * old_p = fp->_p;
+ 	  int old_size = fp->_bf._size;
+ 	  /* allow __refill to use user's buffer */
+ 	  fp->_bf._base = (unsigned char *) p;
+@@ -197,7 +196,7 @@ _fread_r (struct _reent * ptr,
+ 	  /* restore fp buffering back to original state */
+ 	  fp->_bf._base = old_base;
+ 	  fp->_bf._size = old_size;
+-	  fp->_p = old_p;
++	  fp->_p = old_base;
+ 	  resid -= fp->_r;
+ 	  p += fp->_r;
+ 	  fp->_r = 0;
+@@ -225,7 +224,30 @@ _fread_r (struct _reent * ptr,
  	  /* fp->_r = 0 ... done in __srefill */
  	  p += r;
  	  resid -= r;
 -	  if (__srefill_r (ptr, fp))
 +      int rc = 0;
 +
-+      if (resid>BUFSIZ)
++      if (resid>fp->_bf._size)
 +      {
 +        /* save fp buffering state */
 +        void *old_base = fp->_bf._base;
-+        void * old_p = fp->_p;
 +        int old_size = fp->_bf._size;
 +        /* allow __refill to use user's buffer */
 +        fp->_bf._base = (unsigned char *) p;
@@ -8129,7 +8136,7 @@ index b358d2b4a..9cab2180e 100644
 +        /* restore fp buffering back to original state */
 +        fp->_bf._base = old_base;
 +        fp->_bf._size = old_size;
-+        fp->_p = old_p;
++        fp->_p = old_base;
 +        resid -= fp->_r;
 +        p += fp->_r;
 +        fp->_r = 0;
