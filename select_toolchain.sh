@@ -41,7 +41,7 @@ case "$VERSION" in
   ;;
   "2" )
     GCC_VER=10.1.0
-    BINUTILS_VER=2.32
+    BINUTILS_VER=2.34
     MN_BINUTILS_VER=2.17
     NEWLIB_VER=3.3.0
     GDB_VER=8.2.1

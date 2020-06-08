@@ -1,0 +1,12 @@
+diff -NBaur binutils-2.34/opcodes/ppc-opc.c binutils-2.34-ppc/opcodes/ppc-opc.c
+--- binutils-2.34/opcodes/ppc-opc.c	2020-01-18 13:55:49.000000000 +0000
++++ binutils-2.34-ppc/opcodes/ppc-opc.c	2020-05-22 10:47:37.900308413 +0000
+@@ -3747,7 +3747,7 @@
+ #define MFDEC2	(PPC_OPCODE_PPC | PPC_OPCODE_601 | PPC_OPCODE_BOOKE \
+ 		 | PPC_OPCODE_TITAN)
+ #define BOOKE	PPC_OPCODE_BOOKE
+-#define NO371	PPC_OPCODE_BOOKE | PPC_OPCODE_PPCPS | PPC_OPCODE_EFS
++#define NO371	PPC_OPCODE_BOOKE | PPC_OPCODE_EFS
+ #define PPCE300 PPC_OPCODE_E300
+ #define PPCSPE	PPC_OPCODE_SPE
+ #define PPCSPE2 PPC_OPCODE_SPE2
