@@ -8096,7 +8096,7 @@ index 022992b8d..bdf4c7bb0 100644
    fp->_flags = flags;
    fp->_cookie = (void *) fp;
 diff --git a/newlib/libc/stdio/fread.c b/newlib/libc/stdio/fread.c
-index b358d2b4a..95493cd66 100644
+index b358d2b4a..78bb0df30 100644
 --- a/newlib/libc/stdio/fread.c
 +++ b/newlib/libc/stdio/fread.c
 @@ -187,7 +187,6 @@ _fread_r (struct _reent * ptr,
@@ -8116,7 +8116,7 @@ index b358d2b4a..95493cd66 100644
  	  resid -= fp->_r;
  	  p += fp->_r;
  	  fp->_r = 0;
-@@ -225,7 +224,30 @@ _fread_r (struct _reent * ptr,
+@@ -225,7 +224,29 @@ _fread_r (struct _reent * ptr,
  	  /* fp->_r = 0 ... done in __srefill */
  	  p += r;
  	  resid -= r;
@@ -8130,7 +8130,7 @@ index b358d2b4a..95493cd66 100644
 +        int old_size = fp->_bf._size;
 +        /* allow __refill to use user's buffer */
 +        fp->_bf._base = (unsigned char *) p;
-+        fp->_bf._size = resid;
++        fp->_bf._size = resid - old_size;
 +        fp->_p = (unsigned char *) p;
 +        rc = __srefill_r (ptr, fp);
 +        /* restore fp buffering back to original state */
@@ -8139,12 +8139,11 @@ index b358d2b4a..95493cd66 100644
 +        fp->_p = old_base;
 +        resid -= fp->_r;
 +        p += fp->_r;
-+        fp->_r = 0;
-+
-+      } else {
-+        rc = __srefill_r (ptr, fp);
++        //fp->_r = 0;
 +      }
-+    if (rc)
++        rc = __srefill_r (ptr, fp);
++
++	  if (rc)
  	    {
  	      /* no more input: return partial result */
  #ifdef __SCLE
