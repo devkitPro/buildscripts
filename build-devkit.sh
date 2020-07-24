@@ -127,13 +127,10 @@ export PATH=$TOOLPATH/$package/bin:$PATH
 CROSS_PARAMS="--build=`./config.guess`"
 
 if [ ! -z $CROSSBUILD ]; then
-	toolsprefix=$INSTALLDIR/$CROSSBUILD/tools
 	prefix=$INSTALLDIR/$CROSSBUILD/$package
-	toolsprefix=$INSTALLDIR/$CROSSBUILD/tools
 	CROSS_PARAMS="$CROSS_PARAMS --host=$CROSSBUILD"
 	CROSS_GCC_PARAMS="--with-gmp=$CROSSPATH --with-mpfr=$CROSSPATH --with-mpc=$CROSSPATH"
 else
-	toolsprefix=$INSTALLDIR/tools
 	prefix=$INSTALLDIR/$package
 fi
 
