@@ -118,21 +118,22 @@ fi
 echo use $MAKE as make
 export MAKE
 
-#---------------------------------------------------------------------------------
-# Add installed devkit to the path, adjusting path on minsys
-#---------------------------------------------------------------------------------
-TOOLPATH=$(echo $INSTALLDIR | sed -e 's/^\([a-zA-Z]\):/\/\1/')
-export PATH=$TOOLPATH/$package/bin:$PATH
-
 CROSS_PARAMS="--build=`./config.guess`"
 
 if [ ! -z $CROSSBUILD ]; then
+	export PATH=/opt/devkitpro/$package/bin:$PATH
 	prefix=$INSTALLDIR/$CROSSBUILD/$package
 	CROSS_PARAMS="$CROSS_PARAMS --host=$CROSSBUILD"
 	CROSS_GCC_PARAMS="--with-gmp=$CROSSPATH --with-mpfr=$CROSSPATH --with-mpc=$CROSSPATH"
 else
 	prefix=$INSTALLDIR/$package
 fi
+
+#---------------------------------------------------------------------------------
+# Add installed devkit to the path, adjusting path on minsys
+#---------------------------------------------------------------------------------
+TOOLPATH=$(echo $INSTALLDIR | sed -e 's/^\([a-zA-Z]\):/\/\1/')
+export PATH=$TOOLPATH/$package/bin:$PATH
 
 if [ "$BUILD_DKPRO_AUTOMATED" != "1" ] ; then
 
