@@ -122,7 +122,7 @@ export MAKE
 # Add installed devkit to the path, adjusting path on minsys
 #---------------------------------------------------------------------------------
 TOOLPATH=$(echo $INSTALLDIR | sed -e 's/^\([a-zA-Z]\):/\/\1/')
-export PATH=$PATH:$TOOLPATH/$package/bin
+export PATH=$TOOLPATH/$package/bin:$PATH
 
 CROSS_PARAMS="--build=`./config.guess`"
 
