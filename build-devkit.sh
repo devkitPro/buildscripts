@@ -33,6 +33,8 @@ DKARM_CRTLS_VER=1.0.0
 
 DKPPC_RULES_VER=1.0.0
 
+DKA64_RULES_VER=1.0.0
+
 OSXMIN=${OSXMIN:-10.9}
 
 #---------------------------------------------------------------------------------
@@ -183,7 +185,7 @@ archives="binutils-${BINUTILS_VER}.tar.xz gcc-${GCC_VER}.tar.xz newlib-${NEWLIB_
 
 if [ $VERSION -eq 1 ]; then
 
-	archives="devkitarm-rules-$DKARM_RULES_VER.tar.xz devkitarm-crtls-$DKARM_CRTLS_VER.tar.xz $archives"
+	archives="devkita64-rules-$DKA64_RULES_VER.tar.xz devkitarm-rules-$DKARM_RULES_VER.tar.xz devkitarm-crtls-$DKARM_CRTLS_VER.tar.xz $archives"
 fi
 
 if [ $VERSION -eq 2 ]; then
