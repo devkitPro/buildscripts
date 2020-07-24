@@ -64,6 +64,8 @@ then
 		--prefix=$prefix \
 		--enable-lto $plugin_ld\
 		--with-system-zlib \
+                --disable-tm-clone-registry \
+                --disable-__cxa_atexit \
 		--with-bugurl="https://github.com/devkitPro/buildscripts/issues" --with-pkgversion="devkitA64 release 15" \
 		$CROSS_PARAMS \
 		$CROSS_GCC_PARAMS \
