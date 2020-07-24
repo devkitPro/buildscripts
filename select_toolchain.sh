@@ -51,10 +51,9 @@ case "$VERSION" in
     toolchain=DEVKITPPC
   ;;
   "3" )
-    GCC_VER=10.1.0
+    GCC_VER=10.2.0
     BINUTILS_VER=2.32
     NEWLIB_VER=3.3.0
-    GDB_VER=9.1
     basedir='dka64'
     package=devkitA64
     target=aarch64-none-elf

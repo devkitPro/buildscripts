@@ -1,5 +1,5 @@
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index cf1a87e2efd..bd79664568e 100644
+index 6a349965c0a..2206091e057 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
 @@ -1039,7 +1039,14 @@ aarch64*-*-elf | aarch64*-*-fuchsia* | aarch64*-*-rtems*)
@@ -47,10 +47,10 @@ index ee7bed34924..d1e2742d750 100644
     Most have a PIC and non-PIC variant.  */
  enum aarch64_code_model {
 diff --git a/gcc/config/aarch64/aarch64.c b/gcc/config/aarch64/aarch64.c
-index 409ca8d9519..fa57bbf8cd5 100644
+index b86434a6acf..389e3fe3910 100644
 --- a/gcc/config/aarch64/aarch64.c
 +++ b/gcc/config/aarch64/aarch64.c
-@@ -15951,8 +15951,24 @@ aarch64_load_tp (rtx target)
+@@ -15983,8 +15983,24 @@ aarch64_load_tp (rtx target)
        || !register_operand (target, Pmode))
      target = gen_reg_rtx (Pmode);
  
@@ -78,7 +78,7 @@ index 409ca8d9519..fa57bbf8cd5 100644
  }
  
 diff --git a/gcc/config/aarch64/aarch64.h b/gcc/config/aarch64/aarch64.h
-index 24767c747ba..0b1bbb5d79e 100644
+index 1ce23c68781..57216651648 100644
 --- a/gcc/config/aarch64/aarch64.h
 +++ b/gcc/config/aarch64/aarch64.h
 @@ -1134,6 +1134,10 @@ typedef struct
@@ -319,6 +319,19 @@ index 9f790db0daf..97f52d0b893 100644
    INIT_STATIC_SPEC ("startfile",		&startfile_spec),
    INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
    INIT_STATIC_SPEC ("version",			&compiler_version),
+diff --git a/libgcc/crtstuff.c b/libgcc/crtstuff.c
+index 3f769a1c660..e005d8304b7 100644
+--- a/libgcc/crtstuff.c
++++ b/libgcc/crtstuff.c
+@@ -325,7 +325,7 @@ register_tm_clones (void)
+ 
+ #ifdef OBJECT_FORMAT_ELF
+ 
+-#if DEFAULT_USE_CXA_ATEXIT
++#if 1 /* DEFAULT_USE_CXA_ATEXIT */
+ /* Declare the __dso_handle variable.  It should have a unique value
+    in every shared-object; in a main program its value is zero.  The
+    object should in any case be protected.  This means the instance
 diff --git a/libgcc/gthr.h b/libgcc/gthr.h
 index f31cf083cbe..649f900aac3 100644
 --- a/libgcc/gthr.h
