@@ -40,6 +40,9 @@ cd $BUILDDIR
 # build and install mn10200 binutils
 #---------------------------------------------------------------------------------
 
+# Use modern config.sub for aarch64 host
+cp binutils-$BINUTILS_VER/config.sub binutils-$MN_BINUTILS_VER/config.sub
+
 mkdir -p mn10200/binutils
 cd mn10200/binutils
 
