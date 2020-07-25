@@ -66,7 +66,7 @@ index 2e086f16de9..1c27c6467bc 100644
  
  #define SIG_ATOMIC_TYPE "int"
 diff --git a/gcc/config/rs6000/rs6000.h b/gcc/config/rs6000/rs6000.h
-index 1adc371d70f..a7e1220981c 100644
+index 132ca20fd7d..119ee5bbc8c 100644
 --- a/gcc/config/rs6000/rs6000.h
 +++ b/gcc/config/rs6000/rs6000.h
 @@ -196,6 +196,7 @@ ASM_OPT_ANY
@@ -276,7 +276,7 @@ index b49ba261f3c..4eda763dfca 100644
  Target RejectNegative
  Link with libyk.a, libc.a and crt0.o.
 diff --git a/gcc/configure b/gcc/configure
-index cd3d9516fce..fcb4b206b60 100755
+index eb6061c1631..4c6e993ca3a 100755
 --- a/gcc/configure
 +++ b/gcc/configure
 @@ -12208,7 +12208,7 @@ case ${enable_threads} in
@@ -289,7 +289,7 @@ index cd3d9516fce..fcb4b206b60 100755
      target_thread_file=${enable_threads}
      ;;
 diff --git a/gcc/configure.ac b/gcc/configure.ac
-index 0de3b4bf97b..739aa4ae3da 100644
+index 715fcba0482..779743b69ee 100644
 --- a/gcc/configure.ac
 +++ b/gcc/configure.ac
 @@ -1800,7 +1800,7 @@ case ${enable_threads} in
@@ -877,6 +877,19 @@ index 26bf75789e0..1f663d2cfb0 100755
      gcn)	thread_header=config/gcn/gthr-gcn.h ;;
      lynx)	thread_header=config/gthr-lynx.h ;;
      mipssde)	thread_header=config/mips/gthr-mipssde.h ;;
+diff --git a/libgcc/crtstuff.c b/libgcc/crtstuff.c
+index 3f769a1c660..e005d8304b7 100644
+--- a/libgcc/crtstuff.c
++++ b/libgcc/crtstuff.c
+@@ -325,7 +325,7 @@ register_tm_clones (void)
+ 
+ #ifdef OBJECT_FORMAT_ELF
+ 
+-#if DEFAULT_USE_CXA_ATEXIT
++#if 1 /* DEFAULT_USE_CXA_ATEXIT */
+ /* Declare the __dso_handle variable.  It should have a unique value
+    in every shared-object; in a main program its value is zero.  The
+    object should in any case be protected.  This means the instance
 diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
 index 9f9c5a2419a..c9bb6c548be 100755
 --- a/libstdc++-v3/configure
