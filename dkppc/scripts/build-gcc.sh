@@ -187,31 +187,3 @@ echo "installing linkscripts ..."
 cp $BUILDSCRIPTDIR/dkppc/crtls/*.ld $prefix/$target/lib/
 
 cd $BUILDDIR
-
-#---------------------------------------------------------------------------------
-# build and install the debugger
-#---------------------------------------------------------------------------------
-mkdir -p $target/gdb
-cd $target/gdb
-
-if [ ! -f configured-gdb ]
-then
-	CFLAGS="$cflags" LDFLAGS="$ldflags" ../../gdb-$GDB_VER/configure \
-	--disable-nls --prefix=$prefix --target=$target --disable-werror \
-	$CROSS_PARAMS \
-	$CROSS_GCC_PARAMS || { echo "Error configuring gdb"; exit 1; }
-	touch configured-gdb
-fi
-
-if [ ! -f built-gdb ]
-then
-	$MAKE || { echo "Error building gdb"; exit 1; }
-	touch built-gdb
-fi
-
-if [ ! -f installed-gdb ]
-then
-	$MAKE install || { echo "Error installing gdb"; exit 1; }
-	touch installed-gdb
-fi
-
