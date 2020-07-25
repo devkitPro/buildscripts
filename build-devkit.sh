@@ -183,21 +183,23 @@ scriptdir=$(pwd)/$basedir/scripts
 
 archives="binutils-${BINUTILS_VER}.tar.xz gcc-${GCC_VER}.tar.xz newlib-${NEWLIB_VER}.tar.gz"
 
-if [ $VERSION -eq 1 ]; then
-
-	archives="devkitarm-rules-$DKARM_RULES_VER.tar.xz devkitarm-crtls-$DKARM_CRTLS_VER.tar.xz $archives"
-fi
-
 if [ $VERSION -eq 2 ]; then
-
-	archives="binutils-${MN_BINUTILS_VER}.tar.bz2 devkitppc-rules-$DKPPC_RULES_VER.tar.xz $archives"
+	archives="binutils-${MN_BINUTILS_VER}.tar.bz2 $archives"
 fi
 
-if [ $VERSION -eq 3 ]; then
+if [ "$BUILD_DKPRO_SKIP_CRTLS" != "1" ]; then
+	if [ $VERSION -eq 1 ]; then
+		archives="devkitarm-rules-$DKARM_RULES_VER.tar.xz devkitarm-crtls-$DKARM_CRTLS_VER.tar.xz $archives"
+	fi
 
-	archives="devkita64-rules-$DKA64_RULES_VER.tar.xz $archives"
+	if [ $VERSION -eq 2 ]; then
+		archives="devkitppc-rules-$DKPPC_RULES_VER.tar.xz $archives"
+	fi
+
+	if [ $VERSION -eq 3 ]; then
+		archives="devkita64-rules-$DKA64_RULES_VER.tar.xz $archives"
+	fi
 fi
-
 
 if [ ! -z "$BUILD_DKPRO_SRCDIR" ] ; then
 	SRCDIR="$BUILD_DKPRO_SRCDIR"
