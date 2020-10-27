@@ -1,0 +1,13 @@
+--- a/Makefile	2020-07-24 10:52:18.000000000 +0200
++++ b/Makefile	2020-10-27 23:09:13.036267200 +0100
+@@ -8,8 +8,8 @@ all:
+ 	@echo "use dist or install targets"
+ 
+ install:
+-	@mkdir -p $(DESTDIR)/opt/devkitpro/devkitA64
+-	@cp -v $(FILES) $(DESTDIR)/opt/devkitpro/devkitA64
++	@mkdir -p $(DEVKITPRO)/devkitA64
++	@cp -v $(FILES) $(DEVKITPRO)/devkitA64
+ 
+ dist:
+ 	@tar -cJf devkita64-rules-$(_MAJOR).$(_MINOR).$(_PATCH).tar.xz $(FILES) Makefile
