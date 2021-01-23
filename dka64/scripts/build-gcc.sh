@@ -66,7 +66,7 @@ then
 		--with-system-zlib \
                 --disable-tm-clone-registry \
                 --disable-__cxa_atexit \
-		--with-bugurl="https://github.com/devkitPro/buildscripts/issues" --with-pkgversion="devkitA64 release 16" \
+		--with-bugurl="https://github.com/devkitPro/buildscripts/issues" --with-pkgversion="devkitA64 release 17" \
 		$CROSS_PARAMS \
 		$CROSS_GCC_PARAMS \
 		|| { echo "Error configuring gcc"; exit 1; }
