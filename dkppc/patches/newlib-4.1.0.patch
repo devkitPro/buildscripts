@@ -1,8 +1,8 @@
 diff --git a/libgloss/configure b/libgloss/configure
-index 0d2918cee..bccfb07b4 100755
+index 816b9c4b8..b79edb6c8 100755
 --- a/libgloss/configure
 +++ b/libgloss/configure
-@@ -2604,6 +2604,8 @@ if test "${config_libnosys}" = "true"; then
+@@ -2609,6 +2609,8 @@ if test "${config_libnosys}" = "true"; then
  
  fi
  
@@ -12,7 +12,7 @@ index 0d2918cee..bccfb07b4 100755
  
  ac_config_commands="$ac_config_commands depfiles"
 diff --git a/libgloss/configure.in b/libgloss/configure.in
-index f38d5298e..db6b33ab8 100644
+index 4111724e1..dfd632c20 100644
 --- a/libgloss/configure.in
 +++ b/libgloss/configure.in
 @@ -2,6 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
@@ -33,7 +33,7 @@ index f38d5298e..db6b33ab8 100644
  case "${target}" in
    aarch64*-*-*)
  	AC_CONFIG_SUBDIRS(aarch64)
-@@ -194,6 +198,10 @@ if test "${config_libnosys}" = "true"; then
+@@ -197,6 +201,10 @@ if test "${config_libnosys}" = "true"; then
    AC_CONFIG_SUBDIRS([libnosys])
  fi
  
@@ -7372,16 +7372,18 @@ index 000000000..bd25d775d
 +	exit ( main(__system_argv->argc,__system_argv->argv) );
 +}
 diff --git a/newlib/configure.host b/newlib/configure.host
-index a84c0c80a..0921e00be 100644
+index 1ddbb6c76..b7f568bf8 100644
 --- a/newlib/configure.host
 +++ b/newlib/configure.host
-@@ -853,7 +853,12 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
+@@ -864,7 +864,14 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
  	default_newlib_io_long_long="yes"
  	newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES"
  	;;
 -  powerpc*-*-eabi* | \
 +  powerpc*-*-eabi*)
++	default_newlib_io_c99_formats="yes"
 +	default_newlib_io_long_long="yes"
++	default_newlib_io_pos_args="yes"
 +	newlib_cflags="${newlib_cflags} -DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__"
 +	newlib_cflags="${newlib_cflags} -ffunction-sections -fdata-sections"
 +	syscall_dir=syscalls
@@ -7389,6 +7391,32 @@ index a84c0c80a..0921e00be 100644
    powerpc*-*-elf* | \
    powerpc*-*-linux* | \
    powerpc*-*-rtem* | \
+diff --git a/newlib/libc/ctype/jp2uc.c b/newlib/libc/ctype/jp2uc.c
+index 5e30f09be..1ea357f92 100644
+--- a/newlib/libc/ctype/jp2uc.c
++++ b/newlib/libc/ctype/jp2uc.c
+@@ -35,7 +35,7 @@
+ #ifdef _MB_CAPABLE
+ /* Under Cygwin, the incoming wide character is already given in UTF due
+    to the requirements of the underlying OS. */
+-#ifndef __CYGWIN__
++#if !defined(__CYGWIN__) && !defined(__DEVKITA64__)
+ 
+ #include <_ansi.h>
+ #include <string.h>
+diff --git a/newlib/libc/ctype/local.h b/newlib/libc/ctype/local.h
+index 5c293c83d..75ccf89f5 100644
+--- a/newlib/libc/ctype/local.h
++++ b/newlib/libc/ctype/local.h
+@@ -32,7 +32,7 @@
+    * for towupper and towlower, the result must be back-transformed
+      into the respective locale encoding; currently NOT IMPLEMENTED
+ */
+-#ifdef __CYGWIN__
++#if defined(__CYGWIN__) || defined(__DEVKITA64__)
+ /* Under Cygwin, wchar_t (or its extension wint_t) is Unicode */
+ #define _jp2uc(c) (c)
+ #define _jp2uc_l(c, l) (c)
 diff --git a/newlib/libc/include/sys/dirent.h b/newlib/libc/include/sys/dirent.h
 index a3fb5c02c..adb8e1083 100644
 --- a/newlib/libc/include/sys/dirent.h
@@ -7668,10 +7696,10 @@ index 000000000..380329d34
 +#endif // _SYS_STATVFS_H
 \ No newline at end of file
 diff --git a/newlib/libc/include/sys/syslimits.h b/newlib/libc/include/sys/syslimits.h
-index ba9dbd667..93ed11a42 100644
+index c872d2018..9ccdbc51a 100644
 --- a/newlib/libc/include/sys/syslimits.h
 +++ b/newlib/libc/include/sys/syslimits.h
-@@ -44,12 +44,12 @@
+@@ -40,12 +40,12 @@
  #define	LINK_MAX		32767	/* max file link count */
  #define	MAX_CANON		  255	/* max bytes in term canon input line */
  #define	MAX_INPUT		  255	/* max bytes in terminal input */
@@ -7713,7 +7741,7 @@ index 5e937f103..635a7a6b8 100644
  };
  #endif
 diff --git a/newlib/libc/locale/locale.c b/newlib/libc/locale/locale.c
-index 4c343e462..835b3a712 100644
+index 968642745..82f68c809 100644
 --- a/newlib/libc/locale/locale.c
 +++ b/newlib/libc/locale/locale.c
 @@ -166,15 +166,18 @@ No supporting OS subroutines are required.
@@ -7807,7 +7835,7 @@ index 4c343e462..835b3a712 100644
  #else /* __HAVE_LOCALE_INFO__ */
    {
      { NULL, NULL },			/* LC_ALL */
-@@ -990,6 +1015,7 @@ __locale_ctype_ptr_l (struct __locale_t *locale)
+@@ -991,6 +1016,7 @@ __locale_ctype_ptr_l (struct __locale_t *locale)
  
  const char *
  __locale_ctype_ptr (void)
@@ -8082,7 +8110,7 @@ index aa22a0e3a..93e672b6a 100644
  	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-scanf.o `test -f 'scanf.c' || echo '$(srcdir)/'`scanf.c
  
 diff --git a/newlib/libc/stdio/fopen.c b/newlib/libc/stdio/fopen.c
-index 022992b8d..bdf4c7bb0 100644
+index 1ac551fed..d293b7b0e 100644
 --- a/newlib/libc/stdio/fopen.c
 +++ b/newlib/libc/stdio/fopen.c
 @@ -139,6 +139,9 @@ _fopen_r (struct _reent *ptr,
@@ -8096,7 +8124,7 @@ index 022992b8d..bdf4c7bb0 100644
    fp->_flags = flags;
    fp->_cookie = (void *) fp;
 diff --git a/newlib/libc/stdio/fread.c b/newlib/libc/stdio/fread.c
-index b358d2b4a..78bb0df30 100644
+index df8321461..eee4181cd 100644
 --- a/newlib/libc/stdio/fread.c
 +++ b/newlib/libc/stdio/fread.c
 @@ -187,7 +187,6 @@ _fread_r (struct _reent * ptr,
@@ -8148,37 +8176,18 @@ index b358d2b4a..78bb0df30 100644
  	      /* no more input: return partial result */
  #ifdef __SCLE
 diff --git a/newlib/libc/stdlib/aligned_alloc.c b/newlib/libc/stdlib/aligned_alloc.c
-index 88413ce86..24029a6f7 100644
+index feb22c24b..3dae0c9a9 100644
 --- a/newlib/libc/stdlib/aligned_alloc.c
 +++ b/newlib/libc/stdlib/aligned_alloc.c
-@@ -1,5 +1,5 @@
- /*-
-- * Copyright (c) 2015 embedded brains GmbH
-+ * Copyright (c) 2018 Dave Murphy
-  * All rights reserved.
-  *
-  * Redistribution and use in source and binary forms, with or without
-@@ -25,14 +25,15 @@
-  */
+@@ -28,6 +28,8 @@
  
+ #include <reent.h>
  #include <stdlib.h>
 +#include <malloc.h>
 +#include <errno.h>
  
  void *
- aligned_alloc(size_t alignment, size_t size)
- {
--	void *p;
--	int error;
-+	if ((alignment !=0) && !(alignment & (alignment - 1 )) && !(size & (alignment - 1)))
-+		return memalign(alignment,size);
- 
--	error = posix_memalign(&p, alignment, size);
--
--	return (error == 0 ? p : NULL);
-+	errno = EINVAL;
-+	return (void*)NULL;
- }
+ aligned_alloc (size_t align, size_t size)
 diff --git a/newlib/libc/stdlib/mbtowc_r.c b/newlib/libc/stdlib/mbtowc_r.c
 index 920a7ea3c..ba5ee7652 100644
 --- a/newlib/libc/stdlib/mbtowc_r.c
