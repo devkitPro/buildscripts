@@ -6381,7 +6381,7 @@ index 000000000..eeeab1a7b
 +
 +	ret = -1;
 +
-+	if ( sourceDev == destDev) {
++	if ( sourceDev == destDev && destDev != -1 ) {
 +		if (devoptab_list[destDev]->link_r) {
 +			r->deviceData = devoptab_list[destDev]->deviceData;
 +			ret = devoptab_list[destDev]->link_r( r, existing, new);
@@ -6507,11 +6507,15 @@ index 000000000..b4fcbd3d7
 +	int dev = FindDevice(path);
 +	ret = -1;
 +
-+	if (devoptab_list[dev]->mkdir_r) {
-+		r->deviceData = devoptab_list[dev]->deviceData;
-+		ret = devoptab_list[dev]->mkdir_r(r, path, mode);
++	if (dev!=-1) {
++		if (devoptab_list[dev]->mkdir_r) {
++			r->deviceData = devoptab_list[dev]->deviceData;
++			ret = devoptab_list[dev]->mkdir_r(r, path, mode);
++		} else {
++			r->_errno = ENOSYS;
++		}
 +	} else {
-+		r->_errno = ENOSYS;
++		r->_errno = ENODEV;
 +	}
 +
 +	return ret;
@@ -6665,7 +6669,7 @@ index 000000000..1d7b7e8e7
 +
 +	ret = -1;
 +
-+	if ( sourceDev == destDev) {
++	if ( sourceDev == destDev && destDev != -1) {
 +		if (devoptab_list[destDev]->rename_r) {
 +			r->deviceData = devoptab_list[destDev]->deviceData;
 +			ret = devoptab_list[destDev]->rename_r( r, existing, newName);
