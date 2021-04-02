@@ -6247,8 +6247,8 @@ index 000000000..948c6ef93
 +	while(i<STD_MAX) {
 +		if(devoptab_list[i]) {
 +			namelen = strlen(devoptab_list[i]->name);
-+			if(dev_namelen == namelen && strncmp(devoptab_list[i]->name,name,namelen)==0 ) {
-+				if ( name[namelen] == ':' || (isdigit(name[namelen]) && name[namelen+1] ==':' )) {
++			if(strncmp(devoptab_list[i]->name,name,namelen)==0) {
++				if ( dev_namelen == namelen || (dev_namelen == (namelen + 1) && isdigit(name[namelen])) ) {
 +					dev = i;
 +					break;
 +				}
