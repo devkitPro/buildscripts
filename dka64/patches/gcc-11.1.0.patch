@@ -1,8 +1,8 @@
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index 6a349965c0a..2206091e057 100644
+index 357b0bed067..6b1e254785a 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
-@@ -1039,7 +1039,14 @@ aarch64*-*-elf | aarch64*-*-fuchsia* | aarch64*-*-rtems*)
+@@ -1090,7 +1090,14 @@ aarch64*-*-elf | aarch64*-*-fuchsia* | aarch64*-*-rtems*)
  	tmake_file="${tmake_file} aarch64/t-aarch64"
  	case $target in
  	aarch64-*-elf*)
@@ -17,8 +17,23 @@ index 6a349965c0a..2206091e057 100644
  		;;
          aarch64-*-fuchsia*)
                  tm_file="${tm_file} fuchsia.h"
+diff --git a/gcc/config.host b/gcc/config.host
+index 0a02c33cc80..38f7adc655e 100644
+--- a/gcc/config.host
++++ b/gcc/config.host
+@@ -251,6 +251,10 @@ case ${host} in
+     host_extra_gcc_objs="${host_extra_gcc_objs} driver-mingw32.o"
+     host_lto_plugin_soname=liblto_plugin.dll
+     ;;
++  aarch64-*-darwin*)
++    out_host_hook_obj="${out_host_hook_obj} host-aarch64-darwin.o"
++    host_xmake_file="${host_xmake_file} aarch64/x-darwin"
++    ;;
+   i[34567]86-*-darwin* | x86_64-*-darwin*)
+     out_host_hook_obj="${out_host_hook_obj} host-i386-darwin.o"
+     host_xmake_file="${host_xmake_file} i386/x-darwin"
 diff --git a/gcc/config/aarch64/aarch64-elf-raw.h b/gcc/config/aarch64/aarch64-elf-raw.h
-index da5872cf4d8..ca840ab29cb 100644
+index e986149e400..9264d53f32c 100644
 --- a/gcc/config/aarch64/aarch64-elf-raw.h
 +++ b/gcc/config/aarch64/aarch64-elf-raw.h
 @@ -22,6 +22,7 @@
@@ -30,7 +45,7 @@ index da5872cf4d8..ca840ab29cb 100644
  #define ENDFILE_SPEC \
    " crtend%O%s crtn%O%s " \
 diff --git a/gcc/config/aarch64/aarch64-opts.h b/gcc/config/aarch64/aarch64-opts.h
-index ee7bed34924..d1e2742d750 100644
+index af3b7364a74..6df7a0dc8a1 100644
 --- a/gcc/config/aarch64/aarch64-opts.h
 +++ b/gcc/config/aarch64/aarch64-opts.h
 @@ -48,6 +48,12 @@ enum aarch64_tls_type {
@@ -47,10 +62,10 @@ index ee7bed34924..d1e2742d750 100644
     Most have a PIC and non-PIC variant.  */
  enum aarch64_code_model {
 diff --git a/gcc/config/aarch64/aarch64.c b/gcc/config/aarch64/aarch64.c
-index b86434a6acf..389e3fe3910 100644
+index 12625a4bee3..4353e2658a1 100644
 --- a/gcc/config/aarch64/aarch64.c
 +++ b/gcc/config/aarch64/aarch64.c
-@@ -15983,8 +15983,24 @@ aarch64_load_tp (rtx target)
+@@ -18053,8 +18053,24 @@ aarch64_load_tp (rtx target)
        || !register_operand (target, Pmode))
      target = gen_reg_rtx (Pmode);
  
@@ -78,10 +93,10 @@ index b86434a6acf..389e3fe3910 100644
  }
  
 diff --git a/gcc/config/aarch64/aarch64.h b/gcc/config/aarch64/aarch64.h
-index 1ce23c68781..57216651648 100644
+index bfffbcd6abf..814de8c2918 100644
 --- a/gcc/config/aarch64/aarch64.h
 +++ b/gcc/config/aarch64/aarch64.h
-@@ -1134,6 +1134,10 @@ typedef struct
+@@ -1191,6 +1191,10 @@ typedef struct
  /* Check TLS Descriptors mechanism is selected.  */
  #define TARGET_TLS_DESC (aarch64_tls_dialect == TLS_DESCRIPTORS)
  
@@ -92,11 +107,20 @@ index 1ce23c68781..57216651648 100644
  extern enum aarch64_code_model aarch64_cmodel;
  
  /* When using the tiny addressing model conditional and unconditional branches
+@@ -1236,7 +1240,7 @@ extern const char *aarch64_rewrite_mcpu (int argc, const char **argv);
+ #define MCPU_TO_MARCH_SPEC_FUNCTIONS \
+   { "rewrite_mcpu", aarch64_rewrite_mcpu },
+ 
+-#if defined(__aarch64__)
++#if 0 // defined(__aarch64__)
+ extern const char *host_detect_local_cpu (int argc, const char **argv);
+ #define HAVE_LOCAL_CPU_DETECT
+ # define EXTRA_SPEC_FUNCTIONS						\
 diff --git a/gcc/config/aarch64/aarch64.md b/gcc/config/aarch64/aarch64.md
-index 8c8be3c2740..1257616a659 100644
+index abfd8452674..8b9f4423adb 100644
 --- a/gcc/config/aarch64/aarch64.md
 +++ b/gcc/config/aarch64/aarch64.md
-@@ -6789,11 +6789,22 @@
+@@ -6771,11 +6771,22 @@
  (define_insn "aarch64_load_tp_hard"
    [(set (match_operand:DI 0 "register_operand" "=r")
  	(unspec:DI [(const_int 0)] UNSPEC_TLS))]
@@ -122,10 +146,10 @@ index 8c8be3c2740..1257616a659 100644
  ;; instructions in the TLS stubs, in order to enable linker relaxation.
  ;; Therefore we treat the stubs as an atomic sequence.
 diff --git a/gcc/config/aarch64/aarch64.opt b/gcc/config/aarch64/aarch64.opt
-index d99d14c137d..08e52537dc6 100644
+index 32191cf1acf..49b03937bdd 100644
 --- a/gcc/config/aarch64/aarch64.opt
 +++ b/gcc/config/aarch64/aarch64.opt
-@@ -118,6 +118,21 @@ Enum(aarch64_tls_size) String(32) Value(32)
+@@ -122,6 +122,21 @@ Enum(aarch64_tls_size) String(32) Value(32)
  EnumValue
  Enum(aarch64_tls_size) String(48) Value(48)
  
@@ -147,21 +171,59 @@ index d99d14c137d..08e52537dc6 100644
  march=
  Target RejectNegative Negative(march=) ToLower Joined Var(aarch64_arch_string)
  Use features of architecture ARCH.
-@@ -256,7 +271,7 @@ TargetVariable
+@@ -260,7 +275,7 @@ TargetVariable
  long aarch64_stack_protector_guard_offset = 0
  
  moutline-atomics
--Target Report Var(aarch64_flag_outline_atomics) Init(2) Save
-+Target Report Var(aarch64_flag_outline_atomics) Save
+-Target Var(aarch64_flag_outline_atomics) Init(2) Save
++Target Var(aarch64_flag_outline_atomics) Save
  Generate local calls to out-of-line atomic operations.
  
  -param=aarch64-sve-compare-costs=
+diff --git a/gcc/config/aarch64/host-aarch64-darwin.c b/gcc/config/aarch64/host-aarch64-darwin.c
+new file mode 100644
+index 00000000000..92c38b0b9db
+--- /dev/null
++++ b/gcc/config/aarch64/host-aarch64-darwin.c
+@@ -0,0 +1,32 @@
++/* i386-darwin host-specific hook definitions.
++   Copyright (C) 2003-2021 Free Software Foundation, Inc.
++
++This file is part of GCC.
++
++GCC is free software; you can redistribute it and/or modify it under
++the terms of the GNU General Public License as published by the Free
++Software Foundation; either version 3, or (at your option) any later
++version.
++
++GCC is distributed in the hope that it will be useful, but WITHOUT ANY
++WARRANTY; without even the implied warranty of MERCHANTABILITY or
++FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++for more details.
++
++You should have received a copy of the GNU General Public License
++along with GCC; see the file COPYING3.  If not see
++<http://www.gnu.org/licenses/>.  */
++
++#define IN_TARGET_CODE 1
++
++#include "config.h"
++#include "system.h"
++#include "coretypes.h"
++#include "hosthooks.h"
++#include "hosthooks-def.h"
++#include "config/host-darwin.h"
++
++/* Darwin doesn't do anything special for aarch64 hosts; this file exists just
++   to include config/host-darwin.h.  */
++
++const struct host_hooks host_hooks = HOST_HOOKS_INITIALIZER;
 diff --git a/gcc/config/aarch64/t-aarch64 b/gcc/config/aarch64/t-aarch64
-index 11d20b7be14..02ca761d3bf 100644
+index 7e1606c47ac..3b650075724 100644
 --- a/gcc/config/aarch64/t-aarch64
 +++ b/gcc/config/aarch64/t-aarch64
-@@ -159,8 +159,10 @@ aarch64-bti-insert.o: $(srcdir)/config/aarch64/aarch64-bti-insert.c \
- 		$(srcdir)/config/aarch64/aarch64-bti-insert.c
+@@ -165,8 +165,10 @@ aarch64-cc-fusion.o: $(srcdir)/config/aarch64/aarch64-cc-fusion.cc \
+ 		$(srcdir)/config/aarch64/aarch64-cc-fusion.cc
  
  comma=,
 -MULTILIB_OPTIONS    = $(subst $(comma),/, $(patsubst %, mabi=%, $(subst $(comma),$(comma)mabi=,$(TM_MULTILIB_CONFIG))))
@@ -173,6 +235,15 @@ index 11d20b7be14..02ca761d3bf 100644
  
  insn-conditions.md: s-check-sve-md
  s-check-sve-md: $(srcdir)/config/aarch64/check-sve-md.awk \
+diff --git a/gcc/config/aarch64/x-darwin b/gcc/config/aarch64/x-darwin
+new file mode 100644
+index 00000000000..6d788d5e89c
+--- /dev/null
++++ b/gcc/config/aarch64/x-darwin
+@@ -0,0 +1,3 @@
++host-aarch64-darwin.o : $(srcdir)/config/aarch64/host-aarch64-darwin.c
++	$(COMPILE) $<
++	$(POSTCOMPILE)
 diff --git a/gcc/config/devkitpro.h b/gcc/config/devkitpro.h
 new file mode 100644
 index 00000000000..11ba0f5ab1c
@@ -246,52 +317,26 @@ index 00000000000..9acbbf9d27c
 +
 +; This comment is to ensure we retain the blank line above.
 diff --git a/gcc/config/i386/host-mingw32.c b/gcc/config/i386/host-mingw32.c
-index 250fef59b55..36b2239aa5d 100644
+index 360a280b23a..2c03947999a 100644
 --- a/gcc/config/i386/host-mingw32.c
 +++ b/gcc/config/i386/host-mingw32.c
-@@ -44,9 +44,6 @@ static size_t mingw32_gt_pch_alloc_granularity (void);
- 
+@@ -45,7 +45,11 @@ static size_t mingw32_gt_pch_alloc_granularity (void);
  static inline void w32_error(const char*, const char*, int, const char*);
  
--/* FIXME: Is this big enough?  */
--static const size_t pch_VA_max_size  = 128 * 1024 * 1024;
--
+ /* FIXME: Is this big enough?  */
++#if __MINGW64__
++static const size_t pch_VA_max_size  = UINT64_C(64 * 1024 * 1024 * 1024);
++#else
+ static const size_t pch_VA_max_size  = 128 * 1024 * 1024;
++#endif
+ 
  /* Granularity for reserving address space.  */
  static size_t va_granularity = 0x10000;
- 
-@@ -88,9 +85,6 @@ static void *
- mingw32_gt_pch_get_address (size_t size, int)
- {
-   void* res;
--  size = (size + va_granularity - 1) & ~(va_granularity - 1);
--  if (size > pch_VA_max_size)
--    return NULL;
- 
-   /* FIXME: We let system determine base by setting first arg to NULL.
-      Allocating at top of available address space avoids unnecessary
-@@ -100,7 +94,7 @@ mingw32_gt_pch_get_address (size_t size, int)
-      If we allocate at bottom we need to reserve the address as early
-      as possible and at the same point in each invocation. */
-  
--  res = VirtualAlloc (NULL, pch_VA_max_size,
-+  res = VirtualAlloc (NULL, size,
- 		      MEM_RESERVE | MEM_TOP_DOWN,
- 		      PAGE_NOACCESS);
-   if (!res)
-@@ -150,7 +144,7 @@ mingw32_gt_pch_use_address (void *addr, size_t size, int fd,
- 
-   /* Offset must be also be a multiple of allocation granularity for
-      this to work.  We can't change the offset. */ 
--  if ((offset & (va_granularity - 1)) != 0 || size > pch_VA_max_size)
-+  if ((offset & (va_granularity - 1)) != 0)
-     return -1;
- 
- 
 diff --git a/gcc/gcc.c b/gcc/gcc.c
-index 9f790db0daf..97f52d0b893 100644
+index 7837553958b..69d7a798e2e 100644
 --- a/gcc/gcc.c
 +++ b/gcc/gcc.c
-@@ -793,6 +793,11 @@ proper position among the other output files.  */
+@@ -853,6 +853,11 @@ proper position among the other output files.  */
  #endif
  #endif
  
@@ -303,7 +348,7 @@ index 9f790db0daf..97f52d0b893 100644
  /* config.h can define STARTFILE_SPEC to override the default crt0 files.  */
  #ifndef STARTFILE_SPEC
  #define STARTFILE_SPEC  \
-@@ -1085,6 +1090,7 @@ static const char *link_spec = LINK_SPEC;
+@@ -1197,6 +1202,7 @@ static const char *link_spec = LINK_SPEC;
  static const char *lib_spec = LIB_SPEC;
  static const char *link_gomp_spec = "";
  static const char *libgcc_spec = LIBGCC_SPEC;
@@ -311,7 +356,7 @@ index 9f790db0daf..97f52d0b893 100644
  static const char *endfile_spec = ENDFILE_SPEC;
  static const char *startfile_spec = STARTFILE_SPEC;
  static const char *linker_name_spec = LINKER_NAME;
-@@ -1582,6 +1588,7 @@ static struct spec_list static_specs[] =
+@@ -1702,6 +1708,7 @@ static struct spec_list static_specs[] =
    INIT_STATIC_SPEC ("lib",			&lib_spec),
    INIT_STATIC_SPEC ("link_gomp",		&link_gomp_spec),
    INIT_STATIC_SPEC ("libgcc",			&libgcc_spec),
@@ -320,7 +365,7 @@ index 9f790db0daf..97f52d0b893 100644
    INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
    INIT_STATIC_SPEC ("version",			&compiler_version),
 diff --git a/libgcc/crtstuff.c b/libgcc/crtstuff.c
-index 3f769a1c660..e005d8304b7 100644
+index 675930db043..bdfd6f6b0bb 100644
 --- a/libgcc/crtstuff.c
 +++ b/libgcc/crtstuff.c
 @@ -325,7 +325,7 @@ register_tm_clones (void)
@@ -333,7 +378,7 @@ index 3f769a1c660..e005d8304b7 100644
     in every shared-object; in a main program its value is zero.  The
     object should in any case be protected.  This means the instance
 diff --git a/libgcc/gthr.h b/libgcc/gthr.h
-index f31cf083cbe..649f900aac3 100644
+index cca3f294b7b..deffea4107b 100644
 --- a/libgcc/gthr.h
 +++ b/libgcc/gthr.h
 @@ -136,7 +136,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
@@ -346,10 +391,10 @@ index f31cf083cbe..649f900aac3 100644
  #define GTHREAD_USE_WEAK 0
  #endif
 diff --git a/libstdc++-v3/include/Makefile.am b/libstdc++-v3/include/Makefile.am
-index 80aeb3f8959..308ceedc673 100644
+index 40a41ef2a1c..4d06c6f9953 100644
 --- a/libstdc++-v3/include/Makefile.am
 +++ b/libstdc++-v3/include/Makefile.am
-@@ -1315,6 +1315,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
+@@ -1347,6 +1347,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
  	    -e '/^#/s/\(${uppercase}${uppercase}*\)/_GLIBCXX_\1/g' \
  	    -e 's/_GLIBCXX_SUPPORTS_WEAK/__GXX_WEAK__/g' \
  	    -e 's/_GLIBCXX___MINGW32_GLIBCXX___/__MINGW32__/g' \
@@ -358,14 +403,54 @@ index 80aeb3f8959..308ceedc673 100644
  	    < $< > $@
  
 diff --git a/libstdc++-v3/include/Makefile.in b/libstdc++-v3/include/Makefile.in
-index eb437ad8d8d..6e076fc63bd 100644
+index fcd2b5b2d40..c034367994a 100644
 --- a/libstdc++-v3/include/Makefile.in
 +++ b/libstdc++-v3/include/Makefile.in
-@@ -1793,6 +1793,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
+@@ -1830,6 +1830,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
  	    -e '/^#/s/\(${uppercase}${uppercase}*\)/_GLIBCXX_\1/g' \
  	    -e 's/_GLIBCXX_SUPPORTS_WEAK/__GXX_WEAK__/g' \
  	    -e 's/_GLIBCXX___MINGW32_GLIBCXX___/__MINGW32__/g' \
 +	    -e 's/_GLIBCXX___DEVKITA64_GLIBCXX___/__DEVKITA64__/g' \
  	    -e 's,^#include "\(.*\)",#include <bits/\1>,g' \
  	    < $< > $@
+ 
+diff --git a/libstdc++-v3/include/c_compatibility/fenv.h b/libstdc++-v3/include/c_compatibility/fenv.h
+index 0413e3b7c25..ff5f8bbe1a1 100644
+--- a/libstdc++-v3/include/c_compatibility/fenv.h
++++ b/libstdc++-v3/include/c_compatibility/fenv.h
+@@ -26,6 +26,10 @@
+  *  This is a Standard C++ Library header.
+  */
+ 
++#if !defined __cplusplus || defined _GLIBCXX_INCLUDE_NEXT_C_HEADERS
++# include_next <fenv.h>
++#else
++
+ #ifndef _GLIBCXX_FENV_H
+ #define _GLIBCXX_FENV_H 1
+ 
+@@ -79,3 +83,5 @@ namespace std
+ #endif // C++11
+ 
+ #endif // _GLIBCXX_FENV_H
++
++#endif // __cplusplus
+diff --git a/libstdc++-v3/include/c_global/cfenv b/libstdc++-v3/include/c_global/cfenv
+index 0b0ec35a837..d24cb1a3c81 100644
+--- a/libstdc++-v3/include/c_global/cfenv
++++ b/libstdc++-v3/include/c_global/cfenv
+@@ -37,9 +37,11 @@
+ 
+ #include <bits/c++config.h>
+ 
+-#if _GLIBCXX_HAVE_FENV_H
+-# include <fenv.h>
+-#endif
++// Need to ensure this finds the C library's <fenv.h> not a libstdc++
++// wrapper that might already be installed later in the include search path.
++#define _GLIBCXX_INCLUDE_NEXT_C_HEADERS
++#include_next <fenv.h>
++#undef _GLIBCXX_INCLUDE_NEXT_C_HEADERS
+ 
+ #ifdef _GLIBCXX_USE_C99_FENV_TR1
  
