@@ -69,6 +69,7 @@ then
 		--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 56" \
 		$CROSS_PARAMS \
 		$CROSS_GCC_PARAMS \
+                $EXTRA_GCC_PARAMS \
 		|| { echo "Error configuring gcc"; exit 1; }
 	touch configured-gcc
 fi
