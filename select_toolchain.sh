@@ -30,7 +30,7 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=10.2.0
+    GCC_VER=11.1.0
     BINUTILS_VER=2.34
     NEWLIB_VER=3.3.0
     basedir='dkarm-eabi'

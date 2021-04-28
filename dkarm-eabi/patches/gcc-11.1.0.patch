@@ -1,8 +1,8 @@
 diff --git a/gcc/config/arm/arm-cpus.in b/gcc/config/arm/arm-cpus.in
-index 728be500b80..74c1abad635 100644
+index 0becb4385b6..30bd4a24cd6 100644
 --- a/gcc/config/arm/arm-cpus.in
 +++ b/gcc/config/arm/arm-cpus.in
-@@ -392,7 +392,7 @@ begin arch armv6k
+@@ -400,7 +400,7 @@ begin arch armv6k
   tune for mpcore
   tune flags CO_PROC
   base 6K
@@ -12,7 +12,7 @@ index 728be500b80..74c1abad635 100644
   optalias vfpv2 fp
   option nofp remove ALL_FP
 diff --git a/gcc/config/arm/t-arm-elf b/gcc/config/arm/t-arm-elf
-index 3d92bd23322..35cefcde676 100644
+index d68def30867..d31f1e31ee6 100644
 --- a/gcc/config/arm/t-arm-elf
 +++ b/gcc/config/arm/t-arm-elf
 @@ -16,111 +16,14 @@
@@ -133,7 +133,7 @@ index 3d92bd23322..35cefcde676 100644
 -MULTILIB_REUSE	     += mthumb/mfpu.auto/march.armv7+fp/mfloat-abi.hard=mfpu.auto/march.armv7+fp/mfloat-abi.hard
 -MULTILIB_REUSE	     += mthumb/mfpu.auto/march.armv7+fp/mfloat-abi.hard=march.armv7+fp/mfloat-abi.hard
 diff --git a/gcc/config/arm/unknown-elf.h b/gcc/config/arm/unknown-elf.h
-index 9ad2947505f..1790caa8e88 100644
+index cca6f0ece54..8b78c28c7bb 100644
 --- a/gcc/config/arm/unknown-elf.h
 +++ b/gcc/config/arm/unknown-elf.h
 @@ -29,7 +29,7 @@
@@ -153,52 +153,26 @@ index 9ad2947505f..1790caa8e88 100644
 +#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
 +
 diff --git a/gcc/config/i386/host-mingw32.c b/gcc/config/i386/host-mingw32.c
-index 250fef59b55..36b2239aa5d 100644
+index 360a280b23a..2c03947999a 100644
 --- a/gcc/config/i386/host-mingw32.c
 +++ b/gcc/config/i386/host-mingw32.c
-@@ -44,9 +44,6 @@ static size_t mingw32_gt_pch_alloc_granularity (void);
- 
+@@ -45,7 +45,11 @@ static size_t mingw32_gt_pch_alloc_granularity (void);
  static inline void w32_error(const char*, const char*, int, const char*);
  
--/* FIXME: Is this big enough?  */
--static const size_t pch_VA_max_size  = 128 * 1024 * 1024;
--
+ /* FIXME: Is this big enough?  */
++#if __MINGW64__
++static const size_t pch_VA_max_size  = UINT64_C(64 * 1024 * 1024 * 1024);
++#else
+ static const size_t pch_VA_max_size  = 128 * 1024 * 1024;
++#endif
+ 
  /* Granularity for reserving address space.  */
  static size_t va_granularity = 0x10000;
- 
-@@ -88,9 +85,6 @@ static void *
- mingw32_gt_pch_get_address (size_t size, int)
- {
-   void* res;
--  size = (size + va_granularity - 1) & ~(va_granularity - 1);
--  if (size > pch_VA_max_size)
--    return NULL;
- 
-   /* FIXME: We let system determine base by setting first arg to NULL.
-      Allocating at top of available address space avoids unnecessary
-@@ -100,7 +94,7 @@ mingw32_gt_pch_get_address (size_t size, int)
-      If we allocate at bottom we need to reserve the address as early
-      as possible and at the same point in each invocation. */
-  
--  res = VirtualAlloc (NULL, pch_VA_max_size,
-+  res = VirtualAlloc (NULL, size,
- 		      MEM_RESERVE | MEM_TOP_DOWN,
- 		      PAGE_NOACCESS);
-   if (!res)
-@@ -150,7 +144,7 @@ mingw32_gt_pch_use_address (void *addr, size_t size, int fd,
- 
-   /* Offset must be also be a multiple of allocation granularity for
-      this to work.  We can't change the offset. */ 
--  if ((offset & (va_granularity - 1)) != 0 || size > pch_VA_max_size)
-+  if ((offset & (va_granularity - 1)) != 0)
-     return -1;
- 
- 
 diff --git a/gcc/gcc.c b/gcc/gcc.c
-index 9f790db0daf..97f52d0b893 100644
+index 7837553958b..69d7a798e2e 100644
 --- a/gcc/gcc.c
 +++ b/gcc/gcc.c
-@@ -793,6 +793,11 @@ proper position among the other output files.  */
+@@ -853,6 +853,11 @@ proper position among the other output files.  */
  #endif
  #endif
  
@@ -210,7 +184,7 @@ index 9f790db0daf..97f52d0b893 100644
  /* config.h can define STARTFILE_SPEC to override the default crt0 files.  */
  #ifndef STARTFILE_SPEC
  #define STARTFILE_SPEC  \
-@@ -1085,6 +1090,7 @@ static const char *link_spec = LINK_SPEC;
+@@ -1197,6 +1202,7 @@ static const char *link_spec = LINK_SPEC;
  static const char *lib_spec = LIB_SPEC;
  static const char *link_gomp_spec = "";
  static const char *libgcc_spec = LIBGCC_SPEC;
@@ -218,7 +192,7 @@ index 9f790db0daf..97f52d0b893 100644
  static const char *endfile_spec = ENDFILE_SPEC;
  static const char *startfile_spec = STARTFILE_SPEC;
  static const char *linker_name_spec = LINKER_NAME;
-@@ -1582,6 +1588,7 @@ static struct spec_list static_specs[] =
+@@ -1702,6 +1708,7 @@ static struct spec_list static_specs[] =
    INIT_STATIC_SPEC ("lib",			&lib_spec),
    INIT_STATIC_SPEC ("link_gomp",		&link_gomp_spec),
    INIT_STATIC_SPEC ("libgcc",			&libgcc_spec),
@@ -237,7 +211,7 @@ index dddddc7c444..c2502597953 100644
 -LIB2_DIVMOD_EXCEPTION_FLAGS := -fexceptions
 +LIB2_DIVMOD_EXCEPTION_FLAGS := -fno-exceptions
 diff --git a/libgcc/crtstuff.c b/libgcc/crtstuff.c
-index 3f769a1c660..e005d8304b7 100644
+index 675930db043..bdfd6f6b0bb 100644
 --- a/libgcc/crtstuff.c
 +++ b/libgcc/crtstuff.c
 @@ -325,7 +325,7 @@ register_tm_clones (void)
@@ -249,3 +223,43 @@ index 3f769a1c660..e005d8304b7 100644
  /* Declare the __dso_handle variable.  It should have a unique value
     in every shared-object; in a main program its value is zero.  The
     object should in any case be protected.  This means the instance
+diff --git a/libstdc++-v3/include/c_compatibility/fenv.h b/libstdc++-v3/include/c_compatibility/fenv.h
+index 0413e3b7c25..ff5f8bbe1a1 100644
+--- a/libstdc++-v3/include/c_compatibility/fenv.h
++++ b/libstdc++-v3/include/c_compatibility/fenv.h
+@@ -26,6 +26,10 @@
+  *  This is a Standard C++ Library header.
+  */
+ 
++#if !defined __cplusplus || defined _GLIBCXX_INCLUDE_NEXT_C_HEADERS
++# include_next <fenv.h>
++#else
++
+ #ifndef _GLIBCXX_FENV_H
+ #define _GLIBCXX_FENV_H 1
+ 
+@@ -79,3 +83,5 @@ namespace std
+ #endif // C++11
+ 
+ #endif // _GLIBCXX_FENV_H
++
++#endif // __cplusplus
+diff --git a/libstdc++-v3/include/c_global/cfenv b/libstdc++-v3/include/c_global/cfenv
+index 0b0ec35a837..d24cb1a3c81 100644
+--- a/libstdc++-v3/include/c_global/cfenv
++++ b/libstdc++-v3/include/c_global/cfenv
+@@ -37,9 +37,11 @@
+ 
+ #include <bits/c++config.h>
+ 
+-#if _GLIBCXX_HAVE_FENV_H
+-# include <fenv.h>
+-#endif
++// Need to ensure this finds the C library's <fenv.h> not a libstdc++
++// wrapper that might already be installed later in the include search path.
++#define _GLIBCXX_INCLUDE_NEXT_C_HEADERS
++#include_next <fenv.h>
++#undef _GLIBCXX_INCLUDE_NEXT_C_HEADERS
+ 
+ #ifdef _GLIBCXX_USE_C99_FENV_TR1
+ 
