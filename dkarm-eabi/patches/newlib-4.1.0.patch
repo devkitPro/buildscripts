@@ -1,8 +1,8 @@
 diff --git a/libgloss/configure b/libgloss/configure
-index 0d2918cee..bccfb07b4 100755
+index 816b9c4b8..b79edb6c8 100755
 --- a/libgloss/configure
 +++ b/libgloss/configure
-@@ -2604,6 +2604,8 @@ if test "${config_libnosys}" = "true"; then
+@@ -2609,6 +2609,8 @@ if test "${config_libnosys}" = "true"; then
  
  fi
  
@@ -12,7 +12,7 @@ index 0d2918cee..bccfb07b4 100755
  
  ac_config_commands="$ac_config_commands depfiles"
 diff --git a/libgloss/configure.in b/libgloss/configure.in
-index f38d5298e..509c31071 100644
+index 4111724e1..0e44d885e 100644
 --- a/libgloss/configure.in
 +++ b/libgloss/configure.in
 @@ -2,6 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
@@ -23,7 +23,7 @@ index f38d5298e..509c31071 100644
  
  if test "${enable_shared}" = "yes" ; then
      echo "Shared libraries not supported for cross compiling, ignored"
-@@ -193,6 +194,7 @@ dnl fi
+@@ -196,6 +197,7 @@ dnl fi
  if test "${config_libnosys}" = "true"; then
    AC_CONFIG_SUBDIRS([libnosys])
  fi
@@ -7408,10 +7408,10 @@ index 000000000..61de918bc
 +	return ret;
 +}
 diff --git a/newlib/configure.host b/newlib/configure.host
-index a84c0c80a..29fb7ed24 100644
+index 1ddbb6c76..ed9999bea 100644
 --- a/newlib/configure.host
 +++ b/newlib/configure.host
-@@ -687,6 +687,14 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
+@@ -694,6 +694,14 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
  	syscall_dir=syscalls
  	default_newlib_io_long_long="yes"
  	;;
@@ -7426,8 +7426,34 @@ index a84c0c80a..29fb7ed24 100644
    arm*-*-pe)
  	syscall_dir=syscalls
  	;;
+diff --git a/newlib/libc/ctype/jp2uc.c b/newlib/libc/ctype/jp2uc.c
+index 5e30f09be..1ea357f92 100644
+--- a/newlib/libc/ctype/jp2uc.c
++++ b/newlib/libc/ctype/jp2uc.c
+@@ -35,7 +35,7 @@
+ #ifdef _MB_CAPABLE
+ /* Under Cygwin, the incoming wide character is already given in UTF due
+    to the requirements of the underlying OS. */
+-#ifndef __CYGWIN__
++#if !defined(__CYGWIN__) && !defined(__DEVKITA64__)
+ 
+ #include <_ansi.h>
+ #include <string.h>
+diff --git a/newlib/libc/ctype/local.h b/newlib/libc/ctype/local.h
+index 5c293c83d..75ccf89f5 100644
+--- a/newlib/libc/ctype/local.h
++++ b/newlib/libc/ctype/local.h
+@@ -32,7 +32,7 @@
+    * for towupper and towlower, the result must be back-transformed
+      into the respective locale encoding; currently NOT IMPLEMENTED
+ */
+-#ifdef __CYGWIN__
++#if defined(__CYGWIN__) || defined(__DEVKITA64__)
+ /* Under Cygwin, wchar_t (or its extension wint_t) is Unicode */
+ #define _jp2uc(c) (c)
+ #define _jp2uc_l(c, l) (c)
 diff --git a/newlib/libc/include/stdio.h b/newlib/libc/include/stdio.h
-index 164d95bca..083e48758 100644
+index ab18806e3..db77ebb2a 100644
 --- a/newlib/libc/include/stdio.h
 +++ b/newlib/libc/include/stdio.h
 @@ -233,7 +233,7 @@ int	fsetpos (FILE *, const _fpos_t *);
@@ -7440,7 +7466,7 @@ index 164d95bca..083e48758 100644
  void	clearerr (FILE *);
  int	feof (FILE *);
 diff --git a/newlib/libc/include/sys/config.h b/newlib/libc/include/sys/config.h
-index d746b15fc..80169d9b7 100644
+index 4bc8d29bf..35c05e6af 100644
 --- a/newlib/libc/include/sys/config.h
 +++ b/newlib/libc/include/sys/config.h
 @@ -4,6 +4,9 @@
@@ -7770,7 +7796,7 @@ index 5e937f103..635a7a6b8 100644
  };
  #endif
 diff --git a/newlib/libc/locale/locale.c b/newlib/libc/locale/locale.c
-index 4c343e462..c04493460 100644
+index 968642745..2ab1f9570 100644
 --- a/newlib/libc/locale/locale.c
 +++ b/newlib/libc/locale/locale.c
 @@ -92,7 +92,7 @@ beginning with <<"LC_">>.
@@ -7882,7 +7908,7 @@ index 4c343e462..c04493460 100644
        if (strcmp (locale, "POSIX") && strcmp (locale, "C")
  	  && strcmp (locale, ""))
          return NULL;
-@@ -990,6 +1015,7 @@ __locale_ctype_ptr_l (struct __locale_t *locale)
+@@ -991,6 +1016,7 @@ __locale_ctype_ptr_l (struct __locale_t *locale)
  
  const char *
  __locale_ctype_ptr (void)
@@ -8031,7 +8057,7 @@ index 9b982a993..8c0aaac8c 100644
 +*/
  #endif /* ! defined (REENTRANT_SYSCALLS_PROVIDED) */
 diff --git a/newlib/libc/stdio/fread.c b/newlib/libc/stdio/fread.c
-index b358d2b4a..a3e597fd2 100644
+index df8321461..9263e5829 100644
 --- a/newlib/libc/stdio/fread.c
 +++ b/newlib/libc/stdio/fread.c
 @@ -135,7 +135,7 @@ crlf_r (struct _reent * ptr,
@@ -8060,7 +8086,7 @@ index b358d2b4a..a3e597fd2 100644
  	  resid -= fp->_r;
  	  p += fp->_r;
  	  fp->_r = 0;
-@@ -225,7 +224,31 @@ _fread_r (struct _reent * ptr,
+@@ -225,7 +224,30 @@ _fread_r (struct _reent * ptr,
  	  /* fp->_r = 0 ... done in __srefill */
  	  p += r;
  	  resid -= r;
@@ -8075,7 +8101,7 @@ index b358d2b4a..a3e597fd2 100644
 +        int old_size = fp->_bf._size;
 +        /* allow __refill to use user's buffer */
 +        fp->_bf._base = (unsigned char *) p;
-+        fp->_bf._size = resid;
++        fp->_bf._size = resid - old_size;
 +        fp->_p = (unsigned char *) p;
 +        rc = __srefill_r (ptr, fp);
 +        /* restore fp buffering back to original state */
@@ -8084,20 +8110,19 @@ index b358d2b4a..a3e597fd2 100644
 +        fp->_p = old_base;
 +        resid -= fp->_r;
 +        p += fp->_r;
-+        fp->_r = 0;
-+
-+      } else {
-+        rc = __srefill_r (ptr, fp);
++        //fp->_r = 0;
 +      }
++        rc = __srefill_r (ptr, fp);
++
 +	  if (rc)
  	    {
  	      /* no more input: return partial result */
  #ifdef __SCLE
 diff --git a/newlib/libc/stdio/vfprintf.c b/newlib/libc/stdio/vfprintf.c
-index c4bf2dbe3..d756df37d 100644
+index 1aaf05aa4..b67182a79 100644
 --- a/newlib/libc/stdio/vfprintf.c
 +++ b/newlib/libc/stdio/vfprintf.c
-@@ -112,6 +112,8 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
+@@ -108,6 +108,8 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
  <<lseek>>, <<read>>, <<sbrk>>, <<write>>.
  */
  
@@ -8106,7 +8131,7 @@ index c4bf2dbe3..d756df37d 100644
  #if defined(LIBC_SCCS) && !defined(lint)
  /*static char *sccsid = "from: @(#)vfprintf.c	5.50 (Berkeley) 12/16/92";*/
  static char *rcsid = "$Id$";
-@@ -1438,7 +1440,7 @@ reswitch:	switch (ch) {
+@@ -1434,7 +1436,7 @@ reswitch:	switch (ch) {
  string:
  #endif
  			sign = '\0';
@@ -8115,7 +8140,7 @@ index c4bf2dbe3..d756df37d 100644
  			/* Behavior is undefined if the user passed a
  			   NULL string when precision is not 0.
  			   However, if we are not optimizing for size,
-@@ -1448,7 +1450,7 @@ string:
+@@ -1444,7 +1446,7 @@ string:
  				size = ((unsigned) prec > 6U) ? 6 : prec;
  			}
  			else
@@ -8125,7 +8150,7 @@ index c4bf2dbe3..d756df37d 100644
  			if (ch == 'S' || (flags & LONGINT)) {
  				mbstate_t ps;
 diff --git a/newlib/libc/stdio/vfscanf.c b/newlib/libc/stdio/vfscanf.c
-index 9c38eebf4..fbc8d877d 100644
+index 994cee7fc..5d1d0a1cd 100644
 --- a/newlib/libc/stdio/vfscanf.c
 +++ b/newlib/libc/stdio/vfscanf.c
 @@ -74,6 +74,8 @@ These are GNU extensions.
@@ -8152,7 +8177,7 @@ index 980b31e3b..722be905e 100644
  
  #ifdef INTEGER_ONLY
 diff --git a/newlib/libc/stdio/vfwscanf.c b/newlib/libc/stdio/vfwscanf.c
-index ffb6cc85b..db33d4f29 100644
+index f00d41a09..7e290ee8d 100644
 --- a/newlib/libc/stdio/vfwscanf.c
 +++ b/newlib/libc/stdio/vfwscanf.c
 @@ -74,6 +74,9 @@ PORTABILITY
@@ -8166,37 +8191,18 @@ index ffb6cc85b..db33d4f29 100644
  #include <reent.h>
  #include <newlib.h>
 diff --git a/newlib/libc/stdlib/aligned_alloc.c b/newlib/libc/stdlib/aligned_alloc.c
-index 88413ce86..24029a6f7 100644
+index feb22c24b..3dae0c9a9 100644
 --- a/newlib/libc/stdlib/aligned_alloc.c
 +++ b/newlib/libc/stdlib/aligned_alloc.c
-@@ -1,5 +1,5 @@
- /*-
-- * Copyright (c) 2015 embedded brains GmbH
-+ * Copyright (c) 2018 Dave Murphy
-  * All rights reserved.
-  *
-  * Redistribution and use in source and binary forms, with or without
-@@ -25,14 +25,15 @@
-  */
+@@ -28,6 +28,8 @@
  
+ #include <reent.h>
  #include <stdlib.h>
 +#include <malloc.h>
 +#include <errno.h>
  
  void *
- aligned_alloc(size_t alignment, size_t size)
- {
--	void *p;
--	int error;
-+	if ((alignment !=0) && !(alignment & (alignment - 1 )) && !(size & (alignment - 1)))
-+		return memalign(alignment,size);
- 
--	error = posix_memalign(&p, alignment, size);
--
--	return (error == 0 ? p : NULL);
-+	errno = EINVAL;
-+	return (void*)NULL;
- }
+ aligned_alloc (size_t align, size_t size)
 diff --git a/newlib/libc/stdlib/mbtowc_r.c b/newlib/libc/stdlib/mbtowc_r.c
 index 920a7ea3c..ba5ee7652 100644
 --- a/newlib/libc/stdlib/mbtowc_r.c
