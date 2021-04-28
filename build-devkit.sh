@@ -126,7 +126,7 @@ if [ ! -z $CROSSBUILD ]; then
 	export PATH=/opt/devkitpro/$package/bin:$PATH
 	prefix=$INSTALLDIR/$CROSSBUILD/$package
 	CROSS_PARAMS="$CROSS_PARAMS --host=$CROSSBUILD"
-	CROSS_GCC_PARAMS="--with-gmp=$CROSSPATH --with-mpfr=$CROSSPATH --with-mpc=$CROSSPATH --with-isl=$CROSSPATH"
+	CROSS_GCC_PARAMS="--with-gmp=$CROSSPATH --with-mpfr=$CROSSPATH --with-mpc=$CROSSPATH --with-isl=$CROSSPATH --with-zstd=$CROSSPATH"
 else
 	prefix=$INSTALLDIR/$package
 fi
