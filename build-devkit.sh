@@ -28,12 +28,12 @@ echo
 
 
 
-DKARM_RULES_VER=1.2.0
-DKARM_CRTLS_VER=1.0.0
+DKARM_RULES_VER=1.2.1
+DKARM_CRTLS_VER=1.1.1
 
-DKPPC_RULES_VER=1.0.0
+DKPPC_RULES_VER=1.1.0
 
-DKA64_RULES_VER=1.0.0
+DKA64_RULES_VER=1.0.1
 
 OSXMIN=${OSXMIN:-10.9}
 
@@ -189,15 +189,15 @@ fi
 
 if [ "$BUILD_DKPRO_SKIP_CRTLS" != "1" ]; then
 	if [ $VERSION -eq 1 ]; then
-		archives="devkitarm-rules-$DKARM_RULES_VER.tar.xz devkitarm-crtls-$DKARM_CRTLS_VER.tar.xz $archives"
+		archives="devkitarm-rules-$DKARM_RULES_VER.tar.gz devkitarm-crtls-$DKARM_CRTLS_VER.tar.gz $archives"
 	fi
 
 	if [ $VERSION -eq 2 ]; then
-		archives="devkitppc-rules-$DKPPC_RULES_VER.tar.xz $archives"
+		archives="devkitppc-rules-$DKPPC_RULES_VER.tar.gz $archives"
 	fi
 
 	if [ $VERSION -eq 3 ]; then
-		archives="devkita64-rules-$DKA64_RULES_VER.tar.xz $archives"
+		archives="devkita64-rules-$DKA64_RULES_VER.tar.gz $archives"
 	fi
 fi
 

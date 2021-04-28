@@ -11,7 +11,6 @@ export DEVKITPPC=$DEVKITPRO/devkitPPC
 #---------------------------------------------------------------------------------
 cd $BUILDDIR
 
-mkdir -p rules
-cd rules
-tar -xvf $SRCDIR/devkitppc-rules-$DKPPC_RULES_VER.tar.xz
+tar -xvf $SRCDIR/devkitppc-rules-$DKPPC_RULES_VER.tar.gz
+cd devkitppc-rules-$DKPPC_RULES_VER
 make install

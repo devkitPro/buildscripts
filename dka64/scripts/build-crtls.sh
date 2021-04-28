@@ -10,7 +10,6 @@ export DEVKITPRO=$TOOLPATH
 #---------------------------------------------------------------------------------
 cd $BUILDDIR
 
-mkdir -p rules
-cd rules
-tar -xvf $SRCDIR/devkita64-rules-$DKA64_RULES_VER.tar.xz
+tar -xvf $SRCDIR/devkita64-rules-$DKA64_RULES_VER.tar.gz
+cd devkita64-rules-$DKA64_RULES_VER
 make install

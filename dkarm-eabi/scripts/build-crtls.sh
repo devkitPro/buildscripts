@@ -11,9 +11,8 @@ export DEVKITARM=$DEVKITPRO/devkitARM
 #---------------------------------------------------------------------------------
 cd $BUILDDIR
 
-mkdir -p rules
-cd rules
-tar -xvf $SRCDIR/devkitarm-rules-$DKARM_RULES_VER.tar.xz
+tar -xvf $SRCDIR/devkitarm-rules-$DKARM_RULES_VER.tar.gz
+cd devkitarm-rules-$DKARM_RULES_VER
 make install
 
 #---------------------------------------------------------------------------------
@@ -21,8 +20,7 @@ make install
 #---------------------------------------------------------------------------------
 cd $BUILDDIR
 
-mkdir -p crtls
-cd crtls
-tar -xvf $SRCDIR/devkitarm-crtls-$DKARM_CRTLS_VER.tar.xz
+tar -xvf $SRCDIR/devkitarm-crtls-$DKARM_CRTLS_VER.tar.gz
+cd devkitarm-crtls-$DKARM_CRTLS_VER
 make install
 
