@@ -94,12 +94,14 @@ then
 	--disable-libstdcxx-verbose \
 	--enable-libstdcxx-time=yes \
 	--enable-libstdcxx-filesystem-ts \
+	--disable-tm-clone-registry \
+	--disable-__cxa_atexit \
 	--enable-cxx-flags='-ffunction-sections -fdata-sections' \
 	--target=$target \
 	--with-newlib \
 	--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
-	--prefix=$prefix\
-	--with-system-zlib\
+	--prefix=$prefix \
+	--with-system-zlib \
 	--with-bugurl="https://github.com/devkitpro/buildscripts/issues" --with-pkgversion="devkitPPC release 39" \
 	$CROSS_PARAMS \
 	$CROSS_GCC_PARAMS \
