@@ -7372,10 +7372,10 @@ index 000000000..bd25d775d
 +	exit ( main(__system_argv->argc,__system_argv->argv) );
 +}
 diff --git a/newlib/configure.host b/newlib/configure.host
-index 1ddbb6c76..b7f568bf8 100644
+index 1ddbb6c76..ef4cbe6c3 100644
 --- a/newlib/configure.host
 +++ b/newlib/configure.host
-@@ -864,7 +864,14 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
+@@ -864,7 +864,13 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
  	default_newlib_io_long_long="yes"
  	newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES"
  	;;
@@ -7383,7 +7383,6 @@ index 1ddbb6c76..b7f568bf8 100644
 +  powerpc*-*-eabi*)
 +	default_newlib_io_c99_formats="yes"
 +	default_newlib_io_long_long="yes"
-+	default_newlib_io_pos_args="yes"
 +	newlib_cflags="${newlib_cflags} -DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__"
 +	newlib_cflags="${newlib_cflags} -ffunction-sections -fdata-sections"
 +	syscall_dir=syscalls
@@ -8175,77 +8174,6 @@ index df8321461..eee4181cd 100644
  	    {
  	      /* no more input: return partial result */
  #ifdef __SCLE
-diff --git a/newlib/libc/stdio/vfprintf.c b/newlib/libc/stdio/vfprintf.c
-index 1aaf05aa4..b67182a79 100644
---- a/newlib/libc/stdio/vfprintf.c
-+++ b/newlib/libc/stdio/vfprintf.c
-@@ -108,6 +108,8 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
- <<lseek>>, <<read>>, <<sbrk>>, <<write>>.
- */
- 
-+#pragma GCC optimize ("Os")
-+
- #if defined(LIBC_SCCS) && !defined(lint)
- /*static char *sccsid = "from: @(#)vfprintf.c	5.50 (Berkeley) 12/16/92";*/
- static char *rcsid = "$Id$";
-@@ -1434,7 +1436,7 @@ reswitch:	switch (ch) {
- string:
- #endif
- 			sign = '\0';
--#ifndef __OPTIMIZE_SIZE__
-+//#ifndef __OPTIMIZE_SIZE__
- 			/* Behavior is undefined if the user passed a
- 			   NULL string when precision is not 0.
- 			   However, if we are not optimizing for size,
-@@ -1444,7 +1446,7 @@ string:
- 				size = ((unsigned) prec > 6U) ? 6 : prec;
- 			}
- 			else
--#endif /* __OPTIMIZE_SIZE__ */
-+//#endif /* __OPTIMIZE_SIZE__ */
- #ifdef _MB_CAPABLE
- 			if (ch == 'S' || (flags & LONGINT)) {
- 				mbstate_t ps;
-diff --git a/newlib/libc/stdio/vfscanf.c b/newlib/libc/stdio/vfscanf.c
-index 994cee7fc..5d1d0a1cd 100644
---- a/newlib/libc/stdio/vfscanf.c
-+++ b/newlib/libc/stdio/vfscanf.c
-@@ -74,6 +74,8 @@ These are GNU extensions.
- Supporting OS subroutines required:
- */
- 
-+#pragma GCC optimize ("Os")
-+
- #include <_ansi.h>
- #include <reent.h>
- #include <newlib.h>
-diff --git a/newlib/libc/stdio/vfwprintf.c b/newlib/libc/stdio/vfwprintf.c
-index 980b31e3b..722be905e 100644
---- a/newlib/libc/stdio/vfwprintf.c
-+++ b/newlib/libc/stdio/vfwprintf.c
-@@ -92,6 +92,9 @@ SEEALSO
-  *
-  * This code is large and complicated...
-  */
-+
-+#pragma GCC optimize ("Os")
-+
- #include <newlib.h>
- 
- #ifdef INTEGER_ONLY
-diff --git a/newlib/libc/stdio/vfwscanf.c b/newlib/libc/stdio/vfwscanf.c
-index f00d41a09..647f9e55a 100644
---- a/newlib/libc/stdio/vfwscanf.c
-+++ b/newlib/libc/stdio/vfwscanf.c
-@@ -74,6 +74,8 @@ PORTABILITY
- C99, POSIX-1.2008
- */
- 
-+#pragma GCC optimize ("Os")
-+
- #include <_ansi.h>
- #include <reent.h>
- #include <newlib.h>
 diff --git a/newlib/libc/stdlib/aligned_alloc.c b/newlib/libc/stdlib/aligned_alloc.c
 index feb22c24b..3dae0c9a9 100644
 --- a/newlib/libc/stdlib/aligned_alloc.c
