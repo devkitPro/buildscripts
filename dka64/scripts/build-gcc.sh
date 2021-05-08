@@ -62,10 +62,9 @@ then
 		--with-newlib=yes \
 		--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 		--prefix=$prefix \
-		--enable-lto $plugin_ld\
-		--with-system-zlib \
-                --disable-tm-clone-registry \
-                --disable-__cxa_atexit \
+		--enable-lto \
+		--disable-tm-clone-registry \
+		--disable-__cxa_atexit \
 		--with-bugurl="https://github.com/devkitPro/buildscripts/issues" --with-pkgversion="devkitA64 release 17" \
 		$CROSS_PARAMS \
 		$CROSS_GCC_PARAMS \
