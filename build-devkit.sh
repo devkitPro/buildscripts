@@ -231,8 +231,10 @@ fi
 
 cd $BUILDSCRIPTDIR
 
-echo "stripping installed binaries"
-. ./strip_bins.sh
+if [ "$BUILD_DKPRO_NO_STRIP_BINARIES" != "1" ]; then
+	echo "stripping installed binaries"
+	. ./strip_bins.sh
+fi
 
 #---------------------------------------------------------------------------------
 # Clean up temporary files and source directories
