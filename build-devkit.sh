@@ -155,7 +155,7 @@ case $PLATFORM in
 		fi
     ;;
 	MINGW32* )
-		cppflags="-D__USE_MINGW_ACCESS"
+		cppflags="-D__USE_MINGW_ACCESS -D__USE_MINGW_ANSI_STDIO=1"
     ;;
 esac
 
