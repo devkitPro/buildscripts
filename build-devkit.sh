@@ -1,5 +1,4 @@
-
-#!/bin/bash
+#!/usr/bin/env bash
 #---------------------------------------------------------------------------------
 #	devkitARM release 55
 #	devkitPPC release 39
