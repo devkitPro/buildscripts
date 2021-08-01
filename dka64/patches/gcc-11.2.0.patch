@@ -62,7 +62,7 @@ index af3b7364a74..6df7a0dc8a1 100644
     Most have a PIC and non-PIC variant.  */
  enum aarch64_code_model {
 diff --git a/gcc/config/aarch64/aarch64.c b/gcc/config/aarch64/aarch64.c
-index 12625a4bee3..4353e2658a1 100644
+index c2f4b27f6e4..ec05f056568 100644
 --- a/gcc/config/aarch64/aarch64.c
 +++ b/gcc/config/aarch64/aarch64.c
 @@ -18053,8 +18053,24 @@ aarch64_load_tp (rtx target)
@@ -117,10 +117,10 @@ index bfffbcd6abf..814de8c2918 100644
  #define HAVE_LOCAL_CPU_DETECT
  # define EXTRA_SPEC_FUNCTIONS						\
 diff --git a/gcc/config/aarch64/aarch64.md b/gcc/config/aarch64/aarch64.md
-index abfd8452674..8b9f4423adb 100644
+index aef6da9732d..1cbffec5ef8 100644
 --- a/gcc/config/aarch64/aarch64.md
 +++ b/gcc/config/aarch64/aarch64.md
-@@ -6771,11 +6771,22 @@
+@@ -6772,11 +6772,22 @@
  (define_insn "aarch64_load_tp_hard"
    [(set (match_operand:DI 0 "register_operand" "=r")
  	(unspec:DI [(const_int 0)] UNSPEC_TLS))]
@@ -333,7 +333,7 @@ index 360a280b23a..2c03947999a 100644
  /* Granularity for reserving address space.  */
  static size_t va_granularity = 0x10000;
 diff --git a/gcc/gcc.c b/gcc/gcc.c
-index 7837553958b..69d7a798e2e 100644
+index 4d790f9dd4a..10f0d08524c 100644
 --- a/gcc/gcc.c
 +++ b/gcc/gcc.c
 @@ -853,6 +853,11 @@ proper position among the other output files.  */
