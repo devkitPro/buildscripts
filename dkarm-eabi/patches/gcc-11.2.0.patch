@@ -61,10 +61,10 @@ index 00000000000..6d788d5e89c
 +	$(COMPILE) $<
 +	$(POSTCOMPILE)
 diff --git a/gcc/config/arm/arm-cpus.in b/gcc/config/arm/arm-cpus.in
-index 0becb4385b6..30bd4a24cd6 100644
+index ab4b6acf5ea..2b8d0da296f 100644
 --- a/gcc/config/arm/arm-cpus.in
 +++ b/gcc/config/arm/arm-cpus.in
-@@ -400,7 +400,7 @@ begin arch armv6k
+@@ -402,7 +402,7 @@ begin arch armv6k
   tune for mpcore
   tune flags CO_PROC
   base 6K
@@ -231,7 +231,7 @@ index 360a280b23a..2c03947999a 100644
  /* Granularity for reserving address space.  */
  static size_t va_granularity = 0x10000;
 diff --git a/gcc/gcc.c b/gcc/gcc.c
-index 7837553958b..69d7a798e2e 100644
+index 4d790f9dd4a..10f0d08524c 100644
 --- a/gcc/gcc.c
 +++ b/gcc/gcc.c
 @@ -853,6 +853,11 @@ proper position among the other output files.  */
