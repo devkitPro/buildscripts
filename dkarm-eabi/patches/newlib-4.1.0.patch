@@ -33,7 +33,7 @@ index 4111724e1..0e44d885e 100644
  AS=${AS-as}
 diff --git a/libgloss/libsysbase/Makefile.in b/libgloss/libsysbase/Makefile.in
 new file mode 100644
-index 000000000..7ee40deec
+index 000000000..edb10d215
 --- /dev/null
 +++ b/libgloss/libsysbase/Makefile.in
 @@ -0,0 +1,148 @@
@@ -108,8 +108,8 @@ index 000000000..7ee40deec
 +	isatty.o kill.o link.o lseek.o lstat.o nanosleep.o open.o read.o sbrk.o sleep.o stat.o usleep.o times.o \
 +	unlink.o wait.o write.o _exit.o malloc_vars.o \
 +	chdir.o mkdir.o rename.o build_argv.o statvfs.o \
-+	flock.o syscall_support.o handle_manager.o truncate.o ftruncate.o dirent.o fsync.o \
-+	fchmod.o chmod.o getreent.o rmdir.o utime.o scandir.o
++	flock.o handle_manager.o truncate.o ftruncate.o dirent.o fsync.o \
++	fchmod.o chmod.o getreent.o rmdir.o utime.o scandir.o syscall_support.o
 +
 +# Object files specific to particular targets.
 +EVALOBJS = ${OBJS}
@@ -130,10 +130,10 @@ index 000000000..7ee40deec
 +AR_FLAGS = qc
 +
 +.c.o:
-+	$(CC) $(CFLAGS_FOR_TARGET) -O2 $(INCLUDES) -c $(CFLAGS) $<
++	$(CC) $(CFLAGS_FOR_TARGET) -D_BUILDING_LIBSYSBASE -O2 $(INCLUDES) -c $(CFLAGS) $<
 +
 +.C.o:
-+	$(CC) $(CFLAGS_FOR_TARGET) -O2 $(INCLUDES) -c $(CFLAGS) $<
++	$(CC) $(CFLAGS_FOR_TARGET) -O2 -D_BUILDING_LIBSYSBASE $(INCLUDES) -c $(CFLAGS) $<
 +.s.o:
 +	$(AS) $(ASFLAGS_FOR_TARGET) $(INCLUDES) $(ASFLAGS) -o $*.o $<
 +
@@ -187,7 +187,7 @@ index 000000000..7ee40deec
 +	$(SHELL) config.status --recheck
 diff --git a/libgloss/libsysbase/_exit.c b/libgloss/libsysbase/_exit.c
 new file mode 100644
-index 000000000..e5cb5a9ed
+index 000000000..6effb1105
 --- /dev/null
 +++ b/libgloss/libsysbase/_exit.c
 @@ -0,0 +1,17 @@
@@ -202,8 +202,8 @@ index 000000000..e5cb5a9ed
 +void _exit(int rc)
 +{
 +
-+	if ( __syscalls.exit ) {
-+		__syscalls.exit(rc);
++	if ( __has_syscall(exit) ) {
++		__syscall_exit(rc);
 +	}
 +
 +	while(1);
@@ -889,7 +889,7 @@ index 000000000..3668b5801
 +
 diff --git a/libgloss/libsysbase/clocks.c b/libgloss/libsysbase/clocks.c
 new file mode 100644
-index 000000000..01cfee469
+index 000000000..b36b5c079
 --- /dev/null
 +++ b/libgloss/libsysbase/clocks.c
 @@ -0,0 +1,34 @@
@@ -899,8 +899,8 @@ index 000000000..01cfee469
 +
 +int clock_gettime(clockid_t clock_id, struct timespec *tp)
 +{
-+   if ( __syscalls.clock_gettime ) {
-+      return __syscalls.clock_gettime(clock_id, tp);
++   if ( __has_syscall(clock_gettime) ) {
++      return __syscall_clock_gettime(clock_id, tp);
 +   } else {
 +      errno = ENOSYS;
 +      return -1;
@@ -909,8 +909,8 @@ index 000000000..01cfee469
 +
 +int clock_settime(clockid_t clock_id, const struct timespec *tp)
 +{
-+   if ( __syscalls.clock_settime ) {
-+      return __syscalls.clock_settime(clock_id, tp);
++   if ( __has_syscall(clock_settime) ) {
++      return __syscall_clock_settime(clock_id, tp);
 +   } else {
 +      errno = ENOSYS;
 +      return -1;
@@ -919,8 +919,8 @@ index 000000000..01cfee469
 +
 +int clock_getres (clockid_t clock_id, struct timespec *res)
 +{
-+   if ( __syscalls.clock_getres ) {
-+      return __syscalls.clock_getres(clock_id, res);
++   if ( __has_syscall(clock_getres) ) {
++      return __syscall_clock_getres(clock_id, res);
 +   } else {
 +      errno = ENOSYS;
 +      return -1;
@@ -5884,7 +5884,7 @@ index 000000000..fdce14b5f
 +
 diff --git a/libgloss/libsysbase/getreent.c b/libgloss/libsysbase/getreent.c
 new file mode 100644
-index 000000000..028d0eb77
+index 000000000..a3f1e98a9
 --- /dev/null
 +++ b/libgloss/libsysbase/getreent.c
 @@ -0,0 +1,20 @@
@@ -5900,8 +5900,8 @@ index 000000000..028d0eb77
 +#endif
 +
 +struct _reent *__getreent() {
-+	if ( __syscalls.getreent ) {
-+		return __syscalls.getreent();
++	if ( __has_syscall(getreent) ) {
++		return __syscall_getreent();
 +	} else {
 +		return _impure_ptr;
 +	}
@@ -5910,7 +5910,7 @@ index 000000000..028d0eb77
 +
 diff --git a/libgloss/libsysbase/gettod.c b/libgloss/libsysbase/gettod.c
 new file mode 100644
-index 000000000..9d5b74724
+index 000000000..4f2211248
 --- /dev/null
 +++ b/libgloss/libsysbase/gettod.c
 @@ -0,0 +1,33 @@
@@ -5940,7 +5940,7 @@ index 000000000..9d5b74724
 +	struct _reent *ptr = _REENT;
 +#endif
 +
-+	if ( __syscalls.gettod_r ) return __syscalls.gettod_r(ptr, ptimeval, ptimezone);
++	if ( __has_syscall(gettod_r) ) return __syscall_gettod_r(ptr, ptimeval, ptimezone);
 +
 +	ptr->_errno = ENOSYS;
 +	return -1;
@@ -6540,7 +6540,7 @@ index 000000000..b4fcbd3d7
 +}
 diff --git a/libgloss/libsysbase/nanosleep.c b/libgloss/libsysbase/nanosleep.c
 new file mode 100644
-index 000000000..3c96fc61b
+index 000000000..a233b9df6
 --- /dev/null
 +++ b/libgloss/libsysbase/nanosleep.c
 @@ -0,0 +1,14 @@
@@ -6550,8 +6550,8 @@ index 000000000..3c96fc61b
 +
 +int nanosleep(const struct timespec *req, struct timespec *rem)
 +{
-+   if ( __syscalls.nanosleep ) {
-+      return __syscalls.nanosleep(req, rem);
++   if ( __has_syscall(nanosleep) ) {
++      return __syscall_nanosleep(req, rem);
 +   } else {
 +      *rem = *req;
 +      errno = ENOSYS;
@@ -6979,54 +6979,30 @@ index 000000000..84e221340
 +}
 diff --git a/libgloss/libsysbase/syscall_support.c b/libgloss/libsysbase/syscall_support.c
 new file mode 100644
-index 000000000..53fead72a
+index 000000000..9bb71aa0d
 --- /dev/null
 +++ b/libgloss/libsysbase/syscall_support.c
-@@ -0,0 +1,103 @@
+@@ -0,0 +1,78 @@
 +#include <sys/iosupport.h>
-+
-+//---------------------------------------------------------------------------------
-+__syscalls_t __syscalls = {
-+//---------------------------------------------------------------------------------
-+	NULL,	// sbrk
-+	NULL,	// exit
-+	NULL,	// gettod_r
-+	NULL,	// lock_init
-+	NULL,	// lock_acquire
-+	NULL,	// lock_try_acquire
-+	NULL,	// lock_release
-+	NULL,	// lock_close
-+	NULL,	// lock_init_recursive
-+	NULL,	// lock_acquire_recursive
-+	NULL,	// lock_try_acquire_recursive
-+	NULL,	// lock_release_recursive
-+	NULL,	// lock_close_recursive
-+	NULL,	// __getreent
-+	NULL,	// clock_gettime
-+	NULL,	// clock_settime
-+	NULL,	// clock_getres
-+	NULL,	// nanosleep
-+};
 +
 +void __libc_lock_init(_LOCK_T *lock) {
 +
-+	if ( __syscalls.lock_init ) {
-+		__syscalls.lock_init(lock);
++	if ( __has_syscall(lock_init) ) {
++		__syscall_lock_init(lock);
 +	}
-+
 +}
 +
 +void __libc_lock_acquire(_LOCK_T *lock ) {
 +
-+	if ( __syscalls.lock_acquire) {
-+		__syscalls.lock_acquire(lock);
++	if ( __has_syscall(lock_acquire) ) {
++		__syscall_lock_acquire(lock);
 +	}
 +}
 +
 +int __libc_lock_try_acquire(_LOCK_T *lock ) {
 +
-+	if ( __syscalls.lock_acquire) {
-+		return __syscalls.lock_try_acquire(lock);
++	if ( __has_syscall(lock_acquire) ) {
++		return __syscall_lock_try_acquire(lock);
 +	} else {
 +		return 0;
 +	}
@@ -7034,15 +7010,15 @@ index 000000000..53fead72a
 +
 +void __libc_lock_release(_LOCK_T *lock ) {
 +
-+	if ( __syscalls.lock_release) {
-+		__syscalls.lock_release(lock);
++	if ( __has_syscall(lock_release) ) {
++		__syscall_lock_release(lock);
 +	}
 +}
 +
 +void __libc_lock_close(_LOCK_T *lock ) {
 +
-+	if ( __syscalls.lock_close) {
-+		__syscalls.lock_close(lock);
++	if ( __has_syscall(lock_close) ) {
++		__syscall_lock_close(lock);
 +	}
 +}
 +
@@ -7050,23 +7026,23 @@ index 000000000..53fead72a
 +
 +void __libc_lock_init_recursive(_LOCK_RECURSIVE_T *lock) {
 +
-+	if ( __syscalls.lock_init_recursive ) {
-+		__syscalls.lock_init_recursive(lock);
++	if ( __has_syscall(lock_init_recursive) ) {
++		__syscall_lock_init_recursive(lock);
 +	}
 +
 +}
 +
 +void __libc_lock_acquire_recursive(_LOCK_RECURSIVE_T *lock ) {
 +
-+	if ( __syscalls.lock_acquire_recursive) {
-+		__syscalls.lock_acquire_recursive(lock);
++	if ( __has_syscall(lock_acquire_recursive) ) {
++		__syscall_lock_acquire_recursive(lock);
 +	}
 +}
 +
 +int __libc_lock_try_acquire_recursive(_LOCK_RECURSIVE_T *lock ) {
 +
-+	if ( __syscalls.lock_acquire_recursive) {
-+		return __syscalls.lock_try_acquire_recursive(lock);
++	if ( __has_syscall(lock_acquire_recursive) ) {
++		return __syscall_lock_try_acquire_recursive(lock);
 +	} else {
 +		return 0;
 +	}
@@ -7074,18 +7050,17 @@ index 000000000..53fead72a
 +
 +void __libc_lock_release_recursive(_LOCK_RECURSIVE_T *lock ) {
 +
-+	if ( __syscalls.lock_release_recursive) {
-+		__syscalls.lock_release_recursive(lock);
++	if ( __has_syscall(lock_release_recursive) ) {
++		__syscall_lock_release_recursive(lock);
 +	}
 +}
 +
 +void __libc_lock_close_recursive(_LOCK_RECURSIVE_T *lock ) {
 +
-+	if ( __syscalls.lock_close_recursive) {
-+		__syscalls.lock_close_recursive(lock);
++	if ( __has_syscall(lock_close_recursive) ) {
++		__syscall_lock_close_recursive(lock);
 +	}
 +}
-+
 diff --git a/libgloss/libsysbase/times.c b/libgloss/libsysbase/times.c
 new file mode 100644
 index 000000000..79484e7f4
@@ -7561,10 +7536,10 @@ index 218807178..c9efd7d03 100644
  #ifdef __rtems__
 diff --git a/newlib/libc/include/sys/iosupport.h b/newlib/libc/include/sys/iosupport.h
 new file mode 100644
-index 000000000..c190fa37d
+index 000000000..7b366f593
 --- /dev/null
 +++ b/newlib/libc/include/sys/iosupport.h
-@@ -0,0 +1,112 @@
+@@ -0,0 +1,115 @@
 +//---------------------------------------------------------------------------------
 +#ifndef __iosupp_h__
 +#define __iosupp_h__
@@ -7637,28 +7612,31 @@ index 000000000..c190fa37d
 +
 +extern const devoptab_t *devoptab_list[];
 +
-+typedef struct {
-+	void *(*sbrk_r) (struct _reent *ptr, ptrdiff_t incr);
-+	void (*exit) ( int rc );
-+	int  (*gettod_r) (struct _reent *ptr, struct timeval *tp, struct timezone *tz);
-+	void (*lock_init) (_LOCK_T *lock);
-+	void (*lock_acquire) (_LOCK_T *lock);
-+	int  (*lock_try_acquire) (_LOCK_T *lock);
-+	void (*lock_release) (_LOCK_T *lock);
-+	void (*lock_close) (_LOCK_T *lock);
-+	void (*lock_init_recursive) (_LOCK_RECURSIVE_T *lock);
-+	void (*lock_acquire_recursive) (_LOCK_RECURSIVE_T *lock);
-+	int  (*lock_try_acquire_recursive) (_LOCK_RECURSIVE_T *lock);
-+	void (*lock_release_recursive) (_LOCK_RECURSIVE_T *lock);
-+	void (*lock_close_recursive) (_LOCK_RECURSIVE_T *lock);
-+	struct _reent *(*getreent) ();
-+	int (*clock_gettime)(clockid_t clock_id, struct timespec *tp);
-+	int (*clock_settime)(clockid_t clock_id, const struct timespec *tp);
-+	int (*clock_getres)(clockid_t clock_id, struct timespec *res);
-+	int (*nanosleep)(const struct timespec *req, struct timespec *rem);
-+} __syscalls_t;
++#ifdef _BUILDING_LIBSYSBASE
++#define __SYSCALL(_name) __attribute__((weak)) __syscall_##_name
++#define __has_syscall(_name) (&__syscall_##_name)
++#else
++#define __SYSCALL(_name) __syscall_##_name
++#endif
 +
-+extern __syscalls_t __syscalls;
++void *__SYSCALL(sbrk_r) (struct _reent *ptr, ptrdiff_t incr);
++void __SYSCALL(exit) ( int rc );
++int  __SYSCALL(gettod_r) (struct _reent *ptr, struct timeval *tp, struct timezone *tz);
++void __SYSCALL(lock_init) (_LOCK_T *lock);
++void __SYSCALL(lock_acquire) (_LOCK_T *lock);
++int  __SYSCALL(lock_try_acquire) (_LOCK_T *lock);
++void __SYSCALL(lock_release) (_LOCK_T *lock);
++void __SYSCALL(lock_close) (_LOCK_T *lock);
++void __SYSCALL(lock_init_recursive) (_LOCK_RECURSIVE_T *lock);
++void __SYSCALL(lock_acquire_recursive) (_LOCK_RECURSIVE_T *lock);
++int  __SYSCALL(lock_try_acquire_recursive) (_LOCK_RECURSIVE_T *lock);
++void __SYSCALL(lock_release_recursive) (_LOCK_RECURSIVE_T *lock);
++void __SYSCALL(lock_close_recursive) (_LOCK_RECURSIVE_T *lock);
++struct _reent * __SYSCALL(getreent) ();
++int __SYSCALL(clock_gettime) (clockid_t clock_id, struct timespec *tp);
++int __SYSCALL(clock_settime) (clockid_t clock_id, const struct timespec *tp);
++int __SYSCALL(clock_getres) (clockid_t clock_id, struct timespec *res);
++int __SYSCALL(nanosleep) (const struct timespec *req, struct timespec *rem);
 +
 +int AddDevice( const devoptab_t* device);
 +int FindDevice(const char* name);
