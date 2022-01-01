@@ -40,7 +40,7 @@ index 65d1fa2cd1f..51991aab75c 100644
  
  #define SIG_ATOMIC_TYPE "int"
 diff --git a/gcc/config/rs6000/rs6000.h b/gcc/config/rs6000/rs6000.h
-index 164d359b724..4785fcf6e73 100644
+index a7953fad965..04abd41239b 100644
 --- a/gcc/config/rs6000/rs6000.h
 +++ b/gcc/config/rs6000/rs6000.h
 @@ -196,6 +196,7 @@ ASM_OPT_ANY
@@ -250,7 +250,7 @@ index 7ab55c49940..763709e907e 100644
  Target RejectNegative
  Link with libyk.a, libc.a and crt0.o.
 diff --git a/gcc/configure b/gcc/configure
-index e8ecb3b0297..10ebe252c12 100755
+index 9b28369e3bf..79b95018a89 100755
 --- a/gcc/configure
 +++ b/gcc/configure
 @@ -12593,7 +12593,7 @@ case ${enable_threads} in
@@ -263,7 +263,7 @@ index e8ecb3b0297..10ebe252c12 100755
      target_thread_file=${enable_threads}
      ;;
 diff --git a/gcc/configure.ac b/gcc/configure.ac
-index 96a6f62b0d3..c5dd3465634 100644
+index 162e08cbc02..34d35d0de8d 100644
 --- a/gcc/configure.ac
 +++ b/gcc/configure.ac
 @@ -1925,7 +1925,7 @@ case ${enable_threads} in
@@ -840,10 +840,10 @@ index fb812d3801f..7f6669d530f 100644
  
  # This can't end up in shared libgcc
 diff --git a/libgcc/configure b/libgcc/configure
-index dd3afb2c957..abc5466abdc 100755
+index 4919a56f518..546b3413deb 100755
 --- a/libgcc/configure
 +++ b/libgcc/configure
-@@ -5642,6 +5642,7 @@ tm_file="${tm_file_}"
+@@ -5679,6 +5679,7 @@ tm_file="${tm_file_}"
  case $target_thread_file in
      aix)	thread_header=config/rs6000/gthr-aix.h ;;
      dce)	thread_header=config/pa/gthr-dce.h ;;
