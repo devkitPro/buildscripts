@@ -39,8 +39,8 @@ case "$VERSION" in
     toolchain=DEVKITARM
   ;;
   "2" )
-    BINUTILS_VER=2.36.1
     GCC_VER=11.2.0
+    BINUTILS_VER=2.37
     MN_BINUTILS_VER=2.24
     NEWLIB_VER=4.1.0
     basedir='dkppc'
