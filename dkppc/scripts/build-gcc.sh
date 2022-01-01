@@ -101,7 +101,7 @@ then
 	--with-newlib \
 	--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 	--prefix=$prefix \
-	--with-bugurl="https://github.com/devkitpro/buildscripts/issues" --with-pkgversion="devkitPPC release 39" \
+	--with-bugurl="https://github.com/devkitpro/buildscripts/issues" --with-pkgversion="devkitPPC release 40" \
 	$CROSS_PARAMS \
 	$CROSS_GCC_PARAMS \
 	$EXTRA_GCC_PARAMS \
