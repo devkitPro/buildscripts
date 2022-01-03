@@ -1,8 +1,8 @@
 diff --git a/libgloss/configure b/libgloss/configure
-index 816b9c4b8..b79edb6c8 100755
+index e70c57d89..ac5c745f9 100755
 --- a/libgloss/configure
 +++ b/libgloss/configure
-@@ -2609,6 +2609,8 @@ if test "${config_libnosys}" = "true"; then
+@@ -2787,6 +2787,8 @@ if test "${config_libnosys}" = "true"; then
  
  fi
  
@@ -11,12 +11,12 @@ index 816b9c4b8..b79edb6c8 100755
  DEPDIR="${am__leading_dot}deps"
  
  ac_config_commands="$ac_config_commands depfiles"
-diff --git a/libgloss/configure.in b/libgloss/configure.in
-index 4111724e1..dfd632c20 100644
---- a/libgloss/configure.in
-+++ b/libgloss/configure.in
+diff --git a/libgloss/configure.ac b/libgloss/configure.ac
+index 0fbe99526..42ea1d2ed 100644
+--- a/libgloss/configure.ac
++++ b/libgloss/configure.ac
 @@ -2,6 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
- AC_PREREQ(2.59)
+ AC_PREREQ(2.69)dnl
  AC_INIT([libgloss],[LIBGLOSS_VERSION])
  AC_CONFIG_SRCDIR([libnosys])
 +AC_CONFIG_SRCDIR([libsysbase])
@@ -7381,10 +7381,10 @@ index 000000000..bd25d775d
 +	exit ( main(__system_argv->argc,__system_argv->argv) );
 +}
 diff --git a/newlib/configure.host b/newlib/configure.host
-index 1ddbb6c76..ef4cbe6c3 100644
+index c429dde1c..350dbc8f0 100644
 --- a/newlib/configure.host
 +++ b/newlib/configure.host
-@@ -864,7 +864,13 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
+@@ -863,7 +863,13 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
  	default_newlib_io_long_long="yes"
  	newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES"
  	;;
@@ -7426,7 +7426,7 @@ index 5c293c83d..75ccf89f5 100644
  #define _jp2uc(c) (c)
  #define _jp2uc_l(c, l) (c)
 diff --git a/newlib/libc/include/reent.h b/newlib/libc/include/reent.h
-index 2b01fbe8f..7af875b81 100644
+index 23d572cd3..65310c084 100644
 --- a/newlib/libc/include/reent.h
 +++ b/newlib/libc/include/reent.h
 @@ -150,6 +150,7 @@ extern int _mkdir_r (struct _reent *, const char *, int);
@@ -7501,10 +7501,10 @@ index a3fb5c02c..adb8e1083 100644
 +
 +#endif // _dirent_h_
 diff --git a/newlib/libc/include/sys/features.h b/newlib/libc/include/sys/features.h
-index 218807178..c9efd7d03 100644
+index 45476ce4a..d76706321 100644
 --- a/newlib/libc/include/sys/features.h
 +++ b/newlib/libc/include/sys/features.h
-@@ -330,6 +330,9 @@ extern "C" {
+@@ -331,6 +331,9 @@ extern "C" {
  #  define __SSP_FORTIFY_LEVEL 0
  #endif
  
@@ -7638,7 +7638,7 @@ index 000000000..9bec9e473
 +#endif // __iosupp_h__
 +//---------------------------------------------------------------------------------
 diff --git a/newlib/libc/include/sys/reent.h b/newlib/libc/include/sys/reent.h
-index 74b70e9c0..d8c5410ec 100644
+index e4e36170e..5b8d06ed6 100644
 --- a/newlib/libc/include/sys/reent.h
 +++ b/newlib/libc/include/sys/reent.h
 @@ -421,6 +421,8 @@ struct _reent
@@ -7659,7 +7659,7 @@ index 74b70e9c0..d8c5410ec 100644
  
  #ifdef _REENT_GLOBAL_STDIO_STREAMS
 diff --git a/newlib/libc/include/sys/stat.h b/newlib/libc/include/sys/stat.h
-index 8769112b0..5526e59ee 100644
+index 6525272dd..d24673618 100644
 --- a/newlib/libc/include/sys/stat.h
 +++ b/newlib/libc/include/sys/stat.h
 @@ -142,8 +142,9 @@ int	mkfifo (const char *__path, mode_t __mode );
@@ -7892,10 +7892,10 @@ index a0c80843a..efabdcfc4 100644
  
  /* Only access fixed "C" locale using this function.  Fake for !_MB_CAPABLE
 diff --git a/newlib/libc/machine/powerpc/Makefile.am b/newlib/libc/machine/powerpc/Makefile.am
-index e86afdf1c..007bd1567 100644
+index 577b7f9b3..ce3bb7b53 100644
 --- a/newlib/libc/machine/powerpc/Makefile.am
 +++ b/newlib/libc/machine/powerpc/Makefile.am
-@@ -10,7 +10,7 @@ noinst_LIBRARIES = lib.a
+@@ -8,7 +8,7 @@ noinst_LIBRARIES = lib.a
  
  AM_CFLAGS = -I $(srcdir)/../../stdio -I $(srcdir)/../../stdlib
  
@@ -7905,19 +7905,19 @@ index e86afdf1c..007bd1567 100644
  lib_a_CFLAGS=$(AM_CFLAGS)
  lib_a_LIBADD = @extra_objs@
 diff --git a/newlib/libc/machine/powerpc/Makefile.in b/newlib/libc/machine/powerpc/Makefile.in
-index 73b0cc471..12044cb8a 100644
+index 46acda680..892a82288 100644
 --- a/newlib/libc/machine/powerpc/Makefile.in
 +++ b/newlib/libc/machine/powerpc/Makefile.in
-@@ -68,7 +68,7 @@ CONFIG_CLEAN_VPATH_FILES =
- LIBRARIES = $(noinst_LIBRARIES)
- ARFLAGS = cru
+@@ -74,7 +74,7 @@ AM_V_at = $(am__v_at_@AM_V@)
+ am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+ am__v_at_0 = @
  lib_a_AR = $(AR) $(ARFLAGS)
 -am_lib_a_OBJECTS = lib_a-setjmp.$(OBJEXT)
 +am_lib_a_OBJECTS = lib_a-setjmp.$(OBJEXT) lib_a-access.$(OBJEXT)
  lib_a_OBJECTS = $(am_lib_a_OBJECTS)
  DEFAULT_INCLUDES = -I.@am__isrc@
  depcomp =
-@@ -196,7 +196,7 @@ INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
+@@ -218,7 +218,7 @@ INCLUDES = $(NEWLIB_CFLAGS) $(CROSS_CFLAGS) $(TARGET_CFLAGS)
  AM_CCASFLAGS = $(INCLUDES)
  noinst_LIBRARIES = lib.a
  AM_CFLAGS = -I $(srcdir)/../../stdio -I $(srcdir)/../../stdlib
@@ -7926,9 +7926,9 @@ index 73b0cc471..12044cb8a 100644
  lib_a_CCASFLAGS = $(AM_CCASFLAGS)
  lib_a_CFLAGS = $(AM_CFLAGS)
  lib_a_LIBADD = @extra_objs@
-@@ -280,6 +280,12 @@ lib_a-setjmp.obj: setjmp.S
+@@ -302,6 +302,12 @@ lib_a-setjmp.obj: setjmp.S
  .c.obj:
- 	$(COMPILE) -c `$(CYGPATH_W) '$<'`
+ 	$(AM_V_CC)$(COMPILE) -c `$(CYGPATH_W) '$<'`
  
 +lib_a-access.o: access.c
 +	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-access.o `test -f 'access.c' || echo '$(srcdir)/'`access.c
@@ -7937,7 +7937,7 @@ index 73b0cc471..12044cb8a 100644
 +	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-access.obj `if test -f 'access.c'; then $(CYGPATH_W) 'access.c'; else $(CYGPATH_W) '$(srcdir)/access.c'; fi`
 +
  lib_a-vfprintf.o: vfprintf.c
- 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-vfprintf.o `test -f 'vfprintf.c' || echo '$(srcdir)/'`vfprintf.c
+ 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-vfprintf.o `test -f 'vfprintf.c' || echo '$(srcdir)/'`vfprintf.c
  
 diff --git a/newlib/libc/machine/powerpc/access.c b/newlib/libc/machine/powerpc/access.c
 new file mode 100644
@@ -8105,10 +8105,10 @@ index 95f1a7422..c797d2e64 100644
 +
  #endif
 diff --git a/newlib/libc/stdio/Makefile.in b/newlib/libc/stdio/Makefile.in
-index aa22a0e3a..93e672b6a 100644
+index 6d18a4443..01402f4de 100644
 --- a/newlib/libc/stdio/Makefile.in
 +++ b/newlib/libc/stdio/Makefile.in
-@@ -507,6 +507,7 @@ GENERAL_SOURCES = \
+@@ -527,6 +527,7 @@ GENERAL_SOURCES = \
  	rename.c			\
  	rewind.c			\
  	rget.c				\
@@ -8116,9 +8116,9 @@ index aa22a0e3a..93e672b6a 100644
  	scanf.c			\
  	sccl.c				\
  	setbuf.c			\
-@@ -1176,6 +1177,12 @@ lib_a-rget.o: rget.c
+@@ -1196,6 +1197,12 @@ lib_a-rget.o: rget.c
  lib_a-rget.obj: rget.c
- 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-rget.obj `if test -f 'rget.c'; then $(CYGPATH_W) 'rget.c'; else $(CYGPATH_W) '$(srcdir)/rget.c'; fi`
+ 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-rget.obj `if test -f 'rget.c'; then $(CYGPATH_W) 'rget.c'; else $(CYGPATH_W) '$(srcdir)/rget.c'; fi`
  
 +lib_a-rmdir.o: rmdir.c
 +	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-rmdir.o `test -f 'rmdir.c' || echo '$(srcdir)/'`rmdir.c
@@ -8127,7 +8127,7 @@ index aa22a0e3a..93e672b6a 100644
 +	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-rmdir.obj `if test -f 'rmdir.c'; then $(CYGPATH_W) 'rmdir.c'; else $(CYGPATH_W) '$(srcdir)/rmdir.c'; fi`
 +
  lib_a-scanf.o: scanf.c
- 	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-scanf.o `test -f 'scanf.c' || echo '$(srcdir)/'`scanf.c
+ 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(lib_a_CFLAGS) $(CFLAGS) -c -o lib_a-scanf.o `test -f 'scanf.c' || echo '$(srcdir)/'`scanf.c
  
 diff --git a/newlib/libc/stdio/fopen.c b/newlib/libc/stdio/fopen.c
 index 1ac551fed..d293b7b0e 100644
@@ -8219,19 +8219,6 @@ index d8dfdbd82..a85b5a99b 100644
  
    return 0;
  }
-diff --git a/newlib/libc/stdlib/aligned_alloc.c b/newlib/libc/stdlib/aligned_alloc.c
-index feb22c24b..3dae0c9a9 100644
---- a/newlib/libc/stdlib/aligned_alloc.c
-+++ b/newlib/libc/stdlib/aligned_alloc.c
-@@ -28,6 +28,8 @@
- 
- #include <reent.h>
- #include <stdlib.h>
-+#include <malloc.h>
-+#include <errno.h>
- 
- void *
- aligned_alloc (size_t align, size_t size)
 diff --git a/newlib/libc/stdlib/mbtowc_r.c b/newlib/libc/stdlib/mbtowc_r.c
 index 920a7ea3c..ba5ee7652 100644
 --- a/newlib/libc/stdlib/mbtowc_r.c
