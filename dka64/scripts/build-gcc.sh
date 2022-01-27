@@ -10,7 +10,7 @@ cd $target/binutils
 
 if [ ! -f configured-binutils ]
 then
-	CFLAGS=$cflags LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
+	../../binutils-$BINUTILS_VER/configure \
         --prefix=$prefix --target=$target --disable-nls --disable-werror \
 	--enable-lto --enable-plugins --enable-poison-system-directories \
 	$CROSS_PARAMS \
@@ -39,9 +39,6 @@ cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
-	CFLAGS="$cflags" \
-	CXXFLAGS="$cflags" \
-	LDFLAGS="$ldflags" \
 	CFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
 	CXXFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
 	LDFLAGS_FOR_TARGET="" \
@@ -52,7 +49,7 @@ then
 		--enable-cxx-flags='-ffunction-sections' \
 		--disable-libstdcxx-verbose \
 		--enable-poison-system-directories \
-		--enable-interwork --enable-multilib \
+		--enable-multilib \
 		--enable-threads --disable-win32-registry --disable-nls --disable-debug\
 		--disable-libmudflap --disable-libssp --disable-libgomp \
 		--disable-libstdcxx-pch \
