@@ -12,7 +12,7 @@ cd $target/binutils
 
 if [ ! -f configured-binutils ]
 then
-	CFLAGS=$cflags LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
+	../../binutils-$BINUTILS_VER/configure \
 	--prefix=$prefix --target=$target --disable-nls --disable-shared --disable-debug \
 	--disable-werror \
 	--enable-poison-system-directories \
@@ -48,7 +48,7 @@ cd mn10200/binutils
 
 if [ ! -f configured-binutils ]
 then
-	CFLAGS=$cflags LDFLAGS=$ldflags ../../binutils-$MN_BINUTILS_VER/configure \
+	../../binutils-$MN_BINUTILS_VER/configure \
 	--prefix=$prefix --target=mn10200 --disable-nls --disable-debug \
 	--disable-multilib \
 	--disable-werror $CROSS_PARAMS \
@@ -78,9 +78,6 @@ cd $target/gcc
 
 if [ ! -f configured-gcc ]
 then
-	CFLAGS="$cflags" \
-	CXXFLAGS="$cflags" \
-	LDFLAGS="$ldflags" \
 	CFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
 	CXXFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
 	LDFLAGS_FOR_TARGET="" \
