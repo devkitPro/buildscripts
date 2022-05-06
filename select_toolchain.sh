@@ -39,7 +39,7 @@ case "$VERSION" in
     toolchain=DEVKITARM
   ;;
   "2" )
-    GCC_VER=11.2.0
+    GCC_VER=12.1.0
     BINUTILS_VER=2.37
     MN_BINUTILS_VER=2.24
     NEWLIB_VER=4.2.0.20211231

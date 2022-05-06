@@ -1,8 +1,7 @@
-diff --git a/config/gthr.m4 b/config/gthr.m4
-index 4b937306ad0..bfd0375bd60 100644
---- a/config/gthr.m4
-+++ b/config/gthr.m4
-@@ -13,6 +13,7 @@ AC_DEFUN([GCC_AC_THREAD_HEADER],
+diff -NBaur gcc-12.1.0/config/gthr.m4 gcc-12.1.0-dkppc/config/gthr.m4
+--- gcc-12.1.0/config/gthr.m4	2022-05-06 08:30:56.000000000 +0100
++++ gcc-12.1.0-dkppc/config/gthr.m4	2022-05-06 19:17:44.784777075 +0100
+@@ -13,6 +13,7 @@
  case $1 in
      aix)	thread_header=config/rs6000/gthr-aix.h ;;
      dce)	thread_header=config/pa/gthr-dce.h ;;
@@ -10,73 +9,10 @@ index 4b937306ad0..bfd0375bd60 100644
      gcn)	thread_header=config/gcn/gthr-gcn.h ;;
      lynx)	thread_header=config/gthr-lynx.h ;;
      mipssde)	thread_header=config/mips/gthr-mipssde.h ;;
-diff --git a/gcc/config.host b/gcc/config.host
-index 0a02c33cc80..38f7adc655e 100644
---- a/gcc/config.host
-+++ b/gcc/config.host
-@@ -251,6 +251,10 @@ case ${host} in
-     host_extra_gcc_objs="${host_extra_gcc_objs} driver-mingw32.o"
-     host_lto_plugin_soname=liblto_plugin.dll
-     ;;
-+  aarch64-*-darwin*)
-+    out_host_hook_obj="${out_host_hook_obj} host-aarch64-darwin.o"
-+    host_xmake_file="${host_xmake_file} aarch64/x-darwin"
-+    ;;
-   i[34567]86-*-darwin* | x86_64-*-darwin*)
-     out_host_hook_obj="${out_host_hook_obj} host-i386-darwin.o"
-     host_xmake_file="${host_xmake_file} i386/x-darwin"
-diff --git a/gcc/config/aarch64/host-aarch64-darwin.c b/gcc/config/aarch64/host-aarch64-darwin.c
-new file mode 100644
-index 00000000000..92c38b0b9db
---- /dev/null
-+++ b/gcc/config/aarch64/host-aarch64-darwin.c
-@@ -0,0 +1,32 @@
-+/* i386-darwin host-specific hook definitions.
-+   Copyright (C) 2003-2021 Free Software Foundation, Inc.
-+
-+This file is part of GCC.
-+
-+GCC is free software; you can redistribute it and/or modify it under
-+the terms of the GNU General Public License as published by the Free
-+Software Foundation; either version 3, or (at your option) any later
-+version.
-+
-+GCC is distributed in the hope that it will be useful, but WITHOUT ANY
-+WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-+for more details.
-+
-+You should have received a copy of the GNU General Public License
-+along with GCC; see the file COPYING3.  If not see
-+<http://www.gnu.org/licenses/>.  */
-+
-+#define IN_TARGET_CODE 1
-+
-+#include "config.h"
-+#include "system.h"
-+#include "coretypes.h"
-+#include "hosthooks.h"
-+#include "hosthooks-def.h"
-+#include "config/host-darwin.h"
-+
-+/* Darwin doesn't do anything special for aarch64 hosts; this file exists just
-+   to include config/host-darwin.h.  */
-+
-+const struct host_hooks host_hooks = HOST_HOOKS_INITIALIZER;
-diff --git a/gcc/config/aarch64/x-darwin b/gcc/config/aarch64/x-darwin
-new file mode 100644
-index 00000000000..6d788d5e89c
---- /dev/null
-+++ b/gcc/config/aarch64/x-darwin
-@@ -0,0 +1,3 @@
-+host-aarch64-darwin.o : $(srcdir)/config/aarch64/host-aarch64-darwin.c
-+	$(COMPILE) $<
-+	$(POSTCOMPILE)
-diff --git a/gcc/config/i386/host-mingw32.c b/gcc/config/i386/host-mingw32.c
-index 360a280b23a..2c03947999a 100644
---- a/gcc/config/i386/host-mingw32.c
-+++ b/gcc/config/i386/host-mingw32.c
-@@ -45,7 +45,11 @@ static size_t mingw32_gt_pch_alloc_granularity (void);
+diff -NBaur gcc-12.1.0/gcc/config/i386/host-mingw32.cc gcc-12.1.0-dkppc/gcc/config/i386/host-mingw32.cc
+--- gcc-12.1.0/gcc/config/i386/host-mingw32.cc	2022-05-06 08:30:56.000000000 +0100
++++ gcc-12.1.0-dkppc/gcc/config/i386/host-mingw32.cc	2022-05-06 19:17:44.784777075 +0100
+@@ -45,7 +45,11 @@
  static inline void w32_error(const char*, const char*, int, const char*);
  
  /* FIXME: Is this big enough?  */
@@ -88,11 +24,10 @@ index 360a280b23a..2c03947999a 100644
  
  /* Granularity for reserving address space.  */
  static size_t va_granularity = 0x10000;
-diff --git a/gcc/config/newlib-stdint.h b/gcc/config/newlib-stdint.h
-index 65d1fa2cd1f..51991aab75c 100644
---- a/gcc/config/newlib-stdint.h
-+++ b/gcc/config/newlib-stdint.h
-@@ -25,7 +25,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+diff -NBaur gcc-12.1.0/gcc/config/newlib-stdint.h gcc-12.1.0-dkppc/gcc/config/newlib-stdint.h
+--- gcc-12.1.0/gcc/config/newlib-stdint.h	2022-05-06 08:30:57.000000000 +0100
++++ gcc-12.1.0-dkppc/gcc/config/newlib-stdint.h	2022-05-06 19:17:44.784777075 +0100
+@@ -25,7 +25,7 @@
  /* newlib uses 32-bit long in certain cases for all non-SPU
     targets.  */
  #ifndef STDINT_LONG32
@@ -101,19 +36,18 @@ index 65d1fa2cd1f..51991aab75c 100644
  #endif
  
  #define SIG_ATOMIC_TYPE "int"
-diff --git a/gcc/config/rs6000/rs6000.h b/gcc/config/rs6000/rs6000.h
-index a7953fad965..04abd41239b 100644
---- a/gcc/config/rs6000/rs6000.h
-+++ b/gcc/config/rs6000/rs6000.h
-@@ -196,6 +196,7 @@ ASM_OPT_ANY
+diff -NBaur gcc-12.1.0/gcc/config/rs6000/rs6000.h gcc-12.1.0-dkppc/gcc/config/rs6000/rs6000.h
+--- gcc-12.1.0/gcc/config/rs6000/rs6000.h	2022-05-06 08:30:57.000000000 +0100
++++ gcc-12.1.0-dkppc/gcc/config/rs6000/rs6000.h	2022-05-06 19:22:10.793624730 +0100
+@@ -196,6 +196,7 @@
  /* -mcpu=native handling only makes sense with compiler running on
     an PowerPC chip.  If changing this condition, also change
-    the condition in driver-rs6000.c.  */
+    the condition in driver-rs6000.cc.  */
 +#if 0
  #if defined(__powerpc__) || defined(__POWERPC__) || defined(_AIX)
- /* In driver-rs6000.c.  */
+ /* In driver-rs6000.cc.  */
  extern const char *host_detect_local_cpu (int argc, const char **argv);
-@@ -207,6 +208,8 @@ extern const char *host_detect_local_cpu (int argc, const char **argv);
+@@ -207,6 +208,8 @@
  #else
  #define ASM_CPU_NATIVE_SPEC "%(asm_default)"
  #endif
@@ -122,11 +56,10 @@ index a7953fad965..04abd41239b 100644
  
  #ifndef CC1_CPU_SPEC
  #ifdef HAVE_LOCAL_CPU_DETECT
-diff --git a/gcc/config/rs6000/sysv4.h b/gcc/config/rs6000/sysv4.h
-index 510abe169c5..988e82007b0 100644
---- a/gcc/config/rs6000/sysv4.h
-+++ b/gcc/config/rs6000/sysv4.h
-@@ -590,7 +590,11 @@ GNU_USER_TARGET_CC1_SPEC
+diff -NBaur gcc-12.1.0/gcc/config/rs6000/sysv4.h gcc-12.1.0-dkppc/gcc/config/rs6000/sysv4.h
+--- gcc-12.1.0/gcc/config/rs6000/sysv4.h	2022-05-06 08:30:57.000000000 +0100
++++ gcc-12.1.0-dkppc/gcc/config/rs6000/sysv4.h	2022-05-06 19:17:44.784777075 +0100
+@@ -589,7 +589,11 @@
  
  /* Default starting address if specified.  */
  #define LINK_START_SPEC "\
@@ -139,7 +72,7 @@ index 510abe169c5..988e82007b0 100644
    myellowknife : %(link_start_yellowknife) ; \
    mmvme        : %(link_start_mvme)        ; \
    msim         : %(link_start_sim)         ; \
-@@ -621,7 +625,8 @@ GNU_USER_TARGET_CC1_SPEC
+@@ -620,7 +624,8 @@
  
  /* Any specific OS flags.  */
  #define LINK_OS_SPEC "\
@@ -149,7 +82,7 @@ index 510abe169c5..988e82007b0 100644
    myellowknife : %(link_os_yellowknife) ; \
    mmvme        : %(link_os_mvme)        ; \
    msim         : %(link_os_sim)         ; \
-@@ -636,7 +641,10 @@ GNU_USER_TARGET_CC1_SPEC
+@@ -635,7 +640,10 @@
  /* Override rs6000.h definition.  */
  #undef	CPP_SPEC
  #define	CPP_SPEC "%{posix: -D_POSIX_SOURCE} \
@@ -161,7 +94,7 @@ index 510abe169c5..988e82007b0 100644
    myellowknife : %(cpp_os_yellowknife) ; \
    mmvme        : %(cpp_os_mvme)        ; \
    msim         : %(cpp_os_sim)         ; \
-@@ -650,7 +658,10 @@ GNU_USER_TARGET_CC1_SPEC
+@@ -649,7 +657,10 @@
  
  #undef	STARTFILE_SPEC
  #define	STARTFILE_SPEC "\
@@ -173,7 +106,7 @@ index 510abe169c5..988e82007b0 100644
    myellowknife : %(startfile_yellowknife) ; \
    mmvme        : %(startfile_mvme)        ; \
    msim         : %(startfile_sim)         ; \
-@@ -664,7 +675,8 @@ GNU_USER_TARGET_CC1_SPEC
+@@ -663,7 +674,8 @@
  
  #undef	LIB_SPEC
  #define	LIB_SPEC "\
@@ -183,7 +116,7 @@ index 510abe169c5..988e82007b0 100644
    myellowknife : %(lib_yellowknife) ; \
    mmvme        : %(lib_mvme)        ; \
    msim         : %(lib_sim)         ; \
-@@ -674,11 +686,12 @@ GNU_USER_TARGET_CC1_SPEC
+@@ -673,11 +685,12 @@
    mcall-openbsd: %(lib_openbsd)     ; \
                 : %(lib_default)     }"
  
@@ -198,7 +131,7 @@ index 510abe169c5..988e82007b0 100644
    myellowknife : %(endfile_yellowknife) ; \
    mmvme        : %(endfile_mvme)        ; \
    msim         : %(endfile_sim)         ; \
-@@ -694,16 +707,27 @@ GNU_USER_TARGET_CC1_SPEC
+@@ -693,16 +706,27 @@
  
  /* Motorola ADS support.  */
  #define LIB_ADS_SPEC "--start-group -lads -lc --end-group"
@@ -226,7 +159,7 @@ index 510abe169c5..988e82007b0 100644
  
  /* Motorola Yellowknife support.  */
  #define LIB_YELLOWKNIFE_SPEC "--start-group -lyk -lc --end-group"
-@@ -851,6 +875,7 @@ ncrtn.o%s"
+@@ -850,6 +874,7 @@
  #undef	SUBTARGET_EXTRA_SPECS
  #define	SUBTARGET_EXTRA_SPECS						\
    { "crtsavres_default",	CRTSAVRES_DEFAULT_SPEC },		\
@@ -234,7 +167,7 @@ index 510abe169c5..988e82007b0 100644
    { "lib_ads",			LIB_ADS_SPEC },				\
    { "lib_yellowknife",		LIB_YELLOWKNIFE_SPEC },			\
    { "lib_mvme",			LIB_MVME_SPEC },			\
-@@ -860,6 +885,7 @@ ncrtn.o%s"
+@@ -859,6 +884,7 @@
    { "lib_netbsd",		LIB_NETBSD_SPEC },			\
    { "lib_openbsd",		LIB_OPENBSD_SPEC },			\
    { "lib_default",		LIB_DEFAULT_SPEC },			\
@@ -242,7 +175,7 @@ index 510abe169c5..988e82007b0 100644
    { "startfile_ads",		STARTFILE_ADS_SPEC },			\
    { "startfile_yellowknife",	STARTFILE_YELLOWKNIFE_SPEC },		\
    { "startfile_mvme",		STARTFILE_MVME_SPEC },			\
-@@ -869,6 +895,7 @@ ncrtn.o%s"
+@@ -868,6 +894,7 @@
    { "startfile_netbsd",		STARTFILE_NETBSD_SPEC },		\
    { "startfile_openbsd",	STARTFILE_OPENBSD_SPEC },		\
    { "startfile_default",	STARTFILE_DEFAULT_SPEC },		\
@@ -250,7 +183,7 @@ index 510abe169c5..988e82007b0 100644
    { "endfile_ads",		ENDFILE_ADS_SPEC },			\
    { "endfile_yellowknife",	ENDFILE_YELLOWKNIFE_SPEC },		\
    { "endfile_mvme",		ENDFILE_MVME_SPEC },			\
-@@ -880,7 +907,11 @@ ncrtn.o%s"
+@@ -879,7 +906,11 @@
    { "endfile_default",		ENDFILE_DEFAULT_SPEC },			\
    { "link_shlib",		LINK_SHLIB_SPEC },			\
    { "link_start",		LINK_START_SPEC },			\
@@ -262,7 +195,7 @@ index 510abe169c5..988e82007b0 100644
    { "link_start_yellowknife",	LINK_START_YELLOWKNIFE_SPEC },		\
    { "link_start_mvme",		LINK_START_MVME_SPEC },			\
    { "link_start_sim",		LINK_START_SIM_SPEC },			\
-@@ -890,6 +921,7 @@ ncrtn.o%s"
+@@ -889,6 +920,7 @@
    { "link_start_openbsd",	LINK_START_OPENBSD_SPEC },		\
    { "link_start_default",	LINK_START_DEFAULT_SPEC },		\
    { "link_os",			LINK_OS_SPEC },				\
@@ -270,7 +203,7 @@ index 510abe169c5..988e82007b0 100644
    { "link_os_ads",		LINK_OS_ADS_SPEC },			\
    { "link_os_yellowknife",	LINK_OS_YELLOWKNIFE_SPEC },		\
    { "link_os_mvme",		LINK_OS_MVME_SPEC },			\
-@@ -901,6 +933,9 @@ ncrtn.o%s"
+@@ -900,6 +932,9 @@
    { "link_os_default",		LINK_OS_DEFAULT_SPEC },			\
    { "cc1_secure_plt_default",	CC1_SECURE_PLT_DEFAULT_SPEC },		\
    { "link_secure_plt",		LINK_SECURE_PLT_SPEC },			\
@@ -280,11 +213,10 @@ index 510abe169c5..988e82007b0 100644
    { "cpp_os_ads",		CPP_OS_ADS_SPEC },			\
    { "cpp_os_yellowknife",	CPP_OS_YELLOWKNIFE_SPEC },		\
    { "cpp_os_mvme",		CPP_OS_MVME_SPEC },			\
-diff --git a/gcc/config/rs6000/sysv4.opt b/gcc/config/rs6000/sysv4.opt
-index 7ab55c49940..763709e907e 100644
---- a/gcc/config/rs6000/sysv4.opt
-+++ b/gcc/config/rs6000/sysv4.opt
-@@ -124,6 +124,26 @@ mads
+diff -NBaur gcc-12.1.0/gcc/config/rs6000/sysv4.opt gcc-12.1.0-dkppc/gcc/config/rs6000/sysv4.opt
+--- gcc-12.1.0/gcc/config/rs6000/sysv4.opt	2022-05-06 08:30:57.000000000 +0100
++++ gcc-12.1.0-dkppc/gcc/config/rs6000/sysv4.opt	2022-05-06 19:17:44.784777075 +0100
+@@ -124,6 +124,26 @@
  Target RejectNegative
  Link with libads.a, libc.a and crt0.o.
  
@@ -311,11 +243,10 @@ index 7ab55c49940..763709e907e 100644
  myellowknife
  Target RejectNegative
  Link with libyk.a, libc.a and crt0.o.
-diff --git a/gcc/configure b/gcc/configure
-index 9b28369e3bf..79b95018a89 100755
---- a/gcc/configure
-+++ b/gcc/configure
-@@ -12593,7 +12593,7 @@ case ${enable_threads} in
+diff -NBaur gcc-12.1.0/gcc/configure gcc-12.1.0-dkppc/gcc/configure
+--- gcc-12.1.0/gcc/configure	2022-05-06 08:30:57.000000000 +0100
++++ gcc-12.1.0-dkppc/gcc/configure	2022-05-06 19:17:44.788859483 +0100
+@@ -12884,7 +12884,7 @@
      # default
      target_thread_file='single'
      ;;
@@ -324,11 +255,10 @@ index 9b28369e3bf..79b95018a89 100755
    single | tpf | vxworks | win32)
      target_thread_file=${enable_threads}
      ;;
-diff --git a/gcc/configure.ac b/gcc/configure.ac
-index 162e08cbc02..34d35d0de8d 100644
---- a/gcc/configure.ac
-+++ b/gcc/configure.ac
-@@ -1925,7 +1925,7 @@ case ${enable_threads} in
+diff -NBaur gcc-12.1.0/gcc/configure.ac gcc-12.1.0-dkppc/gcc/configure.ac
+--- gcc-12.1.0/gcc/configure.ac	2022-05-06 08:30:57.000000000 +0100
++++ gcc-12.1.0-dkppc/gcc/configure.ac	2022-05-06 19:17:44.788859483 +0100
+@@ -1994,7 +1994,7 @@
      # default
      target_thread_file='single'
      ;;
@@ -337,10 +267,9 @@ index 162e08cbc02..34d35d0de8d 100644
    single | tpf | vxworks | win32)
      target_thread_file=${enable_threads}
      ;;
-diff --git a/libgcc/config/rs6000/crtrestvr.S b/libgcc/config/rs6000/crtrestvr.S
-index b372409dd42..708ba039963 100644
---- a/libgcc/config/rs6000/crtrestvr.S
-+++ b/libgcc/config/rs6000/crtrestvr.S
+diff -NBaur gcc-12.1.0/libgcc/config/rs6000/crtrestvr.S gcc-12.1.0-dkppc/libgcc/config/rs6000/crtrestvr.S
+--- gcc-12.1.0/libgcc/config/rs6000/crtrestvr.S	2022-05-06 08:30:59.000000000 +0100
++++ gcc-12.1.0-dkppc/libgcc/config/rs6000/crtrestvr.S	2022-05-06 19:17:44.792941894 +0100
 @@ -24,7 +24,7 @@
  
  /* On PowerPC64 Linux, these functions are provided by the linker.  */
@@ -350,15 +279,14 @@ index b372409dd42..708ba039963 100644
  #undef __ALTIVEC__
  #define __ALTIVEC__ 1
  	#include "ppc-asm.h"
-@@ -86,3 +86,4 @@ FUNC_END(_restvr_20)
+@@ -86,3 +86,4 @@
  CFI_ENDPROC
  
  #endif
 +#endif
-diff --git a/libgcc/config/rs6000/crtsavevr.S b/libgcc/config/rs6000/crtsavevr.S
-index 48a4d65eed4..6835ea69279 100644
---- a/libgcc/config/rs6000/crtsavevr.S
-+++ b/libgcc/config/rs6000/crtsavevr.S
+diff -NBaur gcc-12.1.0/libgcc/config/rs6000/crtsavevr.S gcc-12.1.0-dkppc/libgcc/config/rs6000/crtsavevr.S
+--- gcc-12.1.0/libgcc/config/rs6000/crtsavevr.S	2022-05-06 08:30:59.000000000 +0100
++++ gcc-12.1.0-dkppc/libgcc/config/rs6000/crtsavevr.S	2022-05-06 19:17:44.792941894 +0100
 @@ -24,7 +24,7 @@
  
  /* On PowerPC64 Linux, these functions are provided by the linker.  */
@@ -368,16 +296,14 @@ index 48a4d65eed4..6835ea69279 100644
  #undef __ALTIVEC__
  #define __ALTIVEC__ 1
  	#include "ppc-asm.h"
-@@ -86,3 +86,4 @@ FUNC_END(_savevr_20)
+@@ -86,3 +86,4 @@
  CFI_ENDPROC
  
  #endif
 +#endif
-diff --git a/libgcc/config/rs6000/gthr-dkp.c b/libgcc/config/rs6000/gthr-dkp.c
-new file mode 100644
-index 00000000000..26180aa7f36
---- /dev/null
-+++ b/libgcc/config/rs6000/gthr-dkp.c
+diff -NBaur gcc-12.1.0/libgcc/config/rs6000/gthr-dkp.c gcc-12.1.0-dkppc/libgcc/config/rs6000/gthr-dkp.c
+--- gcc-12.1.0/libgcc/config/rs6000/gthr-dkp.c	1970-01-01 01:00:00.000000000 +0100
++++ gcc-12.1.0-dkppc/libgcc/config/rs6000/gthr-dkp.c	2022-05-06 19:17:44.792941894 +0100
 @@ -0,0 +1,319 @@
 +/* Threads compatibility routines for libgcc2 and libobjc.  */
 +/* Compile this one with gcc.  */
@@ -698,11 +624,9 @@ index 00000000000..26180aa7f36
 +
 +  return __gthr_impl_cond_destroy(__cond);
 +}
-diff --git a/libgcc/config/rs6000/gthr-dkp.h b/libgcc/config/rs6000/gthr-dkp.h
-new file mode 100644
-index 00000000000..72ecf82ab83
---- /dev/null
-+++ b/libgcc/config/rs6000/gthr-dkp.h
+diff -NBaur gcc-12.1.0/libgcc/config/rs6000/gthr-dkp.h gcc-12.1.0-dkppc/libgcc/config/rs6000/gthr-dkp.h
+--- gcc-12.1.0/libgcc/config/rs6000/gthr-dkp.h	1970-01-01 01:00:00.000000000 +0100
++++ gcc-12.1.0-dkppc/libgcc/config/rs6000/gthr-dkp.h	2022-05-06 19:17:44.792941894 +0100
 @@ -0,0 +1,187 @@
 +/* Threads compatibility routines for libgcc2 and libobjc.  */
 +/* Compile this one with gcc.  */
@@ -891,21 +815,19 @@ index 00000000000..72ecf82ab83
 +#endif
 +
 +#endif /* ! _GLIBCXX_GCC_GTHR_DKP_H */
-diff --git a/libgcc/config/rs6000/t-ppccomm b/libgcc/config/rs6000/t-ppccomm
-index fb812d3801f..7f6669d530f 100644
---- a/libgcc/config/rs6000/t-ppccomm
-+++ b/libgcc/config/rs6000/t-ppccomm
+diff -NBaur gcc-12.1.0/libgcc/config/rs6000/t-ppccomm gcc-12.1.0-dkppc/libgcc/config/rs6000/t-ppccomm
+--- gcc-12.1.0/libgcc/config/rs6000/t-ppccomm	2022-05-06 08:30:59.000000000 +0100
++++ gcc-12.1.0-dkppc/libgcc/config/rs6000/t-ppccomm	2022-05-06 19:17:44.792941894 +0100
 @@ -1,4 +1,5 @@
  LIB2ADD += $(srcdir)/config/rs6000/ibm-ldouble.c \
 +	   $(srcdir)/config/rs6000/gthr-dkp.c \
  	   $(srcdir)/config/rs6000/tramp.S
  
  # This can't end up in shared libgcc
-diff --git a/libgcc/configure b/libgcc/configure
-index 4919a56f518..546b3413deb 100755
---- a/libgcc/configure
-+++ b/libgcc/configure
-@@ -5679,6 +5679,7 @@ tm_file="${tm_file_}"
+diff -NBaur gcc-12.1.0/libgcc/configure gcc-12.1.0-dkppc/libgcc/configure
+--- gcc-12.1.0/libgcc/configure	2022-05-06 08:30:59.000000000 +0100
++++ gcc-12.1.0-dkppc/libgcc/configure	2022-05-06 19:17:44.792941894 +0100
+@@ -5689,6 +5689,7 @@
  case $target_thread_file in
      aix)	thread_header=config/rs6000/gthr-aix.h ;;
      dce)	thread_header=config/pa/gthr-dce.h ;;
@@ -913,11 +835,10 @@ index 4919a56f518..546b3413deb 100755
      gcn)	thread_header=config/gcn/gthr-gcn.h ;;
      lynx)	thread_header=config/gthr-lynx.h ;;
      mipssde)	thread_header=config/mips/gthr-mipssde.h ;;
-diff --git a/libgcc/crtstuff.c b/libgcc/crtstuff.c
-index 675930db043..bdfd6f6b0bb 100644
---- a/libgcc/crtstuff.c
-+++ b/libgcc/crtstuff.c
-@@ -325,7 +325,7 @@ register_tm_clones (void)
+diff -NBaur gcc-12.1.0/libgcc/crtstuff.c gcc-12.1.0-dkppc/libgcc/crtstuff.c
+--- gcc-12.1.0/libgcc/crtstuff.c	2022-05-06 08:30:59.000000000 +0100
++++ gcc-12.1.0-dkppc/libgcc/crtstuff.c	2022-05-06 19:17:44.792941894 +0100
+@@ -325,7 +325,7 @@
  
  #ifdef OBJECT_FORMAT_ELF
  
@@ -926,11 +847,10 @@ index 675930db043..bdfd6f6b0bb 100644
  /* Declare the __dso_handle variable.  It should have a unique value
     in every shared-object; in a main program its value is zero.  The
     object should in any case be protected.  This means the instance
-diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
-index 326a279c54f..d2cb9d18294 100755
---- a/libstdc++-v3/configure
-+++ b/libstdc++-v3/configure
-@@ -15698,6 +15698,7 @@ $as_echo "$target_thread_file" >&6; }
+diff -NBaur gcc-12.1.0/libstdc++-v3/configure gcc-12.1.0-dkppc/libstdc++-v3/configure
+--- gcc-12.1.0/libstdc++-v3/configure	2022-05-06 08:31:00.000000000 +0100
++++ gcc-12.1.0-dkppc/libstdc++-v3/configure	2022-05-06 19:17:44.801106712 +0100
+@@ -15765,6 +15765,7 @@
  case $target_thread_file in
      aix)	thread_header=config/rs6000/gthr-aix.h ;;
      dce)	thread_header=config/pa/gthr-dce.h ;;
@@ -938,43 +858,3 @@ index 326a279c54f..d2cb9d18294 100755
      gcn)	thread_header=config/gcn/gthr-gcn.h ;;
      lynx)	thread_header=config/gthr-lynx.h ;;
      mipssde)	thread_header=config/mips/gthr-mipssde.h ;;
-diff --git a/libstdc++-v3/include/c_compatibility/fenv.h b/libstdc++-v3/include/c_compatibility/fenv.h
-index 0413e3b7c25..ff5f8bbe1a1 100644
---- a/libstdc++-v3/include/c_compatibility/fenv.h
-+++ b/libstdc++-v3/include/c_compatibility/fenv.h
-@@ -26,6 +26,10 @@
-  *  This is a Standard C++ Library header.
-  */
- 
-+#if !defined __cplusplus || defined _GLIBCXX_INCLUDE_NEXT_C_HEADERS
-+# include_next <fenv.h>
-+#else
-+
- #ifndef _GLIBCXX_FENV_H
- #define _GLIBCXX_FENV_H 1
- 
-@@ -79,3 +83,5 @@ namespace std
- #endif // C++11
- 
- #endif // _GLIBCXX_FENV_H
-+
-+#endif // __cplusplus
-diff --git a/libstdc++-v3/include/c_global/cfenv b/libstdc++-v3/include/c_global/cfenv
-index 0b0ec35a837..d24cb1a3c81 100644
---- a/libstdc++-v3/include/c_global/cfenv
-+++ b/libstdc++-v3/include/c_global/cfenv
-@@ -37,9 +37,11 @@
- 
- #include <bits/c++config.h>
- 
--#if _GLIBCXX_HAVE_FENV_H
--# include <fenv.h>
--#endif
-+// Need to ensure this finds the C library's <fenv.h> not a libstdc++
-+// wrapper that might already be installed later in the include search path.
-+#define _GLIBCXX_INCLUDE_NEXT_C_HEADERS
-+#include_next <fenv.h>
-+#undef _GLIBCXX_INCLUDE_NEXT_C_HEADERS
- 
- #ifdef _GLIBCXX_USE_C99_FENV_TR1
- 
