@@ -49,7 +49,7 @@ case "$VERSION" in
     toolchain=DEVKITPPC
   ;;
   "3" )
-    GCC_VER=12.1.0-RC-20220429
+    GCC_VER=12.1.0
     BINUTILS_VER=2.32
     NEWLIB_VER=4.2.0.20211231
     basedir='dka64'
