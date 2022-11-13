@@ -1,0 +1,334 @@
+diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.cc gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64.cc
+--- gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.cc	2022-04-29 14:58:22.000000000 +0100
++++ gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64.cc	2022-05-02 21:50:30.090088643 +0100
+@@ -19417,8 +19417,24 @@
+       || !register_operand (target, Pmode))
+     target = gen_reg_rtx (Pmode);
+ 
+-  /* Can return in any reg.  */
+-  emit_insn (gen_aarch64_load_tp_hard (target));
++  if (TARGET_HARD_TP)
++    {
++      /* Can return in any reg.  */
++      emit_insn (gen_aarch64_load_tp_hard (target));
++    }
++  else
++    {
++      /* Always returned in r0.  Immediately copy the result into a pseudo,
++	 otherwise other uses of r0 (e.g. setting up function arguments) may
++	 clobber the value.  */
++
++      rtx tmp;
++
++      emit_insn (gen_aarch64_load_tp_soft ());
++
++      tmp = gen_rtx_REG (DImode, R0_REGNUM);
++      emit_move_insn (target, tmp);
++    }
+   return target;
+ }
+ 
+diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64-elf-raw.h gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64-elf-raw.h
+--- gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64-elf-raw.h	2022-04-29 14:58:22.000000000 +0100
++++ gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64-elf-raw.h	2022-05-02 21:50:30.086094234 +0100
+@@ -22,6 +22,7 @@
+ #ifndef GCC_AARCH64_ELF_RAW_H
+ #define GCC_AARCH64_ELF_RAW_H
+ 
++#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
+ #define STARTFILE_SPEC " crti%O%s crtbegin%O%s crt0%O%s"
+ #define ENDFILE_SPEC \
+   " crtend%O%s crtn%O%s " \
+diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.h gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64.h
+--- gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.h	2022-04-29 14:58:22.000000000 +0100
++++ gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64.h	2022-05-02 21:50:30.090088643 +0100
+@@ -1245,6 +1245,10 @@
+ /* Check TLS Descriptors mechanism is selected.  */
+ #define TARGET_TLS_DESC (aarch64_tls_dialect == TLS_DESCRIPTORS)
+ 
++/* Check selected thread pointer access sequence to use.  */
++#define TARGET_HARD_TP (target_thread_pointer == TP_HARD)
++#define TARGET_SOFT_TP (target_thread_pointer == TP_SOFT)
++
+ extern enum aarch64_code_model aarch64_cmodel;
+ 
+ /* When using the tiny addressing model conditional and unconditional branches
+@@ -1290,7 +1294,7 @@
+ #define MCPU_TO_MARCH_SPEC_FUNCTIONS \
+   { "rewrite_mcpu", aarch64_rewrite_mcpu },
+ 
+-#if defined(__aarch64__)
++#if 0 // defined(__aarch64__)
+ extern const char *host_detect_local_cpu (int argc, const char **argv);
+ #define HAVE_LOCAL_CPU_DETECT
+ # define EXTRA_SPEC_FUNCTIONS						\
+diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.md gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64.md
+--- gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.md	2022-04-29 14:58:22.000000000 +0100
++++ gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64.md	2022-05-02 21:50:30.090088643 +0100
+@@ -6899,11 +6899,22 @@
+ (define_insn "aarch64_load_tp_hard"
+   [(set (match_operand:DI 0 "register_operand" "=r")
+ 	(unspec:DI [(const_int 0)] UNSPEC_TLS))]
+-  ""
+-  "mrs\\t%0, tpidr_el0"
++  "TARGET_HARD_TP"
++  "mrs\\t%0, tpidr_el0\\t// aarch64_load_tp_hard"
+   [(set_attr "type" "mrs")]
+ )
+ 
++(define_insn "aarch64_load_tp_soft"
++  [(set (reg:DI 0) (unspec:DI [(const_int 0)] UNSPEC_TLS))
++   (clobber (reg:DI IP0_REGNUM))
++   (clobber (reg:DI IP1_REGNUM))
++   (clobber (reg:DI LR_REGNUM))
++   (clobber (reg:CC CC_REGNUM))]
++  "TARGET_SOFT_TP"
++  "bl\\t__aarch64_read_tp\\t// aarch64_load_tp_soft"
++  [(set_attr "type" "branch")]
++)
++
+ ;; The TLS ABI specifically requires that the compiler does not schedule
+ ;; instructions in the TLS stubs, in order to enable linker relaxation.
+ ;; Therefore we treat the stubs as an atomic sequence.
+diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.opt gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64.opt
+--- gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.opt	2022-04-29 14:58:22.000000000 +0100
++++ gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64.opt	2022-05-02 21:50:30.090088643 +0100
+@@ -122,6 +122,21 @@
+ EnumValue
+ Enum(aarch64_tls_size) String(48) Value(48)
+ 
++mtp=
++Target RejectNegative Joined Enum(aarch64_tp_type) Var(target_thread_pointer) Init(TP_HARD)
++Specify how to access the thread pointer.
++
++Enum
++Name(aarch64_tp_type) Type(enum aarch64_tp_type)
++Valid arguments to -mtp=:
++
++EnumValue
++Enum(aarch64_tp_type) String(hard) Value(TP_HARD)
++
++EnumValue
++Enum(aarch64_tp_type) String(soft) Value(TP_SOFT)
++
++
+ march=
+ Target RejectNegative Negative(march=) ToLower Joined Var(aarch64_arch_string)
+ Use features of architecture ARCH.
+@@ -260,7 +275,7 @@
+ long aarch64_stack_protector_guard_offset = 0
+ 
+ moutline-atomics
+-Target Var(aarch64_flag_outline_atomics) Init(2) Save
++Target Var(aarch64_flag_outline_atomics) Save
+ Generate local calls to out-of-line atomic operations.
+ 
+ -param=aarch64-sve-compare-costs=
+diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64-opts.h gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64-opts.h
+--- gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64-opts.h	2022-04-29 14:58:22.000000000 +0100
++++ gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64-opts.h	2022-05-02 21:50:30.086094234 +0100
+@@ -48,6 +48,12 @@
+   TLS_DESCRIPTORS
+ };
+ 
++/* Which thread pointer access sequence to use.  */
++enum aarch64_tp_type {
++  TP_HARD,
++  TP_SOFT
++};
++
+ /* The code model defines the address generation strategy.
+    Most have a PIC and non-PIC variant.  */
+ enum aarch64_code_model {
+diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/t-aarch64 gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/t-aarch64
+--- gcc-12.1.0-RC-20220429/gcc/config/aarch64/t-aarch64	2022-04-29 14:58:22.000000000 +0100
++++ gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/t-aarch64	2022-05-02 21:50:30.090088643 +0100
+@@ -177,8 +177,10 @@
+ 		$(srcdir)/config/aarch64/aarch64-cc-fusion.cc
+ 
+ comma=,
+-MULTILIB_OPTIONS    = $(subst $(comma),/, $(patsubst %, mabi=%, $(subst $(comma),$(comma)mabi=,$(TM_MULTILIB_CONFIG))))
+-MULTILIB_DIRNAMES   = $(subst $(comma), ,$(TM_MULTILIB_CONFIG))
++MULTILIB_OPTIONS    = mcmodel=large fPIC
++MULTILIB_DIRNAMES   = large pic
++MULTILIB_REQUIRED   = mcmodel=large fPIC
++MULTILIB_MATCHES    = fPIC=fpic fPIC=fpie fPIC=fPIE
+ 
+ insn-conditions.md: s-check-sve-md
+ s-check-sve-md: $(srcdir)/config/aarch64/check-sve-md.awk \
+diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/devkitpro.h gcc-12.1.0-RC-20220429-dka64/gcc/config/devkitpro.h
+--- gcc-12.1.0-RC-20220429/gcc/config/devkitpro.h	1970-01-01 01:00:00.000000000 +0100
++++ gcc-12.1.0-RC-20220429-dka64/gcc/config/devkitpro.h	2022-05-02 22:04:49.962851033 +0100
+@@ -0,0 +1,29 @@
++/* Definitions for devkitPro toolchains.
++   Copyright (C) 2016-2018 Free Software Foundation, Inc.
++
++   This file is part of GCC.
++
++   GCC is free software; you can redistribute it and/or modify it
++   under the terms of the GNU General Public License as published
++   by the Free Software Foundation; either version 3, or (at your
++   option) any later version.
++
++   GCC is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
++   or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
++   License for more details.
++
++   Under Section 7 of GPL version 3, you are granted additional
++   permissions described in the GCC Runtime Library Exception, version
++   3.1, as published by the Free Software Foundation.
++
++   You should have received a copy of the GNU General Public License and
++   a copy of the GCC Runtime Library Exception along with this program;
++   see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#undef TARGET_OS_CPP_BUILTINS
++#define TARGET_OS_CPP_BUILTINS()                \
++    do {                                        \
++        builtin_define ("__DEVKITA64__");       \
++    } while (0)
+diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/devkitpro.opt gcc-12.1.0-RC-20220429-dka64/gcc/config/devkitpro.opt
+--- gcc-12.1.0-RC-20220429/gcc/config/devkitpro.opt	1970-01-01 01:00:00.000000000 +0100
++++ gcc-12.1.0-RC-20220429-dka64/gcc/config/devkitpro.opt	2022-05-02 21:50:30.090088643 +0100
+@@ -0,0 +1,29 @@
++; Options for devkitPro toolchains.
++
++; Copyright (C) 2011-2018 Free Software Foundation, Inc.
++;
++; This file is part of GCC.
++;
++; GCC is free software; you can redistribute it and/or modify it under
++; the terms of the GNU General Public License as published by the Free
++; Software Foundation; either version 3, or (at your option) any later
++; version.
++;
++; GCC is distributed in the hope that it will be useful, but WITHOUT ANY
++; WARRANTY; without even the implied warranty of MERCHANTABILITY or
++; FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++; for more details.
++;
++; You should have received a copy of the GNU General Public License
++; along with GCC; see the file COPYING3.  If not see
++; <http://www.gnu.org/licenses/>.
++
++; See the GCC internals manual (options.texi) for a description of
++; this file's format.
++
++; Please try to keep this file in ASCII collating order.
++
++pthread
++Driver
++
++; This comment is to ensure we retain the blank line above.
+diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/i386/host-mingw32.cc gcc-12.1.0-RC-20220429-dka64/gcc/config/i386/host-mingw32.cc
+--- gcc-12.1.0-RC-20220429/gcc/config/i386/host-mingw32.cc	2022-04-29 14:58:22.000000000 +0100
++++ gcc-12.1.0-RC-20220429-dka64/gcc/config/i386/host-mingw32.cc	2022-05-02 21:50:30.090088643 +0100
+@@ -45,7 +45,11 @@
+ static inline void w32_error(const char*, const char*, int, const char*);
+ 
+ /* FIXME: Is this big enough?  */
++#if __MINGW64__
++static const size_t pch_VA_max_size  = UINT64_C(64 * 1024 * 1024 * 1024);
++#else
+ static const size_t pch_VA_max_size  = 128 * 1024 * 1024;
++#endif
+ 
+ /* Granularity for reserving address space.  */
+ static size_t va_granularity = 0x10000;
+diff -NBaur gcc-12.1.0-RC-20220429/gcc/config.gcc gcc-12.1.0-RC-20220429-dka64/gcc/config.gcc
+--- gcc-12.1.0-RC-20220429/gcc/config.gcc	2022-04-29 14:58:22.000000000 +0100
++++ gcc-12.1.0-RC-20220429-dka64/gcc/config.gcc	2022-05-02 21:50:30.086094234 +0100
+@@ -1093,7 +1093,14 @@
+ 	tmake_file="${tmake_file} aarch64/t-aarch64"
+ 	case $target in
+ 	aarch64-*-elf*)
++		default_use_cxa_atexit=yes
+ 		use_gcc_stdint=wrap
++		tm_file="${tm_file} devkitpro.h"
++		tm_defines="${tm_defines}  TARGET_DEFAULT_ASYNC_UNWIND_TABLES=1"
++		extra_options="${extra_options} devkitpro.opt"
++		case ${enable_threads} in
++			"" | yes | posix) thread_file='posix' ;;
++		esac
+ 		;;
+         aarch64-*-fuchsia*)
+                 tm_file="${tm_file} fuchsia.h"
+diff -NBaur gcc-12.1.0-RC-20220429/gcc/gcc.cc gcc-12.1.0-RC-20220429-dka64/gcc/gcc.cc
+--- gcc-12.1.0-RC-20220429/gcc/gcc.cc	2022-04-29 14:58:23.000000000 +0100
++++ gcc-12.1.0-RC-20220429-dka64/gcc/gcc.cc	2022-05-02 21:50:30.090088643 +0100
+@@ -860,6 +860,11 @@
+ #endif
+ #endif
+ 
++#ifndef LIBGLOSS_SPEC
++# define LIBGLOSS_SPEC "-lsysbase"
++#endif
++
++
+ /* config.h can define STARTFILE_SPEC to override the default crt0 files.  */
+ #ifndef STARTFILE_SPEC
+ #define STARTFILE_SPEC  \
+@@ -1204,6 +1209,7 @@
+ static const char *lib_spec = LIB_SPEC;
+ static const char *link_gomp_spec = "";
+ static const char *libgcc_spec = LIBGCC_SPEC;
++static const char *libgloss_spec = LIBGLOSS_SPEC;
+ static const char *endfile_spec = ENDFILE_SPEC;
+ static const char *startfile_spec = STARTFILE_SPEC;
+ static const char *linker_name_spec = LINKER_NAME;
+@@ -1709,6 +1715,7 @@
+   INIT_STATIC_SPEC ("lib",			&lib_spec),
+   INIT_STATIC_SPEC ("link_gomp",		&link_gomp_spec),
+   INIT_STATIC_SPEC ("libgcc",			&libgcc_spec),
++  INIT_STATIC_SPEC ("libgloss",			&libgloss_spec),
+   INIT_STATIC_SPEC ("startfile",		&startfile_spec),
+   INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
+   INIT_STATIC_SPEC ("version",			&compiler_version),
+diff -NBaur gcc-12.1.0-RC-20220429/libgcc/crtstuff.c gcc-12.1.0-RC-20220429-dka64/libgcc/crtstuff.c
+--- gcc-12.1.0-RC-20220429/libgcc/crtstuff.c	2022-04-29 14:58:25.000000000 +0100
++++ gcc-12.1.0-RC-20220429-dka64/libgcc/crtstuff.c	2022-05-02 21:50:30.094083051 +0100
+@@ -325,7 +325,7 @@
+ 
+ #ifdef OBJECT_FORMAT_ELF
+ 
+-#if DEFAULT_USE_CXA_ATEXIT
++#if 1 /* DEFAULT_USE_CXA_ATEXIT */
+ /* Declare the __dso_handle variable.  It should have a unique value
+    in every shared-object; in a main program its value is zero.  The
+    object should in any case be protected.  This means the instance
+diff -NBaur gcc-12.1.0-RC-20220429/libgcc/gthr.h gcc-12.1.0-RC-20220429-dka64/libgcc/gthr.h
+--- gcc-12.1.0-RC-20220429/libgcc/gthr.h	2022-04-29 14:58:25.000000000 +0100
++++ gcc-12.1.0-RC-20220429-dka64/libgcc/gthr.h	2022-05-02 21:50:30.094083051 +0100
+@@ -136,7 +136,7 @@
+ /* The pe-coff weak support isn't fully compatible to ELF's weak.
+    For static libraries it might would work, but as we need to deal
+    with shared versions too, we disable it for mingw-targets.  */
+-#ifdef __MINGW32__
++#if defined(__MINGW32__) || defined(__DEVKITA64__)
+ #undef GTHREAD_USE_WEAK
+ #define GTHREAD_USE_WEAK 0
+ #endif
+diff -NBaur gcc-12.1.0-RC-20220429/libstdc++-v3/include/Makefile.am gcc-12.1.0-RC-20220429-dka64/libstdc++-v3/include/Makefile.am
+--- gcc-12.1.0-RC-20220429/libstdc++-v3/include/Makefile.am	2022-04-29 14:58:26.000000000 +0100
++++ gcc-12.1.0-RC-20220429-dka64/libstdc++-v3/include/Makefile.am	2022-05-02 21:50:30.094083051 +0100
+@@ -1366,6 +1366,7 @@
+ 	    -e '/^#/s/\(${uppercase}${uppercase}*\)/_GLIBCXX_\1/g' \
+ 	    -e 's/_GLIBCXX_SUPPORTS_WEAK/__GXX_WEAK__/g' \
+ 	    -e 's/_GLIBCXX___MINGW32_GLIBCXX___/__MINGW32__/g' \
++	    -e 's/_GLIBCXX___DEVKITA64_GLIBCXX___/__DEVKITA64__/g' \
+ 	    -e 's,^#include "\(.*\)",#include <bits/\1>,g' \
+ 	    < $< > $@
+ 
+diff -NBaur gcc-12.1.0-RC-20220429/libstdc++-v3/include/Makefile.in gcc-12.1.0-RC-20220429-dka64/libstdc++-v3/include/Makefile.in
+--- gcc-12.1.0-RC-20220429/libstdc++-v3/include/Makefile.in	2022-04-29 14:58:26.000000000 +0100
++++ gcc-12.1.0-RC-20220429-dka64/libstdc++-v3/include/Makefile.in	2022-05-02 21:50:30.094083051 +0100
+@@ -1857,6 +1857,7 @@
+ 	    -e '/^#/s/\(${uppercase}${uppercase}*\)/_GLIBCXX_\1/g' \
+ 	    -e 's/_GLIBCXX_SUPPORTS_WEAK/__GXX_WEAK__/g' \
+ 	    -e 's/_GLIBCXX___MINGW32_GLIBCXX___/__MINGW32__/g' \
++	    -e 's/_GLIBCXX___DEVKITA64_GLIBCXX___/__DEVKITA64__/g' \
+ 	    -e 's,^#include "\(.*\)",#include <bits/\1>,g' \
+ 	    < $< > $@
+ 
