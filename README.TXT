@@ -24,9 +24,9 @@ For building gcc libgmp, libmpfr and libmpc are required - these are built as
 static libraries to make packaging simpler. If you're building the tools for
 personal use then the versions packaged by your chosen distro should suffice.
 
-http://gmplib.org/
-http://www.mpfr.org/
-http://www.multiprecision.org/
+https://gmplib.org/
+https://www.mpfr.org/
+https://www.multiprecision.org/
 
 sudo apt-get install libgmp-dev libmpfr-dev libmpc-dev
 
@@ -34,10 +34,10 @@ Some of the tools for devkitARM and devkitPPC also require FreeImage, zlib,
 expat, and libusb. Again these are built as static libraries for ease of
 packaging but you can probably use the versions supplied by your distro.
 
-http://freeimage.sourceforge.net/
-http://www.zlib.net
-http://www.libusb.org
-http://expat.sourceforge.net/
+https://freeimage.sourceforge.net/
+https://www.zlib.net
+https://www.libusb.org
+https://expat.sourceforge.net/
 
 sudo apt-get install libfreeimage-dev zlib1g-dev libusb-dev libudev-dev libexpat1-dev
 
