@@ -31,7 +31,7 @@ done
 case "$VERSION" in
   "1" )
     GCC_VER=12.2.0
-    BINUTILS_VER=2.39
+    BINUTILS_VER=2.40
     NEWLIB_VER=4.2.0.20211231
     basedir='dkarm-eabi'
     package=devkitARM
