@@ -66,7 +66,7 @@ then
 		--with-system-zlib \
 		--disable-tm-clone-registry \
 		--disable-__cxa_atexit \
-		--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 59" \
+		--with-bugurl="http://wiki.devkitpro.org/index.php/Bug_Reports" --with-pkgversion="devkitARM release 60" \
 		$CROSS_PARAMS \
 		$CROSS_GCC_PARAMS \
                 $EXTRA_GCC_PARAMS \
