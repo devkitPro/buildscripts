@@ -1,7 +1,8 @@
-diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/arm/arm-cpus.in gcc-12.1.0-RC-20220429-dkarm/gcc/config/arm/arm-cpus.in
---- gcc-12.1.0-RC-20220429/gcc/config/arm/arm-cpus.in	2022-04-29 14:58:22.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dkarm/gcc/config/arm/arm-cpus.in	2022-04-30 13:31:09.120134164 +0100
-@@ -412,7 +412,7 @@
+diff --git a/gcc/config/arm/arm-cpus.in b/gcc/config/arm/arm-cpus.in
+index 0d3082b569f..15be7fc47b3 100644
+--- a/gcc/config/arm/arm-cpus.in
++++ b/gcc/config/arm/arm-cpus.in
+@@ -412,7 +412,7 @@ begin arch armv6k
   tune for mpcore
   tune flags CO_PROC
   base 6K
@@ -10,16 +11,11 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/arm/arm-cpus.in gcc-12.1.0-RC-2022
   option fp add VFPv2 FP_DBL
   optalias vfpv2 fp
   option nofp remove ALL_FP
-diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/arm/t-arm-elf gcc-12.1.0-RC-20220429-dkarm/gcc/config/arm/t-arm-elf
---- gcc-12.1.0-RC-20220429/gcc/config/arm/t-arm-elf	2022-04-29 14:58:22.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dkarm/gcc/config/arm/t-arm-elf	2022-04-30 13:31:39.759455398 +0100
-@@ -1,4 +1,4 @@
--# Copyright (C) 1998-2022 Free Software Foundation, Inc.
-+# Copyright (C) 1998-2021 Free Software Foundation, Inc.
- #
- # This file is part of GCC.
- #
-@@ -16,120 +16,14 @@
+diff --git a/gcc/config/arm/t-arm-elf b/gcc/config/arm/t-arm-elf
+index 1459afea921..72e1d20861d 100644
+--- a/gcc/config/arm/t-arm-elf
++++ b/gcc/config/arm/t-arm-elf
+@@ -16,120 +16,22 @@
  # along with GCC; see the file COPYING3.  If not see
  # <http://www.gnu.org/licenses/>.
  
@@ -69,8 +65,8 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/arm/t-arm-elf gcc-12.1.0-RC-202204
 -
 -MULTILIB_OPTIONS     =
 -MULTILIB_DIRNAMES    =
-+MULTILIB_OPTIONS     = mthumb mbig-endian march=armv6k mfloat-abi=hard
-+MULTILIB_DIRNAMES    = thumb be armv6k fpu
++MULTILIB_OPTIONS     = mthumb mbig-endian march=armv6k march=armv6s-m mfloat-abi=hard mfloat-abi=soft
++MULTILIB_DIRNAMES    = thumb be armv6k v6-m fpu nofp
  MULTILIB_EXCEPTIONS  = 
  MULTILIB_MATCHES     =
 -MULTILIB_REUSE	     =
@@ -117,24 +113,30 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/arm/t-arm-elf gcc-12.1.0-RC-202204
 -MULTILIB_MATCHES     += $(foreach ARCH, $(all_v7_a_r), \
 -			  march?armv7+fp=march?$(ARCH) \
 -			  march?armv7+fp=march?$(ARCH)+fp)
--
+ 
 -MULTILIB_MATCHES     += $(foreach ARCH, $(all_v8_archs), \
 -			  march?armv7+fp=march?$(ARCH) \
 -			  $(foreach FPARCH, $(v8_fps), \
 -			    march?armv7+fp=march?$(ARCH)+$(FPARCH)))
++MULTILIB_REQUIRED    = mthumb mbig-endian mthumb/mbig-endian march=armv6k/mfloat-abi=hard mthumb/march=armv6s-m/mfloat-abi=soft
  
 -MULTILIB_MATCHES     += $(foreach ARCH, $(all_v9_archs), \
 -			  march?armv7+fp=march?$(ARCH) \
 -			  $(foreach FPARCH, $(v9_fps), \
 -			    march?armv7+fp=march?$(ARCH)+$(FPARCH)))
-+MULTILIB_REQUIRED    = mthumb mbig-endian mthumb/mbig-endian march=armv6k/mfloat-abi=hard 
  
 -MULTILIB_MATCHES     += $(foreach ARCH, armv7e-m armv8-m.mainline, \
 -			  march?armv7+fp=march?$(ARCH)+fp.dp)
- 
--# PART 4 - Reuse rules
 +MULTILIB_MATCHES    += march?armv6k=mtune?mpcore
 +MULTILIB_MATCHES    += march?armv6k=mcpu?mpcore
+ 
+-# PART 4 - Reuse rules
++MULTILIB_MATCHES    += march?armv6s-m=mcpu?cortex-m0
++MULTILIB_MATCHES    += march?armv6s-m=mtune?cortex-m0
++MULTILIB_MATCHES    += march?armv6s-m=mcpu?cortex-m0plus
++MULTILIB_MATCHES    += march?armv6s-m=mtune?cortex-m0plus
++MULTILIB_MATCHES    += march?armv6s-m=mcpu?cortex-m1
++MULTILIB_MATCHES    += march?armv6s-m=mtune?cortex-m1
  
 -MULTILIB_REUSE	     += mthumb=mthumb/mfpu.auto
 -MULTILIB_REUSE	     += mthumb=mthumb/mfpu.auto/march.armv5te+fp
@@ -145,9 +147,11 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/arm/t-arm-elf gcc-12.1.0-RC-202204
 -MULTILIB_REUSE	     += mthumb/mfpu.auto/march.armv7+fp/mfloat-abi.hard=mthumb/march.armv7+fp/mfloat-abi.hard
 -MULTILIB_REUSE	     += mthumb/mfpu.auto/march.armv7+fp/mfloat-abi.hard=mfpu.auto/march.armv7+fp/mfloat-abi.hard
 -MULTILIB_REUSE	     += mthumb/mfpu.auto/march.armv7+fp/mfloat-abi.hard=march.armv7+fp/mfloat-abi.hard
-diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/arm/unknown-elf.h gcc-12.1.0-RC-20220429-dkarm/gcc/config/arm/unknown-elf.h
---- gcc-12.1.0-RC-20220429/gcc/config/arm/unknown-elf.h	2022-04-29 14:58:22.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dkarm/gcc/config/arm/unknown-elf.h	2022-04-30 13:31:09.120134164 +0100
++MULTILIB_REUSE       = mthumb/march.armv6s-m/mfloat-abi.soft=mthumb/march.armv6s-m
+diff --git a/gcc/config/arm/unknown-elf.h b/gcc/config/arm/unknown-elf.h
+index bfb294beaa3..7e2e1c7bbbe 100644
+--- a/gcc/config/arm/unknown-elf.h
++++ b/gcc/config/arm/unknown-elf.h
 @@ -29,7 +29,7 @@
  #endif
  
@@ -164,10 +168,11 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/arm/unknown-elf.h gcc-12.1.0-RC-20
 -#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %{!nolibc:%L} --end-group"
 +#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
 +
-diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/i386/host-mingw32.cc gcc-12.1.0-RC-20220429-dkarm/gcc/config/i386/host-mingw32.cc
---- gcc-12.1.0-RC-20220429/gcc/config/i386/host-mingw32.cc	2022-04-29 14:58:22.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dkarm/gcc/config/i386/host-mingw32.cc	2022-04-30 13:31:09.120134164 +0100
-@@ -45,7 +45,11 @@
+diff --git a/gcc/config/i386/host-mingw32.cc b/gcc/config/i386/host-mingw32.cc
+index 3b0d83ffc60..6e063b6ccd0 100644
+--- a/gcc/config/i386/host-mingw32.cc
++++ b/gcc/config/i386/host-mingw32.cc
+@@ -45,7 +45,11 @@ static size_t mingw32_gt_pch_alloc_granularity (void);
  static inline void w32_error(const char*, const char*, int, const char*);
  
  /* FIXME: Is this big enough?  */
@@ -179,10 +184,11 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/i386/host-mingw32.cc gcc-12.1.0-RC
  
  /* Granularity for reserving address space.  */
  static size_t va_granularity = 0x10000;
-diff -NBaur gcc-12.1.0-RC-20220429/gcc/gcc.cc gcc-12.1.0-RC-20220429-dkarm/gcc/gcc.cc
---- gcc-12.1.0-RC-20220429/gcc/gcc.cc	2022-04-29 14:58:23.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dkarm/gcc/gcc.cc	2022-04-30 13:31:09.120134164 +0100
-@@ -860,6 +860,11 @@
+diff --git a/gcc/gcc.cc b/gcc/gcc.cc
+index bb07cc244e3..eff31f5093d 100644
+--- a/gcc/gcc.cc
++++ b/gcc/gcc.cc
+@@ -860,6 +860,11 @@ proper position among the other output files.  */
  #endif
  #endif
  
@@ -194,7 +200,7 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/gcc.cc gcc-12.1.0-RC-20220429-dkarm/gcc/g
  /* config.h can define STARTFILE_SPEC to override the default crt0 files.  */
  #ifndef STARTFILE_SPEC
  #define STARTFILE_SPEC  \
-@@ -1204,6 +1209,7 @@
+@@ -1204,6 +1209,7 @@ static const char *link_spec = LINK_SPEC;
  static const char *lib_spec = LIB_SPEC;
  static const char *link_gomp_spec = "";
  static const char *libgcc_spec = LIBGCC_SPEC;
@@ -202,7 +208,7 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/gcc.cc gcc-12.1.0-RC-20220429-dkarm/gcc/g
  static const char *endfile_spec = ENDFILE_SPEC;
  static const char *startfile_spec = STARTFILE_SPEC;
  static const char *linker_name_spec = LINKER_NAME;
-@@ -1709,6 +1715,7 @@
+@@ -1709,6 +1715,7 @@ static struct spec_list static_specs[] =
    INIT_STATIC_SPEC ("lib",			&lib_spec),
    INIT_STATIC_SPEC ("link_gomp",		&link_gomp_spec),
    INIT_STATIC_SPEC ("libgcc",			&libgcc_spec),
@@ -210,19 +216,21 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/gcc.cc gcc-12.1.0-RC-20220429-dkarm/gcc/g
    INIT_STATIC_SPEC ("startfile",		&startfile_spec),
    INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
    INIT_STATIC_SPEC ("version",			&compiler_version),
-diff -NBaur gcc-12.1.0-RC-20220429/libgcc/config/arm/t-bpabi gcc-12.1.0-RC-20220429-dkarm/libgcc/config/arm/t-bpabi
---- gcc-12.1.0-RC-20220429/libgcc/config/arm/t-bpabi	2022-04-29 14:58:25.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dkarm/libgcc/config/arm/t-bpabi	2022-04-30 13:31:09.120134164 +0100
-@@ -17,4 +17,4 @@
+diff --git a/libgcc/config/arm/t-bpabi b/libgcc/config/arm/t-bpabi
+index dddddc7c444..c2502597953 100644
+--- a/libgcc/config/arm/t-bpabi
++++ b/libgcc/config/arm/t-bpabi
+@@ -17,4 +17,4 @@ SHLIB_MAPFILES += $(srcdir)/config/arm/libgcc-bpabi.ver
  # On ARM, specifying -fnon-call-exceptions will needlessly pull in
  # the unwinder in simple programs which use 64-bit division.  Omitting
  # the option is safe.
 -LIB2_DIVMOD_EXCEPTION_FLAGS := -fexceptions
 +LIB2_DIVMOD_EXCEPTION_FLAGS := -fno-exceptions
-diff -NBaur gcc-12.1.0-RC-20220429/libgcc/crtstuff.c gcc-12.1.0-RC-20220429-dkarm/libgcc/crtstuff.c
---- gcc-12.1.0-RC-20220429/libgcc/crtstuff.c	2022-04-29 14:58:25.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dkarm/libgcc/crtstuff.c	2022-04-30 13:31:09.120134164 +0100
-@@ -325,7 +325,7 @@
+diff --git a/libgcc/crtstuff.c b/libgcc/crtstuff.c
+index b98b86a5a88..3f62b3616d2 100644
+--- a/libgcc/crtstuff.c
++++ b/libgcc/crtstuff.c
+@@ -325,7 +325,7 @@ register_tm_clones (void)
  
  #ifdef OBJECT_FORMAT_ELF
  
