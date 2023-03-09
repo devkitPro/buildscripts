@@ -1,3 +1,19 @@
+diff --git a/gcc/config.gcc b/gcc/config.gcc
+index c5064dd3766..b244608f001 100644
+--- a/gcc/config.gcc
++++ b/gcc/config.gcc
+@@ -1366,6 +1366,11 @@ arm*-*-eabi* | arm*-*-symbianelf* | arm*-*-rtems* | arm*-*-fuchsia*)
+ 	  tm_file="$tm_file newlib-stdint.h"
+ 	  tmake_file="${tmake_file} arm/t-bpabi"
+ 	  use_gcc_stdint=wrap
++	  tm_file="${tm_file} devkitpro.h"
++	  extra_options="${extra_options} devkitpro.opt"
++	  case ${enable_threads} in
++		"" | yes | posix) thread_file='posix' ;;
++	  esac
+ 	  ;;
+ 	arm*-*-fuchsia*)
+ 	  tm_file="${tm_file} fuchsia.h arm/fuchsia-elf.h glibc-stdint.h"
 diff --git a/gcc/config/arm/arm-cpus.in b/gcc/config/arm/arm-cpus.in
 index 0d3082b569f..15be7fc47b3 100644
 --- a/gcc/config/arm/arm-cpus.in
@@ -168,6 +184,74 @@ index bfb294beaa3..7e2e1c7bbbe 100644
 -#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %{!nolibc:%L} --end-group"
 +#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
 +
+diff --git a/gcc/config/devkitpro.h b/gcc/config/devkitpro.h
+new file mode 100644
+index 00000000000..180a9ea8553
+--- /dev/null
++++ b/gcc/config/devkitpro.h
+@@ -0,0 +1,27 @@
++/* Definitions for devkitPro toolchains.
++   Copyright (C) 2016-2018 Free Software Foundation, Inc.
++   This file is part of GCC.
++   GCC is free software; you can redistribute it and/or modify it
++   under the terms of the GNU General Public License as published
++   by the Free Software Foundation; either version 3, or (at your
++   option) any later version.
++   GCC is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
++   or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
++   License for more details.
++   Under Section 7 of GPL version 3, you are granted additional
++   permissions described in the GCC Runtime Library Exception, version
++   3.1, as published by the Free Software Foundation.
++   You should have received a copy of the GNU General Public License and
++   a copy of the GCC Runtime Library Exception along with this program;
++   see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#undef TARGET_OS_CPP_BUILTINS
++#define TARGET_OS_CPP_BUILTINS()                \
++    do {                                        \
++        builtin_define ("__DEVKITPRO__");       \
++        builtin_define ("__DEVKITARM__");       \
++    } while (0)
++
++
+diff --git a/gcc/config/devkitpro.opt b/gcc/config/devkitpro.opt
+new file mode 100644
+index 00000000000..9acbbf9d27c
+--- /dev/null
++++ b/gcc/config/devkitpro.opt
+@@ -0,0 +1,29 @@
++; Options for devkitPro toolchains.
++
++; Copyright (C) 2011-2018 Free Software Foundation, Inc.
++;
++; This file is part of GCC.
++;
++; GCC is free software; you can redistribute it and/or modify it under
++; the terms of the GNU General Public License as published by the Free
++; Software Foundation; either version 3, or (at your option) any later
++; version.
++;
++; GCC is distributed in the hope that it will be useful, but WITHOUT ANY
++; WARRANTY; without even the implied warranty of MERCHANTABILITY or
++; FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++; for more details.
++;
++; You should have received a copy of the GNU General Public License
++; along with GCC; see the file COPYING3.  If not see
++; <http://www.gnu.org/licenses/>.
++
++; See the GCC internals manual (options.texi) for a description of
++; this file's format.
++
++; Please try to keep this file in ASCII collating order.
++
++pthread
++Driver
++
++; This comment is to ensure we retain the blank line above.
 diff --git a/gcc/config/i386/host-mingw32.cc b/gcc/config/i386/host-mingw32.cc
 index 3b0d83ffc60..6e063b6ccd0 100644
 --- a/gcc/config/i386/host-mingw32.cc
@@ -239,3 +323,48 @@ index b98b86a5a88..3f62b3616d2 100644
  /* Declare the __dso_handle variable.  It should have a unique value
     in every shared-object; in a main program its value is zero.  The
     object should in any case be protected.  This means the instance
+diff --git a/libgcc/gthr.h b/libgcc/gthr.h
+index 7943c94f6d1..1edc5360f6a 100644
+--- a/libgcc/gthr.h
++++ b/libgcc/gthr.h
+@@ -136,7 +136,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+ /* The pe-coff weak support isn't fully compatible to ELF's weak.
+    For static libraries it might would work, but as we need to deal
+    with shared versions too, we disable it for mingw-targets.  */
+-#ifdef __MINGW32__
++#ifdef __MINGW32__ || defined(__DEVKITARM__)
+ #undef GTHREAD_USE_WEAK
+ #define GTHREAD_USE_WEAK 0
+ #endif
+diff --git a/libstdc++-v3/include/Makefile.am b/libstdc++-v3/include/Makefile.am
+index 7708f4cf6c5..01743392303 100644
+--- a/libstdc++-v3/include/Makefile.am
++++ b/libstdc++-v3/include/Makefile.am
+@@ -1366,6 +1366,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
+ 	    -e '/^#/s/\(${uppercase}${uppercase}*\)/_GLIBCXX_\1/g' \
+ 	    -e 's/_GLIBCXX_SUPPORTS_WEAK/__GXX_WEAK__/g' \
+ 	    -e 's/_GLIBCXX___MINGW32_GLIBCXX___/__MINGW32__/g' \
++	    -e 's/_GLIBCXX___DEVKITARM_GLIBCXX___/__DEVKITARM__/g' \
+ 	    -e 's,^#include "\(.*\)",#include <bits/\1>,g' \
+ 	    < $< > $@
+ 
+diff --git a/libstdc++-v3/include/Makefile.in b/libstdc++-v3/include/Makefile.in
+index 7023c2de23e..33bec80c2ce 100644
+--- a/libstdc++-v3/include/Makefile.in
++++ b/libstdc++-v3/include/Makefile.in
+@@ -336,6 +336,7 @@ prefix = @prefix@
+ program_transform_name = @program_transform_name@
+ psdir = @psdir@
+ python_mod_dir = @python_mod_dir@
++runstatedir = @runstatedir@
+ sbindir = @sbindir@
+ sharedstatedir = @sharedstatedir@
+ srcdir = @srcdir@
+@@ -1857,6 +1858,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
+ 	    -e '/^#/s/\(${uppercase}${uppercase}*\)/_GLIBCXX_\1/g' \
+ 	    -e 's/_GLIBCXX_SUPPORTS_WEAK/__GXX_WEAK__/g' \
+ 	    -e 's/_GLIBCXX___MINGW32_GLIBCXX___/__MINGW32__/g' \
++	    -e 's/_GLIBCXX___DEVKITARM_GLIBCXX___/__DEVKITARM__/g' \
+ 	    -e 's,^#include "\(.*\)",#include <bits/\1>,g' \
+ 	    < $< > $@
+ 
