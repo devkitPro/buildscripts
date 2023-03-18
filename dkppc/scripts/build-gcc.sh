@@ -76,6 +76,8 @@ cd $BUILDDIR
 mkdir -p $target/gcc
 cd $target/gcc
 
+export gcc_cv_libc_provides_ssp=yes
+
 if [ ! -f configured-gcc ]
 then
 	CFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
@@ -136,7 +138,7 @@ unset CXX
 
 if [ ! -f configured-newlib ]
 then
-	CFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
+	CFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections -DCUSTOM_MALLOC_LOCK" \
 	../../newlib-$NEWLIB_VER/configure \
 	--target=$target \
 	--prefix=$prefix \
