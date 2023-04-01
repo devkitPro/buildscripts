@@ -1,7 +1,56 @@
-diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.cc gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64.cc
---- gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.cc	2022-04-29 14:58:22.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64.cc	2022-05-02 21:50:30.090088643 +0100
-@@ -19417,8 +19417,24 @@
+diff --git a/gcc/config.gcc b/gcc/config.gcc
+index c5064dd3766..decfa78fb7b 100644
+--- a/gcc/config.gcc
++++ b/gcc/config.gcc
+@@ -1093,7 +1093,14 @@ aarch64*-*-elf | aarch64*-*-fuchsia* | aarch64*-*-rtems*)
+ 	tmake_file="${tmake_file} aarch64/t-aarch64"
+ 	case $target in
+ 	aarch64-*-elf*)
++		default_use_cxa_atexit=yes
+ 		use_gcc_stdint=wrap
++		tm_file="${tm_file} devkitpro.h"
++		tm_defines="${tm_defines}  TARGET_DEFAULT_ASYNC_UNWIND_TABLES=1"
++		extra_options="${extra_options} devkitpro.opt"
++		case ${enable_threads} in
++			"" | yes | posix) thread_file='posix' ;;
++		esac
+ 		;;
+         aarch64-*-fuchsia*)
+                 tm_file="${tm_file} fuchsia.h"
+diff --git a/gcc/config/aarch64/aarch64-elf-raw.h b/gcc/config/aarch64/aarch64-elf-raw.h
+index d4d820a9d54..ed5dd440846 100644
+--- a/gcc/config/aarch64/aarch64-elf-raw.h
++++ b/gcc/config/aarch64/aarch64-elf-raw.h
+@@ -22,6 +22,7 @@
+ #ifndef GCC_AARCH64_ELF_RAW_H
+ #define GCC_AARCH64_ELF_RAW_H
+ 
++#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
+ #define STARTFILE_SPEC " crti%O%s crtbegin%O%s crt0%O%s"
+ #define ENDFILE_SPEC \
+   " crtend%O%s crtn%O%s " \
+diff --git a/gcc/config/aarch64/aarch64-opts.h b/gcc/config/aarch64/aarch64-opts.h
+index 93572fe8330..9327c52a819 100644
+--- a/gcc/config/aarch64/aarch64-opts.h
++++ b/gcc/config/aarch64/aarch64-opts.h
+@@ -48,6 +48,12 @@ enum aarch64_tls_type {
+   TLS_DESCRIPTORS
+ };
+ 
++/* Which thread pointer access sequence to use.  */
++enum aarch64_tp_type {
++  TP_HARD,
++  TP_SOFT
++};
++
+ /* The code model defines the address generation strategy.
+    Most have a PIC and non-PIC variant.  */
+ enum aarch64_code_model {
+diff --git a/gcc/config/aarch64/aarch64.cc b/gcc/config/aarch64/aarch64.cc
+index 5c9e7791a12..718db155d57 100644
+--- a/gcc/config/aarch64/aarch64.cc
++++ b/gcc/config/aarch64/aarch64.cc
+@@ -19413,8 +19413,24 @@ aarch64_load_tp (rtx target)
        || !register_operand (target, Pmode))
      target = gen_reg_rtx (Pmode);
  
@@ -28,21 +77,11 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.cc gcc-12.1.0-RC-2
    return target;
  }
  
-diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64-elf-raw.h gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64-elf-raw.h
---- gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64-elf-raw.h	2022-04-29 14:58:22.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64-elf-raw.h	2022-05-02 21:50:30.086094234 +0100
-@@ -22,6 +22,7 @@
- #ifndef GCC_AARCH64_ELF_RAW_H
- #define GCC_AARCH64_ELF_RAW_H
- 
-+#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
- #define STARTFILE_SPEC " crti%O%s crtbegin%O%s crt0%O%s"
- #define ENDFILE_SPEC \
-   " crtend%O%s crtn%O%s " \
-diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.h gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64.h
---- gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.h	2022-04-29 14:58:22.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64.h	2022-05-02 21:50:30.090088643 +0100
-@@ -1245,6 +1245,10 @@
+diff --git a/gcc/config/aarch64/aarch64.h b/gcc/config/aarch64/aarch64.h
+index 359b6e8561f..f5b596fc312 100644
+--- a/gcc/config/aarch64/aarch64.h
++++ b/gcc/config/aarch64/aarch64.h
+@@ -1245,6 +1245,10 @@ typedef struct
  /* Check TLS Descriptors mechanism is selected.  */
  #define TARGET_TLS_DESC (aarch64_tls_dialect == TLS_DESCRIPTORS)
  
@@ -53,7 +92,7 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.h gcc-12.1.0-RC-20
  extern enum aarch64_code_model aarch64_cmodel;
  
  /* When using the tiny addressing model conditional and unconditional branches
-@@ -1290,7 +1294,7 @@
+@@ -1290,7 +1294,7 @@ extern const char *aarch64_rewrite_mcpu (int argc, const char **argv);
  #define MCPU_TO_MARCH_SPEC_FUNCTIONS \
    { "rewrite_mcpu", aarch64_rewrite_mcpu },
  
@@ -62,10 +101,11 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.h gcc-12.1.0-RC-20
  extern const char *host_detect_local_cpu (int argc, const char **argv);
  #define HAVE_LOCAL_CPU_DETECT
  # define EXTRA_SPEC_FUNCTIONS						\
-diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.md gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64.md
---- gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.md	2022-04-29 14:58:22.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64.md	2022-05-02 21:50:30.090088643 +0100
-@@ -6899,11 +6899,22 @@
+diff --git a/gcc/config/aarch64/aarch64.md b/gcc/config/aarch64/aarch64.md
+index 34b8059b45b..4debacf3cb9 100644
+--- a/gcc/config/aarch64/aarch64.md
++++ b/gcc/config/aarch64/aarch64.md
+@@ -6906,11 +6906,22 @@
  (define_insn "aarch64_load_tp_hard"
    [(set (match_operand:DI 0 "register_operand" "=r")
  	(unspec:DI [(const_int 0)] UNSPEC_TLS))]
@@ -90,10 +130,11 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.md gcc-12.1.0-RC-2
  ;; The TLS ABI specifically requires that the compiler does not schedule
  ;; instructions in the TLS stubs, in order to enable linker relaxation.
  ;; Therefore we treat the stubs as an atomic sequence.
-diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.opt gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64.opt
---- gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.opt	2022-04-29 14:58:22.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64.opt	2022-05-02 21:50:30.090088643 +0100
-@@ -122,6 +122,21 @@
+diff --git a/gcc/config/aarch64/aarch64.opt b/gcc/config/aarch64/aarch64.opt
+index 92220b26ee2..68abc1764f6 100644
+--- a/gcc/config/aarch64/aarch64.opt
++++ b/gcc/config/aarch64/aarch64.opt
+@@ -122,6 +122,21 @@ Enum(aarch64_tls_size) String(32) Value(32)
  EnumValue
  Enum(aarch64_tls_size) String(48) Value(48)
  
@@ -115,7 +156,7 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.opt gcc-12.1.0-RC-
  march=
  Target RejectNegative Negative(march=) ToLower Joined Var(aarch64_arch_string)
  Use features of architecture ARCH.
-@@ -260,7 +275,7 @@
+@@ -260,7 +275,7 @@ TargetVariable
  long aarch64_stack_protector_guard_offset = 0
  
  moutline-atomics
@@ -124,26 +165,11 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64.opt gcc-12.1.0-RC-
  Generate local calls to out-of-line atomic operations.
  
  -param=aarch64-sve-compare-costs=
-diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64-opts.h gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64-opts.h
---- gcc-12.1.0-RC-20220429/gcc/config/aarch64/aarch64-opts.h	2022-04-29 14:58:22.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/aarch64-opts.h	2022-05-02 21:50:30.086094234 +0100
-@@ -48,6 +48,12 @@
-   TLS_DESCRIPTORS
- };
- 
-+/* Which thread pointer access sequence to use.  */
-+enum aarch64_tp_type {
-+  TP_HARD,
-+  TP_SOFT
-+};
-+
- /* The code model defines the address generation strategy.
-    Most have a PIC and non-PIC variant.  */
- enum aarch64_code_model {
-diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/t-aarch64 gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/t-aarch64
---- gcc-12.1.0-RC-20220429/gcc/config/aarch64/t-aarch64	2022-04-29 14:58:22.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dka64/gcc/config/aarch64/t-aarch64	2022-05-02 21:50:30.090088643 +0100
-@@ -177,8 +177,10 @@
+diff --git a/gcc/config/aarch64/t-aarch64 b/gcc/config/aarch64/t-aarch64
+index ba74abc0a43..5202ec05d0b 100644
+--- a/gcc/config/aarch64/t-aarch64
++++ b/gcc/config/aarch64/t-aarch64
+@@ -177,8 +177,10 @@ aarch64-cc-fusion.o: $(srcdir)/config/aarch64/aarch64-cc-fusion.cc \
  		$(srcdir)/config/aarch64/aarch64-cc-fusion.cc
  
  comma=,
@@ -156,10 +182,12 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/aarch64/t-aarch64 gcc-12.1.0-RC-20
  
  insn-conditions.md: s-check-sve-md
  s-check-sve-md: $(srcdir)/config/aarch64/check-sve-md.awk \
-diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/devkitpro.h gcc-12.1.0-RC-20220429-dka64/gcc/config/devkitpro.h
---- gcc-12.1.0-RC-20220429/gcc/config/devkitpro.h	1970-01-01 01:00:00.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dka64/gcc/config/devkitpro.h	2022-05-02 22:04:49.962851033 +0100
-@@ -0,0 +1,29 @@
+diff --git a/gcc/config/devkitpro.h b/gcc/config/devkitpro.h
+new file mode 100644
+index 00000000000..a25459e4352
+--- /dev/null
++++ b/gcc/config/devkitpro.h
+@@ -0,0 +1,32 @@
 +/* Definitions for devkitPro toolchains.
 +   Copyright (C) 2016-2018 Free Software Foundation, Inc.
 +
@@ -188,10 +216,15 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/devkitpro.h gcc-12.1.0-RC-20220429
 +#define TARGET_OS_CPP_BUILTINS()                \
 +    do {                                        \
 +        builtin_define ("__DEVKITA64__");       \
++        builtin_define ("__DEVKITPRO__");       \
 +    } while (0)
-diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/devkitpro.opt gcc-12.1.0-RC-20220429-dka64/gcc/config/devkitpro.opt
---- gcc-12.1.0-RC-20220429/gcc/config/devkitpro.opt	1970-01-01 01:00:00.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dka64/gcc/config/devkitpro.opt	2022-05-02 21:50:30.090088643 +0100
++
++
+diff --git a/gcc/config/devkitpro.opt b/gcc/config/devkitpro.opt
+new file mode 100644
+index 00000000000..9acbbf9d27c
+--- /dev/null
++++ b/gcc/config/devkitpro.opt
 @@ -0,0 +1,29 @@
 +; Options for devkitPro toolchains.
 +
@@ -222,10 +255,11 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/devkitpro.opt gcc-12.1.0-RC-202204
 +Driver
 +
 +; This comment is to ensure we retain the blank line above.
-diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/i386/host-mingw32.cc gcc-12.1.0-RC-20220429-dka64/gcc/config/i386/host-mingw32.cc
---- gcc-12.1.0-RC-20220429/gcc/config/i386/host-mingw32.cc	2022-04-29 14:58:22.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dka64/gcc/config/i386/host-mingw32.cc	2022-05-02 21:50:30.090088643 +0100
-@@ -45,7 +45,11 @@
+diff --git a/gcc/config/i386/host-mingw32.cc b/gcc/config/i386/host-mingw32.cc
+index 3b0d83ffc60..6e063b6ccd0 100644
+--- a/gcc/config/i386/host-mingw32.cc
++++ b/gcc/config/i386/host-mingw32.cc
+@@ -45,7 +45,11 @@ static size_t mingw32_gt_pch_alloc_granularity (void);
  static inline void w32_error(const char*, const char*, int, const char*);
  
  /* FIXME: Is this big enough?  */
@@ -237,28 +271,11 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/config/i386/host-mingw32.cc gcc-12.1.0-RC
  
  /* Granularity for reserving address space.  */
  static size_t va_granularity = 0x10000;
-diff -NBaur gcc-12.1.0-RC-20220429/gcc/config.gcc gcc-12.1.0-RC-20220429-dka64/gcc/config.gcc
---- gcc-12.1.0-RC-20220429/gcc/config.gcc	2022-04-29 14:58:22.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dka64/gcc/config.gcc	2022-05-02 21:50:30.086094234 +0100
-@@ -1093,7 +1093,14 @@
- 	tmake_file="${tmake_file} aarch64/t-aarch64"
- 	case $target in
- 	aarch64-*-elf*)
-+		default_use_cxa_atexit=yes
- 		use_gcc_stdint=wrap
-+		tm_file="${tm_file} devkitpro.h"
-+		tm_defines="${tm_defines}  TARGET_DEFAULT_ASYNC_UNWIND_TABLES=1"
-+		extra_options="${extra_options} devkitpro.opt"
-+		case ${enable_threads} in
-+			"" | yes | posix) thread_file='posix' ;;
-+		esac
- 		;;
-         aarch64-*-fuchsia*)
-                 tm_file="${tm_file} fuchsia.h"
-diff -NBaur gcc-12.1.0-RC-20220429/gcc/gcc.cc gcc-12.1.0-RC-20220429-dka64/gcc/gcc.cc
---- gcc-12.1.0-RC-20220429/gcc/gcc.cc	2022-04-29 14:58:23.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dka64/gcc/gcc.cc	2022-05-02 21:50:30.090088643 +0100
-@@ -860,6 +860,11 @@
+diff --git a/gcc/gcc.cc b/gcc/gcc.cc
+index bb07cc244e3..eff31f5093d 100644
+--- a/gcc/gcc.cc
++++ b/gcc/gcc.cc
+@@ -860,6 +860,11 @@ proper position among the other output files.  */
  #endif
  #endif
  
@@ -270,7 +287,7 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/gcc.cc gcc-12.1.0-RC-20220429-dka64/gcc/g
  /* config.h can define STARTFILE_SPEC to override the default crt0 files.  */
  #ifndef STARTFILE_SPEC
  #define STARTFILE_SPEC  \
-@@ -1204,6 +1209,7 @@
+@@ -1204,6 +1209,7 @@ static const char *link_spec = LINK_SPEC;
  static const char *lib_spec = LIB_SPEC;
  static const char *link_gomp_spec = "";
  static const char *libgcc_spec = LIBGCC_SPEC;
@@ -278,7 +295,7 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/gcc.cc gcc-12.1.0-RC-20220429-dka64/gcc/g
  static const char *endfile_spec = ENDFILE_SPEC;
  static const char *startfile_spec = STARTFILE_SPEC;
  static const char *linker_name_spec = LINKER_NAME;
-@@ -1709,6 +1715,7 @@
+@@ -1709,6 +1715,7 @@ static struct spec_list static_specs[] =
    INIT_STATIC_SPEC ("lib",			&lib_spec),
    INIT_STATIC_SPEC ("link_gomp",		&link_gomp_spec),
    INIT_STATIC_SPEC ("libgcc",			&libgcc_spec),
@@ -286,10 +303,11 @@ diff -NBaur gcc-12.1.0-RC-20220429/gcc/gcc.cc gcc-12.1.0-RC-20220429-dka64/gcc/g
    INIT_STATIC_SPEC ("startfile",		&startfile_spec),
    INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
    INIT_STATIC_SPEC ("version",			&compiler_version),
-diff -NBaur gcc-12.1.0-RC-20220429/libgcc/crtstuff.c gcc-12.1.0-RC-20220429-dka64/libgcc/crtstuff.c
---- gcc-12.1.0-RC-20220429/libgcc/crtstuff.c	2022-04-29 14:58:25.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dka64/libgcc/crtstuff.c	2022-05-02 21:50:30.094083051 +0100
-@@ -325,7 +325,7 @@
+diff --git a/libgcc/crtstuff.c b/libgcc/crtstuff.c
+index b98b86a5a88..3f62b3616d2 100644
+--- a/libgcc/crtstuff.c
++++ b/libgcc/crtstuff.c
+@@ -325,7 +325,7 @@ register_tm_clones (void)
  
  #ifdef OBJECT_FORMAT_ELF
  
@@ -298,10 +316,11 @@ diff -NBaur gcc-12.1.0-RC-20220429/libgcc/crtstuff.c gcc-12.1.0-RC-20220429-dka6
  /* Declare the __dso_handle variable.  It should have a unique value
     in every shared-object; in a main program its value is zero.  The
     object should in any case be protected.  This means the instance
-diff -NBaur gcc-12.1.0-RC-20220429/libgcc/gthr.h gcc-12.1.0-RC-20220429-dka64/libgcc/gthr.h
---- gcc-12.1.0-RC-20220429/libgcc/gthr.h	2022-04-29 14:58:25.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dka64/libgcc/gthr.h	2022-05-02 21:50:30.094083051 +0100
-@@ -136,7 +136,7 @@
+diff --git a/libgcc/gthr.h b/libgcc/gthr.h
+index 7943c94f6d1..6d23362f7f0 100644
+--- a/libgcc/gthr.h
++++ b/libgcc/gthr.h
+@@ -136,7 +136,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
  /* The pe-coff weak support isn't fully compatible to ELF's weak.
     For static libraries it might would work, but as we need to deal
     with shared versions too, we disable it for mingw-targets.  */
@@ -310,10 +329,11 @@ diff -NBaur gcc-12.1.0-RC-20220429/libgcc/gthr.h gcc-12.1.0-RC-20220429-dka64/li
  #undef GTHREAD_USE_WEAK
  #define GTHREAD_USE_WEAK 0
  #endif
-diff -NBaur gcc-12.1.0-RC-20220429/libstdc++-v3/include/Makefile.am gcc-12.1.0-RC-20220429-dka64/libstdc++-v3/include/Makefile.am
---- gcc-12.1.0-RC-20220429/libstdc++-v3/include/Makefile.am	2022-04-29 14:58:26.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dka64/libstdc++-v3/include/Makefile.am	2022-05-02 21:50:30.094083051 +0100
-@@ -1366,6 +1366,7 @@
+diff --git a/libstdc++-v3/include/Makefile.am b/libstdc++-v3/include/Makefile.am
+index 7708f4cf6c5..d3f484a5623 100644
+--- a/libstdc++-v3/include/Makefile.am
++++ b/libstdc++-v3/include/Makefile.am
+@@ -1366,6 +1366,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
  	    -e '/^#/s/\(${uppercase}${uppercase}*\)/_GLIBCXX_\1/g' \
  	    -e 's/_GLIBCXX_SUPPORTS_WEAK/__GXX_WEAK__/g' \
  	    -e 's/_GLIBCXX___MINGW32_GLIBCXX___/__MINGW32__/g' \
@@ -321,10 +341,11 @@ diff -NBaur gcc-12.1.0-RC-20220429/libstdc++-v3/include/Makefile.am gcc-12.1.0-R
  	    -e 's,^#include "\(.*\)",#include <bits/\1>,g' \
  	    < $< > $@
  
-diff -NBaur gcc-12.1.0-RC-20220429/libstdc++-v3/include/Makefile.in gcc-12.1.0-RC-20220429-dka64/libstdc++-v3/include/Makefile.in
---- gcc-12.1.0-RC-20220429/libstdc++-v3/include/Makefile.in	2022-04-29 14:58:26.000000000 +0100
-+++ gcc-12.1.0-RC-20220429-dka64/libstdc++-v3/include/Makefile.in	2022-05-02 21:50:30.094083051 +0100
-@@ -1857,6 +1857,7 @@
+diff --git a/libstdc++-v3/include/Makefile.in b/libstdc++-v3/include/Makefile.in
+index 7023c2de23e..d150a616d13 100644
+--- a/libstdc++-v3/include/Makefile.in
++++ b/libstdc++-v3/include/Makefile.in
+@@ -1857,6 +1857,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
  	    -e '/^#/s/\(${uppercase}${uppercase}*\)/_GLIBCXX_\1/g' \
  	    -e 's/_GLIBCXX_SUPPORTS_WEAK/__GXX_WEAK__/g' \
  	    -e 's/_GLIBCXX___MINGW32_GLIBCXX___/__MINGW32__/g' \
