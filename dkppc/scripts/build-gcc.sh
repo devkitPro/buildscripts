@@ -95,6 +95,7 @@ then
 	--enable-libstdcxx-filesystem-ts \
 	--disable-tm-clone-registry \
 	--disable-__cxa_atexit \
+	--disable-libssp \
 	--enable-cxx-flags='-ffunction-sections -fdata-sections' \
 	--target=$target \
 	--with-newlib \
