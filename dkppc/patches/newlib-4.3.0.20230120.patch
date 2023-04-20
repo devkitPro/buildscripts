@@ -6342,10 +6342,10 @@ index 000000000..d15eab89d
 +
 diff --git a/libgloss/libsysbase/dirent.c b/libgloss/libsysbase/dirent.c
 new file mode 100644
-index 000000000..bed699102
+index 000000000..482d2f814
 --- /dev/null
 +++ b/libgloss/libsysbase/dirent.c
-@@ -0,0 +1,255 @@
+@@ -0,0 +1,257 @@
 +#include <malloc.h>
 +#include <errno.h>
 +#include <string.h>
@@ -6465,6 +6465,7 @@ index 000000000..bed699102
 +
 +	dirp->position = 0;	// 0th position means no file name has been returned yet
 +	dirp->fileData.d_ino = -1;
++	dirp->fileData.d_type = DT_UNKNOWN;
 +	dirp->fileData.d_name[0] = '\0';
 +
 +	return dirp;
@@ -6487,7 +6488,7 @@ index 000000000..bed699102
 +
 +struct dirent* readdir (DIR *dirp) {
 +	struct stat st;
-+	char filename[NAME_MAX];
++	char filename[NAME_MAX+1];
 +	int res;
 +	int olderrno = errno;
 +
@@ -6510,7 +6511,7 @@ index 000000000..bed699102
 +	// We've moved forward in the directory
 +	dirp->position += 1;
 +
-+	if (strnlen(filename, NAME_MAX) >= sizeof(dirp->fileData.d_name)) {
++	if (strnlen(filename, sizeof(filename)) >= sizeof(dirp->fileData.d_name)) {
 +		errno = EOVERFLOW;
 +		return NULL;
 +	}
@@ -6525,7 +6526,7 @@ index 000000000..bed699102
 +
 +int readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result) {
 +	struct stat st;
-+	char filename[NAME_MAX];
++	char filename[NAME_MAX+1];
 +	int res;
 +
 +	if (!dirp) {
@@ -6548,13 +6549,14 @@ index 000000000..bed699102
 +	// We've moved forward in the directory
 +	dirp->position += 1;
 +
-+	if (strnlen(filename, NAME_MAX) >= sizeof(entry->d_name)) {
++	if (strnlen(filename, sizeof(filename)) >= sizeof(entry->d_name)) {
 +		errno = EOVERFLOW;
 +		return EOVERFLOW;
 +	}
 +
 +	strncpy (entry->d_name, filename, sizeof(entry->d_name));
 +	entry->d_ino = st.st_ino;
++	entry->d_type = IFTODT(st.st_mode);
 +
 +	*result = entry;
 +	return 0;
@@ -6572,7 +6574,7 @@ index 000000000..bed699102
 +
 +
 +void seekdir(DIR *dirp, long int loc) {
-+	char filename[NAME_MAX];
++	char filename[NAME_MAX+1];
 +
 +	if (!dirp || loc < 0) {
 +		return;
@@ -6930,7 +6932,7 @@ index 000000000..2bada9736
 +}
 diff --git a/libgloss/libsysbase/fpathconf.c b/libgloss/libsysbase/fpathconf.c
 new file mode 100644
-index 000000000..6911163ae
+index 000000000..453f64870
 --- /dev/null
 +++ b/libgloss/libsysbase/fpathconf.c
 @@ -0,0 +1,30 @@
@@ -6958,7 +6960,7 @@ index 000000000..6911163ae
 +
 +        if(devoptab_list[dev]->fpathconf_r) {
 +                r->deviceData = devoptab_list[dev]->deviceData;
-+                ret = devoptab_list[dev]->fpathconf_r(r, fd, name);
++                ret = devoptab_list[dev]->fpathconf_r(r, handle->fileStruct, name);
 +        } else
 +                r->_errno=ENOSYS;
 +
@@ -8678,10 +8680,10 @@ index 000000000..b54714775
 +}
 diff --git a/libgloss/libsysbase/utime.c b/libgloss/libsysbase/utime.c
 new file mode 100644
-index 000000000..462e86520
+index 000000000..14b459eef
 --- /dev/null
 +++ b/libgloss/libsysbase/utime.c
-@@ -0,0 +1,41 @@
+@@ -0,0 +1,45 @@
 +#include "config.h"
 +
 +#include <errno.h>
@@ -8719,6 +8721,10 @@ index 000000000..462e86520
 +                t[0].tv_usec = 0;
 +                t[1].tv_sec  = times->modtime;
 +                t[1].tv_usec = 0;
++        } else if (gettimeofday(&t[0], NULL) != -1) {
++                t[1] = t[0];
++        } else {
++                return -1;
 +        }
 +
 +        return utimes(filename, t);
