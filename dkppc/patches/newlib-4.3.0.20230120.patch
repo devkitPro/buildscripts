@@ -9123,7 +9123,7 @@ index bc967bd70..b0d8d64f0 100644
  @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libc_a_CPPFLAGS) $(CPPFLAGS) $(libc_a_CFLAGS) $(CFLAGS) -MT libc/machine/powerpc/libc_a-vfprintf.o -MD -MP -MF libc/machine/powerpc/$(DEPDIR)/libc_a-vfprintf.Tpo -c -o libc/machine/powerpc/libc_a-vfprintf.o `test -f 'libc/machine/powerpc/vfprintf.c' || echo '$(srcdir)/'`libc/machine/powerpc/vfprintf.c
  @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libc/machine/powerpc/$(DEPDIR)/libc_a-vfprintf.Tpo libc/machine/powerpc/$(DEPDIR)/libc_a-vfprintf.Po
 diff --git a/newlib/configure.host b/newlib/configure.host
-index 0a1ba282a..749f1ec7d 100644
+index 0a1ba282a..25722d004 100644
 --- a/newlib/configure.host
 +++ b/newlib/configure.host
 @@ -627,6 +627,14 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
@@ -9146,10 +9146,10 @@ index 0a1ba282a..749f1ec7d 100644
  	newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES"
  	;;
 -  powerpc*-*-eabi* | \
-+	powerpc*-*-eabi*)
++  powerpc*-*-eabi*)
 +	default_newlib_io_c99_formats="yes"
 +	default_newlib_io_long_long="yes"
-+	newlib_cflags="${newlib_cflags} -DCUSTOM_MALLOC_LOCK -DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__"
++	newlib_cflags="${newlib_cflags} -DCUSTOM_MALLOC_LOCK -D__DYNAMIC_REENT__ -DGETREENT_PROVIDED -DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__"
 +	newlib_cflags="${newlib_cflags} -ffunction-sections -fdata-sections"
 +	syscall_dir=syscalls
 +	;;
@@ -9207,21 +9207,30 @@ index 23d572cd3..65310c084 100644
  extern int _stat_r (struct _reent *, const char *, struct stat *);
  extern _CLOCK_T_ _times_r (struct _reent *, struct tms *);
 diff --git a/newlib/libc/include/sys/config.h b/newlib/libc/include/sys/config.h
-index 5dcc77a80..3a33705c0 100644
+index 5dcc77a80..6930a751d 100644
 --- a/newlib/libc/include/sys/config.h
 +++ b/newlib/libc/include/sys/config.h
-@@ -8,6 +8,11 @@
- #define MALLOC_ALIGNMENT 16
- #endif
+@@ -4,8 +4,19 @@
+ #include <machine/ieeefp.h>  /* floating point macros */
+ #include <sys/features.h>	/* POSIX defs */
  
-+#ifdef _ARCH_PPC
-+#define __BUFSIZ__ 32768
-+#define MALLOC_ALIGNMENT 64
+-#ifdef __aarch64__
++#ifdef __DEVKITARM__
++#define __DYNAMIC_REENT__
 +#endif
 +
- #ifdef __AMDGCN__
- #define __DYNAMIC_REENT__
++#ifdef __DEVKITA64__
+ #define MALLOC_ALIGNMENT 16
++#define __DYNAMIC_REENT__
++#endif
++
++#ifdef __DEVKITPPC__
++#define __BUFSIZ__ 32768
++#define MALLOC_ALIGNMENT 64
++#define __DYNAMIC_REENT__
  #endif
+ 
+ #ifdef __AMDGCN__
 diff --git a/newlib/libc/include/sys/features.h b/newlib/libc/include/sys/features.h
 index 45476ce4a..d76706321 100644
 --- a/newlib/libc/include/sys/features.h
