@@ -11983,6 +11983,27 @@ index 9812add76..8410f2633 100644
  	%D%/utoa.c \
  	%D%/wcstod.c \
  	%D%/wcstoimax.c \
+diff --git a/newlib/libc/stdlib/exit.c b/newlib/libc/stdlib/exit.c
+index 9b7bd518b..f0e33bbc1 100644
+--- a/newlib/libc/stdlib/exit.c
++++ b/newlib/libc/stdlib/exit.c
+@@ -45,6 +45,16 @@ Supporting OS subroutines required: <<_exit>>.
+ #include <reent.h>
+ #include "atexit.h"
+ 
++// exit calls this handler; avoid a hard dependency on findfp by providing a weak global
++void (*__stdio_exit_handler)(void) __attribute__((weak));
++
++// exit calls this function; avoid a hard dependency on atexit by providing a simple weak implementation
++__attribute__((weak)) void __call_exitprocs(int rc, void* dso)
++{
++    extern void __libc_fini_array(void);
++    __libc_fini_array();
++}
++
+ /*
+  * Exit, flushing stdio buffers if necessary.
+  */
 diff --git a/newlib/libc/stdlib/mlock.c b/newlib/libc/stdlib/mlock.c
 index 23aa10173..ba88eb9fb 100644
 --- a/newlib/libc/stdlib/mlock.c
