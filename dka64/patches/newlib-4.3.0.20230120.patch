@@ -13,7 +13,7 @@ index 4309cd3a4..fad31dbe0 100644
  include lm32/Makefile.inc
  endif
 diff --git a/libgloss/Makefile.in b/libgloss/Makefile.in
-index a117577ea..fcbffa306 100644
+index a117577ea..44731970d 100644
 --- a/libgloss/Makefile.in
 +++ b/libgloss/Makefile.in
 @@ -173,23 +173,26 @@ check_PROGRAMS = $(am__EXEEXT_2) $(am__EXEEXT_3)
@@ -60,7 +60,7 @@ index a117577ea..fcbffa306 100644
  	$(top_srcdir)/m68k/acinclude.m4 \
  	$(top_srcdir)/mcore/acinclude.m4 \
  	$(top_srcdir)/mips/acinclude.m4 \
-@@ -421,6 +425,64 @@ libobjs_a_LIBADD =
+@@ -421,6 +425,69 @@ libobjs_a_LIBADD =
  am_libobjs_a_OBJECTS = $(am__objects_3) $(am__objects_4) \
  	$(am__objects_5) $(am__objects_6)
  libobjs_a_OBJECTS = $(am_libobjs_a_OBJECTS)
@@ -78,6 +78,7 @@ index a117577ea..fcbffa306 100644
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-chdir.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-chmod.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-clocks.$(OBJEXT) \
++@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-concatenate.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-dirent.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-environ.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-execve.$(OBJEXT) \
@@ -85,6 +86,7 @@ index a117577ea..fcbffa306 100644
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-flock.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-fnmatch.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-fork.$(OBJEXT) \
++@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-fpathconf.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-fstat.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-fsync.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-ftruncate.$(OBJEXT) \
@@ -105,6 +107,8 @@ index a117577ea..fcbffa306 100644
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-open.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-pathconf.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-read.$(OBJEXT) \
++@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-readlink.$(OBJEXT) \
++@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-realpath.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-rename.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-rmdir.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-sbrk.$(OBJEXT) \
@@ -112,6 +116,7 @@ index a117577ea..fcbffa306 100644
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-sleep.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-stat.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-statvfs.$(OBJEXT) \
++@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-symlink.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-syscall_support.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-times.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-truncate.$(OBJEXT) \
@@ -125,7 +130,7 @@ index a117577ea..fcbffa306 100644
  lm32_libgloss_a_AR = $(AR) $(ARFLAGS)
  lm32_libgloss_a_LIBADD =
  @CONFIG_LM32_TRUE@am_lm32_libgloss_a_OBJECTS = lm32/isatty.$(OBJEXT) \
-@@ -572,7 +634,8 @@ SOURCES = $(aarch64_librdimon_a_SOURCES) $(arc_libnsim_a_SOURCES) \
+@@ -572,7 +639,8 @@ SOURCES = $(aarch64_librdimon_a_SOURCES) $(arc_libnsim_a_SOURCES) \
  	$(bfin_libbfinbsp_a_SOURCES) $(bfin_libsim_a_SOURCES) \
  	$(csky_libsemi_a_SOURCES) $(d30v_libsim_a_SOURCES) \
  	$(iq2000_libeval_a_SOURCES) $(libnosys_libnosys_a_SOURCES) \
@@ -135,7 +140,7 @@ index a117577ea..fcbffa306 100644
  	$(nios2_libnios2_a_SOURCES) $(riscv_libgloss_a_SOURCES) \
  	$(riscv_libsemihost_a_SOURCES) bfin/sim-test.c iq2000/test.c \
  	$(wince_stub_exe_SOURCES)
-@@ -662,7 +725,7 @@ ETAGS = etags
+@@ -662,7 +730,7 @@ ETAGS = etags
  CTAGS = ctags
  CSCOPE = cscope
  DIST_SUBDIRS = $(SUBDIRS)
@@ -144,7 +149,7 @@ index a117577ea..fcbffa306 100644
  AARCH64_OBJTYPE = @AARCH64_OBJTYPE@
  ACLOCAL = @ACLOCAL@
  AMTAR = @AMTAR@
-@@ -772,6 +835,7 @@ pdfdir = @pdfdir@
+@@ -772,6 +840,7 @@ pdfdir = @pdfdir@
  prefix = @prefix@
  program_transform_name = @program_transform_name@
  psdir = @psdir@
@@ -152,7 +157,7 @@ index a117577ea..fcbffa306 100644
  sbindir = @sbindir@
  sharedstatedir = @sharedstatedir@
  srcdir = @srcdir@
-@@ -797,12 +861,13 @@ multilibtooldir = $(tooldir)/lib$(MULTISUBDIR)
+@@ -797,12 +866,13 @@ multilibtooldir = $(tooldir)/lib$(MULTISUBDIR)
  multilibtool_DATA = $(am__append_3) $(am__append_6) $(am__append_7) \
  	$(am__append_8) $(am__append_13) $(am__append_15) \
  	$(am__append_18) $(am__append_22) $(am__append_23) \
@@ -169,7 +174,7 @@ index a117577ea..fcbffa306 100644
  includetooldir = $(tooldir)/include
  includetool_DATA = $(am__append_16)
  includesystooldir = $(tooldir)/include/sys
-@@ -813,7 +878,7 @@ AM_CPPFLAGS = -idirafter $(srcroot)/include
+@@ -813,7 +883,7 @@ AM_CPPFLAGS = -idirafter $(srcroot)/include
  # to install (e.g. our crt0.o objects).
  noinst_LIBRARIES = libobjs.a
  libobjs_a_SOURCES = $(am__append_14) $(am__append_19) $(am__append_25) \
@@ -178,7 +183,7 @@ index a117577ea..fcbffa306 100644
  FLAGS_TO_PASS = \
  	"CC=$(CC)" \
  	"CFLAGS=$(CFLAGS)" \
-@@ -992,6 +1057,60 @@ TEXINFO_TEX = ../texinfo/texinfo.tex
+@@ -992,6 +1062,65 @@ TEXINFO_TEX = ../texinfo/texinfo.tex
  @CONFIG_LIBNOSYS_TRUE@	libnosys/write.c \
  @CONFIG_LIBNOSYS_TRUE@	libnosys/_exit.c
  
@@ -193,6 +198,7 @@ index a117577ea..fcbffa306 100644
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/chdir.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/chmod.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/clocks.c \
++@CONFIG_LIBSYSBASE_TRUE@	libsysbase/concatenate.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/dirent.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/environ.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/execve.c \
@@ -200,6 +206,7 @@ index a117577ea..fcbffa306 100644
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/flock.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/fnmatch.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/fork.c \
++@CONFIG_LIBSYSBASE_TRUE@	libsysbase/fpathconf.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/fstat.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/fsync.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/ftruncate.c \
@@ -220,6 +227,8 @@ index a117577ea..fcbffa306 100644
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/open.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/pathconf.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/read.c \
++@CONFIG_LIBSYSBASE_TRUE@	libsysbase/readlink.c \
++@CONFIG_LIBSYSBASE_TRUE@	libsysbase/realpath.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/rename.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/rmdir.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/sbrk.c \
@@ -227,6 +236,7 @@ index a117577ea..fcbffa306 100644
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/sleep.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/stat.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/statvfs.c \
++@CONFIG_LIBSYSBASE_TRUE@	libsysbase/symlink.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/syscall_support.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/times.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/truncate.c \
@@ -239,7 +249,7 @@ index a117577ea..fcbffa306 100644
  @CONFIG_LM32_TRUE@lm32_libgloss_a_SOURCES = \
  @CONFIG_LM32_TRUE@	lm32/isatty.c \
  @CONFIG_LM32_TRUE@	lm32/scall.S
-@@ -1099,7 +1218,7 @@ all: config.h
+@@ -1099,7 +1228,7 @@ all: config.h
  .SUFFIXES: .S .c .dvi .o .obj .ps
  am--refresh: Makefile
  	@:
@@ -248,7 +258,7 @@ index a117577ea..fcbffa306 100644
  	@for dep in $?; do \
  	  case '$(am__configure_deps)' in \
  	    *$$dep*) \
-@@ -1121,7 +1240,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
+@@ -1121,7 +1250,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
  	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
  	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
  	esac;
@@ -257,7 +267,7 @@ index a117577ea..fcbffa306 100644
  
  $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
  	$(SHELL) ./config.status --recheck
-@@ -1585,6 +1704,168 @@ libobjs.a: $(libobjs_a_OBJECTS) $(libobjs_a_DEPENDENCIES) $(EXTRA_libobjs_a_DEPE
+@@ -1585,6 +1714,183 @@ libobjs.a: $(libobjs_a_OBJECTS) $(libobjs_a_DEPENDENCIES) $(EXTRA_libobjs_a_DEPE
  	$(AM_V_at)-rm -f libobjs.a
  	$(AM_V_AR)$(libobjs_a_AR) libobjs.a $(libobjs_a_OBJECTS) $(libobjs_a_LIBADD)
  	$(AM_V_at)$(RANLIB) libobjs.a
@@ -292,6 +302,9 @@ index a117577ea..fcbffa306 100644
 +libsysbase/libsysbase_libsysbase_a-clocks.$(OBJEXT):  \
 +	libsysbase/$(am__dirstamp) \
 +	libsysbase/$(DEPDIR)/$(am__dirstamp)
++libsysbase/libsysbase_libsysbase_a-concatenate.$(OBJEXT):  \
++	libsysbase/$(am__dirstamp) \
++	libsysbase/$(DEPDIR)/$(am__dirstamp)
 +libsysbase/libsysbase_libsysbase_a-dirent.$(OBJEXT):  \
 +	libsysbase/$(am__dirstamp) \
 +	libsysbase/$(DEPDIR)/$(am__dirstamp)
@@ -311,6 +324,9 @@ index a117577ea..fcbffa306 100644
 +	libsysbase/$(am__dirstamp) \
 +	libsysbase/$(DEPDIR)/$(am__dirstamp)
 +libsysbase/libsysbase_libsysbase_a-fork.$(OBJEXT):  \
++	libsysbase/$(am__dirstamp) \
++	libsysbase/$(DEPDIR)/$(am__dirstamp)
++libsysbase/libsysbase_libsysbase_a-fpathconf.$(OBJEXT):  \
 +	libsysbase/$(am__dirstamp) \
 +	libsysbase/$(DEPDIR)/$(am__dirstamp)
 +libsysbase/libsysbase_libsysbase_a-fstat.$(OBJEXT):  \
@@ -373,6 +389,12 @@ index a117577ea..fcbffa306 100644
 +libsysbase/libsysbase_libsysbase_a-read.$(OBJEXT):  \
 +	libsysbase/$(am__dirstamp) \
 +	libsysbase/$(DEPDIR)/$(am__dirstamp)
++libsysbase/libsysbase_libsysbase_a-readlink.$(OBJEXT):  \
++	libsysbase/$(am__dirstamp) \
++	libsysbase/$(DEPDIR)/$(am__dirstamp)
++libsysbase/libsysbase_libsysbase_a-realpath.$(OBJEXT):  \
++	libsysbase/$(am__dirstamp) \
++	libsysbase/$(DEPDIR)/$(am__dirstamp)
 +libsysbase/libsysbase_libsysbase_a-rename.$(OBJEXT):  \
 +	libsysbase/$(am__dirstamp) \
 +	libsysbase/$(DEPDIR)/$(am__dirstamp)
@@ -392,6 +414,9 @@ index a117577ea..fcbffa306 100644
 +	libsysbase/$(am__dirstamp) \
 +	libsysbase/$(DEPDIR)/$(am__dirstamp)
 +libsysbase/libsysbase_libsysbase_a-statvfs.$(OBJEXT):  \
++	libsysbase/$(am__dirstamp) \
++	libsysbase/$(DEPDIR)/$(am__dirstamp)
++libsysbase/libsysbase_libsysbase_a-symlink.$(OBJEXT):  \
 +	libsysbase/$(am__dirstamp) \
 +	libsysbase/$(DEPDIR)/$(am__dirstamp)
 +libsysbase/libsysbase_libsysbase_a-syscall_support.$(OBJEXT):  \
@@ -426,7 +451,7 @@ index a117577ea..fcbffa306 100644
  lm32/isatty.$(OBJEXT): lm32/$(am__dirstamp) \
  	lm32/$(DEPDIR)/$(am__dirstamp)
  lm32/scall.$(OBJEXT): lm32/$(am__dirstamp) \
-@@ -1852,6 +2133,7 @@ mostlyclean-compile:
+@@ -1852,6 +2158,7 @@ mostlyclean-compile:
  	-rm -f d30v/*.$(OBJEXT)
  	-rm -f iq2000/*.$(OBJEXT)
  	-rm -f libnosys/*.$(OBJEXT)
@@ -434,7 +459,7 @@ index a117577ea..fcbffa306 100644
  	-rm -f lm32/*.$(OBJEXT)
  	-rm -f nios2/*.$(OBJEXT)
  	-rm -f riscv/*.$(OBJEXT)
-@@ -1973,6 +2255,55 @@ distclean-compile:
+@@ -1973,6 +2280,60 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@libnosys/$(DEPDIR)/unlink.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libnosys/$(DEPDIR)/wait.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libnosys/$(DEPDIR)/write.Po@am__quote@
@@ -445,6 +470,7 @@ index a117577ea..fcbffa306 100644
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-chdir.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-chmod.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-clocks.Po@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-concatenate.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-dirent.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-environ.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-execve.Po@am__quote@
@@ -452,6 +478,7 @@ index a117577ea..fcbffa306 100644
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-flock.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-fnmatch.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-fork.Po@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-fpathconf.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-fstat.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-fsync.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-ftruncate.Po@am__quote@
@@ -472,6 +499,8 @@ index a117577ea..fcbffa306 100644
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-pathconf.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-pthread.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-read.Po@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-readlink.Po@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-realpath.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-rename.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-rmdir.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-sbrk.Po@am__quote@
@@ -479,6 +508,7 @@ index a117577ea..fcbffa306 100644
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-sleep.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-stat.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-statvfs.Po@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-symlink.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-syscall_support.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-times.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-truncate.Po@am__quote@
@@ -490,7 +520,7 @@ index a117577ea..fcbffa306 100644
  @AMDEP_TRUE@@am__include@ @am__quote@lm32/$(DEPDIR)/crt0.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@lm32/$(DEPDIR)/isatty.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@lm32/$(DEPDIR)/scall.Po@am__quote@
-@@ -2717,6 +3048,678 @@ csky/csky_libsemi_a-getpid.obj: csky/getpid.c
+@@ -2717,6 +3078,748 @@ csky/csky_libsemi_a-getpid.obj: csky/getpid.c
  @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
  @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(csky_libsemi_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o csky/csky_libsemi_a-getpid.obj `if test -f 'csky/getpid.c'; then $(CYGPATH_W) 'csky/getpid.c'; else $(CYGPATH_W) '$(srcdir)/csky/getpid.c'; fi`
  
@@ -577,6 +607,20 @@ index a117577ea..fcbffa306 100644
 +@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libsysbase/clocks.c' object='libsysbase/libsysbase_libsysbase_a-clocks.obj' libtool=no @AMDEPBACKSLASH@
 +@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 +@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libsysbase/libsysbase_libsysbase_a-clocks.obj `if test -f 'libsysbase/clocks.c'; then $(CYGPATH_W) 'libsysbase/clocks.c'; else $(CYGPATH_W) '$(srcdir)/libsysbase/clocks.c'; fi`
++
++libsysbase/libsysbase_libsysbase_a-concatenate.o: libsysbase/concatenate.c
++@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libsysbase/libsysbase_libsysbase_a-concatenate.o -MD -MP -MF libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-concatenate.Tpo -c -o libsysbase/libsysbase_libsysbase_a-concatenate.o `test -f 'libsysbase/concatenate.c' || echo '$(srcdir)/'`libsysbase/concatenate.c
++@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-concatenate.Tpo libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-concatenate.Po
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libsysbase/concatenate.c' object='libsysbase/libsysbase_libsysbase_a-concatenate.o' libtool=no @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libsysbase/libsysbase_libsysbase_a-concatenate.o `test -f 'libsysbase/concatenate.c' || echo '$(srcdir)/'`libsysbase/concatenate.c
++
++libsysbase/libsysbase_libsysbase_a-concatenate.obj: libsysbase/concatenate.c
++@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libsysbase/libsysbase_libsysbase_a-concatenate.obj -MD -MP -MF libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-concatenate.Tpo -c -o libsysbase/libsysbase_libsysbase_a-concatenate.obj `if test -f 'libsysbase/concatenate.c'; then $(CYGPATH_W) 'libsysbase/concatenate.c'; else $(CYGPATH_W) '$(srcdir)/libsysbase/concatenate.c'; fi`
++@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-concatenate.Tpo libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-concatenate.Po
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libsysbase/concatenate.c' object='libsysbase/libsysbase_libsysbase_a-concatenate.obj' libtool=no @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libsysbase/libsysbase_libsysbase_a-concatenate.obj `if test -f 'libsysbase/concatenate.c'; then $(CYGPATH_W) 'libsysbase/concatenate.c'; else $(CYGPATH_W) '$(srcdir)/libsysbase/concatenate.c'; fi`
 +
 +libsysbase/libsysbase_libsysbase_a-dirent.o: libsysbase/dirent.c
 +@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libsysbase/libsysbase_libsysbase_a-dirent.o -MD -MP -MF libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-dirent.Tpo -c -o libsysbase/libsysbase_libsysbase_a-dirent.o `test -f 'libsysbase/dirent.c' || echo '$(srcdir)/'`libsysbase/dirent.c
@@ -675,6 +719,20 @@ index a117577ea..fcbffa306 100644
 +@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libsysbase/fork.c' object='libsysbase/libsysbase_libsysbase_a-fork.obj' libtool=no @AMDEPBACKSLASH@
 +@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 +@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libsysbase/libsysbase_libsysbase_a-fork.obj `if test -f 'libsysbase/fork.c'; then $(CYGPATH_W) 'libsysbase/fork.c'; else $(CYGPATH_W) '$(srcdir)/libsysbase/fork.c'; fi`
++
++libsysbase/libsysbase_libsysbase_a-fpathconf.o: libsysbase/fpathconf.c
++@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libsysbase/libsysbase_libsysbase_a-fpathconf.o -MD -MP -MF libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-fpathconf.Tpo -c -o libsysbase/libsysbase_libsysbase_a-fpathconf.o `test -f 'libsysbase/fpathconf.c' || echo '$(srcdir)/'`libsysbase/fpathconf.c
++@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-fpathconf.Tpo libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-fpathconf.Po
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libsysbase/fpathconf.c' object='libsysbase/libsysbase_libsysbase_a-fpathconf.o' libtool=no @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libsysbase/libsysbase_libsysbase_a-fpathconf.o `test -f 'libsysbase/fpathconf.c' || echo '$(srcdir)/'`libsysbase/fpathconf.c
++
++libsysbase/libsysbase_libsysbase_a-fpathconf.obj: libsysbase/fpathconf.c
++@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libsysbase/libsysbase_libsysbase_a-fpathconf.obj -MD -MP -MF libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-fpathconf.Tpo -c -o libsysbase/libsysbase_libsysbase_a-fpathconf.obj `if test -f 'libsysbase/fpathconf.c'; then $(CYGPATH_W) 'libsysbase/fpathconf.c'; else $(CYGPATH_W) '$(srcdir)/libsysbase/fpathconf.c'; fi`
++@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-fpathconf.Tpo libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-fpathconf.Po
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libsysbase/fpathconf.c' object='libsysbase/libsysbase_libsysbase_a-fpathconf.obj' libtool=no @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libsysbase/libsysbase_libsysbase_a-fpathconf.obj `if test -f 'libsysbase/fpathconf.c'; then $(CYGPATH_W) 'libsysbase/fpathconf.c'; else $(CYGPATH_W) '$(srcdir)/libsysbase/fpathconf.c'; fi`
 +
 +libsysbase/libsysbase_libsysbase_a-fstat.o: libsysbase/fstat.c
 +@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libsysbase/libsysbase_libsysbase_a-fstat.o -MD -MP -MF libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-fstat.Tpo -c -o libsysbase/libsysbase_libsysbase_a-fstat.o `test -f 'libsysbase/fstat.c' || echo '$(srcdir)/'`libsysbase/fstat.c
@@ -956,6 +1014,34 @@ index a117577ea..fcbffa306 100644
 +@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 +@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libsysbase/libsysbase_libsysbase_a-read.obj `if test -f 'libsysbase/read.c'; then $(CYGPATH_W) 'libsysbase/read.c'; else $(CYGPATH_W) '$(srcdir)/libsysbase/read.c'; fi`
 +
++libsysbase/libsysbase_libsysbase_a-readlink.o: libsysbase/readlink.c
++@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libsysbase/libsysbase_libsysbase_a-readlink.o -MD -MP -MF libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-readlink.Tpo -c -o libsysbase/libsysbase_libsysbase_a-readlink.o `test -f 'libsysbase/readlink.c' || echo '$(srcdir)/'`libsysbase/readlink.c
++@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-readlink.Tpo libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-readlink.Po
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libsysbase/readlink.c' object='libsysbase/libsysbase_libsysbase_a-readlink.o' libtool=no @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libsysbase/libsysbase_libsysbase_a-readlink.o `test -f 'libsysbase/readlink.c' || echo '$(srcdir)/'`libsysbase/readlink.c
++
++libsysbase/libsysbase_libsysbase_a-readlink.obj: libsysbase/readlink.c
++@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libsysbase/libsysbase_libsysbase_a-readlink.obj -MD -MP -MF libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-readlink.Tpo -c -o libsysbase/libsysbase_libsysbase_a-readlink.obj `if test -f 'libsysbase/readlink.c'; then $(CYGPATH_W) 'libsysbase/readlink.c'; else $(CYGPATH_W) '$(srcdir)/libsysbase/readlink.c'; fi`
++@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-readlink.Tpo libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-readlink.Po
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libsysbase/readlink.c' object='libsysbase/libsysbase_libsysbase_a-readlink.obj' libtool=no @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libsysbase/libsysbase_libsysbase_a-readlink.obj `if test -f 'libsysbase/readlink.c'; then $(CYGPATH_W) 'libsysbase/readlink.c'; else $(CYGPATH_W) '$(srcdir)/libsysbase/readlink.c'; fi`
++
++libsysbase/libsysbase_libsysbase_a-realpath.o: libsysbase/realpath.c
++@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libsysbase/libsysbase_libsysbase_a-realpath.o -MD -MP -MF libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-realpath.Tpo -c -o libsysbase/libsysbase_libsysbase_a-realpath.o `test -f 'libsysbase/realpath.c' || echo '$(srcdir)/'`libsysbase/realpath.c
++@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-realpath.Tpo libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-realpath.Po
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libsysbase/realpath.c' object='libsysbase/libsysbase_libsysbase_a-realpath.o' libtool=no @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libsysbase/libsysbase_libsysbase_a-realpath.o `test -f 'libsysbase/realpath.c' || echo '$(srcdir)/'`libsysbase/realpath.c
++
++libsysbase/libsysbase_libsysbase_a-realpath.obj: libsysbase/realpath.c
++@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libsysbase/libsysbase_libsysbase_a-realpath.obj -MD -MP -MF libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-realpath.Tpo -c -o libsysbase/libsysbase_libsysbase_a-realpath.obj `if test -f 'libsysbase/realpath.c'; then $(CYGPATH_W) 'libsysbase/realpath.c'; else $(CYGPATH_W) '$(srcdir)/libsysbase/realpath.c'; fi`
++@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-realpath.Tpo libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-realpath.Po
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libsysbase/realpath.c' object='libsysbase/libsysbase_libsysbase_a-realpath.obj' libtool=no @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libsysbase/libsysbase_libsysbase_a-realpath.obj `if test -f 'libsysbase/realpath.c'; then $(CYGPATH_W) 'libsysbase/realpath.c'; else $(CYGPATH_W) '$(srcdir)/libsysbase/realpath.c'; fi`
++
 +libsysbase/libsysbase_libsysbase_a-rename.o: libsysbase/rename.c
 +@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libsysbase/libsysbase_libsysbase_a-rename.o -MD -MP -MF libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-rename.Tpo -c -o libsysbase/libsysbase_libsysbase_a-rename.o `test -f 'libsysbase/rename.c' || echo '$(srcdir)/'`libsysbase/rename.c
 +@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-rename.Tpo libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-rename.Po
@@ -1053,6 +1139,20 @@ index a117577ea..fcbffa306 100644
 +@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libsysbase/statvfs.c' object='libsysbase/libsysbase_libsysbase_a-statvfs.obj' libtool=no @AMDEPBACKSLASH@
 +@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 +@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libsysbase/libsysbase_libsysbase_a-statvfs.obj `if test -f 'libsysbase/statvfs.c'; then $(CYGPATH_W) 'libsysbase/statvfs.c'; else $(CYGPATH_W) '$(srcdir)/libsysbase/statvfs.c'; fi`
++
++libsysbase/libsysbase_libsysbase_a-symlink.o: libsysbase/symlink.c
++@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libsysbase/libsysbase_libsysbase_a-symlink.o -MD -MP -MF libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-symlink.Tpo -c -o libsysbase/libsysbase_libsysbase_a-symlink.o `test -f 'libsysbase/symlink.c' || echo '$(srcdir)/'`libsysbase/symlink.c
++@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-symlink.Tpo libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-symlink.Po
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libsysbase/symlink.c' object='libsysbase/libsysbase_libsysbase_a-symlink.o' libtool=no @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libsysbase/libsysbase_libsysbase_a-symlink.o `test -f 'libsysbase/symlink.c' || echo '$(srcdir)/'`libsysbase/symlink.c
++
++libsysbase/libsysbase_libsysbase_a-symlink.obj: libsysbase/symlink.c
++@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libsysbase/libsysbase_libsysbase_a-symlink.obj -MD -MP -MF libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-symlink.Tpo -c -o libsysbase/libsysbase_libsysbase_a-symlink.obj `if test -f 'libsysbase/symlink.c'; then $(CYGPATH_W) 'libsysbase/symlink.c'; else $(CYGPATH_W) '$(srcdir)/libsysbase/symlink.c'; fi`
++@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-symlink.Tpo libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-symlink.Po
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libsysbase/symlink.c' object='libsysbase/libsysbase_libsysbase_a-symlink.obj' libtool=no @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libsysbase/libsysbase_libsysbase_a-symlink.obj `if test -f 'libsysbase/symlink.c'; then $(CYGPATH_W) 'libsysbase/symlink.c'; else $(CYGPATH_W) '$(srcdir)/libsysbase/symlink.c'; fi`
 +
 +libsysbase/libsysbase_libsysbase_a-syscall_support.o: libsysbase/syscall_support.c
 +@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libsysbase/libsysbase_libsysbase_a-syscall_support.o -MD -MP -MF libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-syscall_support.Tpo -c -o libsysbase/libsysbase_libsysbase_a-syscall_support.o `test -f 'libsysbase/syscall_support.c' || echo '$(srcdir)/'`libsysbase/syscall_support.c
@@ -1169,7 +1269,7 @@ index a117577ea..fcbffa306 100644
  nios2/nios2_libnios2_a-io-close.o: nios2/io-close.c
  @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(nios2_libnios2_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT nios2/nios2_libnios2_a-io-close.o -MD -MP -MF nios2/$(DEPDIR)/nios2_libnios2_a-io-close.Tpo -c -o nios2/nios2_libnios2_a-io-close.o `test -f 'nios2/io-close.c' || echo '$(srcdir)/'`nios2/io-close.c
  @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) nios2/$(DEPDIR)/nios2_libnios2_a-io-close.Tpo nios2/$(DEPDIR)/nios2_libnios2_a-io-close.Po
-@@ -4220,6 +5223,8 @@ distclean-generic:
+@@ -4220,6 +5323,8 @@ distclean-generic:
  	-rm -f iq2000/$(am__dirstamp)
  	-rm -f libnosys/$(DEPDIR)/$(am__dirstamp)
  	-rm -f libnosys/$(am__dirstamp)
@@ -1178,7 +1278,7 @@ index a117577ea..fcbffa306 100644
  	-rm -f lm32/$(DEPDIR)/$(am__dirstamp)
  	-rm -f lm32/$(am__dirstamp)
  	-rm -f nios2/$(DEPDIR)/$(am__dirstamp)
-@@ -4239,7 +5244,7 @@ clean-am: clean-aminfo clean-binPROGRAMS clean-checkPROGRAMS \
+@@ -4239,7 +5344,7 @@ clean-am: clean-aminfo clean-binPROGRAMS clean-checkPROGRAMS \
  
  distclean: distclean-recursive
  	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
@@ -1187,7 +1287,7 @@ index a117577ea..fcbffa306 100644
  	-rm -f Makefile
  distclean-am: clean-am distclean-compile distclean-generic \
  	distclean-hdr distclean-local distclean-tags
-@@ -4382,7 +5387,7 @@ installcheck-am:
+@@ -4382,7 +5487,7 @@ installcheck-am:
  maintainer-clean: maintainer-clean-recursive
  	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
  	-rm -rf $(top_srcdir)/autom4te.cache
@@ -1362,10 +1462,10 @@ index 5fb26845c..cf07fb118 100644
  m4_include([mips/acinclude.m4])
 diff --git a/libgloss/libsysbase/Makefile.inc b/libgloss/libsysbase/Makefile.inc
 new file mode 100644
-index 000000000..7d4398d6a
+index 000000000..123a1dedf
 --- /dev/null
 +++ b/libgloss/libsysbase/Makefile.inc
-@@ -0,0 +1,61 @@
+@@ -0,0 +1,66 @@
 +multilibtool_DATA += %D%/sysbase.specs
 +
 +multilibtool_LIBRARIES += %D%/libpthread.a
@@ -1385,6 +1485,7 @@ index 000000000..7d4398d6a
 +	%D%/chdir.c \
 +	%D%/chmod.c \
 +	%D%/clocks.c \
++	%D%/concatenate.c \
 +	%D%/dirent.c \
 +	%D%/environ.c \
 +	%D%/execve.c \
@@ -1392,6 +1493,7 @@ index 000000000..7d4398d6a
 +	%D%/flock.c \
 +	%D%/fnmatch.c \
 +	%D%/fork.c \
++	%D%/fpathconf.c \
 +	%D%/fstat.c \
 +	%D%/fsync.c \
 +	%D%/ftruncate.c \
@@ -1412,6 +1514,8 @@ index 000000000..7d4398d6a
 +	%D%/open.c \
 +	%D%/pathconf.c \
 +	%D%/read.c \
++	%D%/readlink.c \
++	%D%/realpath.c \
 +	%D%/rename.c \
 +	%D%/rmdir.c \
 +	%D%/sbrk.c \
@@ -1419,6 +1523,7 @@ index 000000000..7d4398d6a
 +	%D%/sleep.c \
 +	%D%/stat.c \
 +	%D%/statvfs.c \
++	%D%/symlink.c \
 +	%D%/syscall_support.c \
 +	%D%/times.c \
 +	%D%/truncate.c \
@@ -1571,116 +1676,21 @@ index 000000000..0697f53d2
 +}
 diff --git a/libgloss/libsysbase/chdir.c b/libgloss/libsysbase/chdir.c
 new file mode 100644
-index 000000000..b94f6a8b4
+index 000000000..922124b65
 --- /dev/null
 +++ b/libgloss/libsysbase/chdir.c
-@@ -0,0 +1,200 @@
+@@ -0,0 +1,105 @@
 +#include <unistd.h>
 +#include <limits.h>
-+#include <reent.h>
-+#include <string.h>
-+#include <errno.h>
 +#include <stdlib.h>
 +#include <sys/iosupport.h>
 +#include <sys/param.h>
 +
++#include "concatenate.h"
++
 +/* CWD always start with "/" */
 +static char _current_working_directory [PATH_MAX] = "/";
 +static char temp_cwd [PATH_MAX];
-+
-+#define DIRECTORY_SEPARATOR_CHAR '/'
-+const char DIRECTORY_SEPARATOR[] = "/";
-+const char DIRECTORY_THIS[] = ".";
-+const char DIRECTORY_PARENT[] = "..";
-+
-+int _concatenate_path (struct _reent *r, char *path, const char *extra, int maxLength) {
-+	char *pathEnd;
-+	int pathLength;
-+	const char *extraEnd;
-+	int extraSize;
-+
-+	pathLength = strnlen (path, maxLength);
-+
-+	/* assumes path ends in a directory separator */
-+	if (pathLength >= maxLength) {
-+		r->_errno = ENAMETOOLONG;
-+		return -1;
-+	}
-+	pathEnd = path + pathLength;
-+	if (pathEnd[-1] != DIRECTORY_SEPARATOR_CHAR) {
-+		pathEnd[0] = DIRECTORY_SEPARATOR_CHAR;
-+		pathEnd += 1;
-+	}
-+
-+	extraEnd = extra;
-+
-+	/* If the extra bit starts with a slash, start at root */
-+	if (extra[0] == DIRECTORY_SEPARATOR_CHAR) {
-+		pathEnd = strchr (path, DIRECTORY_SEPARATOR_CHAR) + 1;
-+		pathEnd[0] = '\0';
-+	}
-+	do {
-+		/* Advance past any separators in extra */
-+		while (extra[0] == DIRECTORY_SEPARATOR_CHAR) {
-+			extra += 1;
-+		}
-+
-+		/* Grab the next directory name from extra */
-+		extraEnd = strchr (extra, DIRECTORY_SEPARATOR_CHAR);
-+		if (extraEnd == NULL) {
-+			extraEnd = strrchr (extra, '\0');
-+		} else {
-+			extraEnd += 1;
-+		}
-+
-+		extraSize = (extraEnd - extra);
-+		if (extraSize == 0) {
-+			break;
-+		}
-+
-+		if ((strncmp (extra, DIRECTORY_THIS, sizeof(DIRECTORY_THIS) - 1) == 0)
-+			&& ((extra[sizeof(DIRECTORY_THIS)-1] == DIRECTORY_SEPARATOR_CHAR)
-+				||(extra[sizeof(DIRECTORY_THIS)-1] == '\0')))
-+		{
-+			/* Don't copy anything */
-+		} else 	if ((strncmp (extra, DIRECTORY_PARENT, sizeof(DIRECTORY_PARENT) - 1) == 0)
-+			&& ((extra[sizeof(DIRECTORY_PARENT)-1] == DIRECTORY_SEPARATOR_CHAR)
-+				||(extra[sizeof(DIRECTORY_PARENT)-1] == '\0')))
-+		{
-+			/* Go up one level of in the path */
-+			if (pathEnd[-1] == DIRECTORY_SEPARATOR_CHAR) {
-+				// Remove trailing separator
-+				pathEnd[-1] = '\0';
-+			}
-+			pathEnd = strrchr (path, DIRECTORY_SEPARATOR_CHAR);
-+			if (pathEnd == NULL) {
-+				/* Can't go up any higher, return false */
-+				r->_errno = ENOENT;
-+				return -1;
-+			}
-+			pathLength = pathEnd - path;
-+			pathEnd += 1;
-+		} else {
-+			pathLength += extraSize;
-+			if (pathLength >= maxLength) {
-+				r->_errno = ENAMETOOLONG;
-+				return -1;
-+			}
-+			/* Copy the next part over */
-+			strncpy (pathEnd, extra, extraSize);
-+			pathEnd += extraSize;
-+		}
-+		pathEnd[0] = '\0';
-+		extra += extraSize;
-+	} while (extraSize != 0);
-+
-+        if (strlen(path) > 2 ) {
-+                if (pathEnd[-1] == DIRECTORY_SEPARATOR_CHAR && pathEnd[-2] != ':')
-+                        pathEnd[-1] = '\0';
-+        }
-+
-+	return 0;
-+}
 +
 +int chdir (const char *path) {
 +	struct _reent *r = _REENT;
@@ -1850,6 +1860,120 @@ index 000000000..b36b5c079
 +   }
 +}
 +
+diff --git a/libgloss/libsysbase/concatenate.c b/libgloss/libsysbase/concatenate.c
+new file mode 100644
+index 000000000..e1da5a403
+--- /dev/null
++++ b/libgloss/libsysbase/concatenate.c
+@@ -0,0 +1,91 @@
++#include "concatenate.h"
++
++
++int _concatenate_path (struct _reent *r, char *path, const char *extra, int maxLength) {
++	char *pathEnd;
++	int pathLength;
++	const char *extraEnd;
++	int extraSize;
++
++	pathLength = strnlen (path, maxLength);
++
++	/* assumes path ends in a directory separator */
++	if (pathLength >= maxLength) {
++		r->_errno = ENAMETOOLONG;
++		return -1;
++	}
++	pathEnd = path + pathLength;
++	if (pathLength != 0 && pathEnd[-1] != DIRECTORY_SEPARATOR_CHAR) {
++		pathEnd[0] = DIRECTORY_SEPARATOR_CHAR;
++		pathEnd += 1;
++	}
++
++	extraEnd = extra;
++
++	/* If the extra bit starts with a slash, start at root */
++	if (extra[0] == DIRECTORY_SEPARATOR_CHAR) {
++		pathEnd = strchr (path, DIRECTORY_SEPARATOR_CHAR) + 1;
++		pathEnd[0] = '\0';
++	}
++	do {
++		/* Advance past any separators in extra */
++		while (extra[0] == DIRECTORY_SEPARATOR_CHAR) {
++			extra += 1;
++		}
++
++		/* Grab the next directory name from extra */
++		extraEnd = strchr (extra, DIRECTORY_SEPARATOR_CHAR);
++		if (extraEnd == NULL) {
++			extraEnd = strrchr (extra, '\0');
++		} else {
++			extraEnd += 1;
++		}
++
++		extraSize = (extraEnd - extra);
++		if (extraSize == 0) {
++			break;
++		}
++
++		if ((strncmp (extra, DIRECTORY_THIS, sizeof(DIRECTORY_THIS) - 1) == 0)
++			&& ((extra[sizeof(DIRECTORY_THIS)-1] == DIRECTORY_SEPARATOR_CHAR)
++				||(extra[sizeof(DIRECTORY_THIS)-1] == '\0')))
++		{
++			/* Don't copy anything */
++		} else 	if ((strncmp (extra, DIRECTORY_PARENT, sizeof(DIRECTORY_PARENT) - 1) == 0)
++			&& ((extra[sizeof(DIRECTORY_PARENT)-1] == DIRECTORY_SEPARATOR_CHAR)
++				||(extra[sizeof(DIRECTORY_PARENT)-1] == '\0')))
++		{
++			/* Go up one level of in the path */
++			if (pathEnd[-1] == DIRECTORY_SEPARATOR_CHAR) {
++				// Remove trailing separator
++				pathEnd[-1] = '\0';
++			}
++			pathEnd = strrchr (path, DIRECTORY_SEPARATOR_CHAR);
++			if (pathEnd == NULL) {
++				/* Can't go up any higher, return false */
++				r->_errno = ENOENT;
++				return -1;
++			}
++			pathLength = pathEnd - path;
++			pathEnd += 1;
++		} else {
++			pathLength += extraSize;
++			if (pathLength >= maxLength) {
++				r->_errno = ENAMETOOLONG;
++				return -1;
++			}
++			/* Copy the next part over */
++			strncpy (pathEnd, extra, extraSize);
++			pathEnd += extraSize;
++		}
++		pathEnd[0] = '\0';
++		extra += extraSize;
++	} while (extraSize != 0);
++
++        if (strlen(path) > 2 ) {
++                if (pathEnd[-1] == DIRECTORY_SEPARATOR_CHAR && pathEnd[-2] != ':')
++                        pathEnd[-1] = '\0';
++        }
++
++	return 0;
++}
+\ No newline at end of file
+diff --git a/libgloss/libsysbase/concatenate.h b/libgloss/libsysbase/concatenate.h
+new file mode 100644
+index 000000000..e3b9e7d99
+--- /dev/null
++++ b/libgloss/libsysbase/concatenate.h
+@@ -0,0 +1,10 @@
++#include <reent.h>
++#include <string.h>
++#include <errno.h>
++
++#define DIRECTORY_SEPARATOR_CHAR '/'
++#define DIRECTORY_SEPARATOR      "/"
++#define DIRECTORY_THIS           "."
++#define DIRECTORY_PARENT         ".."
++
++int _concatenate_path (struct _reent *r, char *path, const char *extra, int maxLength);
 diff --git a/libgloss/libsysbase/config.h.in b/libgloss/libsysbase/config.h.in
 new file mode 100644
 index 000000000..48ce950b4
@@ -6259,10 +6383,10 @@ index 000000000..d15eab89d
 +
 diff --git a/libgloss/libsysbase/dirent.c b/libgloss/libsysbase/dirent.c
 new file mode 100644
-index 000000000..bed699102
+index 000000000..482d2f814
 --- /dev/null
 +++ b/libgloss/libsysbase/dirent.c
-@@ -0,0 +1,255 @@
+@@ -0,0 +1,257 @@
 +#include <malloc.h>
 +#include <errno.h>
 +#include <string.h>
@@ -6382,6 +6506,7 @@ index 000000000..bed699102
 +
 +	dirp->position = 0;	// 0th position means no file name has been returned yet
 +	dirp->fileData.d_ino = -1;
++	dirp->fileData.d_type = DT_UNKNOWN;
 +	dirp->fileData.d_name[0] = '\0';
 +
 +	return dirp;
@@ -6404,7 +6529,7 @@ index 000000000..bed699102
 +
 +struct dirent* readdir (DIR *dirp) {
 +	struct stat st;
-+	char filename[NAME_MAX];
++	char filename[NAME_MAX+1];
 +	int res;
 +	int olderrno = errno;
 +
@@ -6427,7 +6552,7 @@ index 000000000..bed699102
 +	// We've moved forward in the directory
 +	dirp->position += 1;
 +
-+	if (strnlen(filename, NAME_MAX) >= sizeof(dirp->fileData.d_name)) {
++	if (strnlen(filename, sizeof(filename)) >= sizeof(dirp->fileData.d_name)) {
 +		errno = EOVERFLOW;
 +		return NULL;
 +	}
@@ -6442,7 +6567,7 @@ index 000000000..bed699102
 +
 +int readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result) {
 +	struct stat st;
-+	char filename[NAME_MAX];
++	char filename[NAME_MAX+1];
 +	int res;
 +
 +	if (!dirp) {
@@ -6465,13 +6590,14 @@ index 000000000..bed699102
 +	// We've moved forward in the directory
 +	dirp->position += 1;
 +
-+	if (strnlen(filename, NAME_MAX) >= sizeof(entry->d_name)) {
++	if (strnlen(filename, sizeof(filename)) >= sizeof(entry->d_name)) {
 +		errno = EOVERFLOW;
 +		return EOVERFLOW;
 +	}
 +
 +	strncpy (entry->d_name, filename, sizeof(entry->d_name));
 +	entry->d_ino = st.st_ino;
++	entry->d_type = IFTODT(st.st_mode);
 +
 +	*result = entry;
 +	return 0;
@@ -6489,7 +6615,7 @@ index 000000000..bed699102
 +
 +
 +void seekdir(DIR *dirp, long int loc) {
-+	char filename[NAME_MAX];
++	char filename[NAME_MAX+1];
 +
 +	if (!dirp || loc < 0) {
 +		return;
@@ -6847,6 +6973,42 @@ index 000000000..2bada9736
 +//---------------------------------------------------------------------------------
 +	r->_errno = ENOSYS;
 +	return -1;
++}
+diff --git a/libgloss/libsysbase/fpathconf.c b/libgloss/libsysbase/fpathconf.c
+new file mode 100644
+index 000000000..453f64870
+--- /dev/null
++++ b/libgloss/libsysbase/fpathconf.c
+@@ -0,0 +1,30 @@
++#include <errno.h>
++#include <stddef.h>
++#include <unistd.h>
++#include <limits.h>
++#include <reent.h>
++#include <sys/iosupport.h>
++
++long fpathconf(int fd, int name)
++{
++        int ret = -1;
++        unsigned int dev = 0;
++
++        __handle * handle = __get_handle(fd);
++       struct _reent *r = _REENT;
++
++        if ( NULL == handle ) {
++                errno = EINVAL;
++                return ret;
++        }
++
++        dev = handle->device;
++
++        if(devoptab_list[dev]->fpathconf_r) {
++                r->deviceData = devoptab_list[dev]->deviceData;
++                ret = devoptab_list[dev]->fpathconf_r(r, handle->fileStruct, name);
++        } else
++                r->_errno=ENOSYS;
++
++        return ret;
 +}
 diff --git a/libgloss/libsysbase/fstat.c b/libgloss/libsysbase/fstat.c
 new file mode 100644
@@ -7280,10 +7442,10 @@ index 000000000..5e81c5d42
 +#endif
 diff --git a/libgloss/libsysbase/iosupport.c b/libgloss/libsysbase/iosupport.c
 new file mode 100644
-index 000000000..948c6ef93
+index 000000000..71224902f
 --- /dev/null
 +++ b/libgloss/libsysbase/iosupport.c
-@@ -0,0 +1,140 @@
+@@ -0,0 +1,138 @@
 +#include <stdlib.h>
 +#include <string.h>
 +#include <ctype.h>
@@ -7422,8 +7584,6 @@ index 000000000..948c6ef93
 +		return NULL;
 +	}
 +}
-+
-+
 diff --git a/libgloss/libsysbase/isatty.c b/libgloss/libsysbase/isatty.c
 new file mode 100644
 index 000000000..2901f1474
@@ -7681,62 +7841,30 @@ index 000000000..ca17db8bf
 +}
 diff --git a/libgloss/libsysbase/pathconf.c b/libgloss/libsysbase/pathconf.c
 new file mode 100644
-index 000000000..f2b9e9dbf
+index 000000000..a696c9ab9
 --- /dev/null
 +++ b/libgloss/libsysbase/pathconf.c
-@@ -0,0 +1,53 @@
+@@ -0,0 +1,21 @@
 +#include <errno.h>
 +#include <stddef.h>
 +#include <unistd.h>
 +#include <limits.h>
++#include <reent.h>
++#include <sys/iosupport.h>
 +
-+long pathconf(const char *path, int name) {
-+	return fpathconf(-1, name);
-+}
-+
-+long fpathconf(int fd, int name)
++long pathconf(const char *path, int name)
 +{
++        int ret = -1;
++        unsigned int dev = FindDevice(path);
 +	struct _reent *r = _REENT;
 +
-+	switch (name) {
-+		case _PC_LINK_MAX:
-+			return 1;
-+		case _PC_MAX_CANON:
-+			return MAX_CANON;
-+		case _PC_MAX_INPUT:
-+			return MAX_INPUT;
-+		case _PC_NAME_MAX:
-+			return NAME_MAX;
-+		case _PC_PATH_MAX:
-+			return PATH_MAX;
-+		case _PC_PIPE_BUF:
-+			return PIPE_BUF;
-+		case _PC_CHOWN_RESTRICTED:
-+			break; // chown is not implemented
-+		case _PC_NO_TRUNC:
-+			return 1;
-+		case _PC_VDISABLE:
-+			break; // termios is not supported
-+		case _PC_SYNC_IO:
-+			return 1;
-+		case _PC_ASYNC_IO:
-+		case _PC_PRIO_IO:
-+			break;
-+		case _PC_FILESIZEBITS:
-+			return 64;
-+		case _PC_REC_INCR_XFER_SIZE:
-+		case _PC_REC_MAX_XFER_SIZE:
-+		case _PC_REC_MIN_XFER_SIZE:
-+		case _PC_REC_XFER_ALIGN:
-+		case _PC_ALLOC_SIZE_MIN:
-+		case _PC_SYMLINK_MAX:
-+			break;
-+		case _PC_2_SYMLINKS:
-+			return 1;
-+	}
++        if(dev != -1 && devoptab_list[dev]->pathconf_r) {
++                r->deviceData = devoptab_list[dev]->deviceData;
++                ret = devoptab_list[dev]->pathconf_r(r, path, name);
++        } else
++                r->_errno=ENOSYS;
 +
-+	r->_errno = EINVAL;
-+	return -1;
++        return ret;
 +}
 diff --git a/libgloss/libsysbase/pthread.c b/libgloss/libsysbase/pthread.c
 new file mode 100755
@@ -8865,6 +8993,230 @@ index 000000000..9c548d830
 +	return ret;
 +}
 +
+diff --git a/libgloss/libsysbase/readlink.c b/libgloss/libsysbase/readlink.c
+new file mode 100644
+index 000000000..98ce358e4
+--- /dev/null
++++ b/libgloss/libsysbase/readlink.c
+@@ -0,0 +1,24 @@
++#include <unistd.h>
++#include <reent.h>
++#include <errno.h>
++#include <sys/iosupport.h>
++
++ssize_t readlink_r(struct _reent *r, const char *path, char *buf, size_t bufsiz) {
++        int ret=-1;
++        int device = FindDevice(path);
++
++        if ( device != -1 && devoptab_list[device]->readlink_r) {
++
++                r->deviceData = devoptab_list[device]->deviceData;
++                ret = devoptab_list[device]->readlink_r(r, path, buf, bufsiz);
++
++        } else {
++                r->_errno = ENOSYS;
++        }
++
++        return ret;
++}
++
++ssize_t readlink(const char *path, char *buf, size_t bufsiz) {
++	return(readlink_r(_REENT, path, buf, bufsiz));
++}
+diff --git a/libgloss/libsysbase/realpath.c b/libgloss/libsysbase/realpath.c
+new file mode 100644
+index 000000000..f2cf3a831
+--- /dev/null
++++ b/libgloss/libsysbase/realpath.c
+@@ -0,0 +1,188 @@
++#include <stdlib.h>
++#include <unistd.h>
++#include <string.h>
++#include <limits.h>
++#include <errno.h>
++#include <sys/stat.h>
++#include <sys/iosupport.h>
++
++#include "concatenate.h"
++
++/* Based on chdir.c */
++static inline int _resolve_links(struct _reent *r, char *path, const char *extra, int maxLength) {
++	char *pathEnd;
++	int pathLength;
++	const char *extraEnd;
++	int extraSize;
++
++	int resolvedLinks = 0;
++
++	pathLength = strnlen (path, maxLength);
++
++	/* assumes path ends in a directory separator */
++	if (pathLength >= maxLength) {
++		r->_errno = ENAMETOOLONG;
++		return -1;
++	}
++	pathEnd = path + pathLength;
++	if (pathEnd[-1] != DIRECTORY_SEPARATOR_CHAR) {
++		pathEnd[0] = DIRECTORY_SEPARATOR_CHAR;
++		pathEnd += 1;
++	}
++
++	extraEnd = extra;
++
++	/* If the extra bit starts with a slash, start at root */
++	if (extra[0] == DIRECTORY_SEPARATOR_CHAR) {
++		pathEnd = strchr (path, DIRECTORY_SEPARATOR_CHAR) + 1;
++		pathEnd[0] = '\0';
++	}
++
++
++	do {
++		/* Advance past any separators in extra */
++		while (extra[0] == DIRECTORY_SEPARATOR_CHAR) {
++			extra += 1;
++		}
++
++		/* Grab the next directory name from extra */
++		extraEnd = strchr (extra, DIRECTORY_SEPARATOR_CHAR);
++		if (extraEnd == NULL) {
++			extraEnd = strrchr (extra, '\0');
++		} else {
++			extraEnd += 1;
++		}
++
++		extraSize = (extraEnd - extra);
++		if (extraSize == 0) {
++			break;
++		}
++
++		if ((strncmp (extra, DIRECTORY_THIS, sizeof(DIRECTORY_THIS) - 1) == 0)
++			&& ((extra[sizeof(DIRECTORY_THIS)-1] == DIRECTORY_SEPARATOR_CHAR)
++				||(extra[sizeof(DIRECTORY_THIS)-1] == '\0')))
++		{
++			/* Don't copy anything */
++		} else 	if ((strncmp (extra, DIRECTORY_PARENT, sizeof(DIRECTORY_PARENT) - 1) == 0)
++			&& ((extra[sizeof(DIRECTORY_PARENT)-1] == DIRECTORY_SEPARATOR_CHAR)
++				||(extra[sizeof(DIRECTORY_PARENT)-1] == '\0')))
++		{
++			/* Go up one level of in the path */
++			if (pathEnd[-1] == DIRECTORY_SEPARATOR_CHAR) {
++				// Remove trailing separator
++				pathEnd[-1] = '\0';
++			}
++			pathEnd = strrchr (path, DIRECTORY_SEPARATOR_CHAR);
++			if (pathEnd == NULL) {
++				/* Can't go up any higher, return false */
++				r->_errno = ENOENT;
++				return -1;
++			}
++			pathLength = pathEnd - path;
++			pathEnd += 1;
++		} else {
++			pathLength += extraSize;
++			if (pathLength >= maxLength) {
++				r->_errno = ENAMETOOLONG;
++				return -1;
++			}
++			/* Copy the next part over */
++			strncpy (pathEnd, extra, extraSize);
++			pathEnd += extraSize;
++		}
++		pathEnd[0] = '\0';
++		extra += extraSize;
++
++
++		struct stat st;
++		if (lstat(path,&st) < 0) return -1;
++		if (S_ISLNK(st.st_mode)) {
++			do {
++				if(resolvedLinks > 8 && extraSize > 0) {
++					r->_errno = ELOOP;
++					return -1;
++				}
++
++				char buf[PATH_MAX];
++				memset(buf,0,PATH_MAX);
++
++				if (readlink(path,buf,sizeof(buf)) == -1) return -1;
++
++				pathEnd = strrchr(path, DIRECTORY_SEPARATOR_CHAR) + 1;
++				if (pathEnd == NULL) pathEnd = path;
++				pathEnd[0] = '\0';
++
++				if (_concatenate_path(r, path, buf, PATH_MAX) == -1) {
++					return -1;
++				}
++
++				resolvedLinks++;
++				pathEnd = strchr(path,0);
++
++				if (lstat(path,&st) < 0) return -1;
++
++			} while(S_ISLNK(st.st_mode));
++		}
++	} while (extraSize != 0);
++
++
++	return 0;
++}
++
++char *realpath(const char *__restrict path, char *__restrict resolved)
++{
++	struct _reent *r = _REENT;
++
++	char stack[PATH_MAX] = {0};
++	const char *pathPosition = NULL;
++	int len = 0;
++
++	if (!path) {
++		errno = ENOENT;
++		return NULL;
++	}
++
++	len = strnlen(path, PATH_MAX);
++	if (!len) {
++		r->_errno = ENOENT;
++		return NULL;
++	}
++	if (len >= PATH_MAX) {
++		r->_errno = ENAMETOOLONG;
++		return NULL;
++	}
++
++	if (strchr (path, ':') != NULL) {
++		strncpy(stack, path, PATH_MAX-1);
++		/* Move path past device name */
++		path = strchr(path, ':') + 1;
++	} else {
++		getcwd(stack, PATH_MAX);
++	}
++
++	pathPosition = strchr(stack, ':');
++
++	if (pathPosition == NULL) {
++		pathPosition = stack;
++	} else {
++		pathPosition++;
++	}
++
++	/* Make sure the path starts in the root directory */
++	if (pathPosition[0] != DIRECTORY_SEPARATOR_CHAR) {
++		r->_errno = ENOENT;
++		return NULL;
++	}
++
++	if (_resolve_links(r, stack, path, PATH_MAX) == -1) {
++			return NULL;
++	}
++
++	if (resolved) {
++		strncpy(resolved, stack, PATH_MAX);
++		return resolved;
++	}
++
++	return strndup(stack, sizeof(stack));
++}
++
 diff --git a/libgloss/libsysbase/rename.c b/libgloss/libsysbase/rename.c
 new file mode 100644
 index 000000000..433f7ef83
@@ -9172,6 +9524,41 @@ index 000000000..84e221340
 +
 +	return ret;
 +}
+diff --git a/libgloss/libsysbase/symlink.c b/libgloss/libsysbase/symlink.c
+new file mode 100644
+index 000000000..b3c34ea51
+--- /dev/null
++++ b/libgloss/libsysbase/symlink.c
+@@ -0,0 +1,29 @@
++#include <unistd.h>
++#include <reent.h>
++#include <errno.h>
++#include <sys/iosupport.h>
++
++int symlink_r(struct _reent *r, const char *target, const char *linkpath) {
++	int ret=-1;
++ 	int targetDevice = FindDevice(target);
++ 	int linkDevice = FindDevice(linkpath);
++
++	if (targetDevice != linkDevice) {
++		return -1;
++	}
++
++	if ( targetDevice != -1 && devoptab_list[targetDevice]->symlink_r) {
++
++		r->deviceData = devoptab_list[targetDevice]->deviceData;
++		ret = devoptab_list[targetDevice]->symlink_r(r, target, linkpath );
++
++	} else {
++		r->_errno = ENOSYS;
++	}
++
++	return ret;
++}
++
++int symlink(const char *target, const char *linkpath) {
++	return (symlink_r(_REENT, target, linkpath));
++}
 diff --git a/libgloss/libsysbase/sysbase.specs b/libgloss/libsysbase/sysbase.specs
 new file mode 100644
 index 000000000..d5959084e
@@ -9477,10 +9864,10 @@ index 000000000..b54714775
 +}
 diff --git a/libgloss/libsysbase/utime.c b/libgloss/libsysbase/utime.c
 new file mode 100644
-index 000000000..462e86520
+index 000000000..14b459eef
 --- /dev/null
 +++ b/libgloss/libsysbase/utime.c
-@@ -0,0 +1,41 @@
+@@ -0,0 +1,45 @@
 +#include "config.h"
 +
 +#include <errno.h>
@@ -9518,6 +9905,10 @@ index 000000000..462e86520
 +                t[0].tv_usec = 0;
 +                t[1].tv_sec  = times->modtime;
 +                t[1].tv_usec = 0;
++        } else if (gettimeofday(&t[0], NULL) != -1) {
++                t[1] = t[0];
++        } else {
++                return -1;
 +        }
 +
 +        return utimes(filename, t);
@@ -10028,7 +10419,7 @@ index bc967bd70..8a72f26f7 100644
  @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libc_a_CPPFLAGS) $(CPPFLAGS) $(libc_a_CFLAGS) $(CFLAGS) -MT libc/machine/powerpc/libc_a-vfprintf.o -MD -MP -MF libc/machine/powerpc/$(DEPDIR)/libc_a-vfprintf.Tpo -c -o libc/machine/powerpc/libc_a-vfprintf.o `test -f 'libc/machine/powerpc/vfprintf.c' || echo '$(srcdir)/'`libc/machine/powerpc/vfprintf.c
  @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libc/machine/powerpc/$(DEPDIR)/libc_a-vfprintf.Tpo libc/machine/powerpc/$(DEPDIR)/libc_a-vfprintf.Po
 diff --git a/newlib/configure.host b/newlib/configure.host
-index 0a1ba282a..8c5e2b211 100644
+index 0a1ba282a..66ccbec57 100644
 --- a/newlib/configure.host
 +++ b/newlib/configure.host
 @@ -620,13 +620,25 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
@@ -10062,10 +10453,10 @@ index 0a1ba282a..8c5e2b211 100644
  	newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES"
  	;;
 -  powerpc*-*-eabi* | \
-+	powerpc*-*-eabi*)
++  powerpc*-*-eabi*)
 +	default_newlib_io_c99_formats="yes"
 +	default_newlib_io_long_long="yes"
-+	newlib_cflags="${newlib_cflags} -DCUSTOM_MALLOC_LOCK -DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__"
++	newlib_cflags="${newlib_cflags} -DCUSTOM_MALLOC_LOCK -D__DYNAMIC_REENT__ -DGETREENT_PROVIDED -DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__"
 +	newlib_cflags="${newlib_cflags} -ffunction-sections -fdata-sections"
 +	syscall_dir=syscalls
 +	;;
@@ -10449,20 +10840,30 @@ index f810b008f..ca7e11dc7 100644
 +
  #endif /* !_SYS__TIMESPEC_H_ */
 diff --git a/newlib/libc/include/sys/config.h b/newlib/libc/include/sys/config.h
-index 5dcc77a80..3c21c147f 100644
+index 5dcc77a80..6930a751d 100644
 --- a/newlib/libc/include/sys/config.h
 +++ b/newlib/libc/include/sys/config.h
-@@ -8,6 +8,10 @@
- #define MALLOC_ALIGNMENT 16
- #endif
+@@ -4,8 +4,19 @@
+ #include <machine/ieeefp.h>  /* floating point macros */
+ #include <sys/features.h>	/* POSIX defs */
  
-+#ifdef _ARCH_PPC
-+#define __BUFSIZ__ 16384
+-#ifdef __aarch64__
++#ifdef __DEVKITARM__
++#define __DYNAMIC_REENT__
 +#endif
 +
- #ifdef __AMDGCN__
- #define __DYNAMIC_REENT__
++#ifdef __DEVKITA64__
+ #define MALLOC_ALIGNMENT 16
++#define __DYNAMIC_REENT__
++#endif
++
++#ifdef __DEVKITPPC__
++#define __BUFSIZ__ 32768
++#define MALLOC_ALIGNMENT 64
++#define __DYNAMIC_REENT__
  #endif
+ 
+ #ifdef __AMDGCN__
 diff --git a/newlib/libc/include/sys/features.h b/newlib/libc/include/sys/features.h
 index 45476ce4a..05efc0ab2 100644
 --- a/newlib/libc/include/sys/features.h
@@ -10487,10 +10888,10 @@ index 45476ce4a..05efc0ab2 100644
  #ifdef __rtems__
 diff --git a/newlib/libc/include/sys/iosupport.h b/newlib/libc/include/sys/iosupport.h
 new file mode 100644
-index 000000000..5942a8914
+index 000000000..8318fda68
 --- /dev/null
 +++ b/newlib/libc/include/sys/iosupport.h
-@@ -0,0 +1,132 @@
+@@ -0,0 +1,140 @@
 +//---------------------------------------------------------------------------------
 +#ifndef __iosupp_h__
 +#define __iosupp_h__
@@ -10504,6 +10905,7 @@ index 000000000..5942a8914
 +#include <sys/stat.h>
 +#include <sys/statvfs.h>
 +#include <sys/time.h>
++#include <stdbool.h>
 +
 +enum	{
 +	STD_IN,
@@ -10559,6 +10961,12 @@ index 000000000..5942a8914
 +	int (*lstat_r)(struct _reent *r, const char *file, struct stat *st);
 +	int (*utimes_r)(struct _reent *r, const char *filename, const struct timeval times[2]);
 +
++	long (*fpathconf_r)(struct _reent *r, int fd, int name);
++	long (*pathconf_r)(struct _reent *r, const char *path, int name);
++
++	int (*symlink_r)(struct _reent *r, const char *target, const char *linkpath);
++	ssize_t (*readlink_r)(struct _reent *r, const char *path, char *buf, size_t bufsiz);
++
 +} devoptab_t;
 +
 +extern const devoptab_t *devoptab_list[];
@@ -10610,6 +11018,7 @@ index 000000000..5942a8914
 +int FindDevice(const char* name);
 +int RemoveDevice(const char* name);
 +void setDefaultDevice( int device );
++
 +const devoptab_t* GetDeviceOpTab (const char *name);
 +
 +void __release_handle(int fd);
@@ -11475,27 +11884,6 @@ index b34c7c9d8..f18dc4301 100644
  #define _STDIO_WITH_THREAD_CANCELLATION_SUPPORT
  #endif
  
-diff --git a/newlib/libc/stdio/makebuf.c b/newlib/libc/stdio/makebuf.c
-index b9c75bbf8..b9af455b8 100644
---- a/newlib/libc/stdio/makebuf.c
-+++ b/newlib/libc/stdio/makebuf.c
-@@ -19,6 +19,7 @@
- #include <_ansi.h>
- #include <stdio.h>
- #include <stdlib.h>
-+#include <malloc.h>
- #include <sys/stat.h>
- #include <sys/types.h>
- #include <sys/unistd.h>
-@@ -50,7 +51,7 @@ __smakebuf_r (struct _reent *ptr,
-       return;
-     }
-   flags = __swhatbuf_r (ptr, fp, &size, &couldbetty);
--  if ((p = _malloc_r (ptr, size)) == NULL)
-+  if ((p = _memalign_r (ptr, 0x40, size)) == NULL)
-     {
-       if (!(fp->_flags & __SSTR))
- 	{
 diff --git a/newlib/libc/stdio/remove.c b/newlib/libc/stdio/remove.c
 index d8dfdbd82..a85b5a99b 100644
 --- a/newlib/libc/stdio/remove.c
@@ -11520,36 +11908,6 @@ index d8dfdbd82..a85b5a99b 100644
  
    return 0;
  }
-diff --git a/newlib/libc/stdio/setvbuf.c b/newlib/libc/stdio/setvbuf.c
-index e27ea086c..2a98b66d5 100644
---- a/newlib/libc/stdio/setvbuf.c
-+++ b/newlib/libc/stdio/setvbuf.c
-@@ -81,6 +81,7 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
- #include <_ansi.h>
- #include <stdio.h>
- #include <stdlib.h>
-+#include <malloc.h>
- #include "local.h"
- 
- /*
-@@ -143,7 +144,7 @@ setvbuf (register FILE * fp,
-   /* Allocate buffer if needed. */
-   if (buf == NULL)
-     {
--      if ((buf = malloc (size)) == NULL)
-+      if ((buf = memalign (0x40, size)) == NULL)
- 	{
- 	  /*
- 	   * Unable to honor user's request.  We will return
-@@ -153,7 +154,7 @@ setvbuf (register FILE * fp,
- 	  if (size != iosize)
- 	    {
- 	      size = iosize;
--	      buf = malloc (size);
-+	      buf = memalign (0x40, size);
- 	    }
- 	}
-       if (buf == NULL)
 diff --git a/newlib/libc/stdio/vfprintf.c b/newlib/libc/stdio/vfprintf.c
 index 6a198e2c6..5ded3fd6e 100644
 --- a/newlib/libc/stdio/vfprintf.c
@@ -11634,6 +11992,27 @@ index 9812add76..8410f2633 100644
  	%D%/utoa.c \
  	%D%/wcstod.c \
  	%D%/wcstoimax.c \
+diff --git a/newlib/libc/stdlib/exit.c b/newlib/libc/stdlib/exit.c
+index 9b7bd518b..f0e33bbc1 100644
+--- a/newlib/libc/stdlib/exit.c
++++ b/newlib/libc/stdlib/exit.c
+@@ -45,6 +45,16 @@ Supporting OS subroutines required: <<_exit>>.
+ #include <reent.h>
+ #include "atexit.h"
+ 
++// exit calls this handler; avoid a hard dependency on findfp by providing a weak global
++void (*__stdio_exit_handler)(void) __attribute__((weak));
++
++// exit calls this function; avoid a hard dependency on atexit by providing a simple weak implementation
++__attribute__((weak)) void __call_exitprocs(int rc, void* dso)
++{
++    extern void __libc_fini_array(void);
++    __libc_fini_array();
++}
++
+ /*
+  * Exit, flushing stdio buffers if necessary.
+  */
 diff --git a/newlib/libc/stdlib/mlock.c b/newlib/libc/stdlib/mlock.c
 index 23aa10173..ba88eb9fb 100644
 --- a/newlib/libc/stdlib/mlock.c
