@@ -1,8 +1,8 @@
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index c5064dd3766..decfa78fb7b 100644
+index 6fd1594480a..31deea1c63b 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
-@@ -1093,7 +1093,14 @@ aarch64*-*-elf | aarch64*-*-fuchsia* | aarch64*-*-rtems*)
+@@ -1132,7 +1132,14 @@ aarch64*-*-elf | aarch64*-*-fuchsia* | aarch64*-*-rtems*)
  	tmake_file="${tmake_file} aarch64/t-aarch64"
  	case $target in
  	aarch64-*-elf*)
@@ -17,8 +17,21 @@ index c5064dd3766..decfa78fb7b 100644
  		;;
          aarch64-*-fuchsia*)
                  tm_file="${tm_file} fuchsia.h"
+diff --git a/gcc/config/aarch64/aarch64-builtins.cc b/gcc/config/aarch64/aarch64-builtins.cc
+index cc6b7c01fd1..44d53659a2f 100644
+--- a/gcc/config/aarch64/aarch64-builtins.cc
++++ b/gcc/config/aarch64/aarch64-builtins.cc
+@@ -1547,7 +1547,7 @@ aarch64_scalar_builtin_type_p (aarch64_simd_type t)
+ 
+ /* Enable AARCH64_FL_* flags EXTRA_FLAGS on top of the base Advanced SIMD
+    set.  */
+-aarch64_simd_switcher::aarch64_simd_switcher (unsigned int extra_flags)
++aarch64_simd_switcher::aarch64_simd_switcher (uint64_t extra_flags)
+   : m_old_asm_isa_flags (aarch64_asm_isa_flags),
+     m_old_general_regs_only (TARGET_GENERAL_REGS_ONLY)
+ {
 diff --git a/gcc/config/aarch64/aarch64-elf-raw.h b/gcc/config/aarch64/aarch64-elf-raw.h
-index d4d820a9d54..ed5dd440846 100644
+index ec45f23fa41..a208eabd806 100644
 --- a/gcc/config/aarch64/aarch64-elf-raw.h
 +++ b/gcc/config/aarch64/aarch64-elf-raw.h
 @@ -22,6 +22,7 @@
@@ -30,10 +43,10 @@ index d4d820a9d54..ed5dd440846 100644
  #define ENDFILE_SPEC \
    " crtend%O%s crtn%O%s " \
 diff --git a/gcc/config/aarch64/aarch64-opts.h b/gcc/config/aarch64/aarch64-opts.h
-index 93572fe8330..9327c52a819 100644
+index a9f3e2715ca..0c7304e1d81 100644
 --- a/gcc/config/aarch64/aarch64-opts.h
 +++ b/gcc/config/aarch64/aarch64-opts.h
-@@ -48,6 +48,12 @@ enum aarch64_tls_type {
+@@ -52,6 +52,12 @@ enum aarch64_tls_type {
    TLS_DESCRIPTORS
  };
  
@@ -46,11 +59,29 @@ index 93572fe8330..9327c52a819 100644
  /* The code model defines the address generation strategy.
     Most have a PIC and non-PIC variant.  */
  enum aarch64_code_model {
+diff --git a/gcc/config/aarch64/aarch64-protos.h b/gcc/config/aarch64/aarch64-protos.h
+index 63339fa47df..02b4d3cbb8f 100644
+--- a/gcc/config/aarch64/aarch64-protos.h
++++ b/gcc/config/aarch64/aarch64-protos.h
+@@ -733,11 +733,11 @@ const unsigned int AARCH64_BUILTIN_CLASS = (1 << AARCH64_BUILTIN_SHIFT) - 1;
+ class aarch64_simd_switcher
+ {
+ public:
+-  aarch64_simd_switcher (unsigned int extra_flags = 0);
++  aarch64_simd_switcher (uint64_t extra_flags = 0);
+   ~aarch64_simd_switcher ();
+ 
+ private:
+-  unsigned long m_old_asm_isa_flags;
++  uint64_t m_old_asm_isa_flags;
+   bool m_old_general_regs_only;
+ };
+ 
 diff --git a/gcc/config/aarch64/aarch64.cc b/gcc/config/aarch64/aarch64.cc
-index 5c9e7791a12..718db155d57 100644
+index 0f04ab9fba0..c524a2f76ba 100644
 --- a/gcc/config/aarch64/aarch64.cc
 +++ b/gcc/config/aarch64/aarch64.cc
-@@ -19413,8 +19413,24 @@ aarch64_load_tp (rtx target)
+@@ -19555,8 +19555,24 @@ aarch64_load_tp (rtx target)
        || !register_operand (target, Pmode))
      target = gen_reg_rtx (Pmode);
  
@@ -78,10 +109,10 @@ index 5c9e7791a12..718db155d57 100644
  }
  
 diff --git a/gcc/config/aarch64/aarch64.h b/gcc/config/aarch64/aarch64.h
-index 359b6e8561f..f5b596fc312 100644
+index 155cace6afe..93ff5264a2e 100644
 --- a/gcc/config/aarch64/aarch64.h
 +++ b/gcc/config/aarch64/aarch64.h
-@@ -1245,6 +1245,10 @@ typedef struct
+@@ -1154,6 +1154,10 @@ typedef struct
  /* Check TLS Descriptors mechanism is selected.  */
  #define TARGET_TLS_DESC (aarch64_tls_dialect == TLS_DESCRIPTORS)
  
@@ -92,20 +123,11 @@ index 359b6e8561f..f5b596fc312 100644
  extern enum aarch64_code_model aarch64_cmodel;
  
  /* When using the tiny addressing model conditional and unconditional branches
-@@ -1290,7 +1294,7 @@ extern const char *aarch64_rewrite_mcpu (int argc, const char **argv);
- #define MCPU_TO_MARCH_SPEC_FUNCTIONS \
-   { "rewrite_mcpu", aarch64_rewrite_mcpu },
- 
--#if defined(__aarch64__)
-+#if 0 // defined(__aarch64__)
- extern const char *host_detect_local_cpu (int argc, const char **argv);
- #define HAVE_LOCAL_CPU_DETECT
- # define EXTRA_SPEC_FUNCTIONS						\
 diff --git a/gcc/config/aarch64/aarch64.md b/gcc/config/aarch64/aarch64.md
-index 34b8059b45b..4debacf3cb9 100644
+index 022eef80bc1..2024af16a17 100644
 --- a/gcc/config/aarch64/aarch64.md
 +++ b/gcc/config/aarch64/aarch64.md
-@@ -6906,11 +6906,22 @@
+@@ -7068,11 +7068,22 @@
  (define_insn "aarch64_load_tp_hard"
    [(set (match_operand:DI 0 "register_operand" "=r")
  	(unspec:DI [(const_int 0)] UNSPEC_TLS))]
@@ -131,10 +153,10 @@ index 34b8059b45b..4debacf3cb9 100644
  ;; instructions in the TLS stubs, in order to enable linker relaxation.
  ;; Therefore we treat the stubs as an atomic sequence.
 diff --git a/gcc/config/aarch64/aarch64.opt b/gcc/config/aarch64/aarch64.opt
-index 92220b26ee2..68abc1764f6 100644
+index 1d7967db9c0..17870f18b8b 100644
 --- a/gcc/config/aarch64/aarch64.opt
 +++ b/gcc/config/aarch64/aarch64.opt
-@@ -122,6 +122,21 @@ Enum(aarch64_tls_size) String(32) Value(32)
+@@ -128,6 +128,21 @@ Enum(aarch64_tls_size) String(32) Value(32)
  EnumValue
  Enum(aarch64_tls_size) String(48) Value(48)
  
@@ -156,7 +178,7 @@ index 92220b26ee2..68abc1764f6 100644
  march=
  Target RejectNegative Negative(march=) ToLower Joined Var(aarch64_arch_string)
  Use features of architecture ARCH.
-@@ -260,7 +275,7 @@ TargetVariable
+@@ -266,7 +281,7 @@ TargetVariable
  long aarch64_stack_protector_guard_offset = 0
  
  moutline-atomics
@@ -166,7 +188,7 @@ index 92220b26ee2..68abc1764f6 100644
  
  -param=aarch64-sve-compare-costs=
 diff --git a/gcc/config/aarch64/t-aarch64 b/gcc/config/aarch64/t-aarch64
-index ba74abc0a43..5202ec05d0b 100644
+index a9a244ab6d6..a29f2772d63 100644
 --- a/gcc/config/aarch64/t-aarch64
 +++ b/gcc/config/aarch64/t-aarch64
 @@ -177,8 +177,10 @@ aarch64-cc-fusion.o: $(srcdir)/config/aarch64/aarch64-cc-fusion.cc \
@@ -256,26 +278,26 @@ index 00000000000..9acbbf9d27c
 +
 +; This comment is to ensure we retain the blank line above.
 diff --git a/gcc/config/i386/host-mingw32.cc b/gcc/config/i386/host-mingw32.cc
-index 3b0d83ffc60..6e063b6ccd0 100644
+index acff6138d63..8dc91b75f93 100644
 --- a/gcc/config/i386/host-mingw32.cc
 +++ b/gcc/config/i386/host-mingw32.cc
-@@ -45,7 +45,11 @@ static size_t mingw32_gt_pch_alloc_granularity (void);
- static inline void w32_error(const char*, const char*, int, const char*);
- 
- /* FIXME: Is this big enough?  */
+@@ -93,7 +93,10 @@ mingw32_gt_pch_get_address (size_t size, int)
+      for NT system dlls is in 0x70000000 to 0x78000000 range.
+      If we allocate at bottom we need to reserve the address as early
+      as possible and at the same point in each invocation. */
+- 
++
 +#if __MINGW64__
-+static const size_t pch_VA_max_size  = UINT64_C(64 * 1024 * 1024 * 1024);
-+#else
- static const size_t pch_VA_max_size  = 128 * 1024 * 1024;
++  size  = UINT64_C(64 * 1024 * 1024 * 1024);
 +#endif
- 
- /* Granularity for reserving address space.  */
- static size_t va_granularity = 0x10000;
+   res = VirtualAlloc (NULL, size,
+ 		      MEM_RESERVE | MEM_TOP_DOWN,
+ 		      PAGE_NOACCESS);
 diff --git a/gcc/gcc.cc b/gcc/gcc.cc
-index bb07cc244e3..eff31f5093d 100644
+index 16bb07f2cdc..22a181a3a1c 100644
 --- a/gcc/gcc.cc
 +++ b/gcc/gcc.cc
-@@ -860,6 +860,11 @@ proper position among the other output files.  */
+@@ -868,6 +868,11 @@ proper position among the other output files.  */
  #endif
  #endif
  
@@ -287,7 +309,7 @@ index bb07cc244e3..eff31f5093d 100644
  /* config.h can define STARTFILE_SPEC to override the default crt0 files.  */
  #ifndef STARTFILE_SPEC
  #define STARTFILE_SPEC  \
-@@ -1204,6 +1209,7 @@ static const char *link_spec = LINK_SPEC;
+@@ -1191,6 +1196,7 @@ static const char *link_spec = LINK_SPEC;
  static const char *lib_spec = LIB_SPEC;
  static const char *link_gomp_spec = "";
  static const char *libgcc_spec = LIBGCC_SPEC;
@@ -295,7 +317,7 @@ index bb07cc244e3..eff31f5093d 100644
  static const char *endfile_spec = ENDFILE_SPEC;
  static const char *startfile_spec = STARTFILE_SPEC;
  static const char *linker_name_spec = LINKER_NAME;
-@@ -1709,6 +1715,7 @@ static struct spec_list static_specs[] =
+@@ -1701,6 +1707,7 @@ static struct spec_list static_specs[] =
    INIT_STATIC_SPEC ("lib",			&lib_spec),
    INIT_STATIC_SPEC ("link_gomp",		&link_gomp_spec),
    INIT_STATIC_SPEC ("libgcc",			&libgcc_spec),
@@ -304,10 +326,10 @@ index bb07cc244e3..eff31f5093d 100644
    INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
    INIT_STATIC_SPEC ("version",			&compiler_version),
 diff --git a/libgcc/crtstuff.c b/libgcc/crtstuff.c
-index b98b86a5a88..3f62b3616d2 100644
+index 93ff5b81dc5..20c0fe89a28 100644
 --- a/libgcc/crtstuff.c
 +++ b/libgcc/crtstuff.c
-@@ -325,7 +325,7 @@ register_tm_clones (void)
+@@ -326,7 +326,7 @@ register_tm_clones (void)
  
  #ifdef OBJECT_FORMAT_ELF
  
@@ -317,7 +339,7 @@ index b98b86a5a88..3f62b3616d2 100644
     in every shared-object; in a main program its value is zero.  The
     object should in any case be protected.  This means the instance
 diff --git a/libgcc/gthr.h b/libgcc/gthr.h
-index 7943c94f6d1..6d23362f7f0 100644
+index 1989c0c86ed..f1c49b2d4b1 100644
 --- a/libgcc/gthr.h
 +++ b/libgcc/gthr.h
 @@ -136,7 +136,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
@@ -330,10 +352,10 @@ index 7943c94f6d1..6d23362f7f0 100644
  #define GTHREAD_USE_WEAK 0
  #endif
 diff --git a/libstdc++-v3/include/Makefile.am b/libstdc++-v3/include/Makefile.am
-index 7708f4cf6c5..d3f484a5623 100644
+index a880e8ee227..c58249f986c 100644
 --- a/libstdc++-v3/include/Makefile.am
 +++ b/libstdc++-v3/include/Makefile.am
-@@ -1366,6 +1366,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
+@@ -1417,6 +1417,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
  	    -e '/^#/s/\(${uppercase}${uppercase}*\)/_GLIBCXX_\1/g' \
  	    -e 's/_GLIBCXX_SUPPORTS_WEAK/__GXX_WEAK__/g' \
  	    -e 's/_GLIBCXX___MINGW32_GLIBCXX___/__MINGW32__/g' \
@@ -342,10 +364,10 @@ index 7708f4cf6c5..d3f484a5623 100644
  	    < $< > $@
  
 diff --git a/libstdc++-v3/include/Makefile.in b/libstdc++-v3/include/Makefile.in
-index 7023c2de23e..d150a616d13 100644
+index 0ff875b280b..37820c57a0a 100644
 --- a/libstdc++-v3/include/Makefile.in
 +++ b/libstdc++-v3/include/Makefile.in
-@@ -1857,6 +1857,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
+@@ -1891,6 +1891,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
  	    -e '/^#/s/\(${uppercase}${uppercase}*\)/_GLIBCXX_\1/g' \
  	    -e 's/_GLIBCXX_SUPPORTS_WEAK/__GXX_WEAK__/g' \
  	    -e 's/_GLIBCXX___MINGW32_GLIBCXX___/__MINGW32__/g' \
