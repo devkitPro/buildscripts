@@ -1,5 +1,5 @@
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index 6fd1594480a..31deea1c63b 100644
+index 648b3dc2110..ed605b28956 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
 @@ -1132,7 +1132,14 @@ aarch64*-*-elf | aarch64*-*-fuchsia* | aarch64*-*-rtems*)
@@ -17,19 +17,6 @@ index 6fd1594480a..31deea1c63b 100644
  		;;
          aarch64-*-fuchsia*)
                  tm_file="${tm_file} fuchsia.h"
-diff --git a/gcc/config/aarch64/aarch64-builtins.cc b/gcc/config/aarch64/aarch64-builtins.cc
-index cc6b7c01fd1..44d53659a2f 100644
---- a/gcc/config/aarch64/aarch64-builtins.cc
-+++ b/gcc/config/aarch64/aarch64-builtins.cc
-@@ -1547,7 +1547,7 @@ aarch64_scalar_builtin_type_p (aarch64_simd_type t)
- 
- /* Enable AARCH64_FL_* flags EXTRA_FLAGS on top of the base Advanced SIMD
-    set.  */
--aarch64_simd_switcher::aarch64_simd_switcher (unsigned int extra_flags)
-+aarch64_simd_switcher::aarch64_simd_switcher (uint64_t extra_flags)
-   : m_old_asm_isa_flags (aarch64_asm_isa_flags),
-     m_old_general_regs_only (TARGET_GENERAL_REGS_ONLY)
- {
 diff --git a/gcc/config/aarch64/aarch64-elf-raw.h b/gcc/config/aarch64/aarch64-elf-raw.h
 index ec45f23fa41..a208eabd806 100644
 --- a/gcc/config/aarch64/aarch64-elf-raw.h
@@ -59,29 +46,11 @@ index a9f3e2715ca..0c7304e1d81 100644
  /* The code model defines the address generation strategy.
     Most have a PIC and non-PIC variant.  */
  enum aarch64_code_model {
-diff --git a/gcc/config/aarch64/aarch64-protos.h b/gcc/config/aarch64/aarch64-protos.h
-index 63339fa47df..02b4d3cbb8f 100644
---- a/gcc/config/aarch64/aarch64-protos.h
-+++ b/gcc/config/aarch64/aarch64-protos.h
-@@ -733,11 +733,11 @@ const unsigned int AARCH64_BUILTIN_CLASS = (1 << AARCH64_BUILTIN_SHIFT) - 1;
- class aarch64_simd_switcher
- {
- public:
--  aarch64_simd_switcher (unsigned int extra_flags = 0);
-+  aarch64_simd_switcher (uint64_t extra_flags = 0);
-   ~aarch64_simd_switcher ();
- 
- private:
--  unsigned long m_old_asm_isa_flags;
-+  uint64_t m_old_asm_isa_flags;
-   bool m_old_general_regs_only;
- };
- 
 diff --git a/gcc/config/aarch64/aarch64.cc b/gcc/config/aarch64/aarch64.cc
-index 0f04ab9fba0..c524a2f76ba 100644
+index f5db5379543..f582e5a7543 100644
 --- a/gcc/config/aarch64/aarch64.cc
 +++ b/gcc/config/aarch64/aarch64.cc
-@@ -19555,8 +19555,24 @@ aarch64_load_tp (rtx target)
+@@ -19550,8 +19550,24 @@ aarch64_load_tp (rtx target)
        || !register_operand (target, Pmode))
      target = gen_reg_rtx (Pmode);
  
@@ -109,7 +78,7 @@ index 0f04ab9fba0..c524a2f76ba 100644
  }
  
 diff --git a/gcc/config/aarch64/aarch64.h b/gcc/config/aarch64/aarch64.h
-index 155cace6afe..93ff5264a2e 100644
+index 73b09e20508..ad62b5080cc 100644
 --- a/gcc/config/aarch64/aarch64.h
 +++ b/gcc/config/aarch64/aarch64.h
 @@ -1154,6 +1154,10 @@ typedef struct
@@ -124,7 +93,7 @@ index 155cace6afe..93ff5264a2e 100644
  
  /* When using the tiny addressing model conditional and unconditional branches
 diff --git a/gcc/config/aarch64/aarch64.md b/gcc/config/aarch64/aarch64.md
-index 022eef80bc1..2024af16a17 100644
+index 36d0bb3f718..cfa2f7efc7f 100644
 --- a/gcc/config/aarch64/aarch64.md
 +++ b/gcc/config/aarch64/aarch64.md
 @@ -7068,11 +7068,22 @@

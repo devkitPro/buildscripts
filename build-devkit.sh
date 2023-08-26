@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #---------------------------------------------------------------------------------
-#	devkitARM release 61
+#	devkitARM release 62
 #	devkitPPC release 43
-#	devkitA64 release 22
+#	devkitA64 release 23
 #---------------------------------------------------------------------------------
 
 if [ 0 -eq 1 ] ; then
