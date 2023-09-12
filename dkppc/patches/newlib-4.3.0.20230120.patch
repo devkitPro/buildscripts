@@ -10065,6 +10065,45 @@ index df966f929..106d99e94 100644
  #include <_ansi.h>
  #include <reent.h>
  #include <newlib.h>
+diff --git a/newlib/libc/stdlib/__call_atexit.c b/newlib/libc/stdlib/__call_atexit.c
+index 710440389..985e720bf 100644
+--- a/newlib/libc/stdlib/__call_atexit.c
++++ b/newlib/libc/stdlib/__call_atexit.c
+@@ -21,6 +21,7 @@ struct _atexit *__atexit = _NULL;
+ 
+ #ifdef _WANT_REGISTER_FINI
+ 
++#if 0
+ /* If "__libc_fini" is defined, finalizers (either
+    "__libc_fini_array", or "_fini", as appropriate) will be run after
+    all user-specified atexit handlers.  For example, you can define
+@@ -36,6 +37,7 @@ struct _atexit *__atexit = _NULL;
+    used with multiple BSPs, some of which register finalizers from
+    startup code, while others defer to the C library.  */
+ extern char __libc_fini __attribute__((weak));
++#endif
+ 
+ /* Register the application finalization function with atexit.  These
+    finalizers should run last.  Therefore, we want to call atexit as
+@@ -46,6 +48,7 @@ register_fini(void) __attribute__((constructor (0)));
+ static void 
+ register_fini(void)
+ {
++#if 0
+   if (&__libc_fini) {
+ #ifdef _HAVE_INITFINI_ARRAY
+     extern void __libc_fini_array (void);
+@@ -55,6 +58,10 @@ register_fini(void)
+     atexit (_fini);
+ #endif
+   }
++#else
++  extern void __fini (void);
++  atexit (__fini);
++#endif
+ }
+ 
+ #endif /* _WANT_REGISTER_FINI  */
 diff --git a/newlib/libc/stdlib/mlock.c b/newlib/libc/stdlib/mlock.c
 index 23aa10173..ba88eb9fb 100644
 --- a/newlib/libc/stdlib/mlock.c
