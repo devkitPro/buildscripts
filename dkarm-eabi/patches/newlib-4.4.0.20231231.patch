@@ -1,5 +1,5 @@
 diff --git a/libgloss/Makefile.am b/libgloss/Makefile.am
-index 4309cd3a4..fad31dbe0 100644
+index 0d4460b58..0eab54b65 100644
 --- a/libgloss/Makefile.am
 +++ b/libgloss/Makefile.am
 @@ -87,6 +87,9 @@ endif
@@ -13,10 +13,10 @@ index 4309cd3a4..fad31dbe0 100644
  include lm32/Makefile.inc
  endif
 diff --git a/libgloss/Makefile.in b/libgloss/Makefile.in
-index a117577ea..44731970d 100644
+index fd845cf5f..5f80b89ab 100644
 --- a/libgloss/Makefile.in
 +++ b/libgloss/Makefile.in
-@@ -173,23 +173,26 @@ check_PROGRAMS = $(am__EXEEXT_2) $(am__EXEEXT_3)
+@@ -173,25 +173,28 @@ check_PROGRAMS = $(am__EXEEXT_2) $(am__EXEEXT_3)
  @CONFIG_IQ2000_TRUE@am__append_26 = iq2000/test
  @CONFIG_LIBNOSYS_TRUE@am__append_27 = libnosys/nosys.specs
  @CONFIG_LIBNOSYS_TRUE@am__append_28 = libnosys/libnosys.a
@@ -42,17 +42,61 @@ index a117577ea..44731970d 100644
  @CONFIG_RISCV_TRUE@	riscv/semihost.specs \
  @CONFIG_RISCV_TRUE@	riscv/crt0.o
  
--@CONFIG_RISCV_TRUE@am__append_35 = riscv/libgloss.a \
-+@CONFIG_RISCV_TRUE@am__append_37 = riscv/libgloss.a \
+-@CONFIG_RISCV_TRUE@am__append_35 = riscv/libgloss.a riscv/libsim.a \
++@CONFIG_RISCV_TRUE@am__append_37 = riscv/libgloss.a riscv/libsim.a \
  @CONFIG_RISCV_TRUE@	riscv/libsemihost.a
 -@CONFIG_WINCE_TRUE@am__append_36 = $(gdbdir)
 -@CONFIG_WINCE_TRUE@am__append_37 = wince/stub.exe
+-@CONFIG_XTENSA_TRUE@am__append_38 = -D_LIBGLOSS -I$(srcdir)/xtensa/include
+-@CONFIG_XTENSA_TRUE@am__append_39 = \
 +@CONFIG_WINCE_TRUE@am__append_38 = $(gdbdir)
 +@CONFIG_WINCE_TRUE@am__append_39 = wince/stub.exe
++@CONFIG_XTENSA_TRUE@am__append_40 = -D_LIBGLOSS -I$(srcdir)/xtensa/include
++@CONFIG_XTENSA_TRUE@am__append_41 = \
+ @CONFIG_XTENSA_TRUE@	xtensa/default.specs \
+ @CONFIG_XTENSA_TRUE@	xtensa/nano.specs \
+ @CONFIG_XTENSA_TRUE@	xtensa/sim.elf.specs \
+@@ -200,27 +203,27 @@ check_PROGRAMS = $(am__EXEEXT_2) $(am__EXEEXT_3)
+ @CONFIG_XTENSA_TRUE@	xtensa/sys.openocd.specs \
+ @CONFIG_XTENSA_TRUE@	xtensa/crt0.o
+ 
+-@CONFIG_XTENSA_TRUE@am__append_40 = \
++@CONFIG_XTENSA_TRUE@am__append_42 = \
+ @CONFIG_XTENSA_TRUE@	xtensa/crt0.S \
+ @CONFIG_XTENSA_TRUE@	xtensa/crt1-sim.S \
+ @CONFIG_XTENSA_TRUE@	xtensa/crt1-boards.S
+ 
+-@CONFIG_XTENSA_TRUE@am__append_41 = xtensa/libgloss.a
+-@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_42 = \
++@CONFIG_XTENSA_TRUE@am__append_43 = xtensa/libgloss.a
++@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_44 = \
+ @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	xtensa/app.elf.ld \
+ @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	xtensa/crt1-sim.o \
+ @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	xtensa/crt1-boards.o
+ 
+-@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_43 = xtensa/libsys_qemu.a \
++@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_45 = xtensa/libsys_qemu.a \
+ @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	xtensa/libsys_openocd.a
+-@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP32_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_44 = xtensa/boards/esp32/memory.elf.ld
+-@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP32_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_45 = xtensa/boards/esp32/board.c
+-@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP32_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_46 = -I$(srcdir)/xtensa/boards/esp32/include
+-@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP32_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_47 = -I$(srcdir)/xtensa/boards/esp32/include
+-@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP32S3_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_48 = xtensa/boards/esp32s3/memory.elf.ld
+-@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP32S3_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_49 = xtensa/boards/esp32s3/board.c
+-@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP32S3_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_50 = -I$(srcdir)/xtensa/boards/esp32s3/include
+-@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP32S3_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_51 = -I$(srcdir)/xtensa/boards/esp32s3/include
++@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP32_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_46 = xtensa/boards/esp32/memory.elf.ld
++@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP32_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_47 = xtensa/boards/esp32/board.c
++@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP32_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_48 = -I$(srcdir)/xtensa/boards/esp32/include
++@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP32_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_49 = -I$(srcdir)/xtensa/boards/esp32/include
++@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP32S3_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_50 = xtensa/boards/esp32s3/memory.elf.ld
++@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP32S3_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_51 = xtensa/boards/esp32s3/board.c
++@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP32S3_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_52 = -I$(srcdir)/xtensa/boards/esp32s3/include
++@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP32S3_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@am__append_53 = -I$(srcdir)/xtensa/boards/esp32s3/include
  subdir = .
  ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
  am__aclocal_m4_deps = $(top_srcdir)/../config/depstand.m4 \
-@@ -199,6 +202,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../config/depstand.m4 \
+@@ -230,6 +233,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../config/depstand.m4 \
  	$(top_srcdir)/aarch64/acinclude.m4 \
  	$(top_srcdir)/arm/acinclude.m4 $(top_srcdir)/i386/acinclude.m4 \
  	$(top_srcdir)/libnosys/acinclude.m4 \
@@ -60,9 +104,9 @@ index a117577ea..44731970d 100644
  	$(top_srcdir)/m68k/acinclude.m4 \
  	$(top_srcdir)/mcore/acinclude.m4 \
  	$(top_srcdir)/mips/acinclude.m4 \
-@@ -421,6 +425,69 @@ libobjs_a_LIBADD =
+@@ -459,6 +463,69 @@ libobjs_a_LIBADD =
  am_libobjs_a_OBJECTS = $(am__objects_3) $(am__objects_4) \
- 	$(am__objects_5) $(am__objects_6)
+ 	$(am__objects_5) $(am__objects_6) $(am__objects_7)
  libobjs_a_OBJECTS = $(am_libobjs_a_OBJECTS)
 +libsysbase_libpthread_a_AR = $(AR) $(ARFLAGS)
 +libsysbase_libpthread_a_LIBADD =
@@ -130,7 +174,7 @@ index a117577ea..44731970d 100644
  lm32_libgloss_a_AR = $(AR) $(ARFLAGS)
  lm32_libgloss_a_LIBADD =
  @CONFIG_LM32_TRUE@am_lm32_libgloss_a_OBJECTS = lm32/isatty.$(OBJEXT) \
-@@ -572,7 +639,8 @@ SOURCES = $(aarch64_librdimon_a_SOURCES) $(arc_libnsim_a_SOURCES) \
+@@ -668,7 +735,8 @@ SOURCES = $(aarch64_librdimon_a_SOURCES) $(arc_libnsim_a_SOURCES) \
  	$(bfin_libbfinbsp_a_SOURCES) $(bfin_libsim_a_SOURCES) \
  	$(csky_libsemi_a_SOURCES) $(d30v_libsim_a_SOURCES) \
  	$(iq2000_libeval_a_SOURCES) $(libnosys_libnosys_a_SOURCES) \
@@ -138,9 +182,9 @@ index a117577ea..44731970d 100644
 +	$(libobjs_a_SOURCES) $(libsysbase_libpthread_a_SOURCES) \
 +	$(libsysbase_libsysbase_a_SOURCES) $(lm32_libgloss_a_SOURCES) \
  	$(nios2_libnios2_a_SOURCES) $(riscv_libgloss_a_SOURCES) \
- 	$(riscv_libsemihost_a_SOURCES) bfin/sim-test.c iq2000/test.c \
- 	$(wince_stub_exe_SOURCES)
-@@ -662,7 +730,7 @@ ETAGS = etags
+ 	$(riscv_libsemihost_a_SOURCES) $(riscv_libsim_a_SOURCES) \
+ 	$(xtensa_libgloss_a_SOURCES) \
+@@ -761,7 +829,7 @@ ETAGS = etags
  CTAGS = ctags
  CSCOPE = cscope
  DIST_SUBDIRS = $(SUBDIRS)
@@ -149,7 +193,16 @@ index a117577ea..44731970d 100644
  AARCH64_OBJTYPE = @AARCH64_OBJTYPE@
  ACLOCAL = @ACLOCAL@
  AMTAR = @AMTAR@
-@@ -772,6 +840,7 @@ pdfdir = @pdfdir@
+@@ -779,7 +847,7 @@ CCASFLAGS = @CCASFLAGS@
+ CCDEPMODE = @CCDEPMODE@
+ CFLAGS = @CFLAGS@
+ CPP = @CPP@
+-CPPFLAGS = @CPPFLAGS@ $(am__append_38)
++CPPFLAGS = @CPPFLAGS@ $(am__append_40)
+ CYGPATH_W = @CYGPATH_W@
+ DEFS = @DEFS@
+ DEPDIR = @DEPDIR@
+@@ -874,6 +942,7 @@ pdfdir = @pdfdir@
  prefix = @prefix@
  program_transform_name = @program_transform_name@
  psdir = @psdir@
@@ -157,34 +210,37 @@ index a117577ea..44731970d 100644
  sbindir = @sbindir@
  sharedstatedir = @sharedstatedir@
  srcdir = @srcdir@
-@@ -797,12 +866,13 @@ multilibtooldir = $(tooldir)/lib$(MULTISUBDIR)
+@@ -899,14 +968,14 @@ multilibtooldir = $(tooldir)/lib$(MULTISUBDIR)
  multilibtool_DATA = $(am__append_3) $(am__append_6) $(am__append_7) \
  	$(am__append_8) $(am__append_13) $(am__append_15) \
  	$(am__append_18) $(am__append_22) $(am__append_23) \
 -	$(am__append_27) $(am__append_29) $(am__append_32) \
--	$(am__append_34)
+-	$(am__append_34) $(am__append_39) $(am__append_42) \
+-	$(am__append_44) $(am__append_48)
 +	$(am__append_27) $(am__append_29) $(am__append_31) \
-+	$(am__append_34) $(am__append_36)
++	$(am__append_34) $(am__append_36) $(am__append_41) \
++	$(am__append_44) $(am__append_46) $(am__append_50)
  multilibtool_LIBRARIES = $(am__append_2) $(am__append_5) \
  	$(am__append_9) $(am__append_11) $(am__append_20) \
  	$(am__append_21) $(am__append_24) $(am__append_28) \
--	$(am__append_30) $(am__append_33) $(am__append_35)
+-	$(am__append_30) $(am__append_33) $(am__append_35) \
+-	$(am__append_41) $(am__append_43)
 +	$(am__append_30) $(am__append_32) $(am__append_35) \
-+	$(am__append_37)
++	$(am__append_37) $(am__append_43) $(am__append_45)
  includetooldir = $(tooldir)/include
  includetool_DATA = $(am__append_16)
  includesystooldir = $(tooldir)/include/sys
-@@ -813,7 +883,7 @@ AM_CPPFLAGS = -idirafter $(srcroot)/include
+@@ -917,7 +986,7 @@ AM_CPPFLAGS = -idirafter $(srcroot)/include
  # to install (e.g. our crt0.o objects).
  noinst_LIBRARIES = libobjs.a
  libobjs_a_SOURCES = $(am__append_14) $(am__append_19) $(am__append_25) \
--	$(am__append_31)
-+	$(am__append_33)
+-	$(am__append_31) $(am__append_40)
++	$(am__append_33) $(am__append_42)
  FLAGS_TO_PASS = \
  	"CC=$(CC)" \
  	"CFLAGS=$(CFLAGS)" \
-@@ -992,6 +1062,65 @@ TEXINFO_TEX = ../texinfo/texinfo.tex
- @CONFIG_LIBNOSYS_TRUE@	libnosys/write.c \
+@@ -1098,6 +1167,65 @@ TEXINFO_TEX = ../texinfo/texinfo.tex
+ @CONFIG_LIBNOSYS_TRUE@	libnosys/getentropy.c \
  @CONFIG_LIBNOSYS_TRUE@	libnosys/_exit.c
  
 +@CONFIG_LIBSYSBASE_TRUE@libsysbase_libpthread_a_SOURCES = \
@@ -249,25 +305,51 @@ index a117577ea..44731970d 100644
  @CONFIG_LM32_TRUE@lm32_libgloss_a_SOURCES = \
  @CONFIG_LM32_TRUE@	lm32/isatty.c \
  @CONFIG_LM32_TRUE@	lm32/scall.S
-@@ -1099,7 +1228,7 @@ all: config.h
+@@ -1203,19 +1331,19 @@ TEXINFO_TEX = ../texinfo/texinfo.tex
+ @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@xtensa_libgloss_a_SOURCES = xtensa/sleep.S \
+ @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	xtensa/syscalls.c \
+ @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	xtensa/window-vectors.S \
+-@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	$(am__append_45) \
+-@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	$(am__append_49)
++@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	$(am__append_47) \
++@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	$(am__append_51)
+ @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@xtensa_libsys_qemu_a_CPPFLAGS = -DQEMU_SEMIHOSTING \
+-@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	$(am__append_46) \
+-@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	$(am__append_50)
++@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	$(am__append_48) \
++@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	$(am__append_52)
+ @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@xtensa_libsys_qemu_a_SOURCES = \
+ @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	xtensa/sim-vectors.S \
+ @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	xtensa/sim-call.S \
+ @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	xtensa/syscalls.c
+ 
+ @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@xtensa_libsys_openocd_a_CPPFLAGS = -DOPENOCD_SEMIHOSTING \
+-@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	$(am__append_47) \
+-@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	$(am__append_51)
++@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	$(am__append_49) \
++@CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	$(am__append_53)
+ @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@xtensa_libsys_openocd_a_SOURCES = \
+ @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	xtensa/syscalls.c
+ 
+@@ -1228,7 +1356,7 @@ all: config.h
  .SUFFIXES: .S .c .dvi .o .obj .ps
  am--refresh: Makefile
  	@:
--$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../multilib.am $(srcdir)/doc/Makefile.inc $(srcdir)/aarch64/Makefile.inc $(srcdir)/aarch64/cpu-init/Makefile.inc $(srcdir)/arc/Makefile.inc $(srcdir)/arm/Makefile.inc $(srcdir)/arm/cpu-init/Makefile.inc $(srcdir)/bfin/Makefile.inc $(srcdir)/csky/Makefile.inc $(srcdir)/d30v/Makefile.inc $(srcdir)/iq2000/Makefile.inc $(srcdir)/libnosys/Makefile.inc $(srcdir)/lm32/Makefile.inc $(srcdir)/nios2/Makefile.inc $(srcdir)/riscv/Makefile.inc $(srcdir)/wince/Makefile.inc $(am__configure_deps)
-+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../multilib.am $(srcdir)/doc/Makefile.inc $(srcdir)/aarch64/Makefile.inc $(srcdir)/aarch64/cpu-init/Makefile.inc $(srcdir)/arc/Makefile.inc $(srcdir)/arm/Makefile.inc $(srcdir)/arm/cpu-init/Makefile.inc $(srcdir)/bfin/Makefile.inc $(srcdir)/csky/Makefile.inc $(srcdir)/d30v/Makefile.inc $(srcdir)/iq2000/Makefile.inc $(srcdir)/libnosys/Makefile.inc $(srcdir)/libsysbase/Makefile.inc $(srcdir)/lm32/Makefile.inc $(srcdir)/nios2/Makefile.inc $(srcdir)/riscv/Makefile.inc $(srcdir)/wince/Makefile.inc $(am__configure_deps)
+-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../multilib.am $(srcdir)/doc/Makefile.inc $(srcdir)/aarch64/Makefile.inc $(srcdir)/aarch64/cpu-init/Makefile.inc $(srcdir)/arc/Makefile.inc $(srcdir)/arm/Makefile.inc $(srcdir)/arm/cpu-init/Makefile.inc $(srcdir)/bfin/Makefile.inc $(srcdir)/csky/Makefile.inc $(srcdir)/d30v/Makefile.inc $(srcdir)/iq2000/Makefile.inc $(srcdir)/libnosys/Makefile.inc $(srcdir)/lm32/Makefile.inc $(srcdir)/nios2/Makefile.inc $(srcdir)/riscv/Makefile.inc $(srcdir)/wince/Makefile.inc $(srcdir)/xtensa/Makefile.inc $(am__configure_deps)
++$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(top_srcdir)/../multilib.am $(srcdir)/doc/Makefile.inc $(srcdir)/aarch64/Makefile.inc $(srcdir)/aarch64/cpu-init/Makefile.inc $(srcdir)/arc/Makefile.inc $(srcdir)/arm/Makefile.inc $(srcdir)/arm/cpu-init/Makefile.inc $(srcdir)/bfin/Makefile.inc $(srcdir)/csky/Makefile.inc $(srcdir)/d30v/Makefile.inc $(srcdir)/iq2000/Makefile.inc $(srcdir)/libnosys/Makefile.inc $(srcdir)/libsysbase/Makefile.inc $(srcdir)/lm32/Makefile.inc $(srcdir)/nios2/Makefile.inc $(srcdir)/riscv/Makefile.inc $(srcdir)/wince/Makefile.inc $(srcdir)/xtensa/Makefile.inc $(am__configure_deps)
  	@for dep in $?; do \
  	  case '$(am__configure_deps)' in \
  	    *$$dep*) \
-@@ -1121,7 +1250,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
+@@ -1250,7 +1378,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
  	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
  	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
  	esac;
--$(top_srcdir)/../multilib.am $(srcdir)/doc/Makefile.inc $(srcdir)/aarch64/Makefile.inc $(srcdir)/aarch64/cpu-init/Makefile.inc $(srcdir)/arc/Makefile.inc $(srcdir)/arm/Makefile.inc $(srcdir)/arm/cpu-init/Makefile.inc $(srcdir)/bfin/Makefile.inc $(srcdir)/csky/Makefile.inc $(srcdir)/d30v/Makefile.inc $(srcdir)/iq2000/Makefile.inc $(srcdir)/libnosys/Makefile.inc $(srcdir)/lm32/Makefile.inc $(srcdir)/nios2/Makefile.inc $(srcdir)/riscv/Makefile.inc $(srcdir)/wince/Makefile.inc $(am__empty):
-+$(top_srcdir)/../multilib.am $(srcdir)/doc/Makefile.inc $(srcdir)/aarch64/Makefile.inc $(srcdir)/aarch64/cpu-init/Makefile.inc $(srcdir)/arc/Makefile.inc $(srcdir)/arm/Makefile.inc $(srcdir)/arm/cpu-init/Makefile.inc $(srcdir)/bfin/Makefile.inc $(srcdir)/csky/Makefile.inc $(srcdir)/d30v/Makefile.inc $(srcdir)/iq2000/Makefile.inc $(srcdir)/libnosys/Makefile.inc $(srcdir)/libsysbase/Makefile.inc $(srcdir)/lm32/Makefile.inc $(srcdir)/nios2/Makefile.inc $(srcdir)/riscv/Makefile.inc $(srcdir)/wince/Makefile.inc $(am__empty):
+-$(top_srcdir)/../multilib.am $(srcdir)/doc/Makefile.inc $(srcdir)/aarch64/Makefile.inc $(srcdir)/aarch64/cpu-init/Makefile.inc $(srcdir)/arc/Makefile.inc $(srcdir)/arm/Makefile.inc $(srcdir)/arm/cpu-init/Makefile.inc $(srcdir)/bfin/Makefile.inc $(srcdir)/csky/Makefile.inc $(srcdir)/d30v/Makefile.inc $(srcdir)/iq2000/Makefile.inc $(srcdir)/libnosys/Makefile.inc $(srcdir)/lm32/Makefile.inc $(srcdir)/nios2/Makefile.inc $(srcdir)/riscv/Makefile.inc $(srcdir)/wince/Makefile.inc $(srcdir)/xtensa/Makefile.inc $(am__empty):
++$(top_srcdir)/../multilib.am $(srcdir)/doc/Makefile.inc $(srcdir)/aarch64/Makefile.inc $(srcdir)/aarch64/cpu-init/Makefile.inc $(srcdir)/arc/Makefile.inc $(srcdir)/arm/Makefile.inc $(srcdir)/arm/cpu-init/Makefile.inc $(srcdir)/bfin/Makefile.inc $(srcdir)/csky/Makefile.inc $(srcdir)/d30v/Makefile.inc $(srcdir)/iq2000/Makefile.inc $(srcdir)/libnosys/Makefile.inc $(srcdir)/libsysbase/Makefile.inc $(srcdir)/lm32/Makefile.inc $(srcdir)/nios2/Makefile.inc $(srcdir)/riscv/Makefile.inc $(srcdir)/wince/Makefile.inc $(srcdir)/xtensa/Makefile.inc $(am__empty):
  
  $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
  	$(SHELL) ./config.status --recheck
-@@ -1585,6 +1714,183 @@ libobjs.a: $(libobjs_a_OBJECTS) $(libobjs_a_DEPENDENCIES) $(EXTRA_libobjs_a_DEPE
+@@ -1730,6 +1858,183 @@ libobjs.a: $(libobjs_a_OBJECTS) $(libobjs_a_DEPENDENCIES) $(EXTRA_libobjs_a_DEPE
  	$(AM_V_at)-rm -f libobjs.a
  	$(AM_V_AR)$(libobjs_a_AR) libobjs.a $(libobjs_a_OBJECTS) $(libobjs_a_LIBADD)
  	$(AM_V_at)$(RANLIB) libobjs.a
@@ -451,7 +533,7 @@ index a117577ea..44731970d 100644
  lm32/isatty.$(OBJEXT): lm32/$(am__dirstamp) \
  	lm32/$(DEPDIR)/$(am__dirstamp)
  lm32/scall.$(OBJEXT): lm32/$(am__dirstamp) \
-@@ -1852,6 +2158,7 @@ mostlyclean-compile:
+@@ -2113,6 +2418,7 @@ mostlyclean-compile:
  	-rm -f d30v/*.$(OBJEXT)
  	-rm -f iq2000/*.$(OBJEXT)
  	-rm -f libnosys/*.$(OBJEXT)
@@ -459,7 +541,7 @@ index a117577ea..44731970d 100644
  	-rm -f lm32/*.$(OBJEXT)
  	-rm -f nios2/*.$(OBJEXT)
  	-rm -f riscv/*.$(OBJEXT)
-@@ -1973,6 +2280,60 @@ distclean-compile:
+@@ -2238,6 +2544,60 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@libnosys/$(DEPDIR)/unlink.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libnosys/$(DEPDIR)/wait.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libnosys/$(DEPDIR)/write.Po@am__quote@
@@ -520,7 +602,7 @@ index a117577ea..44731970d 100644
  @AMDEP_TRUE@@am__include@ @am__quote@lm32/$(DEPDIR)/crt0.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@lm32/$(DEPDIR)/isatty.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@lm32/$(DEPDIR)/scall.Po@am__quote@
-@@ -2717,6 +3078,748 @@ csky/csky_libsemi_a-getpid.obj: csky/getpid.c
+@@ -3082,6 +3442,748 @@ csky/csky_libsemi_a-getpid.obj: csky/getpid.c
  @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
  @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(csky_libsemi_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o csky/csky_libsemi_a-getpid.obj `if test -f 'csky/getpid.c'; then $(CYGPATH_W) 'csky/getpid.c'; else $(CYGPATH_W) '$(srcdir)/csky/getpid.c'; fi`
  
@@ -1269,7 +1351,7 @@ index a117577ea..44731970d 100644
  nios2/nios2_libnios2_a-io-close.o: nios2/io-close.c
  @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(nios2_libnios2_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT nios2/nios2_libnios2_a-io-close.o -MD -MP -MF nios2/$(DEPDIR)/nios2_libnios2_a-io-close.Tpo -c -o nios2/nios2_libnios2_a-io-close.o `test -f 'nios2/io-close.c' || echo '$(srcdir)/'`nios2/io-close.c
  @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) nios2/$(DEPDIR)/nios2_libnios2_a-io-close.Tpo nios2/$(DEPDIR)/nios2_libnios2_a-io-close.Po
-@@ -4220,6 +5323,8 @@ distclean-generic:
+@@ -5103,6 +6205,8 @@ distclean-generic:
  	-rm -f iq2000/$(am__dirstamp)
  	-rm -f libnosys/$(DEPDIR)/$(am__dirstamp)
  	-rm -f libnosys/$(am__dirstamp)
@@ -1278,29 +1360,29 @@ index a117577ea..44731970d 100644
  	-rm -f lm32/$(DEPDIR)/$(am__dirstamp)
  	-rm -f lm32/$(am__dirstamp)
  	-rm -f nios2/$(DEPDIR)/$(am__dirstamp)
-@@ -4239,7 +5344,7 @@ clean-am: clean-aminfo clean-binPROGRAMS clean-checkPROGRAMS \
+@@ -5129,7 +6233,7 @@ clean-am: clean-aminfo clean-binPROGRAMS clean-checkPROGRAMS \
  
  distclean: distclean-recursive
  	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
--	-rm -rf ./$(DEPDIR) aarch64/$(DEPDIR) arc/$(DEPDIR) arm/$(DEPDIR) bfin/$(DEPDIR) csky/$(DEPDIR) d30v/$(DEPDIR) iq2000/$(DEPDIR) libnosys/$(DEPDIR) lm32/$(DEPDIR) nios2/$(DEPDIR) riscv/$(DEPDIR)
-+	-rm -rf ./$(DEPDIR) aarch64/$(DEPDIR) arc/$(DEPDIR) arm/$(DEPDIR) bfin/$(DEPDIR) csky/$(DEPDIR) d30v/$(DEPDIR) iq2000/$(DEPDIR) libnosys/$(DEPDIR) libsysbase/$(DEPDIR) lm32/$(DEPDIR) nios2/$(DEPDIR) riscv/$(DEPDIR)
+-	-rm -rf ./$(DEPDIR) aarch64/$(DEPDIR) arc/$(DEPDIR) arm/$(DEPDIR) bfin/$(DEPDIR) csky/$(DEPDIR) d30v/$(DEPDIR) iq2000/$(DEPDIR) libnosys/$(DEPDIR) lm32/$(DEPDIR) nios2/$(DEPDIR) riscv/$(DEPDIR) xtensa/$(DEPDIR) xtensa/boards/esp32/$(DEPDIR) xtensa/boards/esp32s3/$(DEPDIR)
++	-rm -rf ./$(DEPDIR) aarch64/$(DEPDIR) arc/$(DEPDIR) arm/$(DEPDIR) bfin/$(DEPDIR) csky/$(DEPDIR) d30v/$(DEPDIR) iq2000/$(DEPDIR) libnosys/$(DEPDIR) libsysbase/$(DEPDIR) lm32/$(DEPDIR) nios2/$(DEPDIR) riscv/$(DEPDIR) xtensa/$(DEPDIR) xtensa/boards/esp32/$(DEPDIR) xtensa/boards/esp32s3/$(DEPDIR)
  	-rm -f Makefile
  distclean-am: clean-am distclean-compile distclean-generic \
  	distclean-hdr distclean-local distclean-tags
-@@ -4382,7 +5487,7 @@ installcheck-am:
+@@ -5272,7 +6376,7 @@ installcheck-am:
  maintainer-clean: maintainer-clean-recursive
  	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
  	-rm -rf $(top_srcdir)/autom4te.cache
--	-rm -rf ./$(DEPDIR) aarch64/$(DEPDIR) arc/$(DEPDIR) arm/$(DEPDIR) bfin/$(DEPDIR) csky/$(DEPDIR) d30v/$(DEPDIR) iq2000/$(DEPDIR) libnosys/$(DEPDIR) lm32/$(DEPDIR) nios2/$(DEPDIR) riscv/$(DEPDIR)
-+	-rm -rf ./$(DEPDIR) aarch64/$(DEPDIR) arc/$(DEPDIR) arm/$(DEPDIR) bfin/$(DEPDIR) csky/$(DEPDIR) d30v/$(DEPDIR) iq2000/$(DEPDIR) libnosys/$(DEPDIR) libsysbase/$(DEPDIR) lm32/$(DEPDIR) nios2/$(DEPDIR) riscv/$(DEPDIR)
+-	-rm -rf ./$(DEPDIR) aarch64/$(DEPDIR) arc/$(DEPDIR) arm/$(DEPDIR) bfin/$(DEPDIR) csky/$(DEPDIR) d30v/$(DEPDIR) iq2000/$(DEPDIR) libnosys/$(DEPDIR) lm32/$(DEPDIR) nios2/$(DEPDIR) riscv/$(DEPDIR) xtensa/$(DEPDIR) xtensa/boards/esp32/$(DEPDIR) xtensa/boards/esp32s3/$(DEPDIR)
++	-rm -rf ./$(DEPDIR) aarch64/$(DEPDIR) arc/$(DEPDIR) arm/$(DEPDIR) bfin/$(DEPDIR) csky/$(DEPDIR) d30v/$(DEPDIR) iq2000/$(DEPDIR) libnosys/$(DEPDIR) libsysbase/$(DEPDIR) lm32/$(DEPDIR) nios2/$(DEPDIR) riscv/$(DEPDIR) xtensa/$(DEPDIR) xtensa/boards/esp32/$(DEPDIR) xtensa/boards/esp32s3/$(DEPDIR)
  	-rm -f Makefile
  maintainer-clean-am: distclean-am maintainer-clean-aminfo \
  	maintainer-clean-generic maintainer-clean-local
 diff --git a/libgloss/configure b/libgloss/configure
-index 28754b6d5..2e04092ab 100755
+index 5f6bc5841..b5e41eb03 100755
 --- a/libgloss/configure
 +++ b/libgloss/configure
-@@ -638,6 +638,8 @@ CONFIG_NIOS2_FALSE
+@@ -649,6 +649,8 @@ CONFIG_NIOS2_FALSE
  CONFIG_NIOS2_TRUE
  CONFIG_LM32_FALSE
  CONFIG_LM32_TRUE
@@ -1309,7 +1391,7 @@ index 28754b6d5..2e04092ab 100755
  CONFIG_LIBNOSYS_FALSE
  CONFIG_LIBNOSYS_TRUE
  CONFIG_IQ2000_FALSE
-@@ -722,6 +724,7 @@ infodir
+@@ -733,6 +735,7 @@ infodir
  docdir
  oldincludedir
  includedir
@@ -1317,7 +1399,7 @@ index 28754b6d5..2e04092ab 100755
  localstatedir
  sharedstatedir
  sysconfdir
-@@ -800,6 +803,7 @@ datadir='${datarootdir}'
+@@ -811,6 +814,7 @@ datadir='${datarootdir}'
  sysconfdir='${prefix}/etc'
  sharedstatedir='${prefix}/com'
  localstatedir='${prefix}/var'
@@ -1325,7 +1407,7 @@ index 28754b6d5..2e04092ab 100755
  includedir='${prefix}/include'
  oldincludedir='/usr/include'
  docdir='${datarootdir}/doc/${PACKAGE_TARNAME}'
-@@ -1052,6 +1056,15 @@ do
+@@ -1063,6 +1067,15 @@ do
    | -silent | --silent | --silen | --sile | --sil)
      silent=yes ;;
  
@@ -1341,7 +1423,7 @@ index 28754b6d5..2e04092ab 100755
    -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
      ac_prev=sbindir ;;
    -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
-@@ -1189,7 +1202,7 @@ fi
+@@ -1200,7 +1213,7 @@ fi
  for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
  		datadir sysconfdir sharedstatedir localstatedir includedir \
  		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
@@ -1350,7 +1432,7 @@ index 28754b6d5..2e04092ab 100755
  do
    eval ac_val=\$$ac_var
    # Remove trailing slashes.
-@@ -1342,6 +1355,7 @@ Fine tuning of the installation directories:
+@@ -1353,6 +1366,7 @@ Fine tuning of the installation directories:
    --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
    --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
    --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
@@ -1358,7 +1440,7 @@ index 28754b6d5..2e04092ab 100755
    --libdir=DIR            object code libraries [EPREFIX/lib]
    --includedir=DIR        C header files [PREFIX/include]
    --oldincludedir=DIR     C header files for non-gcc [/usr/include]
-@@ -2745,6 +2759,8 @@ config_testsuite=true
+@@ -2756,6 +2770,8 @@ config_testsuite=true
  
  config_libnosys=true
  
@@ -1367,7 +1449,7 @@ index 28754b6d5..2e04092ab 100755
  host_makefile_frag=${srcdir}/config/default.mh
  target_makefile_frag=${srcdir}/config/default.mt
  
-@@ -3047,6 +3063,14 @@ else
+@@ -3061,6 +3077,14 @@ else
    CONFIG_LIBNOSYS_FALSE=
  fi
  
@@ -1382,9 +1464,9 @@ index 28754b6d5..2e04092ab 100755
     if test x$config_lm32 = xtrue; then
    CONFIG_LM32_TRUE=
    CONFIG_LM32_FALSE='#'
-@@ -4924,6 +4948,35 @@ case "${target}" in
+@@ -4976,6 +5000,35 @@ $as_echo "#define MISSING_SYSCALL_NAMES 1" >>confdefs.h
+  ;;
  esac
- 
  
 +case "${target}" in
 +  *-*-cygwin*) ;;
@@ -1415,10 +1497,10 @@ index 28754b6d5..2e04092ab 100755
 + ;;
 +esac
 +
+ M68K_TARGET=m68k
  case "${target}" in
-   *-*-cygwin*) ;;
-   a29k-amd-udi) ;;
-@@ -5331,6 +5384,10 @@ if test -z "${CONFIG_LIBNOSYS_TRUE}" && test -z "${CONFIG_LIBNOSYS_FALSE}"; then
+   fido-*-* | m68*-*-*)
+@@ -5398,6 +5451,10 @@ if test -z "${CONFIG_LIBNOSYS_TRUE}" && test -z "${CONFIG_LIBNOSYS_FALSE}"; then
    as_fn_error $? "conditional \"CONFIG_LIBNOSYS\" was never defined.
  Usually this means the macro was only invoked conditionally." "$LINENO" 5
  fi
@@ -1430,7 +1512,7 @@ index 28754b6d5..2e04092ab 100755
    as_fn_error $? "conditional \"CONFIG_LM32\" was never defined.
  Usually this means the macro was only invoked conditionally." "$LINENO" 5
 diff --git a/libgloss/configure.ac b/libgloss/configure.ac
-index 5fb26845c..cf07fb118 100644
+index 268d86c51..1b918a61e 100644
 --- a/libgloss/configure.ac
 +++ b/libgloss/configure.ac
 @@ -43,6 +43,9 @@ config_testsuite=true
@@ -1443,16 +1525,16 @@ index 5fb26845c..cf07fb118 100644
  host_makefile_frag=${srcdir}/config/default.mh
  target_makefile_frag=${srcdir}/config/default.mt
  
-@@ -247,7 +250,7 @@ AC_SUBST(subdirs)
+@@ -250,7 +253,7 @@ AC_SUBST(subdirs)
  dnl These subdirs have converted to non-recursive make.  Hopefully someday all
  dnl the ports above will too!
  m4_foreach_w([SUBDIR], [
--  aarch64 arc arm bfin csky d30v iq2000 libnosys lm32 nios2 riscv wince
-+  aarch64 arc arm bfin csky d30v iq2000 libnosys libsysbase lm32 nios2 riscv wince
+-  aarch64 arc arm bfin csky d30v iq2000 libnosys lm32 nios2 riscv wince xtensa
++  aarch64 arc arm bfin csky d30v iq2000 libnosys lm32 libsysbase nios2 riscv wince xtensa
  ], [dnl
    AM_CONDITIONAL([CONFIG_]m4_toupper(SUBDIR), [test x$config_]SUBDIR = xtrue)
  ])
-@@ -343,6 +346,7 @@ m4_include([aarch64/acinclude.m4])
+@@ -346,6 +349,7 @@ m4_include([aarch64/acinclude.m4])
  m4_include([arm/acinclude.m4])
  m4_include([i386/acinclude.m4])
  m4_include([libnosys/acinclude.m4])
@@ -10157,67 +10239,67 @@ index 36c30092d..7e54036ed 100644
       converted to the new style linker.  */
    .stab 0 : { *(.stab) }
 diff --git a/newlib/Makefile.in b/newlib/Makefile.in
-index bc967bd70..8a72f26f7 100644
+index 9a32646ab..e5df29f36 100644
 --- a/newlib/Makefile.in
 +++ b/newlib/Makefile.in
-@@ -586,6 +586,7 @@ check_PROGRAMS =
- @HAVE_LIBC_SYS_W65_DIR_TRUE@am__append_63 = libc/sys/w65/syscalls.c libc/sys/w65/trap.c
- @HAVE_LIBC_SYS_Z8KSIM_DIR_TRUE@am__append_64 = libc/sys/z8ksim/glue.c
- @HAVE_LIBC_MACHINE_AARCH64_TRUE@am__append_65 = \
+@@ -596,6 +596,7 @@ check_PROGRAMS =
+ @HAVE_LIBC_SYS_XTENSA_DIR_TRUE@am__append_64 = libc/sys/xtensa/creat.c libc/sys/xtensa/isatty.c libc/sys/xtensa/clibrary_init.c
+ @HAVE_LIBC_SYS_Z8KSIM_DIR_TRUE@am__append_65 = libc/sys/z8ksim/glue.c
+ @HAVE_LIBC_MACHINE_AARCH64_TRUE@am__append_66 = \
 +@HAVE_LIBC_MACHINE_AARCH64_TRUE@	libc/machine/aarch64/access.c \
  @HAVE_LIBC_MACHINE_AARCH64_TRUE@	libc/machine/aarch64/memchr-stub.c \
  @HAVE_LIBC_MACHINE_AARCH64_TRUE@	libc/machine/aarch64/memchr.S \
  @HAVE_LIBC_MACHINE_AARCH64_TRUE@	libc/machine/aarch64/memcmp-stub.c \
-@@ -668,7 +669,7 @@ check_PROGRAMS =
+@@ -679,7 +680,7 @@ check_PROGRAMS =
  @HAVE_LIBC_MACHINE_ARM_TRUE@	libc/machine/arm/memcpy-stub.c \
  @HAVE_LIBC_MACHINE_ARM_TRUE@	libc/machine/arm/memcpy.S \
  @HAVE_LIBC_MACHINE_ARM_TRUE@	libc/machine/arm/strlen-stub.c \
 -@HAVE_LIBC_MACHINE_ARM_TRUE@	libc/machine/arm/strlen.S
 +@HAVE_LIBC_MACHINE_ARM_TRUE@	libc/machine/arm/sync_synchronize.c
  
- @HAVE_LIBC_MACHINE_BFIN_TRUE@am__append_69 = libc/machine/bfin/setjmp.S libc/machine/bfin/longjmp.S
- @HAVE_LIBC_MACHINE_CR16_TRUE@am__append_70 = libc/machine/cr16/setjmp.S libc/machine/cr16/getenv.c
-@@ -767,7 +768,9 @@ check_PROGRAMS =
+ @HAVE_LIBC_MACHINE_BFIN_TRUE@am__append_70 = libc/machine/bfin/setjmp.S libc/machine/bfin/longjmp.S
+ @HAVE_LIBC_MACHINE_CR16_TRUE@am__append_71 = libc/machine/cr16/setjmp.S libc/machine/cr16/getenv.c
+@@ -778,7 +779,9 @@ check_PROGRAMS =
  @HAVE_LIBC_MACHINE_NVPTX_TRUE@	libc/machine/nvptx/misc.c libc/machine/nvptx/clock.c
  
- @HAVE_LIBC_MACHINE_OR1K_TRUE@am__append_108 = libc/machine/or1k/setjmp.S
--@HAVE_LIBC_MACHINE_POWERPC_TRUE@am__append_109 = libc/machine/powerpc/setjmp.S
-+@HAVE_LIBC_MACHINE_POWERPC_TRUE@am__append_109 = libc/machine/powerpc/setjmp.S \
+ @HAVE_LIBC_MACHINE_OR1K_TRUE@am__append_109 = libc/machine/or1k/setjmp.S
+-@HAVE_LIBC_MACHINE_POWERPC_TRUE@am__append_110 = libc/machine/powerpc/setjmp.S
++@HAVE_LIBC_MACHINE_POWERPC_TRUE@am__append_110 = libc/machine/powerpc/setjmp.S \
 +@HAVE_LIBC_MACHINE_POWERPC_TRUE@                  libc/machine/powerpc/access.c
 +
- @HAVE_LIBC_MACHINE_POWERPC_TRUE@@HAVE_POWERPC_ALTIVEC_TRUE@am__append_110 = \
+ @HAVE_LIBC_MACHINE_POWERPC_TRUE@@HAVE_POWERPC_ALTIVEC_TRUE@am__append_111 = \
  @HAVE_LIBC_MACHINE_POWERPC_TRUE@@HAVE_POWERPC_ALTIVEC_TRUE@	libc/machine/powerpc/vfprintf.c \
  @HAVE_LIBC_MACHINE_POWERPC_TRUE@@HAVE_POWERPC_ALTIVEC_TRUE@	libc/machine/powerpc/vfscanf.c \
-@@ -1811,7 +1814,8 @@ am__objects_51 = libc/ssp/libc_a-chk_fail.$(OBJEXT) \
- @HAVE_LIBC_SYS_W65_DIR_TRUE@am__objects_74 = libc/sys/w65/libc_a-syscalls.$(OBJEXT) \
- @HAVE_LIBC_SYS_W65_DIR_TRUE@	libc/sys/w65/libc_a-trap.$(OBJEXT)
- @HAVE_LIBC_SYS_Z8KSIM_DIR_TRUE@am__objects_75 = libc/sys/z8ksim/libc_a-glue.$(OBJEXT)
--@HAVE_LIBC_MACHINE_AARCH64_TRUE@am__objects_76 = libc/machine/aarch64/libc_a-memchr-stub.$(OBJEXT) \
-+@HAVE_LIBC_MACHINE_AARCH64_TRUE@am__objects_76 = libc/machine/aarch64/libc_a-access.$(OBJEXT) \
+@@ -1860,7 +1863,8 @@ am__objects_51 = libc/ssp/libc_a-chk_fail.$(OBJEXT) \
+ @HAVE_LIBC_SYS_XTENSA_DIR_TRUE@	libc/sys/xtensa/libc_a-isatty.$(OBJEXT) \
+ @HAVE_LIBC_SYS_XTENSA_DIR_TRUE@	libc/sys/xtensa/libc_a-clibrary_init.$(OBJEXT)
+ @HAVE_LIBC_SYS_Z8KSIM_DIR_TRUE@am__objects_76 = libc/sys/z8ksim/libc_a-glue.$(OBJEXT)
+-@HAVE_LIBC_MACHINE_AARCH64_TRUE@am__objects_77 = libc/machine/aarch64/libc_a-memchr-stub.$(OBJEXT) \
++@HAVE_LIBC_MACHINE_AARCH64_TRUE@am__objects_77 = libc/machine/aarch64/libc_a-access.$(OBJEXT) \
 +@HAVE_LIBC_MACHINE_AARCH64_TRUE@	libc/machine/aarch64/libc_a-memchr-stub.$(OBJEXT) \
  @HAVE_LIBC_MACHINE_AARCH64_TRUE@	libc/machine/aarch64/libc_a-memchr.$(OBJEXT) \
  @HAVE_LIBC_MACHINE_AARCH64_TRUE@	libc/machine/aarch64/libc_a-memcmp-stub.$(OBJEXT) \
  @HAVE_LIBC_MACHINE_AARCH64_TRUE@	libc/machine/aarch64/libc_a-memcmp.$(OBJEXT) \
-@@ -1893,7 +1897,7 @@ am__objects_51 = libc/ssp/libc_a-chk_fail.$(OBJEXT) \
+@@ -1943,7 +1947,7 @@ am__objects_51 = libc/ssp/libc_a-chk_fail.$(OBJEXT) \
  @HAVE_LIBC_MACHINE_ARM_TRUE@	libc/machine/arm/libc_a-memcpy-stub.$(OBJEXT) \
  @HAVE_LIBC_MACHINE_ARM_TRUE@	libc/machine/arm/libc_a-memcpy.$(OBJEXT) \
  @HAVE_LIBC_MACHINE_ARM_TRUE@	libc/machine/arm/libc_a-strlen-stub.$(OBJEXT) \
 -@HAVE_LIBC_MACHINE_ARM_TRUE@	libc/machine/arm/libc_a-strlen.$(OBJEXT)
 +@HAVE_LIBC_MACHINE_ARM_TRUE@	libc/machine/arm/libc_a-sync_synchronize.$(OBJEXT)
- @HAVE_LIBC_MACHINE_BFIN_TRUE@am__objects_80 = libc/machine/bfin/libc_a-setjmp.$(OBJEXT) \
+ @HAVE_LIBC_MACHINE_BFIN_TRUE@am__objects_81 = libc/machine/bfin/libc_a-setjmp.$(OBJEXT) \
  @HAVE_LIBC_MACHINE_BFIN_TRUE@	libc/machine/bfin/libc_a-longjmp.$(OBJEXT)
- @HAVE_LIBC_MACHINE_CR16_TRUE@am__objects_81 = libc/machine/cr16/libc_a-setjmp.$(OBJEXT) \
-@@ -2043,7 +2047,8 @@ am__objects_51 = libc/ssp/libc_a-chk_fail.$(OBJEXT) \
+ @HAVE_LIBC_MACHINE_CR16_TRUE@am__objects_82 = libc/machine/cr16/libc_a-setjmp.$(OBJEXT) \
+@@ -2093,7 +2097,8 @@ am__objects_51 = libc/ssp/libc_a-chk_fail.$(OBJEXT) \
  @HAVE_LIBC_MACHINE_NVPTX_TRUE@	libc/machine/nvptx/libc_a-misc.$(OBJEXT) \
  @HAVE_LIBC_MACHINE_NVPTX_TRUE@	libc/machine/nvptx/libc_a-clock.$(OBJEXT)
- @HAVE_LIBC_MACHINE_OR1K_TRUE@am__objects_118 = libc/machine/or1k/libc_a-setjmp.$(OBJEXT)
--@HAVE_LIBC_MACHINE_POWERPC_TRUE@am__objects_119 = libc/machine/powerpc/libc_a-setjmp.$(OBJEXT)
-+@HAVE_LIBC_MACHINE_POWERPC_TRUE@am__objects_119 = libc/machine/powerpc/libc_a-setjmp.$(OBJEXT) \
+ @HAVE_LIBC_MACHINE_OR1K_TRUE@am__objects_119 = libc/machine/or1k/libc_a-setjmp.$(OBJEXT)
+-@HAVE_LIBC_MACHINE_POWERPC_TRUE@am__objects_120 = libc/machine/powerpc/libc_a-setjmp.$(OBJEXT)
++@HAVE_LIBC_MACHINE_POWERPC_TRUE@am__objects_120 = libc/machine/powerpc/libc_a-setjmp.$(OBJEXT) \
 +@HAVE_LIBC_MACHINE_POWERPC_TRUE@	libc/machine/powerpc/libc_a-access.$(OBJEXT)
- @HAVE_LIBC_MACHINE_POWERPC_TRUE@@HAVE_POWERPC_ALTIVEC_TRUE@am__objects_120 = libc/machine/powerpc/libc_a-vfprintf.$(OBJEXT) \
+ @HAVE_LIBC_MACHINE_POWERPC_TRUE@@HAVE_POWERPC_ALTIVEC_TRUE@am__objects_121 = libc/machine/powerpc/libc_a-vfprintf.$(OBJEXT) \
  @HAVE_LIBC_MACHINE_POWERPC_TRUE@@HAVE_POWERPC_ALTIVEC_TRUE@	libc/machine/powerpc/libc_a-vfscanf.$(OBJEXT) \
  @HAVE_LIBC_MACHINE_POWERPC_TRUE@@HAVE_POWERPC_ALTIVEC_TRUE@	libc/machine/powerpc/libc_a-vec_malloc.$(OBJEXT) \
-@@ -2345,6 +2350,7 @@ am_libc_a_OBJECTS = $(am__objects_1) \
+@@ -2402,6 +2407,7 @@ am_libc_a_OBJECTS = $(am__objects_1) \
  	libc/stdlib/libc_a-strtol.$(OBJEXT) \
  	libc/stdlib/libc_a-strtoul.$(OBJEXT) \
  	libc/stdlib/libc_a-strtoumax.$(OBJEXT) \
@@ -10225,7 +10307,7 @@ index bc967bd70..8a72f26f7 100644
  	libc/stdlib/libc_a-utoa.$(OBJEXT) \
  	libc/stdlib/libc_a-wcstod.$(OBJEXT) \
  	libc/stdlib/libc_a-wcstoimax.$(OBJEXT) \
-@@ -3768,6 +3774,7 @@ pdfdir = @pdfdir@
+@@ -3937,6 +3943,7 @@ pdfdir = @pdfdir@
  prefix = @prefix@
  program_transform_name = @program_transform_name@
  psdir = @psdir@
@@ -10233,7 +10315,7 @@ index bc967bd70..8a72f26f7 100644
  sbindir = @sbindir@
  shared_machine_dir = @shared_machine_dir@
  sharedstatedir = @sharedstatedir@
-@@ -3915,7 +3922,7 @@ libc_a_SOURCES = $(am__append_5) libc/stdlib/__adjust.c \
+@@ -4087,7 +4094,7 @@ libc_a_SOURCES = $(am__append_5) libc/stdlib/__adjust.c \
  	libc/stdlib/sb_charsets.c libc/stdlib/strtod.c \
  	libc/stdlib/strtoimax.c libc/stdlib/strtol.c \
  	libc/stdlib/strtoul.c libc/stdlib/strtoumax.c \
@@ -10242,7 +10324,7 @@ index bc967bd70..8a72f26f7 100644
  	libc/stdlib/wcstoimax.c libc/stdlib/wcstol.c \
  	libc/stdlib/wcstoul.c libc/stdlib/wcstoumax.c \
  	libc/stdlib/wcstombs.c libc/stdlib/wcstombs_r.c \
-@@ -5321,6 +5328,8 @@ libc/stdlib/libc_a-strtoul.$(OBJEXT): libc/stdlib/$(am__dirstamp) \
+@@ -5587,6 +5594,8 @@ libc/stdlib/libc_a-strtoul.$(OBJEXT): libc/stdlib/$(am__dirstamp) \
  	libc/stdlib/$(DEPDIR)/$(am__dirstamp)
  libc/stdlib/libc_a-strtoumax.$(OBJEXT): libc/stdlib/$(am__dirstamp) \
  	libc/stdlib/$(DEPDIR)/$(am__dirstamp)
@@ -10251,7 +10333,7 @@ index bc967bd70..8a72f26f7 100644
  libc/stdlib/libc_a-utoa.$(OBJEXT): libc/stdlib/$(am__dirstamp) \
  	libc/stdlib/$(DEPDIR)/$(am__dirstamp)
  libc/stdlib/libc_a-wcstod.$(OBJEXT): libc/stdlib/$(am__dirstamp) \
-@@ -7757,6 +7766,9 @@ libc/machine/aarch64/$(am__dirstamp):
+@@ -8059,6 +8068,9 @@ libc/machine/aarch64/$(am__dirstamp):
  libc/machine/aarch64/$(DEPDIR)/$(am__dirstamp):
  	@$(MKDIR_P) libc/machine/aarch64/$(DEPDIR)
  	@: > libc/machine/aarch64/$(DEPDIR)/$(am__dirstamp)
@@ -10261,7 +10343,7 @@ index bc967bd70..8a72f26f7 100644
  libc/machine/aarch64/libc_a-memchr-stub.$(OBJEXT):  \
  	libc/machine/aarch64/$(am__dirstamp) \
  	libc/machine/aarch64/$(DEPDIR)/$(am__dirstamp)
-@@ -8021,7 +8033,7 @@ libc/machine/arm/libc_a-memcpy.$(OBJEXT):  \
+@@ -8326,7 +8338,7 @@ libc/machine/arm/libc_a-memcpy.$(OBJEXT):  \
  libc/machine/arm/libc_a-strlen-stub.$(OBJEXT):  \
  	libc/machine/arm/$(am__dirstamp) \
  	libc/machine/arm/$(DEPDIR)/$(am__dirstamp)
@@ -10270,7 +10352,7 @@ index bc967bd70..8a72f26f7 100644
  	libc/machine/arm/$(am__dirstamp) \
  	libc/machine/arm/$(DEPDIR)/$(am__dirstamp)
  libc/machine/bfin/$(am__dirstamp):
-@@ -8696,6 +8708,9 @@ libc/machine/powerpc/$(DEPDIR)/$(am__dirstamp):
+@@ -9001,6 +9013,9 @@ libc/machine/powerpc/$(DEPDIR)/$(am__dirstamp):
  libc/machine/powerpc/libc_a-setjmp.$(OBJEXT):  \
  	libc/machine/powerpc/$(am__dirstamp) \
  	libc/machine/powerpc/$(DEPDIR)/$(am__dirstamp)
@@ -10280,7 +10362,7 @@ index bc967bd70..8a72f26f7 100644
  libc/machine/powerpc/libc_a-vfprintf.$(OBJEXT):  \
  	libc/machine/powerpc/$(am__dirstamp) \
  	libc/machine/powerpc/$(DEPDIR)/$(am__dirstamp)
-@@ -12256,6 +12271,7 @@ distclean-compile:
+@@ -12784,6 +12799,7 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@libc/locale/$(DEPDIR)/libc_a-nl_langinfo.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libc/locale/$(DEPDIR)/libc_a-timelocal.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libc/locale/$(DEPDIR)/libc_a-uselocale.Po@am__quote@
@@ -10288,7 +10370,7 @@ index bc967bd70..8a72f26f7 100644
  @AMDEP_TRUE@@am__include@ @am__quote@libc/machine/aarch64/$(DEPDIR)/libc_a-memchr-stub.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libc/machine/aarch64/$(DEPDIR)/libc_a-memchr.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libc/machine/aarch64/$(DEPDIR)/libc_a-memcmp-stub.Po@am__quote@
-@@ -12338,7 +12354,7 @@ distclean-compile:
+@@ -12867,7 +12883,7 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@libc/machine/arm/$(DEPDIR)/libc_a-strcmp.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libc/machine/arm/$(DEPDIR)/libc_a-strcpy.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libc/machine/arm/$(DEPDIR)/libc_a-strlen-stub.Po@am__quote@
@@ -10297,7 +10379,7 @@ index bc967bd70..8a72f26f7 100644
  @AMDEP_TRUE@@am__include@ @am__quote@libc/machine/bfin/$(DEPDIR)/libc_a-longjmp.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libc/machine/bfin/$(DEPDIR)/libc_a-setjmp.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libc/machine/cr16/$(DEPDIR)/libc_a-getenv.Po@am__quote@
-@@ -12487,6 +12503,7 @@ distclean-compile:
+@@ -13016,6 +13032,7 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@libc/machine/nvptx/$(DEPDIR)/libc_a-reallocr.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libc/machine/nvptx/$(DEPDIR)/libc_a-write.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libc/machine/or1k/$(DEPDIR)/libc_a-setjmp.Po@am__quote@
@@ -10305,7 +10387,7 @@ index bc967bd70..8a72f26f7 100644
  @AMDEP_TRUE@@am__include@ @am__quote@libc/machine/powerpc/$(DEPDIR)/libc_a-atosfix16.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libc/machine/powerpc/$(DEPDIR)/libc_a-atosfix32.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libc/machine/powerpc/$(DEPDIR)/libc_a-atosfix64.Po@am__quote@
-@@ -13113,6 +13130,7 @@ distclean-compile:
+@@ -13658,6 +13675,7 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@libc/stdlib/$(DEPDIR)/libc_a-strtoull_r.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libc/stdlib/$(DEPDIR)/libc_a-strtoumax.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libc/stdlib/$(DEPDIR)/libc_a-system.Po@am__quote@
@@ -10313,7 +10395,7 @@ index bc967bd70..8a72f26f7 100644
  @AMDEP_TRUE@@am__include@ @am__quote@libc/stdlib/$(DEPDIR)/libc_a-utoa.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libc/stdlib/$(DEPDIR)/libc_a-valloc.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libc/stdlib/$(DEPDIR)/libc_a-vallocr.Po@am__quote@
-@@ -16730,20 +16748,6 @@ libc/machine/arm/libc_a-memcpy.obj: libc/machine/arm/memcpy.S
+@@ -17357,20 +17375,6 @@ libc/machine/arm/libc_a-memcpy.obj: libc/machine/arm/memcpy.S
  @AMDEP_TRUE@@am__fastdepCCAS_FALSE@	DEPDIR=$(DEPDIR) $(CCASDEPMODE) $(depcomp) @AMDEPBACKSLASH@
  @am__fastdepCCAS_FALSE@	$(AM_V_CPPAS@am__nodep@)$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libc_a_CPPFLAGS) $(CPPFLAGS) $(libc_a_CCASFLAGS) $(CCASFLAGS) -c -o libc/machine/arm/libc_a-memcpy.obj `if test -f 'libc/machine/arm/memcpy.S'; then $(CYGPATH_W) 'libc/machine/arm/memcpy.S'; else $(CYGPATH_W) '$(srcdir)/libc/machine/arm/memcpy.S'; fi`
  
@@ -10334,7 +10416,7 @@ index bc967bd70..8a72f26f7 100644
  libc/machine/bfin/libc_a-setjmp.o: libc/machine/bfin/setjmp.S
  @am__fastdepCCAS_TRUE@	$(AM_V_CPPAS)$(CCAS) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libc_a_CPPFLAGS) $(CPPFLAGS) $(libc_a_CCASFLAGS) $(CCASFLAGS) -MT libc/machine/bfin/libc_a-setjmp.o -MD -MP -MF libc/machine/bfin/$(DEPDIR)/libc_a-setjmp.Tpo -c -o libc/machine/bfin/libc_a-setjmp.o `test -f 'libc/machine/bfin/setjmp.S' || echo '$(srcdir)/'`libc/machine/bfin/setjmp.S
  @am__fastdepCCAS_TRUE@	$(AM_V_at)$(am__mv) libc/machine/bfin/$(DEPDIR)/libc_a-setjmp.Tpo libc/machine/bfin/$(DEPDIR)/libc_a-setjmp.Po
-@@ -20666,6 +20670,20 @@ libc/stdlib/libc_a-strtoumax.obj: libc/stdlib/strtoumax.c
+@@ -21391,6 +21395,20 @@ libc/stdlib/libc_a-strtoumax.obj: libc/stdlib/strtoumax.c
  @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
  @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libc_a_CPPFLAGS) $(CPPFLAGS) $(libc_a_CFLAGS) $(CFLAGS) -c -o libc/stdlib/libc_a-strtoumax.obj `if test -f 'libc/stdlib/strtoumax.c'; then $(CYGPATH_W) 'libc/stdlib/strtoumax.c'; else $(CYGPATH_W) '$(srcdir)/libc/stdlib/strtoumax.c'; fi`
  
@@ -10355,7 +10437,7 @@ index bc967bd70..8a72f26f7 100644
  libc/stdlib/libc_a-utoa.o: libc/stdlib/utoa.c
  @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libc_a_CPPFLAGS) $(CPPFLAGS) $(libc_a_CFLAGS) $(CFLAGS) -MT libc/stdlib/libc_a-utoa.o -MD -MP -MF libc/stdlib/$(DEPDIR)/libc_a-utoa.Tpo -c -o libc/stdlib/libc_a-utoa.o `test -f 'libc/stdlib/utoa.c' || echo '$(srcdir)/'`libc/stdlib/utoa.c
  @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libc/stdlib/$(DEPDIR)/libc_a-utoa.Tpo libc/stdlib/$(DEPDIR)/libc_a-utoa.Po
-@@ -32216,6 +32234,20 @@ libc/sys/z8ksim/libc_a-glue.obj: libc/sys/z8ksim/glue.c
+@@ -33123,6 +33141,20 @@ libc/sys/z8ksim/libc_a-glue.obj: libc/sys/z8ksim/glue.c
  @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
  @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libc_a_CPPFLAGS) $(CPPFLAGS) $(libc_a_CFLAGS) $(CFLAGS) -c -o libc/sys/z8ksim/libc_a-glue.obj `if test -f 'libc/sys/z8ksim/glue.c'; then $(CYGPATH_W) 'libc/sys/z8ksim/glue.c'; else $(CYGPATH_W) '$(srcdir)/libc/sys/z8ksim/glue.c'; fi`
  
@@ -10376,7 +10458,7 @@ index bc967bd70..8a72f26f7 100644
  libc/machine/aarch64/libc_a-memchr-stub.o: libc/machine/aarch64/memchr-stub.c
  @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libc_a_CPPFLAGS) $(CPPFLAGS) $(libc_a_CFLAGS) $(CFLAGS) -MT libc/machine/aarch64/libc_a-memchr-stub.o -MD -MP -MF libc/machine/aarch64/$(DEPDIR)/libc_a-memchr-stub.Tpo -c -o libc/machine/aarch64/libc_a-memchr-stub.o `test -f 'libc/machine/aarch64/memchr-stub.c' || echo '$(srcdir)/'`libc/machine/aarch64/memchr-stub.c
  @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libc/machine/aarch64/$(DEPDIR)/libc_a-memchr-stub.Tpo libc/machine/aarch64/$(DEPDIR)/libc_a-memchr-stub.Po
-@@ -32734,6 +32766,20 @@ libc/machine/arm/libc_a-strlen-stub.obj: libc/machine/arm/strlen-stub.c
+@@ -33655,6 +33687,20 @@ libc/machine/arm/libc_a-strlen-stub.obj: libc/machine/arm/strlen-stub.c
  @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
  @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libc_a_CPPFLAGS) $(CPPFLAGS) $(libc_a_CFLAGS) $(CFLAGS) -c -o libc/machine/arm/libc_a-strlen-stub.obj `if test -f 'libc/machine/arm/strlen-stub.c'; then $(CYGPATH_W) 'libc/machine/arm/strlen-stub.c'; else $(CYGPATH_W) '$(srcdir)/libc/machine/arm/strlen-stub.c'; fi`
  
@@ -10397,7 +10479,7 @@ index bc967bd70..8a72f26f7 100644
  libc/machine/cr16/libc_a-getenv.o: libc/machine/cr16/getenv.c
  @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libc_a_CPPFLAGS) $(CPPFLAGS) $(libc_a_CFLAGS) $(CFLAGS) -MT libc/machine/cr16/libc_a-getenv.o -MD -MP -MF libc/machine/cr16/$(DEPDIR)/libc_a-getenv.Tpo -c -o libc/machine/cr16/libc_a-getenv.o `test -f 'libc/machine/cr16/getenv.c' || echo '$(srcdir)/'`libc/machine/cr16/getenv.c
  @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libc/machine/cr16/$(DEPDIR)/libc_a-getenv.Tpo libc/machine/cr16/$(DEPDIR)/libc_a-getenv.Po
-@@ -33252,6 +33298,20 @@ libc/machine/nvptx/libc_a-clock.obj: libc/machine/nvptx/clock.c
+@@ -34173,6 +34219,20 @@ libc/machine/nvptx/libc_a-clock.obj: libc/machine/nvptx/clock.c
  @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
  @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libc_a_CPPFLAGS) $(CPPFLAGS) $(libc_a_CFLAGS) $(CFLAGS) -c -o libc/machine/nvptx/libc_a-clock.obj `if test -f 'libc/machine/nvptx/clock.c'; then $(CYGPATH_W) 'libc/machine/nvptx/clock.c'; else $(CYGPATH_W) '$(srcdir)/libc/machine/nvptx/clock.c'; fi`
  
@@ -10419,17 +10501,17 @@ index bc967bd70..8a72f26f7 100644
  @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libc_a_CPPFLAGS) $(CPPFLAGS) $(libc_a_CFLAGS) $(CFLAGS) -MT libc/machine/powerpc/libc_a-vfprintf.o -MD -MP -MF libc/machine/powerpc/$(DEPDIR)/libc_a-vfprintf.Tpo -c -o libc/machine/powerpc/libc_a-vfprintf.o `test -f 'libc/machine/powerpc/vfprintf.c' || echo '$(srcdir)/'`libc/machine/powerpc/vfprintf.c
  @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libc/machine/powerpc/$(DEPDIR)/libc_a-vfprintf.Tpo libc/machine/powerpc/$(DEPDIR)/libc_a-vfprintf.Po
 diff --git a/newlib/configure.host b/newlib/configure.host
-index 0a1ba282a..66ccbec57 100644
+index 386183466..cc5e33ad7 100644
 --- a/newlib/configure.host
 +++ b/newlib/configure.host
-@@ -620,13 +620,25 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
+@@ -630,13 +630,25 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
  	syscall_dir=syscalls
  	;;
    aarch64*-*-*)
 +	default_newlib_io_c99_formats="yes"
  	default_newlib_io_long_long="yes"
 +	default_newlib_io_pos_args="yes"
-+	newlib_cflags="${newlib_cflags} -D__DYNAMIC_REENT__ -DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__"
++	newlib_cflags="${newlib_cflags} -D__DYNAMIC_REENT__  -DGETREENT_PROVIDED -DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__"
 +	newlib_cflags="${newlib_cflags} -ffunction-sections -fdata-sections"
  	syscall_dir=syscalls
  	;;
@@ -10448,7 +10530,7 @@ index 0a1ba282a..66ccbec57 100644
    arm*-*-pe)
  	syscall_dir=syscalls
  	newlib_cflags="${newlib_cflags} -DHAVE_SYSCONF_PAGESIZE"
-@@ -799,7 +811,13 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
+@@ -809,7 +821,13 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
  	default_newlib_io_long_long="yes"
  	newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES"
  	;;
@@ -10552,23 +10634,23 @@ index 000000000..a71a5d847
 +
 +#endif
 diff --git a/newlib/libc/include/math.h b/newlib/libc/include/math.h
-index 54e30ef82..3a77345e2 100644
+index 5e92d2662..b12e73d90 100644
 --- a/newlib/libc/include/math.h
 +++ b/newlib/libc/include/math.h
 @@ -445,7 +445,7 @@ extern float hypotf (float, float);
     simply call the double functions.  On Cygwin the long double functions
     are implemented independently from newlib to be able to use optimized
     assembler functions despite using the Microsoft x86_64 ABI. */
--#if defined (_LDBL_EQ_DBL) || defined (__CYGWIN__)
-+#if defined (_LDBL_EQ_DBL) || defined (__CYGWIN__) || defined (__DEVKITA64__)
+-#if defined (_LDBL_EQ_DBL) || defined (__CYGWIN__) || \
++#if defined (_LDBL_EQ_DBL) || defined (__CYGWIN__) || defined (__DEVKITA64__) || \
+ 	defined(__aarch64__) || defined(__i386__) || defined(__x86_64__) || \
+ 	defined(__riscv)
  /* Reentrant ANSI C functions.  */
- #ifndef __math_68881
- extern long double atanl (long double);
 diff --git a/newlib/libc/include/reent.h b/newlib/libc/include/reent.h
-index 23d572cd3..65310c084 100644
+index b1dd2a7c4..16e29c037 100644
 --- a/newlib/libc/include/reent.h
 +++ b/newlib/libc/include/reent.h
-@@ -150,6 +150,7 @@ extern int _mkdir_r (struct _reent *, const char *, int);
+@@ -151,6 +151,7 @@ extern int _mkdir_r (struct _reent *, const char *, int);
  extern int _open_r (struct _reent *, const char *, int, int);
  extern _ssize_t _read_r (struct _reent *, int, void *, size_t);
  extern int _rename_r (struct _reent *, const char *, const char *);
@@ -10865,10 +10947,10 @@ index 5dcc77a80..6930a751d 100644
  
  #ifdef __AMDGCN__
 diff --git a/newlib/libc/include/sys/features.h b/newlib/libc/include/sys/features.h
-index 45476ce4a..05efc0ab2 100644
+index a7d4bc52d..a04f13544 100644
 --- a/newlib/libc/include/sys/features.h
 +++ b/newlib/libc/include/sys/features.h
-@@ -331,6 +331,17 @@ extern "C" {
+@@ -344,6 +344,17 @@ extern "C" {
  #  define __SSP_FORTIFY_LEVEL 0
  #endif
  
@@ -10888,7 +10970,7 @@ index 45476ce4a..05efc0ab2 100644
  #ifdef __rtems__
 diff --git a/newlib/libc/include/sys/iosupport.h b/newlib/libc/include/sys/iosupport.h
 new file mode 100644
-index 000000000..8318fda68
+index 000000000..335014a4b
 --- /dev/null
 +++ b/newlib/libc/include/sys/iosupport.h
 @@ -0,0 +1,140 @@
@@ -10961,7 +11043,7 @@ index 000000000..8318fda68
 +	int (*lstat_r)(struct _reent *r, const char *file, struct stat *st);
 +	int (*utimes_r)(struct _reent *r, const char *filename, const struct timeval times[2]);
 +
-+	long (*fpathconf_r)(struct _reent *r, int fd, int name);
++	long (*fpathconf_r)(struct _reent *r, void *fd, int name);
 +	long (*pathconf_r)(struct _reent *r, const char *path, int name);
 +
 +	int (*symlink_r)(struct _reent *r, const char *target, const char *linkpath);
@@ -11047,10 +11129,10 @@ index 9a6f115a6..142e71d35 100644
  #define MAXPATHLEN PATH_MAX
  
 diff --git a/newlib/libc/include/sys/reent.h b/newlib/libc/include/sys/reent.h
-index 6d8b005b2..8aefe6b0f 100644
+index a02e7c2bd..61de73f88 100644
 --- a/newlib/libc/include/sys/reent.h
 +++ b/newlib/libc/include/sys/reent.h
-@@ -419,6 +419,8 @@ struct _reent
+@@ -420,6 +420,8 @@ struct _reent
    __FILE *__sf;			        /* file descriptors */
    struct _misc_reent *_misc;            /* strtok, multibyte states */
    char *_signal_buf;                    /* strsignal */
@@ -11059,7 +11141,7 @@ index 6d8b005b2..8aefe6b0f 100644
  };
  
  # define _REENT_INIT(var) \
-@@ -639,6 +641,8 @@ struct _reent
+@@ -648,6 +650,8 @@ struct _reent
  
    /* signal info */
    void (**_sig_func)(int);
@@ -11155,7 +11237,7 @@ index 5e937f103..b7b4de67d 100644
  };
  #endif
 diff --git a/newlib/libc/locale/locale.c b/newlib/libc/locale/locale.c
-index 65e2b1833..d3171515d 100644
+index b16ec1511..655e01366 100644
 --- a/newlib/libc/locale/locale.c
 +++ b/newlib/libc/locale/locale.c
 @@ -198,7 +198,11 @@ static char *categories[_LC_LAST] = {
@@ -11231,7 +11313,7 @@ index 65e2b1833..d3171515d 100644
    {
      { NULL, NULL },			/* LC_ALL */
 diff --git a/newlib/libc/locale/setlocale.h b/newlib/libc/locale/setlocale.h
-index 3530ec664..0a62bfd72 100644
+index 7abf92f7e..511a616bc 100644
 --- a/newlib/libc/locale/setlocale.h
 +++ b/newlib/libc/locale/setlocale.h
 @@ -234,11 +234,11 @@ __get_locale_r (struct _reent *r)
@@ -11251,7 +11333,7 @@ index 3530ec664..0a62bfd72 100644
  
  /* Only access fixed "C" locale using this function.  Fake for !_MB_CAPABLE
 diff --git a/newlib/libc/machine/aarch64/Makefile.inc b/newlib/libc/machine/aarch64/Makefile.inc
-index 063a2a84a..790b07e7b 100644
+index 1068d88ce..3175fe439 100644
 --- a/newlib/libc/machine/aarch64/Makefile.inc
 +++ b/newlib/libc/machine/aarch64/Makefile.inc
 @@ -1,4 +1,5 @@
@@ -11497,7 +11579,7 @@ index 2d6c08d71..81b4f119d 100644
 +	%D%/sync_synchronize.c
 +
 diff --git a/newlib/libc/machine/arm/setjmp.S b/newlib/libc/machine/arm/setjmp.S
-index c615f2428..3a3bfd05e 100644
+index 5e5952296..9281cdb54 100644
 --- a/newlib/libc/machine/arm/setjmp.S
 +++ b/newlib/libc/machine/arm/setjmp.S
 @@ -2,6 +2,8 @@
@@ -11760,7 +11842,7 @@ index 000000000..04ebd1ee0
 +#endif /* _NEWLIB_STDIO_H */
 +
 diff --git a/newlib/libc/stdio/fread.c b/newlib/libc/stdio/fread.c
-index df8321461..6ea00229d 100644
+index 8664dc3e5..dbaba0264 100644
 --- a/newlib/libc/stdio/fread.c
 +++ b/newlib/libc/stdio/fread.c
 @@ -135,7 +135,7 @@ crlf_r (struct _reent * ptr,
@@ -11772,7 +11854,7 @@ index df8321461..6ea00229d 100644
  }
  
  #endif
-@@ -187,7 +187,6 @@ _fread_r (struct _reent * ptr,
+@@ -191,7 +191,6 @@ _fread_r (struct _reent * ptr,
  	  int rc = 0;
  	  /* save fp buffering state */
  	  void *old_base = fp->_bf._base;
@@ -11780,7 +11862,7 @@ index df8321461..6ea00229d 100644
  	  int old_size = fp->_bf._size;
  	  /* allow __refill to use user's buffer */
  	  fp->_bf._base = (unsigned char *) p;
-@@ -197,7 +196,7 @@ _fread_r (struct _reent * ptr,
+@@ -201,7 +200,7 @@ _fread_r (struct _reent * ptr,
  	  /* restore fp buffering back to original state */
  	  fp->_bf._base = old_base;
  	  fp->_bf._size = old_size;
@@ -11789,7 +11871,7 @@ index df8321461..6ea00229d 100644
  	  resid -= fp->_r;
  	  p += fp->_r;
  	  fp->_r = 0;
-@@ -218,27 +217,63 @@ _fread_r (struct _reent * ptr,
+@@ -222,27 +221,63 @@ _fread_r (struct _reent * ptr,
    else
  #endif /* !PREFER_SIZE_OVER_SPEED && !__OPTIMIZE_SIZE__ */
      {
@@ -11872,7 +11954,7 @@ index df8321461..6ea00229d 100644
        fp->_r -= resid;
        fp->_p += resid;
 diff --git a/newlib/libc/stdio/local.h b/newlib/libc/stdio/local.h
-index b34c7c9d8..f18dc4301 100644
+index 63c0618f1..dd3801900 100644
 --- a/newlib/libc/stdio/local.h
 +++ b/newlib/libc/stdio/local.h
 @@ -56,7 +56,7 @@
@@ -11909,7 +11991,7 @@ index d8dfdbd82..a85b5a99b 100644
    return 0;
  }
 diff --git a/newlib/libc/stdio/vfprintf.c b/newlib/libc/stdio/vfprintf.c
-index 6a198e2c6..5ded3fd6e 100644
+index feb1fab56..7a59eb21f 100644
 --- a/newlib/libc/stdio/vfprintf.c
 +++ b/newlib/libc/stdio/vfprintf.c
 @@ -108,6 +108,8 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
@@ -11921,7 +12003,7 @@ index 6a198e2c6..5ded3fd6e 100644
  #if defined(LIBC_SCCS) && !defined(lint)
  /*static char *sccsid = "from: @(#)vfprintf.c	5.50 (Berkeley) 12/16/92";*/
  static char *rcsid = "$Id$";
-@@ -1431,7 +1433,7 @@ reswitch:	switch (ch) {
+@@ -1188,7 +1190,7 @@ reswitch:	switch (ch) {
  string:
  #endif
  			sign = '\0';
@@ -11930,7 +12012,7 @@ index 6a198e2c6..5ded3fd6e 100644
  			/* Behavior is undefined if the user passed a
  			   NULL string when precision is not 0.
  			   However, if we are not optimizing for size,
-@@ -1441,7 +1443,7 @@ string:
+@@ -1198,7 +1200,7 @@ string:
  				size = ((unsigned) prec > 6U) ? 6 : prec;
  			}
  			else
@@ -11940,7 +12022,7 @@ index 6a198e2c6..5ded3fd6e 100644
  			if (ch == 'S' || (flags & LONGINT)) {
  				mbstate_t ps;
 diff --git a/newlib/libc/stdio/vfscanf.c b/newlib/libc/stdio/vfscanf.c
-index cfeea9876..ab7e9d7f1 100644
+index 71e2c3e22..bd2d635ed 100644
 --- a/newlib/libc/stdio/vfscanf.c
 +++ b/newlib/libc/stdio/vfscanf.c
 @@ -74,6 +74,8 @@ These are GNU extensions.
@@ -11953,7 +12035,7 @@ index cfeea9876..ab7e9d7f1 100644
  #include <reent.h>
  #include <newlib.h>
 diff --git a/newlib/libc/stdio/vfwprintf.c b/newlib/libc/stdio/vfwprintf.c
-index 7807a1229..30526cb70 100644
+index 5a5c36829..3eaca0ce6 100644
 --- a/newlib/libc/stdio/vfwprintf.c
 +++ b/newlib/libc/stdio/vfwprintf.c
 @@ -92,6 +92,9 @@ SEEALSO
@@ -11967,7 +12049,7 @@ index 7807a1229..30526cb70 100644
  
  #ifdef INTEGER_ONLY
 diff --git a/newlib/libc/stdio/vfwscanf.c b/newlib/libc/stdio/vfwscanf.c
-index df966f929..106d99e94 100644
+index d2f91dde2..de80cc0c0 100644
 --- a/newlib/libc/stdio/vfwscanf.c
 +++ b/newlib/libc/stdio/vfwscanf.c
 @@ -74,6 +74,9 @@ PORTABILITY
@@ -11992,6 +12074,45 @@ index 9812add76..8410f2633 100644
  	%D%/utoa.c \
  	%D%/wcstod.c \
  	%D%/wcstoimax.c \
+diff --git a/newlib/libc/stdlib/__call_atexit.c b/newlib/libc/stdlib/__call_atexit.c
+index 710440389..985e720bf 100644
+--- a/newlib/libc/stdlib/__call_atexit.c
++++ b/newlib/libc/stdlib/__call_atexit.c
+@@ -21,6 +21,7 @@ struct _atexit *__atexit = _NULL;
+ 
+ #ifdef _WANT_REGISTER_FINI
+ 
++#if 0
+ /* If "__libc_fini" is defined, finalizers (either
+    "__libc_fini_array", or "_fini", as appropriate) will be run after
+    all user-specified atexit handlers.  For example, you can define
+@@ -36,6 +37,7 @@ struct _atexit *__atexit = _NULL;
+    used with multiple BSPs, some of which register finalizers from
+    startup code, while others defer to the C library.  */
+ extern char __libc_fini __attribute__((weak));
++#endif
+ 
+ /* Register the application finalization function with atexit.  These
+    finalizers should run last.  Therefore, we want to call atexit as
+@@ -46,6 +48,7 @@ register_fini(void) __attribute__((constructor (0)));
+ static void 
+ register_fini(void)
+ {
++#if 0
+   if (&__libc_fini) {
+ #ifdef _HAVE_INITFINI_ARRAY
+     extern void __libc_fini_array (void);
+@@ -55,6 +58,10 @@ register_fini(void)
+     atexit (_fini);
+ #endif
+   }
++#else
++  extern void __fini (void);
++  atexit (__fini);
++#endif
+ }
+ 
+ #endif /* _WANT_REGISTER_FINI  */
 diff --git a/newlib/libc/stdlib/exit.c b/newlib/libc/stdlib/exit.c
 index 9b7bd518b..f0e33bbc1 100644
 --- a/newlib/libc/stdlib/exit.c
