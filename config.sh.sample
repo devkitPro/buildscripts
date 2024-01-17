@@ -14,12 +14,6 @@
 BUILD_DKPRO_PACKAGE=0
 
 #---------------------------------------------------------------------------------
-# Toolchain installation directory, comment if not specified
-#---------------------------------------------------------------------------------
-#BUILD_DKPRO_INSTALLDIR=/opt/devkitpro
-#BUILD_DKPRO_INSTALLDIR=c:/devkitPro
-
-#---------------------------------------------------------------------------------
 # Path to previously downloaded source packages, comment if not specified
 #---------------------------------------------------------------------------------
 #BUILD_DKPRO_SRCDIR=~/projects/archives

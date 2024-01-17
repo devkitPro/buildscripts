@@ -72,20 +72,18 @@ fi
 . ./select_toolchain.sh
 
 #---------------------------------------------------------------------------------
-# Get preferred installation directory and set paths to the sources
+# Legacy versions of these scripts allowed the selection of a prefix which is
+# no longer supported. Since adopting pacman and providing precompiled binaries
+# of "portlibs" everything we distribute is intended to work within opt/devkitpro
+#
+# Rather than attempting to repackage our work for exotic linux distributions it
+# would be much better for everyone concerned if efforts were made to provide
+# pacman and whatever support is necessary to allow the binaries we distribute to
+# work as expected.
+#
+# See https://github.com/devkitPro/pacman and https://devkitpro.org/wiki/devkitPro_pacman
 #---------------------------------------------------------------------------------
-
-if [ ! -z "$BUILD_DKPRO_INSTALLDIR" ] ; then
-	INSTALLDIR="$BUILD_DKPRO_INSTALLDIR"
-else
-	echo
-	echo "Please enter the directory where you would like '$package' to be installed:"
-	echo "for mingw/msys you must use <drive>:/<install path> or you will have include path problems"
-	echo "this is the top level directory for devkitpro, i.e. e:/devkitPro"
-
-	read -e INSTALLDIR
-	echo
-fi
+INSTALLDIR=/opt/devkitpro
 
 [ ! -z "$INSTALLDIR" ] && mkdir -p $INSTALLDIR && touch $INSTALLDIR/nonexistantfile && rm $INSTALLDIR/nonexistantfile || exit 1;
 
