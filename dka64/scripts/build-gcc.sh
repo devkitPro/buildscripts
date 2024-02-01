@@ -62,7 +62,7 @@ then
 		--enable-lto \
 		--disable-tm-clone-registry \
 		--disable-__cxa_atexit \
-		--with-bugurl="https://github.com/devkitPro/buildscripts/issues" --with-pkgversion="devkitA64 release 24" \
+		--with-bugurl="https://github.com/devkitPro/buildscripts/issues" --with-pkgversion="devkitA64 release 25" \
 		$CROSS_PARAMS \
 		$CROSS_GCC_PARAMS \
 		$EXTRA_GCC_PARAMS \
