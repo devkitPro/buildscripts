@@ -11114,6 +11114,23 @@ index 000000000..335014a4b
 +//---------------------------------------------------------------------------------
 +#endif // __iosupp_h__
 +//---------------------------------------------------------------------------------
+diff --git a/newlib/libc/include/sys/mkdev.h b/newlib/libc/include/sys/mkdev.h
+new file mode 100644
+index 000000000..a6f860158
+--- /dev/null
++++ b/newlib/libc/include/sys/mkdev.h
+@@ -0,0 +1,11 @@
++#ifndef __SYS_MKDEV_H__
++#define __SYS_MKDEV_H__
++
++#define MINORBITS       20
++#define MINORMASK       ((1U << MINORBITS) - 1)
++
++#define major(dev)      ((unsigned int) ((dev) >> MINORBITS))
++#define minor(dev)      ((unsigned int) ((dev) & MINORMASK))
++#define mkdev(ma,mi)    (((ma) << MINORBITS) | (mi))
++
++#endif
 diff --git a/newlib/libc/include/sys/param.h b/newlib/libc/include/sys/param.h
 index 9a6f115a6..142e71d35 100644
 --- a/newlib/libc/include/sys/param.h
