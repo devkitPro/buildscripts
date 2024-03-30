@@ -9458,6 +9458,23 @@ index 000000000..fb0646bc6
 +//---------------------------------------------------------------------------------
 +#endif // __iosupp_h__
 +//---------------------------------------------------------------------------------
+diff --git a/newlib/libc/include/sys/mkdev.h b/newlib/libc/include/sys/mkdev.h
+new file mode 100644
+index 000000000..a6f860158
+--- /dev/null
++++ b/newlib/libc/include/sys/mkdev.h
+@@ -0,0 +1,11 @@
++#ifndef __SYS_MKDEV_H__
++#define __SYS_MKDEV_H__
++
++#define MINORBITS       20
++#define MINORMASK       ((1U << MINORBITS) - 1)
++
++#define major(dev)      ((unsigned int) ((dev) >> MINORBITS))
++#define minor(dev)      ((unsigned int) ((dev) & MINORMASK))
++#define mkdev(ma,mi)    (((ma) << MINORBITS) | (mi))
++
++#endif
 diff --git a/newlib/libc/include/sys/param.h b/newlib/libc/include/sys/param.h
 index 9a6f115a6..142e71d35 100644
 --- a/newlib/libc/include/sys/param.h
@@ -9782,17 +9799,19 @@ index 000000000..a7d63da51
 +#endif // _MACHINE__TYPES_H
 diff --git a/newlib/libc/machine/powerpc/sys/dirent.h b/newlib/libc/machine/powerpc/sys/dirent.h
 new file mode 100644
-index 000000000..2aaca6080
+index 000000000..b3780c263
 --- /dev/null
 +++ b/newlib/libc/machine/powerpc/sys/dirent.h
-@@ -0,0 +1,58 @@
+@@ -0,0 +1,61 @@
 +#ifndef _dirent_h_
 +#define _dirent_h_
 +
 +#define _DIRENT_HAVE_D_TYPE
++#define _DIRENT_HAVE_D_STAT
 +
 +#include <sys/iosupport.h>
 +#include <sys/types.h>
++#include <sys/stat.h>
 +#include <sys/syslimits.h>
 +
 +#define	DT_UNKNOWN	 0
@@ -9811,6 +9830,7 @@ index 000000000..2aaca6080
 +
 +struct dirent {
 +	ino_t	d_ino;
++	struct  stat d_stat;
 +	unsigned char  d_type;
 +	char	d_name[NAME_MAX+1];
 +};
