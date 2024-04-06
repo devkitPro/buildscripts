@@ -6424,10 +6424,10 @@ index 000000000..d15eab89d
 +
 diff --git a/libgloss/libsysbase/dirent.c b/libgloss/libsysbase/dirent.c
 new file mode 100644
-index 000000000..482d2f814
+index 000000000..3c4fd8693
 --- /dev/null
 +++ b/libgloss/libsysbase/dirent.c
-@@ -0,0 +1,257 @@
+@@ -0,0 +1,263 @@
 +#include <malloc.h>
 +#include <errno.h>
 +#include <string.h>
@@ -6569,7 +6569,13 @@ index 000000000..482d2f814
 +
 +
 +struct dirent* readdir (DIR *dirp) {
-+	struct stat st;
++
++#ifdef _DIRENT_HAVE_D_STAT
++	struct stat *st = &dirp->fileData.d_stat;
++#else
++	struct stat tmpstat;
++	struct stat *st = &tmpstat;
++#endif
 +	char filename[NAME_MAX+1];
 +	int res;
 +	int olderrno = errno;
@@ -6579,7 +6585,7 @@ index 000000000..482d2f814
 +		return NULL;
 +	}
 +
-+	res = __dirnext (dirp->dirData, filename, &st);
++	res = __dirnext (dirp->dirData, filename, st);
 +
 +	if (res < 0) {
 +		if (errno == ENOENT) {
@@ -6599,8 +6605,8 @@ index 000000000..482d2f814
 +	}
 +
 +	strncpy (dirp->fileData.d_name, filename, sizeof(dirp->fileData.d_name));
-+	dirp->fileData.d_ino = st.st_ino;
-+	dirp->fileData.d_type = IFTODT(st.st_mode);
++	dirp->fileData.d_ino = st->st_ino;
++	dirp->fileData.d_type = IFTODT(st->st_mode);
 +
 +	return &(dirp->fileData);
 +}
@@ -9205,7 +9211,7 @@ index 9a32646ab..fb28f3611 100644
  @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libc_a_CPPFLAGS) $(CPPFLAGS) $(libc_a_CFLAGS) $(CFLAGS) -MT libc/machine/powerpc/libc_a-vfprintf.o -MD -MP -MF libc/machine/powerpc/$(DEPDIR)/libc_a-vfprintf.Tpo -c -o libc/machine/powerpc/libc_a-vfprintf.o `test -f 'libc/machine/powerpc/vfprintf.c' || echo '$(srcdir)/'`libc/machine/powerpc/vfprintf.c
  @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libc/machine/powerpc/$(DEPDIR)/libc_a-vfprintf.Tpo libc/machine/powerpc/$(DEPDIR)/libc_a-vfprintf.Po
 diff --git a/newlib/configure.host b/newlib/configure.host
-index 386183466..728170741 100644
+index 386183466..45993129a 100644
 --- a/newlib/configure.host
 +++ b/newlib/configure.host
 @@ -637,6 +637,14 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
@@ -9231,7 +9237,7 @@ index 386183466..728170741 100644
 +  powerpc*-*-eabi*)
 +	default_newlib_io_c99_formats="yes"
 +	default_newlib_io_long_long="yes"
-+	newlib_cflags="${newlib_cflags} -DCUSTOM_MALLOC_LOCK -D__DYNAMIC_REENT__ -DGETREENT_PROVIDED -DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__"
++	newlib_cflags="${newlib_cflags} -DHAVE_ASSERT_FUNC -DABORT_PROVIDED -DCUSTOM_MALLOC_LOCK -D__DYNAMIC_REENT__ -DGETREENT_PROVIDED -DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__"
 +	newlib_cflags="${newlib_cflags} -ffunction-sections -fdata-sections"
 +	syscall_dir=syscalls
 +	;;
