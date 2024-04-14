@@ -6475,10 +6475,10 @@ index 000000000..d15eab89d
 +
 diff --git a/libgloss/libsysbase/dirent.c b/libgloss/libsysbase/dirent.c
 new file mode 100644
-index 000000000..315cb02c2
+index 000000000..a8dc84739
 --- /dev/null
 +++ b/libgloss/libsysbase/dirent.c
-@@ -0,0 +1,241 @@
+@@ -0,0 +1,240 @@
 +#include <malloc.h>
 +#include <errno.h>
 +#include <string.h>
@@ -6667,10 +6667,9 @@ index 000000000..315cb02c2
 +
 +struct dirent* readdir (DIR *dirp) {
 +
-+	struct dirent *result;
 +	struct dirent *entry = &dirp->fileData;
 +
-+	int res = readdir_r(dirp, entry, &result);
++	int res = readdir_r(dirp, entry, &entry);
 +
 +	if (res !=0) {
 +		errno = res;
