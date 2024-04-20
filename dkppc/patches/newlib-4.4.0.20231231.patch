@@ -9323,10 +9323,10 @@ index b1dd2a7c4..16e29c037 100644
  extern int _stat_r (struct _reent *, const char *, struct stat *);
  extern _CLOCK_T_ _times_r (struct _reent *, struct tms *);
 diff --git a/newlib/libc/include/sys/config.h b/newlib/libc/include/sys/config.h
-index 5dcc77a80..6930a751d 100644
+index 5dcc77a80..c53fce983 100644
 --- a/newlib/libc/include/sys/config.h
 +++ b/newlib/libc/include/sys/config.h
-@@ -4,8 +4,19 @@
+@@ -4,8 +4,18 @@
  #include <machine/ieeefp.h>  /* floating point macros */
  #include <sys/features.h>	/* POSIX defs */
  
@@ -9342,7 +9342,6 @@ index 5dcc77a80..6930a751d 100644
 +
 +#ifdef __DEVKITPPC__
 +#define __BUFSIZ__ 32768
-+#define MALLOC_ALIGNMENT 64
 +#define __DYNAMIC_REENT__
  #endif
  
@@ -10107,6 +10106,19 @@ index 8664dc3e5..dbaba0264 100644
        (void) memcpy ((void *) p, (void *) fp->_p, resid);
        fp->_r -= resid;
        fp->_p += resid;
+diff --git a/newlib/libc/stdio/makebuf.c b/newlib/libc/stdio/makebuf.c
+index b9c75bbf8..315cd7c1a 100644
+--- a/newlib/libc/stdio/makebuf.c
++++ b/newlib/libc/stdio/makebuf.c
+@@ -50,7 +50,7 @@ __smakebuf_r (struct _reent *ptr,
+       return;
+     }
+   flags = __swhatbuf_r (ptr, fp, &size, &couldbetty);
+-  if ((p = _malloc_r (ptr, size)) == NULL)
++  if ((p = _memalign_r (ptr, 64, size)) == NULL)
+     {
+       if (!(fp->_flags & __SSTR))
+ 	{
 diff --git a/newlib/libc/stdio/remove.c b/newlib/libc/stdio/remove.c
 index d8dfdbd82..a85b5a99b 100644
 --- a/newlib/libc/stdio/remove.c
@@ -10242,6 +10254,22 @@ index 710440389..985e720bf 100644
  }
  
  #endif /* _WANT_REGISTER_FINI  */
+diff --git a/newlib/libc/stdlib/malloc.c b/newlib/libc/stdlib/malloc.c
+index f5ac29208..3f21ea154 100644
+--- a/newlib/libc/stdlib/malloc.c
++++ b/newlib/libc/stdlib/malloc.c
+@@ -161,7 +161,10 @@ Supporting OS subroutines required: <<sbrk>>.  */
+ void *
+ malloc (size_t nbytes)		/* get a block */
+ {
+-  return _malloc_r (_REENT, nbytes);
++  if (nbytes < 64)
++    return _malloc_r (_REENT, nbytes);
++  else
++    return _memalign_r (_REENT, 64, nbytes);
+ }
+ 
+ void
 diff --git a/newlib/libc/stdlib/mlock.c b/newlib/libc/stdlib/mlock.c
 index 23aa10173..ba88eb9fb 100644
 --- a/newlib/libc/stdlib/mlock.c
