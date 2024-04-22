@@ -9322,6 +9322,19 @@ index b1dd2a7c4..16e29c037 100644
  extern void *_sbrk_r (struct _reent *, ptrdiff_t);
  extern int _stat_r (struct _reent *, const char *, struct stat *);
  extern _CLOCK_T_ _times_r (struct _reent *, struct tms *);
+diff --git a/newlib/libc/include/regex.h b/newlib/libc/include/regex.h
+index fa3e26879..4da1a374e 100644
+--- a/newlib/libc/include/regex.h
++++ b/newlib/libc/include/regex.h
+@@ -96,7 +96,7 @@ __BEGIN_DECLS
+ int	regcomp(regex_t *__restrict, const char *__restrict, int);
+ size_t	regerror(int, const regex_t *__restrict, char *__restrict, size_t);
+ int	regexec(const regex_t *__restrict, const char *__restrict,
+-			size_t, regmatch_t [__restrict], int);
++			size_t, regmatch_t [__restrict_arr], int);
+ void	regfree(regex_t *);
+ __END_DECLS
+ 
 diff --git a/newlib/libc/include/sys/config.h b/newlib/libc/include/sys/config.h
 index 5dcc77a80..c53fce983 100644
 --- a/newlib/libc/include/sys/config.h
@@ -10107,10 +10120,18 @@ index 8664dc3e5..dbaba0264 100644
        fp->_r -= resid;
        fp->_p += resid;
 diff --git a/newlib/libc/stdio/makebuf.c b/newlib/libc/stdio/makebuf.c
-index b9c75bbf8..315cd7c1a 100644
+index b9c75bbf8..d748d5dc8 100644
 --- a/newlib/libc/stdio/makebuf.c
 +++ b/newlib/libc/stdio/makebuf.c
-@@ -50,7 +50,7 @@ __smakebuf_r (struct _reent *ptr,
+@@ -19,6 +19,7 @@
+ #include <_ansi.h>
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <malloc.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ #include <sys/unistd.h>
+@@ -50,7 +51,7 @@ __smakebuf_r (struct _reent *ptr,
        return;
      }
    flags = __swhatbuf_r (ptr, fp, &size, &couldbetty);
