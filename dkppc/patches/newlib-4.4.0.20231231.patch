@@ -6475,10 +6475,10 @@ index 000000000..d15eab89d
 +
 diff --git a/libgloss/libsysbase/dirent.c b/libgloss/libsysbase/dirent.c
 new file mode 100644
-index 000000000..a8dc84739
+index 000000000..4dfeabd71
 --- /dev/null
 +++ b/libgloss/libsysbase/dirent.c
-@@ -0,0 +1,240 @@
+@@ -0,0 +1,241 @@
 +#include <malloc.h>
 +#include <errno.h>
 +#include <string.h>
@@ -6645,6 +6645,7 @@ index 000000000..a8dc84739
 +			// errno == ENONENT set by dirnext means it's end of directory
 +			// But readdir should not touch errno in case of dir end
 +			res = 0;
++			errno = 0;
 +		}
 +		return res;
 +	}
@@ -9375,7 +9376,7 @@ index a7d4bc52d..6b06ce5a5 100644
  #ifdef __rtems__
 diff --git a/newlib/libc/include/sys/iosupport.h b/newlib/libc/include/sys/iosupport.h
 new file mode 100644
-index 000000000..287fadaaa
+index 000000000..a38b71599
 --- /dev/null
 +++ b/newlib/libc/include/sys/iosupport.h
 @@ -0,0 +1,127 @@
@@ -9448,7 +9449,7 @@ index 000000000..287fadaaa
 +	int (*lstat_r)(struct _reent *r, const char *file, struct stat *st);
 +	int (*utimes_r)(struct _reent *r, const char *filename, const struct timeval times[2]);
 +
-+	long (*fpathconf_r)(struct _reent *r, int fd, int name);
++	long (*fpathconf_r)(struct _reent *r, void *fd, int name);
 +	long (*pathconf_r)(struct _reent *r, const char *path, int name);
 +
 +	int (*symlink_r)(struct _reent *r, const char *target, const char *linkpath);
