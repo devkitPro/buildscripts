@@ -10,7 +10,7 @@ cd $target/binutils
 
 if [ ! -f configured-binutils ]
 then
-	CPPFLAGS="$cppflags $CPPFLAGS" LDFLAGS=$ldflags ../../binutils-$BINUTILS_VER/configure \
+	CPPFLAGS="$cppflags $CPPFLAGS" LDFLAGS="$ldflags $LDFLAGS" ../../binutils-$BINUTILS_VER/configure \
         --prefix=$prefix --target=$target --disable-nls --disable-werror \
 	--enable-lto --enable-plugins \
 	--enable-poison-system-directories \
@@ -41,7 +41,7 @@ cd $target/gcc
 if [ ! -f configured-gcc ]
 then
 	CPPFLAGS="$cppflags $CPPFLAGS" \
-	LDFLAGS="$ldflags" \
+	LDFLAGS="$ldflags $LDFLAGS" \
 	CFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
 	CXXFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
 	LDFLAGS_FOR_TARGET="" \
