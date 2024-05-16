@@ -291,6 +291,19 @@ index 728332b8153..47fc03eb8c8 100644
    INIT_STATIC_SPEC ("startfile",		&startfile_spec),
    INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
    INIT_STATIC_SPEC ("version",			&compiler_version),
+diff --git a/libcc1/configure b/libcc1/configure
+index ea689a353c8..98f9d9b21b7 100755
+--- a/libcc1/configure
++++ b/libcc1/configure
+@@ -5119,7 +5119,7 @@ else
+        # Adding the `sed 1q' prevents false positives on HP-UX, which says:
+        #   nm: unknown option "B" ignored
+        case `"$tmp_nm" -B "$tmp_nm_to_nm" 2>&1 | grep -v '^ *$' | sed '1q'` in
+-       *$tmp_nm*) lt_cv_path_NM="$tmp_nm -B"
++       $tmp_nm*) lt_cv_path_NM="$tmp_nm -B"
+ 	 break
+ 	 ;;
+        *)
 diff --git a/libgcc/config/arm/t-bpabi b/libgcc/config/arm/t-bpabi
 index dddddc7c444..c2502597953 100644
 --- a/libgcc/config/arm/t-bpabi
@@ -550,3 +563,16 @@ index 9fd4ab4848c..0b7ba4021ee 100644
  	    -e 's,^#include "\(.*\)",#include <bits/\1>,g' \
  	    < $< > $@
  
+diff --git a/lto-plugin/configure b/lto-plugin/configure
+index 28f5dd79cd7..a79f318a4d6 100755
+--- a/lto-plugin/configure
++++ b/lto-plugin/configure
+@@ -6469,7 +6469,7 @@ else
+        # Adding the `sed 1q' prevents false positives on HP-UX, which says:
+        #   nm: unknown option "B" ignored
+        case `"$tmp_nm" -B "$tmp_nm_to_nm" 2>&1 | grep -v '^ *$' | sed '1q'` in
+-       *$tmp_nm*) lt_cv_path_NM="$tmp_nm -B"
++       $tmp_nm*) lt_cv_path_NM="$tmp_nm -B"
+ 	 break
+ 	 ;;
+        *)
