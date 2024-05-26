@@ -13,7 +13,7 @@ index 0d4460b58..0eab54b65 100644
  include lm32/Makefile.inc
  endif
 diff --git a/libgloss/Makefile.in b/libgloss/Makefile.in
-index fd845cf5f..5f80b89ab 100644
+index fd845cf5f..0a6ff43fb 100644
 --- a/libgloss/Makefile.in
 +++ b/libgloss/Makefile.in
 @@ -173,25 +173,28 @@ check_PROGRAMS = $(am__EXEEXT_2) $(am__EXEEXT_3)
@@ -104,7 +104,7 @@ index fd845cf5f..5f80b89ab 100644
  	$(top_srcdir)/m68k/acinclude.m4 \
  	$(top_srcdir)/mcore/acinclude.m4 \
  	$(top_srcdir)/mips/acinclude.m4 \
-@@ -459,6 +463,69 @@ libobjs_a_LIBADD =
+@@ -459,6 +463,70 @@ libobjs_a_LIBADD =
  am_libobjs_a_OBJECTS = $(am__objects_3) $(am__objects_4) \
  	$(am__objects_5) $(am__objects_6) $(am__objects_7)
  libobjs_a_OBJECTS = $(am_libobjs_a_OBJECTS)
@@ -118,6 +118,7 @@ index fd845cf5f..5f80b89ab 100644
 +libsysbase_libsysbase_a_LIBADD =
 +@CONFIG_LIBSYSBASE_TRUE@am_libsysbase_libsysbase_a_OBJECTS = libsysbase/libsysbase_libsysbase_a-_exit.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-abort.$(OBJEXT) \
++@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-assert.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-build_argv.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-chdir.$(OBJEXT) \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/libsysbase_libsysbase_a-chmod.$(OBJEXT) \
@@ -174,7 +175,7 @@ index fd845cf5f..5f80b89ab 100644
  lm32_libgloss_a_AR = $(AR) $(ARFLAGS)
  lm32_libgloss_a_LIBADD =
  @CONFIG_LM32_TRUE@am_lm32_libgloss_a_OBJECTS = lm32/isatty.$(OBJEXT) \
-@@ -668,7 +735,8 @@ SOURCES = $(aarch64_librdimon_a_SOURCES) $(arc_libnsim_a_SOURCES) \
+@@ -668,7 +736,8 @@ SOURCES = $(aarch64_librdimon_a_SOURCES) $(arc_libnsim_a_SOURCES) \
  	$(bfin_libbfinbsp_a_SOURCES) $(bfin_libsim_a_SOURCES) \
  	$(csky_libsemi_a_SOURCES) $(d30v_libsim_a_SOURCES) \
  	$(iq2000_libeval_a_SOURCES) $(libnosys_libnosys_a_SOURCES) \
@@ -184,7 +185,7 @@ index fd845cf5f..5f80b89ab 100644
  	$(nios2_libnios2_a_SOURCES) $(riscv_libgloss_a_SOURCES) \
  	$(riscv_libsemihost_a_SOURCES) $(riscv_libsim_a_SOURCES) \
  	$(xtensa_libgloss_a_SOURCES) \
-@@ -761,7 +829,7 @@ ETAGS = etags
+@@ -761,7 +830,7 @@ ETAGS = etags
  CTAGS = ctags
  CSCOPE = cscope
  DIST_SUBDIRS = $(SUBDIRS)
@@ -193,7 +194,7 @@ index fd845cf5f..5f80b89ab 100644
  AARCH64_OBJTYPE = @AARCH64_OBJTYPE@
  ACLOCAL = @ACLOCAL@
  AMTAR = @AMTAR@
-@@ -779,7 +847,7 @@ CCASFLAGS = @CCASFLAGS@
+@@ -779,7 +848,7 @@ CCASFLAGS = @CCASFLAGS@
  CCDEPMODE = @CCDEPMODE@
  CFLAGS = @CFLAGS@
  CPP = @CPP@
@@ -202,7 +203,7 @@ index fd845cf5f..5f80b89ab 100644
  CYGPATH_W = @CYGPATH_W@
  DEFS = @DEFS@
  DEPDIR = @DEPDIR@
-@@ -874,6 +942,7 @@ pdfdir = @pdfdir@
+@@ -874,6 +943,7 @@ pdfdir = @pdfdir@
  prefix = @prefix@
  program_transform_name = @program_transform_name@
  psdir = @psdir@
@@ -210,7 +211,7 @@ index fd845cf5f..5f80b89ab 100644
  sbindir = @sbindir@
  sharedstatedir = @sharedstatedir@
  srcdir = @srcdir@
-@@ -899,14 +968,14 @@ multilibtooldir = $(tooldir)/lib$(MULTISUBDIR)
+@@ -899,14 +969,14 @@ multilibtooldir = $(tooldir)/lib$(MULTISUBDIR)
  multilibtool_DATA = $(am__append_3) $(am__append_6) $(am__append_7) \
  	$(am__append_8) $(am__append_13) $(am__append_15) \
  	$(am__append_18) $(am__append_22) $(am__append_23) \
@@ -230,7 +231,7 @@ index fd845cf5f..5f80b89ab 100644
  includetooldir = $(tooldir)/include
  includetool_DATA = $(am__append_16)
  includesystooldir = $(tooldir)/include/sys
-@@ -917,7 +986,7 @@ AM_CPPFLAGS = -idirafter $(srcroot)/include
+@@ -917,7 +987,7 @@ AM_CPPFLAGS = -idirafter $(srcroot)/include
  # to install (e.g. our crt0.o objects).
  noinst_LIBRARIES = libobjs.a
  libobjs_a_SOURCES = $(am__append_14) $(am__append_19) $(am__append_25) \
@@ -239,7 +240,7 @@ index fd845cf5f..5f80b89ab 100644
  FLAGS_TO_PASS = \
  	"CC=$(CC)" \
  	"CFLAGS=$(CFLAGS)" \
-@@ -1098,6 +1167,65 @@ TEXINFO_TEX = ../texinfo/texinfo.tex
+@@ -1098,6 +1168,66 @@ TEXINFO_TEX = ../texinfo/texinfo.tex
  @CONFIG_LIBNOSYS_TRUE@	libnosys/getentropy.c \
  @CONFIG_LIBNOSYS_TRUE@	libnosys/_exit.c
  
@@ -250,6 +251,7 @@ index fd845cf5f..5f80b89ab 100644
 +@CONFIG_LIBSYSBASE_TRUE@libsysbase_libsysbase_a_SOURCES = \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/_exit.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/abort.c \
++@CONFIG_LIBSYSBASE_TRUE@	libsysbase/assert.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/build_argv.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/chdir.c \
 +@CONFIG_LIBSYSBASE_TRUE@	libsysbase/chmod.c \
@@ -305,7 +307,7 @@ index fd845cf5f..5f80b89ab 100644
  @CONFIG_LM32_TRUE@lm32_libgloss_a_SOURCES = \
  @CONFIG_LM32_TRUE@	lm32/isatty.c \
  @CONFIG_LM32_TRUE@	lm32/scall.S
-@@ -1203,19 +1331,19 @@ TEXINFO_TEX = ../texinfo/texinfo.tex
+@@ -1203,19 +1333,19 @@ TEXINFO_TEX = ../texinfo/texinfo.tex
  @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@xtensa_libgloss_a_SOURCES = xtensa/sleep.S \
  @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	xtensa/syscalls.c \
  @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	xtensa/window-vectors.S \
@@ -331,7 +333,7 @@ index fd845cf5f..5f80b89ab 100644
  @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@xtensa_libsys_openocd_a_SOURCES = \
  @CONFIG_XTENSA_TRUE@@HAVE_XTENSA_BOARD_ESP_TRUE@	xtensa/syscalls.c
  
-@@ -1228,7 +1356,7 @@ all: config.h
+@@ -1228,7 +1358,7 @@ all: config.h
  .SUFFIXES: .S .c .dvi .o .obj .ps
  am--refresh: Makefile
  	@:
@@ -340,7 +342,7 @@ index fd845cf5f..5f80b89ab 100644
  	@for dep in $?; do \
  	  case '$(am__configure_deps)' in \
  	    *$$dep*) \
-@@ -1250,7 +1378,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
+@@ -1250,7 +1380,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
  	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe)'; \
  	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__depfiles_maybe);; \
  	esac;
@@ -349,7 +351,7 @@ index fd845cf5f..5f80b89ab 100644
  
  $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
  	$(SHELL) ./config.status --recheck
-@@ -1730,6 +1858,183 @@ libobjs.a: $(libobjs_a_OBJECTS) $(libobjs_a_DEPENDENCIES) $(EXTRA_libobjs_a_DEPE
+@@ -1730,6 +1860,186 @@ libobjs.a: $(libobjs_a_OBJECTS) $(libobjs_a_DEPENDENCIES) $(EXTRA_libobjs_a_DEPE
  	$(AM_V_at)-rm -f libobjs.a
  	$(AM_V_AR)$(libobjs_a_AR) libobjs.a $(libobjs_a_OBJECTS) $(libobjs_a_LIBADD)
  	$(AM_V_at)$(RANLIB) libobjs.a
@@ -370,6 +372,9 @@ index fd845cf5f..5f80b89ab 100644
 +	libsysbase/$(am__dirstamp) \
 +	libsysbase/$(DEPDIR)/$(am__dirstamp)
 +libsysbase/libsysbase_libsysbase_a-abort.$(OBJEXT):  \
++	libsysbase/$(am__dirstamp) \
++	libsysbase/$(DEPDIR)/$(am__dirstamp)
++libsysbase/libsysbase_libsysbase_a-assert.$(OBJEXT):  \
 +	libsysbase/$(am__dirstamp) \
 +	libsysbase/$(DEPDIR)/$(am__dirstamp)
 +libsysbase/libsysbase_libsysbase_a-build_argv.$(OBJEXT):  \
@@ -533,7 +538,7 @@ index fd845cf5f..5f80b89ab 100644
  lm32/isatty.$(OBJEXT): lm32/$(am__dirstamp) \
  	lm32/$(DEPDIR)/$(am__dirstamp)
  lm32/scall.$(OBJEXT): lm32/$(am__dirstamp) \
-@@ -2113,6 +2418,7 @@ mostlyclean-compile:
+@@ -2113,6 +2423,7 @@ mostlyclean-compile:
  	-rm -f d30v/*.$(OBJEXT)
  	-rm -f iq2000/*.$(OBJEXT)
  	-rm -f libnosys/*.$(OBJEXT)
@@ -541,13 +546,14 @@ index fd845cf5f..5f80b89ab 100644
  	-rm -f lm32/*.$(OBJEXT)
  	-rm -f nios2/*.$(OBJEXT)
  	-rm -f riscv/*.$(OBJEXT)
-@@ -2238,6 +2544,60 @@ distclean-compile:
+@@ -2238,6 +2549,61 @@ distclean-compile:
  @AMDEP_TRUE@@am__include@ @am__quote@libnosys/$(DEPDIR)/unlink.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libnosys/$(DEPDIR)/wait.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@libnosys/$(DEPDIR)/write.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/dummy.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-_exit.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-abort.Po@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-assert.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-build_argv.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-chdir.Po@am__quote@
 +@AMDEP_TRUE@@am__include@ @am__quote@libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-chmod.Po@am__quote@
@@ -602,7 +608,7 @@ index fd845cf5f..5f80b89ab 100644
  @AMDEP_TRUE@@am__include@ @am__quote@lm32/$(DEPDIR)/crt0.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@lm32/$(DEPDIR)/isatty.Po@am__quote@
  @AMDEP_TRUE@@am__include@ @am__quote@lm32/$(DEPDIR)/scall.Po@am__quote@
-@@ -3082,6 +3442,748 @@ csky/csky_libsemi_a-getpid.obj: csky/getpid.c
+@@ -3082,6 +3448,762 @@ csky/csky_libsemi_a-getpid.obj: csky/getpid.c
  @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
  @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(csky_libsemi_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o csky/csky_libsemi_a-getpid.obj `if test -f 'csky/getpid.c'; then $(CYGPATH_W) 'csky/getpid.c'; else $(CYGPATH_W) '$(srcdir)/csky/getpid.c'; fi`
  
@@ -633,6 +639,20 @@ index fd845cf5f..5f80b89ab 100644
 +@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libsysbase/abort.c' object='libsysbase/libsysbase_libsysbase_a-abort.obj' libtool=no @AMDEPBACKSLASH@
 +@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 +@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libsysbase/libsysbase_libsysbase_a-abort.obj `if test -f 'libsysbase/abort.c'; then $(CYGPATH_W) 'libsysbase/abort.c'; else $(CYGPATH_W) '$(srcdir)/libsysbase/abort.c'; fi`
++
++libsysbase/libsysbase_libsysbase_a-assert.o: libsysbase/assert.c
++@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libsysbase/libsysbase_libsysbase_a-assert.o -MD -MP -MF libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-assert.Tpo -c -o libsysbase/libsysbase_libsysbase_a-assert.o `test -f 'libsysbase/assert.c' || echo '$(srcdir)/'`libsysbase/assert.c
++@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-assert.Tpo libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-assert.Po
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libsysbase/assert.c' object='libsysbase/libsysbase_libsysbase_a-assert.o' libtool=no @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libsysbase/libsysbase_libsysbase_a-assert.o `test -f 'libsysbase/assert.c' || echo '$(srcdir)/'`libsysbase/assert.c
++
++libsysbase/libsysbase_libsysbase_a-assert.obj: libsysbase/assert.c
++@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libsysbase/libsysbase_libsysbase_a-assert.obj -MD -MP -MF libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-assert.Tpo -c -o libsysbase/libsysbase_libsysbase_a-assert.obj `if test -f 'libsysbase/assert.c'; then $(CYGPATH_W) 'libsysbase/assert.c'; else $(CYGPATH_W) '$(srcdir)/libsysbase/assert.c'; fi`
++@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-assert.Tpo libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-assert.Po
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='libsysbase/assert.c' object='libsysbase/libsysbase_libsysbase_a-assert.obj' libtool=no @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libsysbase/libsysbase_libsysbase_a-assert.obj `if test -f 'libsysbase/assert.c'; then $(CYGPATH_W) 'libsysbase/assert.c'; else $(CYGPATH_W) '$(srcdir)/libsysbase/assert.c'; fi`
 +
 +libsysbase/libsysbase_libsysbase_a-build_argv.o: libsysbase/build_argv.c
 +@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libsysbase_libsysbase_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libsysbase/libsysbase_libsysbase_a-build_argv.o -MD -MP -MF libsysbase/$(DEPDIR)/libsysbase_libsysbase_a-build_argv.Tpo -c -o libsysbase/libsysbase_libsysbase_a-build_argv.o `test -f 'libsysbase/build_argv.c' || echo '$(srcdir)/'`libsysbase/build_argv.c
@@ -1351,7 +1371,7 @@ index fd845cf5f..5f80b89ab 100644
  nios2/nios2_libnios2_a-io-close.o: nios2/io-close.c
  @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(nios2_libnios2_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT nios2/nios2_libnios2_a-io-close.o -MD -MP -MF nios2/$(DEPDIR)/nios2_libnios2_a-io-close.Tpo -c -o nios2/nios2_libnios2_a-io-close.o `test -f 'nios2/io-close.c' || echo '$(srcdir)/'`nios2/io-close.c
  @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) nios2/$(DEPDIR)/nios2_libnios2_a-io-close.Tpo nios2/$(DEPDIR)/nios2_libnios2_a-io-close.Po
-@@ -5103,6 +6205,8 @@ distclean-generic:
+@@ -5103,6 +6225,8 @@ distclean-generic:
  	-rm -f iq2000/$(am__dirstamp)
  	-rm -f libnosys/$(DEPDIR)/$(am__dirstamp)
  	-rm -f libnosys/$(am__dirstamp)
@@ -1360,7 +1380,7 @@ index fd845cf5f..5f80b89ab 100644
  	-rm -f lm32/$(DEPDIR)/$(am__dirstamp)
  	-rm -f lm32/$(am__dirstamp)
  	-rm -f nios2/$(DEPDIR)/$(am__dirstamp)
-@@ -5129,7 +6233,7 @@ clean-am: clean-aminfo clean-binPROGRAMS clean-checkPROGRAMS \
+@@ -5129,7 +6253,7 @@ clean-am: clean-aminfo clean-binPROGRAMS clean-checkPROGRAMS \
  
  distclean: distclean-recursive
  	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
@@ -1369,7 +1389,7 @@ index fd845cf5f..5f80b89ab 100644
  	-rm -f Makefile
  distclean-am: clean-am distclean-compile distclean-generic \
  	distclean-hdr distclean-local distclean-tags
-@@ -5272,7 +6376,7 @@ installcheck-am:
+@@ -5272,7 +6396,7 @@ installcheck-am:
  maintainer-clean: maintainer-clean-recursive
  	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
  	-rm -rf $(top_srcdir)/autom4te.cache
@@ -1544,10 +1564,10 @@ index 268d86c51..1b918a61e 100644
  m4_include([mips/acinclude.m4])
 diff --git a/libgloss/libsysbase/Makefile.inc b/libgloss/libsysbase/Makefile.inc
 new file mode 100644
-index 000000000..123a1dedf
+index 000000000..bb3c45c32
 --- /dev/null
 +++ b/libgloss/libsysbase/Makefile.inc
-@@ -0,0 +1,66 @@
+@@ -0,0 +1,67 @@
 +multilibtool_DATA += %D%/sysbase.specs
 +
 +multilibtool_LIBRARIES += %D%/libpthread.a
@@ -1563,6 +1583,7 @@ index 000000000..123a1dedf
 +%C%_libsysbase_a_SOURCES = \
 +	%D%/_exit.c \
 +	%D%/abort.c \
++	%D%/assert.c \
 +	%D%/build_argv.c \
 +	%D%/chdir.c \
 +	%D%/chmod.c \
@@ -1638,16 +1659,23 @@ index 000000000..a45723f84
 +}
 diff --git a/libgloss/libsysbase/abort.c b/libgloss/libsysbase/abort.c
 new file mode 100644
-index 000000000..9272e22c9
+index 000000000..9074c8fa2
 --- /dev/null
 +++ b/libgloss/libsysbase/abort.c
-@@ -0,0 +1,8 @@
+@@ -0,0 +1,15 @@
 +#include <stdlib.h>
 +#include <unistd.h>
++#include <sys/iosupport.h>
 +
 +void abort(void) {
-+  write (2, "Abort called.\n", sizeof("Abort called.\n")-1);
-+  _exit (1);
++  do {
++
++    if ( __has_syscall(abort) ) {
++      __syscall_abort();
++    } else {
++     _exit (1);
++    }
++  } while(1);
 +}
 +
 diff --git a/libgloss/libsysbase/acconfig.h b/libgloss/libsysbase/acconfig.h
@@ -1718,6 +1746,29 @@ index 000000000..7b0d7b4d6
 +  z8k-*-*) ;;
 +  *) AC_DEFINE(MISSING_SYSCALL_NAMES, 1, [Missing syscall names]) ;;
 +esac
+diff --git a/libgloss/libsysbase/assert.c b/libgloss/libsysbase/assert.c
+new file mode 100644
+index 000000000..faa74b866
+--- /dev/null
++++ b/libgloss/libsysbase/assert.c
+@@ -0,0 +1,17 @@
++#include <assert.h>
++#include <stdlib.h>
++#include <stdio.h>
++#include <sys/iosupport.h>
++
++void
++__assert_func (const char *file,
++        int line,
++        const char *func,
++        const char *failedexpr)
++{
++  if ( __has_syscall(assert_func) ) {
++    __syscall_assert_func(file, line, func, failedexpr);
++  }
++  abort();
++  /* NOTREACHED */
++}
 diff --git a/libgloss/libsysbase/build_argv.c b/libgloss/libsysbase/build_argv.c
 new file mode 100644
 index 000000000..0697f53d2
@@ -6465,10 +6516,10 @@ index 000000000..d15eab89d
 +
 diff --git a/libgloss/libsysbase/dirent.c b/libgloss/libsysbase/dirent.c
 new file mode 100644
-index 000000000..482d2f814
+index 000000000..4dfeabd71
 --- /dev/null
 +++ b/libgloss/libsysbase/dirent.c
-@@ -0,0 +1,257 @@
+@@ -0,0 +1,241 @@
 +#include <malloc.h>
 +#include <errno.h>
 +#include <string.h>
@@ -6608,47 +6659,13 @@ index 000000000..482d2f814
 +	return res;
 +}
 +
-+
-+struct dirent* readdir (DIR *dirp) {
-+	struct stat st;
-+	char filename[NAME_MAX+1];
-+	int res;
-+	int olderrno = errno;
-+
-+	if (!dirp) {
-+		errno = EBADF;
-+		return NULL;
-+	}
-+
-+	res = __dirnext (dirp->dirData, filename, &st);
-+
-+	if (res < 0) {
-+		if (errno == ENOENT) {
-+			// errno == ENONENT set by dirnext means it's end of directory
-+			// But readdir should not touch errno in case of dir end
-+			errno = olderrno;
-+		}
-+		return NULL;
-+	}
-+
-+	// We've moved forward in the directory
-+	dirp->position += 1;
-+
-+	if (strnlen(filename, sizeof(filename)) >= sizeof(dirp->fileData.d_name)) {
-+		errno = EOVERFLOW;
-+		return NULL;
-+	}
-+
-+	strncpy (dirp->fileData.d_name, filename, sizeof(dirp->fileData.d_name));
-+	dirp->fileData.d_ino = st.st_ino;
-+	dirp->fileData.d_type = IFTODT(st.st_mode);
-+
-+	return &(dirp->fileData);
-+}
-+
-+
 +int readdir_r(DIR *dirp, struct dirent *entry, struct dirent **result) {
-+	struct stat st;
++#ifdef _DIRENT_HAVE_D_STAT
++	struct stat *st = &dirp->fileData.d_stat;
++#else
++	struct stat tmpstat;
++	struct stat *st = &tmpstat;
++#endif
 +	char filename[NAME_MAX+1];
 +	int res;
 +
@@ -6656,7 +6673,11 @@ index 000000000..482d2f814
 +		return EBADF;
 +	}
 +
-+	res = __dirnext (dirp->dirData, filename, &st);
++	if (!result) {
++		return EFAULT;
++	}
++
++	res = __dirnext (dirp->dirData, filename, st);
 +
 +	if (res < 0) {
 +		res = errno;
@@ -6665,6 +6686,7 @@ index 000000000..482d2f814
 +			// errno == ENONENT set by dirnext means it's end of directory
 +			// But readdir should not touch errno in case of dir end
 +			res = 0;
++			errno = 0;
 +		}
 +		return res;
 +	}
@@ -6678,13 +6700,26 @@ index 000000000..482d2f814
 +	}
 +
 +	strncpy (entry->d_name, filename, sizeof(entry->d_name));
-+	entry->d_ino = st.st_ino;
-+	entry->d_type = IFTODT(st.st_mode);
++	entry->d_ino = st->st_ino;
++	entry->d_type = IFTODT(st->st_mode);
 +
 +	*result = entry;
 +	return 0;
 +}
 +
++struct dirent* readdir (DIR *dirp) {
++
++	struct dirent *entry = &dirp->fileData;
++
++	int res = readdir_r(dirp, entry, &entry);
++
++	if (res !=0) {
++		errno = res;
++		return NULL;
++	}
++
++	return entry;
++}
 +
 +void rewinddir (DIR *dirp) {
 +	if (!dirp) {
@@ -7058,7 +7093,7 @@ index 000000000..2bada9736
 +}
 diff --git a/libgloss/libsysbase/fpathconf.c b/libgloss/libsysbase/fpathconf.c
 new file mode 100644
-index 000000000..453f64870
+index 000000000..9cba92a72
 --- /dev/null
 +++ b/libgloss/libsysbase/fpathconf.c
 @@ -0,0 +1,30 @@
@@ -7078,7 +7113,7 @@ index 000000000..453f64870
 +       struct _reent *r = _REENT;
 +
 +        if ( NULL == handle ) {
-+                errno = EINVAL;
++                errno = EBADF;
 +                return ret;
 +        }
 +
@@ -7094,10 +7129,10 @@ index 000000000..453f64870
 +}
 diff --git a/libgloss/libsysbase/fstat.c b/libgloss/libsysbase/fstat.c
 new file mode 100644
-index 000000000..32267b828
+index 000000000..94924d802
 --- /dev/null
 +++ b/libgloss/libsysbase/fstat.c
-@@ -0,0 +1,32 @@
+@@ -0,0 +1,35 @@
 +#include "config.h"
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -7117,7 +7152,10 @@ index 000000000..32267b828
 +	if(fileDesc!=-1) {
 +		handle = __get_handle(fileDesc);
 +
-+		if ( NULL == handle ) return ret;
++		if ( NULL == handle ) {
++			errno = EBADF;
++			return ret;
++		}
 +
 +		dev = handle->device;
 +
@@ -7132,7 +7170,7 @@ index 000000000..32267b828
 +}
 diff --git a/libgloss/libsysbase/fsync.c b/libgloss/libsysbase/fsync.c
 new file mode 100644
-index 000000000..fb06cb6d1
+index 000000000..e63e3762b
 --- /dev/null
 +++ b/libgloss/libsysbase/fsync.c
 @@ -0,0 +1,34 @@
@@ -7156,7 +7194,7 @@ index 000000000..fb06cb6d1
 +	handle = __get_handle(fileDesc);
 +
 +	if ( NULL == handle ) {
-+		errno = EINVAL;
++		errno = EBADF;
 +		return ret;
 +	}
 +
@@ -7172,7 +7210,7 @@ index 000000000..fb06cb6d1
 +}
 diff --git a/libgloss/libsysbase/ftruncate.c b/libgloss/libsysbase/ftruncate.c
 new file mode 100644
-index 000000000..0cd7d0fc4
+index 000000000..94b4a3761
 --- /dev/null
 +++ b/libgloss/libsysbase/ftruncate.c
 @@ -0,0 +1,34 @@
@@ -7196,7 +7234,7 @@ index 000000000..0cd7d0fc4
 +	handle = __get_handle(fileDesc);
 +
 +	if ( NULL == handle ) {
-+		r->_errno = EINVAL;
++		r->_errno=EBADF;
 +		return ret;
 +	}
 +
@@ -7741,10 +7779,10 @@ index 000000000..d7a988359
 +
 diff --git a/libgloss/libsysbase/lseek.c b/libgloss/libsysbase/lseek.c
 new file mode 100644
-index 000000000..39ef385b1
+index 000000000..c5568e338
 --- /dev/null
 +++ b/libgloss/libsysbase/lseek.c
-@@ -0,0 +1,35 @@
+@@ -0,0 +1,38 @@
 +#include "config.h"
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -7766,7 +7804,10 @@ index 000000000..39ef385b1
 +
 +		handle = __get_handle(fileDesc);
 +
-+		if ( NULL == handle ) return ret;
++		if ( NULL == handle ) {
++			r->_errno=EBADF;
++			return ret;
++		}
 +
 +		dev = handle->device;
 +
@@ -9039,10 +9080,10 @@ index 000000000..ff84cd355
 +}
 diff --git a/libgloss/libsysbase/read.c b/libgloss/libsysbase/read.c
 new file mode 100644
-index 000000000..9c548d830
+index 000000000..30505c7b6
 --- /dev/null
 +++ b/libgloss/libsysbase/read.c
-@@ -0,0 +1,32 @@
+@@ -0,0 +1,35 @@
 +#include "config.h"
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -9062,7 +9103,10 @@ index 000000000..9c548d830
 +	if(fileDesc!=-1) {
 +		handle = __get_handle(fileDesc);
 +
-+		if ( NULL == handle ) return ret;
++		if ( NULL == handle ) {
++			r->_errno=EBADF;
++			return ret;
++		}
 +
 +		dev = handle->device;
 +
@@ -10068,10 +10112,10 @@ index 000000000..2c2998250
 +#endif /* __WARNING_H__ */
 diff --git a/libgloss/libsysbase/write.c b/libgloss/libsysbase/write.c
 new file mode 100644
-index 000000000..04198e854
+index 000000000..baf0d6ae5
 --- /dev/null
 +++ b/libgloss/libsysbase/write.c
-@@ -0,0 +1,31 @@
+@@ -0,0 +1,34 @@
 +#include "config.h"
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -10091,7 +10135,10 @@ index 000000000..04198e854
 +	if(fileDesc!=-1) {
 +		handle = __get_handle(fileDesc);
 +
-+		if ( NULL == handle ) return ret;
++		if ( NULL == handle ) {
++			r->_errno=EBADF;
++			return ret;
++		}
 +
 +		dev = handle->device;
 +
@@ -10168,11 +10215,12 @@ index ef5038e68..32a1d5e0b 100644
    .stab 0 : { *(.stab) }
 diff --git a/libgloss/rs6000/crtmain.c b/libgloss/rs6000/crtmain.c
 new file mode 100644
-index 000000000..bd25d775d
+index 000000000..f4f11fa28
 --- /dev/null
 +++ b/libgloss/rs6000/crtmain.c
-@@ -0,0 +1,18 @@
+@@ -0,0 +1,20 @@
 +#include <unistd.h>
++#include <stdlib.h>
 +
 +struct __argv {
 +	int argvMagic;		//!< argv magic number, set to 0x5f617267 ('_arg') if valid 
@@ -10185,11 +10233,26 @@ index 000000000..bd25d775d
 +extern struct __argv *__system_argv;
 +void __init();
 +void SYS_PreMain();
++int main(int argc, char **argv);
 +
 +void __crtmain() {
 +	SYS_PreMain();
 +	exit ( main(__system_argv->argc,__system_argv->argv) );
 +}
+diff --git a/libgloss/rs6000/mbx-print.c b/libgloss/rs6000/mbx-print.c
+index 64472ee68..8474dd7d5 100644
+--- a/libgloss/rs6000/mbx-print.c
++++ b/libgloss/rs6000/mbx-print.c
+@@ -16,6 +16,9 @@
+ /*
+  * print -- do a raw print of a string
+  */ 
++
++#include <unistd.h>
++
+ void
+ print (ptr)
+      char *ptr;
 diff --git a/libgloss/rs6000/mbx.ld b/libgloss/rs6000/mbx.ld
 index cedf4e867..99d849e90 100644
 --- a/libgloss/rs6000/mbx.ld
@@ -10202,6 +10265,73 @@ index cedf4e867..99d849e90 100644
    /* These are needed for ELF backends which have not yet been
       converted to the new style linker.  */
    .stab 0 : { *(.stab) }
+diff --git a/libgloss/rs6000/mvme-print.c b/libgloss/rs6000/mvme-print.c
+index 8d195424e..7f0877bd5 100644
+--- a/libgloss/rs6000/mvme-print.c
++++ b/libgloss/rs6000/mvme-print.c
+@@ -17,6 +17,10 @@
+  * write -- write some bytes to the output device.
+  */
+ 
++void __pcrlf(void);
++void __outln(char *ptr, char *q);
++void __outstr(char *ptr, char *q);
++
+ int
+ write (fd, ptr, len)
+      int fd;
+diff --git a/libgloss/rs6000/sim-abort.c b/libgloss/rs6000/sim-abort.c
+index e1b59cf19..faeb93153 100644
+--- a/libgloss/rs6000/sim-abort.c
++++ b/libgloss/rs6000/sim-abort.c
+@@ -14,6 +14,9 @@
+  * they apply.
+  */
+ 
++#include <unistd.h>
++#include <stdlib.h>
++
+ void abort(void)
+ {
+   write (2, "Abort called.\n", sizeof("Abort called.\n")-1);
+diff --git a/libgloss/rs6000/sim-inbyte.c b/libgloss/rs6000/sim-inbyte.c
+index 787b68976..44b273dff 100644
+--- a/libgloss/rs6000/sim-inbyte.c
++++ b/libgloss/rs6000/sim-inbyte.c
+@@ -14,6 +14,8 @@
+  * they apply.
+  */
+ 
++#include <unistd.h>
++
+ int
+ inbyte ()
+ {
+diff --git a/libgloss/rs6000/sim-print.c b/libgloss/rs6000/sim-print.c
+index c0b9adced..e74bbfa04 100644
+--- a/libgloss/rs6000/sim-print.c
++++ b/libgloss/rs6000/sim-print.c
+@@ -16,6 +16,8 @@
+ /*
+  * print -- do a raw print of a string
+  */ 
++#include <unistd.h>
++
+ void
+ print (ptr)
+      char *ptr;
+diff --git a/libgloss/rs6000/sim-sbrk.c b/libgloss/rs6000/sim-sbrk.c
+index 5c8bd6522..a536c663e 100644
+--- a/libgloss/rs6000/sim-sbrk.c
++++ b/libgloss/rs6000/sim-sbrk.c
+@@ -16,6 +16,7 @@
+ 
+ extern char _end[];
+ static char *curbrk = _end;
++int brk(char *curbrk);
+ 
+ char *
+ sbrk (incr)
 diff --git a/libgloss/rs6000/xilinx.ld b/libgloss/rs6000/xilinx.ld
 index 75b2a12b6..40a4a1e4b 100644
 --- a/libgloss/rs6000/xilinx.ld
@@ -10501,7 +10631,7 @@ index 9a32646ab..e5df29f36 100644
  @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libc_a_CPPFLAGS) $(CPPFLAGS) $(libc_a_CFLAGS) $(CFLAGS) -MT libc/machine/powerpc/libc_a-vfprintf.o -MD -MP -MF libc/machine/powerpc/$(DEPDIR)/libc_a-vfprintf.Tpo -c -o libc/machine/powerpc/libc_a-vfprintf.o `test -f 'libc/machine/powerpc/vfprintf.c' || echo '$(srcdir)/'`libc/machine/powerpc/vfprintf.c
  @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) libc/machine/powerpc/$(DEPDIR)/libc_a-vfprintf.Tpo libc/machine/powerpc/$(DEPDIR)/libc_a-vfprintf.Po
 diff --git a/newlib/configure.host b/newlib/configure.host
-index 386183466..cc5e33ad7 100644
+index 386183466..b8b021100 100644
 --- a/newlib/configure.host
 +++ b/newlib/configure.host
 @@ -630,13 +630,25 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
@@ -10538,7 +10668,7 @@ index 386183466..cc5e33ad7 100644
 +  powerpc*-*-eabi*)
 +	default_newlib_io_c99_formats="yes"
 +	default_newlib_io_long_long="yes"
-+	newlib_cflags="${newlib_cflags} -DCUSTOM_MALLOC_LOCK -D__DYNAMIC_REENT__ -DGETREENT_PROVIDED -DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__"
++	newlib_cflags="${newlib_cflags} -DHAVE_ASSERT_FUNC -DABORT_PROVIDED -DCUSTOM_MALLOC_LOCK -D__DYNAMIC_REENT__ -DGETREENT_PROVIDED -DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__"
 +	newlib_cflags="${newlib_cflags} -ffunction-sections -fdata-sections"
 +	syscall_dir=syscalls
 +	;;
@@ -10658,6 +10788,19 @@ index b1dd2a7c4..16e29c037 100644
  extern void *_sbrk_r (struct _reent *, ptrdiff_t);
  extern int _stat_r (struct _reent *, const char *, struct stat *);
  extern _CLOCK_T_ _times_r (struct _reent *, struct tms *);
+diff --git a/newlib/libc/include/regex.h b/newlib/libc/include/regex.h
+index fa3e26879..4da1a374e 100644
+--- a/newlib/libc/include/regex.h
++++ b/newlib/libc/include/regex.h
+@@ -96,7 +96,7 @@ __BEGIN_DECLS
+ int	regcomp(regex_t *__restrict, const char *__restrict, int);
+ size_t	regerror(int, const regex_t *__restrict, char *__restrict, size_t);
+ int	regexec(const regex_t *__restrict, const char *__restrict,
+-			size_t, regmatch_t [__restrict], int);
++			size_t, regmatch_t [__restrict_arr], int);
+ void	regfree(regex_t *);
+ __END_DECLS
+ 
 diff --git a/newlib/libc/include/semaphore.h b/newlib/libc/include/semaphore.h
 new file mode 100755
 index 000000000..4afb0e419
@@ -10922,26 +11065,28 @@ index f810b008f..ca7e11dc7 100644
 +
  #endif /* !_SYS__TIMESPEC_H_ */
 diff --git a/newlib/libc/include/sys/config.h b/newlib/libc/include/sys/config.h
-index 5dcc77a80..6930a751d 100644
+index 5dcc77a80..fdf232649 100644
 --- a/newlib/libc/include/sys/config.h
 +++ b/newlib/libc/include/sys/config.h
-@@ -4,8 +4,19 @@
+@@ -4,8 +4,21 @@
  #include <machine/ieeefp.h>  /* floating point macros */
  #include <sys/features.h>	/* POSIX defs */
  
 -#ifdef __aarch64__
 +#ifdef __DEVKITARM__
 +#define __DYNAMIC_REENT__
++#define MALLOC_ALIGNMENT_THRESHOLD 32
 +#endif
 +
 +#ifdef __DEVKITA64__
  #define MALLOC_ALIGNMENT 16
++#define MALLOC_ALIGNMENT_THRESHOLD 32
 +#define __DYNAMIC_REENT__
 +#endif
 +
 +#ifdef __DEVKITPPC__
++#define MALLOC_ALIGNMENT_THRESHOLD 64
 +#define __BUFSIZ__ 32768
-+#define MALLOC_ALIGNMENT 64
 +#define __DYNAMIC_REENT__
  #endif
  
@@ -10970,10 +11115,10 @@ index a7d4bc52d..a04f13544 100644
  #ifdef __rtems__
 diff --git a/newlib/libc/include/sys/iosupport.h b/newlib/libc/include/sys/iosupport.h
 new file mode 100644
-index 000000000..335014a4b
+index 000000000..b81214720
 --- /dev/null
 +++ b/newlib/libc/include/sys/iosupport.h
-@@ -0,0 +1,140 @@
+@@ -0,0 +1,142 @@
 +//---------------------------------------------------------------------------------
 +#ifndef __iosupp_h__
 +#define __iosupp_h__
@@ -11060,6 +11205,8 @@ index 000000000..335014a4b
 +#define __SYSCALL(_name) __syscall_##_name
 +#endif
 +
++void __SYSCALL(abort) (void);
++void __SYSCALL(assert_func) (const char *file, int line, const char *func, const char *failedexpr);
 +void __SYSCALL(exit) ( int rc );
 +int  __SYSCALL(gettod_r) (struct _reent *ptr, struct timeval *tp, struct timezone *tz);
 +void __SYSCALL(lock_init) (_LOCK_T *lock);
@@ -11701,17 +11848,19 @@ index 000000000..a7d63da51
 +#endif // _MACHINE__TYPES_H
 diff --git a/newlib/libc/machine/powerpc/sys/dirent.h b/newlib/libc/machine/powerpc/sys/dirent.h
 new file mode 100644
-index 000000000..2aaca6080
+index 000000000..b3780c263
 --- /dev/null
 +++ b/newlib/libc/machine/powerpc/sys/dirent.h
-@@ -0,0 +1,58 @@
+@@ -0,0 +1,61 @@
 +#ifndef _dirent_h_
 +#define _dirent_h_
 +
 +#define _DIRENT_HAVE_D_TYPE
++#define _DIRENT_HAVE_D_STAT
 +
 +#include <sys/iosupport.h>
 +#include <sys/types.h>
++#include <sys/stat.h>
 +#include <sys/syslimits.h>
 +
 +#define	DT_UNKNOWN	 0
@@ -11730,6 +11879,7 @@ index 000000000..2aaca6080
 +
 +struct dirent {
 +	ino_t	d_ino;
++	struct  stat d_stat;
 +	unsigned char  d_type;
 +	char	d_name[NAME_MAX+1];
 +};
@@ -11983,6 +12133,30 @@ index 63c0618f1..dd3801900 100644
  #define _STDIO_WITH_THREAD_CANCELLATION_SUPPORT
  #endif
  
+diff --git a/newlib/libc/stdio/makebuf.c b/newlib/libc/stdio/makebuf.c
+index b9c75bbf8..bc65acc2a 100644
+--- a/newlib/libc/stdio/makebuf.c
++++ b/newlib/libc/stdio/makebuf.c
+@@ -19,6 +19,7 @@
+ #include <_ansi.h>
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <malloc.h>
+ #include <sys/stat.h>
+ #include <sys/types.h>
+ #include <sys/unistd.h>
+@@ -50,7 +51,11 @@ __smakebuf_r (struct _reent *ptr,
+       return;
+     }
+   flags = __swhatbuf_r (ptr, fp, &size, &couldbetty);
++#ifdef MALLOC_ALIGNMENT_THRESHOLD
++  if ((p = _memalign_r (ptr, MALLOC_ALIGNMENT_THRESHOLD, size)) == NULL)
++#else
+   if ((p = _malloc_r (ptr, size)) == NULL)
++#endif
+     {
+       if (!(fp->_flags & __SSTR))
+ 	{
 diff --git a/newlib/libc/stdio/remove.c b/newlib/libc/stdio/remove.c
 index d8dfdbd82..a85b5a99b 100644
 --- a/newlib/libc/stdio/remove.c
@@ -12151,6 +12325,24 @@ index 9b7bd518b..f0e33bbc1 100644
  /*
   * Exit, flushing stdio buffers if necessary.
   */
+diff --git a/newlib/libc/stdlib/malloc.c b/newlib/libc/stdlib/malloc.c
+index f5ac29208..7d016a653 100644
+--- a/newlib/libc/stdlib/malloc.c
++++ b/newlib/libc/stdlib/malloc.c
+@@ -161,7 +161,12 @@ Supporting OS subroutines required: <<sbrk>>.  */
+ void *
+ malloc (size_t nbytes)		/* get a block */
+ {
+-  return _malloc_r (_REENT, nbytes);
++#ifdef MALLOC_ALIGNMENT_THRESHOLD
++  if (nbytes >= MALLOC_ALIGNMENT_THRESHOLD)
++    return _memalign_r (_REENT, MALLOC_ALIGNMENT_THRESHOLD, nbytes);
++  else
++#endif
++    return _malloc_r (_REENT, nbytes);
+ }
+ 
+ void
 diff --git a/newlib/libc/stdlib/mlock.c b/newlib/libc/stdlib/mlock.c
 index 23aa10173..ba88eb9fb 100644
 --- a/newlib/libc/stdlib/mlock.c
