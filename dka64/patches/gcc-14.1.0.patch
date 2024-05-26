@@ -75,7 +75,7 @@ index 1beec94629d..90a9ec580f8 100644
  }
  
 diff --git a/gcc/config/aarch64/aarch64.h b/gcc/config/aarch64/aarch64.h
-index 4fa1dfc7906..085ae3234e6 100644
+index 4fa1dfc7906..43a01fe3d56 100644
 --- a/gcc/config/aarch64/aarch64.h
 +++ b/gcc/config/aarch64/aarch64.h
 @@ -1377,6 +1377,10 @@ typedef struct
@@ -83,8 +83,8 @@ index 4fa1dfc7906..085ae3234e6 100644
  #define TARGET_TLS_DESC (aarch64_tls_dialect == TLS_DESCRIPTORS)
  
 +/* Check selected thread pointer access sequence to use.  */
-+#define TARGET_HARD_TP (aarch64_tpidr_register != AARCH64_TP_SOFT)
-+#define TARGET_SOFT_TP (aarch64_tpidr_register == AARCH64_TP_SOFT)
++#define TARGET_HARD_TP (aarch64_tpidr_reg != AARCH64_TP_SOFT)
++#define TARGET_SOFT_TP (aarch64_tpidr_reg == AARCH64_TP_SOFT)
 +
  extern enum aarch64_code_model aarch64_cmodel;
  
