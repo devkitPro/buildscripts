@@ -1,8 +1,8 @@
 diff --git a/gcc/config.gcc b/gcc/config.gcc
-index 648b3dc2110..ed605b28956 100644
+index 95c91ee02be..4711542eee5 100644
 --- a/gcc/config.gcc
 +++ b/gcc/config.gcc
-@@ -1132,7 +1132,14 @@ aarch64*-*-elf | aarch64*-*-fuchsia* | aarch64*-*-rtems*)
+@@ -1195,7 +1195,14 @@ aarch64*-*-elf | aarch64*-*-fuchsia* | aarch64*-*-rtems*)
  	tmake_file="${tmake_file} aarch64/t-aarch64"
  	case $target in
  	aarch64-*-elf*)
@@ -18,7 +18,7 @@ index 648b3dc2110..ed605b28956 100644
          aarch64-*-fuchsia*)
                  tm_file="${tm_file} fuchsia.h"
 diff --git a/gcc/config/aarch64/aarch64-elf-raw.h b/gcc/config/aarch64/aarch64-elf-raw.h
-index ec45f23fa41..a208eabd806 100644
+index 5396da9b2d6..87235d680ad 100644
 --- a/gcc/config/aarch64/aarch64-elf-raw.h
 +++ b/gcc/config/aarch64/aarch64-elf-raw.h
 @@ -22,6 +22,7 @@
@@ -30,27 +30,24 @@ index ec45f23fa41..a208eabd806 100644
  #define ENDFILE_SPEC \
    " crtend%O%s crtn%O%s " \
 diff --git a/gcc/config/aarch64/aarch64-opts.h b/gcc/config/aarch64/aarch64-opts.h
-index a9f3e2715ca..0c7304e1d81 100644
+index a05c0d3ded1..5551807e4c6 100644
 --- a/gcc/config/aarch64/aarch64-opts.h
 +++ b/gcc/config/aarch64/aarch64-opts.h
-@@ -52,6 +52,12 @@ enum aarch64_tls_type {
-   TLS_DESCRIPTORS
+@@ -80,7 +80,8 @@ enum aarch64_tp_reg {
+   AARCH64_TPIDR_EL1 = 1,
+   AARCH64_TPIDR_EL2 = 2,
+   AARCH64_TPIDR_EL3 = 3,
+-  AARCH64_TPIDRRO_EL0 = 4
++  AARCH64_TPIDRRO_EL0 = 4,
++  AARCH64_TP_SOFT = 5
  };
  
-+/* Which thread pointer access sequence to use.  */
-+enum aarch64_tp_type {
-+  TP_HARD,
-+  TP_SOFT
-+};
-+
- /* The code model defines the address generation strategy.
-    Most have a PIC and non-PIC variant.  */
- enum aarch64_code_model {
+ /* SVE vector register sizes.  */
 diff --git a/gcc/config/aarch64/aarch64.cc b/gcc/config/aarch64/aarch64.cc
-index f5db5379543..f582e5a7543 100644
+index 1beec94629d..90a9ec580f8 100644
 --- a/gcc/config/aarch64/aarch64.cc
 +++ b/gcc/config/aarch64/aarch64.cc
-@@ -19550,8 +19550,24 @@ aarch64_load_tp (rtx target)
+@@ -21060,8 +21060,24 @@ aarch64_load_tp (rtx target)
        || !register_operand (target, Pmode))
      target = gen_reg_rtx (Pmode);
  
@@ -78,32 +75,31 @@ index f5db5379543..f582e5a7543 100644
  }
  
 diff --git a/gcc/config/aarch64/aarch64.h b/gcc/config/aarch64/aarch64.h
-index 73b09e20508..ad62b5080cc 100644
+index 4fa1dfc7906..085ae3234e6 100644
 --- a/gcc/config/aarch64/aarch64.h
 +++ b/gcc/config/aarch64/aarch64.h
-@@ -1154,6 +1154,10 @@ typedef struct
+@@ -1377,6 +1377,10 @@ typedef struct
  /* Check TLS Descriptors mechanism is selected.  */
  #define TARGET_TLS_DESC (aarch64_tls_dialect == TLS_DESCRIPTORS)
  
 +/* Check selected thread pointer access sequence to use.  */
-+#define TARGET_HARD_TP (target_thread_pointer == TP_HARD)
-+#define TARGET_SOFT_TP (target_thread_pointer == TP_SOFT)
++#define TARGET_HARD_TP (aarch64_tpidr_register != AARCH64_TP_SOFT)
++#define TARGET_SOFT_TP (aarch64_tpidr_register == AARCH64_TP_SOFT)
 +
  extern enum aarch64_code_model aarch64_cmodel;
  
  /* When using the tiny addressing model conditional and unconditional branches
 diff --git a/gcc/config/aarch64/aarch64.md b/gcc/config/aarch64/aarch64.md
-index 36d0bb3f718..cfa2f7efc7f 100644
+index dbde066f747..3e3198bf52f 100644
 --- a/gcc/config/aarch64/aarch64.md
 +++ b/gcc/config/aarch64/aarch64.md
-@@ -7068,11 +7068,22 @@
+@@ -7436,11 +7436,22 @@
  (define_insn "aarch64_load_tp_hard"
    [(set (match_operand:DI 0 "register_operand" "=r")
  	(unspec:DI [(const_int 0)] UNSPEC_TLS))]
 -  ""
--  "mrs\\t%0, tpidr_el0"
 +  "TARGET_HARD_TP"
-+  "mrs\\t%0, tpidr_el0\\t// aarch64_load_tp_hard"
+   "* return aarch64_output_load_tp (operands[0]);"
    [(set_attr "type" "mrs")]
  )
  
@@ -122,32 +118,20 @@ index 36d0bb3f718..cfa2f7efc7f 100644
  ;; instructions in the TLS stubs, in order to enable linker relaxation.
  ;; Therefore we treat the stubs as an atomic sequence.
 diff --git a/gcc/config/aarch64/aarch64.opt b/gcc/config/aarch64/aarch64.opt
-index 1d7967db9c0..17870f18b8b 100644
+index 6356c419399..a6907ed0a0b 100644
 --- a/gcc/config/aarch64/aarch64.opt
 +++ b/gcc/config/aarch64/aarch64.opt
-@@ -128,6 +128,21 @@ Enum(aarch64_tls_size) String(32) Value(32)
+@@ -128,6 +128,9 @@ Enum(tp_reg) String(tpidr_el3) Value(AARCH64_TPIDR_EL3)
  EnumValue
- Enum(aarch64_tls_size) String(48) Value(48)
+ Enum(tp_reg) String(tpidrro_el0) Value(AARCH64_TPIDRRO_EL0)
  
-+mtp=
-+Target RejectNegative Joined Enum(aarch64_tp_type) Var(target_thread_pointer) Init(TP_HARD)
-+Specify how to access the thread pointer.
-+
-+Enum
-+Name(aarch64_tp_type) Type(enum aarch64_tp_type)
-+Valid arguments to -mtp=:
-+
 +EnumValue
-+Enum(aarch64_tp_type) String(hard) Value(TP_HARD)
++Enum(tp_reg) String(soft) Value(AARCH64_TP_SOFT)
 +
-+EnumValue
-+Enum(aarch64_tp_type) String(soft) Value(TP_SOFT)
-+
-+
- march=
- Target RejectNegative Negative(march=) ToLower Joined Var(aarch64_arch_string)
- Use features of architecture ARCH.
-@@ -266,7 +281,7 @@ TargetVariable
+ mtp=
+ Target RejectNegative Joined Enum(tp_reg) Var(aarch64_tpidr_reg) Init(AARCH64_TPIDR_EL0) Save
+ Specify the thread pointer register.
+@@ -329,7 +332,7 @@ TargetVariable
  long aarch64_stack_protector_guard_offset = 0
  
  moutline-atomics
@@ -155,13 +139,13 @@ index 1d7967db9c0..17870f18b8b 100644
 +Target Var(aarch64_flag_outline_atomics) Save
  Generate local calls to out-of-line atomic operations.
  
- -param=aarch64-sve-compare-costs=
+ -param=aarch64-vect-compare-costs=
 diff --git a/gcc/config/aarch64/t-aarch64 b/gcc/config/aarch64/t-aarch64
-index a9a244ab6d6..a29f2772d63 100644
+index 78713558e7d..76c0914d8ce 100644
 --- a/gcc/config/aarch64/t-aarch64
 +++ b/gcc/config/aarch64/t-aarch64
-@@ -177,8 +177,10 @@ aarch64-cc-fusion.o: $(srcdir)/config/aarch64/aarch64-cc-fusion.cc \
- 		$(srcdir)/config/aarch64/aarch64-cc-fusion.cc
+@@ -208,8 +208,10 @@ aarch64-ldp-fusion.o: $(srcdir)/config/aarch64/aarch64-ldp-fusion.cc \
+ 		$(srcdir)/config/aarch64/aarch64-ldp-fusion.cc
  
  comma=,
 -MULTILIB_OPTIONS    = $(subst $(comma),/, $(patsubst %, mabi=%, $(subst $(comma),$(comma)mabi=,$(TM_MULTILIB_CONFIG))))
@@ -246,8 +230,15 @@ index 00000000000..9acbbf9d27c
 +Driver
 +
 +; This comment is to ensure we retain the blank line above.
+diff --git a/gcc/config/devkitpro.opt.urls b/gcc/config/devkitpro.opt.urls
+new file mode 100644
+index 00000000000..ab7b466aa71
+--- /dev/null
++++ b/gcc/config/devkitpro.opt.urls
+@@ -0,0 +1 @@
++; Autogenerated by regenerate-opt-urls.py from gcc/config/devkitpro.opt and generated HTML
 diff --git a/gcc/config/i386/host-mingw32.cc b/gcc/config/i386/host-mingw32.cc
-index acff6138d63..8dc91b75f93 100644
+index 42563982e42..923dc198a7e 100644
 --- a/gcc/config/i386/host-mingw32.cc
 +++ b/gcc/config/i386/host-mingw32.cc
 @@ -93,7 +93,10 @@ mingw32_gt_pch_get_address (size_t size, int)
@@ -263,10 +254,10 @@ index acff6138d63..8dc91b75f93 100644
  		      MEM_RESERVE | MEM_TOP_DOWN,
  		      PAGE_NOACCESS);
 diff --git a/gcc/gcc.cc b/gcc/gcc.cc
-index 16bb07f2cdc..22a181a3a1c 100644
+index 728332b8153..47fc03eb8c8 100644
 --- a/gcc/gcc.cc
 +++ b/gcc/gcc.cc
-@@ -868,6 +868,11 @@ proper position among the other output files.  */
+@@ -881,6 +881,11 @@ proper position among the other output files.  */
  #endif
  #endif
  
@@ -278,7 +269,7 @@ index 16bb07f2cdc..22a181a3a1c 100644
  /* config.h can define STARTFILE_SPEC to override the default crt0 files.  */
  #ifndef STARTFILE_SPEC
  #define STARTFILE_SPEC  \
-@@ -1191,6 +1196,7 @@ static const char *link_spec = LINK_SPEC;
+@@ -1208,6 +1213,7 @@ static const char *link_spec = LINK_SPEC;
  static const char *lib_spec = LIB_SPEC;
  static const char *link_gomp_spec = "";
  static const char *libgcc_spec = LIBGCC_SPEC;
@@ -286,7 +277,7 @@ index 16bb07f2cdc..22a181a3a1c 100644
  static const char *endfile_spec = ENDFILE_SPEC;
  static const char *startfile_spec = STARTFILE_SPEC;
  static const char *linker_name_spec = LINKER_NAME;
-@@ -1701,6 +1707,7 @@ static struct spec_list static_specs[] =
+@@ -1720,6 +1726,7 @@ static struct spec_list static_specs[] =
    INIT_STATIC_SPEC ("lib",			&lib_spec),
    INIT_STATIC_SPEC ("link_gomp",		&link_gomp_spec),
    INIT_STATIC_SPEC ("libgcc",			&libgcc_spec),
@@ -294,8 +285,21 @@ index 16bb07f2cdc..22a181a3a1c 100644
    INIT_STATIC_SPEC ("startfile",		&startfile_spec),
    INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
    INIT_STATIC_SPEC ("version",			&compiler_version),
+diff --git a/libcc1/configure b/libcc1/configure
+index ea689a353c8..98f9d9b21b7 100755
+--- a/libcc1/configure
++++ b/libcc1/configure
+@@ -5119,7 +5119,7 @@ else
+        # Adding the `sed 1q' prevents false positives on HP-UX, which says:
+        #   nm: unknown option "B" ignored
+        case `"$tmp_nm" -B "$tmp_nm_to_nm" 2>&1 | grep -v '^ *$' | sed '1q'` in
+-       *$tmp_nm*) lt_cv_path_NM="$tmp_nm -B"
++       $tmp_nm*) lt_cv_path_NM="$tmp_nm -B"
+ 	 break
+ 	 ;;
+        *)
 diff --git a/libgcc/crtstuff.c b/libgcc/crtstuff.c
-index 93ff5b81dc5..20c0fe89a28 100644
+index 38d3859a73c..f97358d9787 100644
 --- a/libgcc/crtstuff.c
 +++ b/libgcc/crtstuff.c
 @@ -326,7 +326,7 @@ register_tm_clones (void)
@@ -308,7 +312,7 @@ index 93ff5b81dc5..20c0fe89a28 100644
     in every shared-object; in a main program its value is zero.  The
     object should in any case be protected.  This means the instance
 diff --git a/libgcc/gthr.h b/libgcc/gthr.h
-index 1989c0c86ed..f1c49b2d4b1 100644
+index 33c2d8ff630..2a0a9c1e87e 100644
 --- a/libgcc/gthr.h
 +++ b/libgcc/gthr.h
 @@ -136,7 +136,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
@@ -321,10 +325,10 @@ index 1989c0c86ed..f1c49b2d4b1 100644
  #define GTHREAD_USE_WEAK 0
  #endif
 diff --git a/libstdc++-v3/include/Makefile.am b/libstdc++-v3/include/Makefile.am
-index a880e8ee227..c58249f986c 100644
+index 422a0f4bd0a..ee09ada9170 100644
 --- a/libstdc++-v3/include/Makefile.am
 +++ b/libstdc++-v3/include/Makefile.am
-@@ -1417,6 +1417,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
+@@ -1429,6 +1429,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
  	    -e '/^#/s/\(${uppercase}${uppercase}*\)/_GLIBCXX_\1/g' \
  	    -e 's/_GLIBCXX_SUPPORTS_WEAK/__GXX_WEAK__/g' \
  	    -e 's/_GLIBCXX___MINGW32_GLIBCXX___/__MINGW32__/g' \
@@ -333,10 +337,10 @@ index a880e8ee227..c58249f986c 100644
  	    < $< > $@
  
 diff --git a/libstdc++-v3/include/Makefile.in b/libstdc++-v3/include/Makefile.in
-index 0ff875b280b..37820c57a0a 100644
+index 9fd4ab4848c..beea48941a3 100644
 --- a/libstdc++-v3/include/Makefile.in
 +++ b/libstdc++-v3/include/Makefile.in
-@@ -1891,6 +1891,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
+@@ -1903,6 +1903,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
  	    -e '/^#/s/\(${uppercase}${uppercase}*\)/_GLIBCXX_\1/g' \
  	    -e 's/_GLIBCXX_SUPPORTS_WEAK/__GXX_WEAK__/g' \
  	    -e 's/_GLIBCXX___MINGW32_GLIBCXX___/__MINGW32__/g' \
@@ -344,3 +348,16 @@ index 0ff875b280b..37820c57a0a 100644
  	    -e 's,^#include "\(.*\)",#include <bits/\1>,g' \
  	    < $< > $@
  
+diff --git a/lto-plugin/configure b/lto-plugin/configure
+index 28f5dd79cd7..a79f318a4d6 100755
+--- a/lto-plugin/configure
++++ b/lto-plugin/configure
+@@ -6469,7 +6469,7 @@ else
+        # Adding the `sed 1q' prevents false positives on HP-UX, which says:
+        #   nm: unknown option "B" ignored
+        case `"$tmp_nm" -B "$tmp_nm_to_nm" 2>&1 | grep -v '^ *$' | sed '1q'` in
+-       *$tmp_nm*) lt_cv_path_NM="$tmp_nm -B"
++       $tmp_nm*) lt_cv_path_NM="$tmp_nm -B"
+ 	 break
+ 	 ;;
+        *)
