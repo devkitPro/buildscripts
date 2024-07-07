@@ -37,6 +37,18 @@ DKA64_RULES_VER=1.1.1
 OSXMIN=${OSXMIN:-10.9}
 
 #---------------------------------------------------------------------------------
+# find proper patch
+#---------------------------------------------------------------------------------
+if [ -z "$PATCH" -a -x "$(which gpatch)" ]; then PATCH=$(which gpatch); fi
+if [ -z "$PATCH" -a -x "$(which patch)" ]; then PATCH=$(which patch); fi
+if [ -z "$PATCH" ]; then
+  echo no patch found
+  exit 1
+fi
+echo use $PATCH as patch
+export PATCH
+
+#---------------------------------------------------------------------------------
 function extract_and_patch {
 #---------------------------------------------------------------------------------
 	if [ ! -f extracted-$1-$2 ]; then
@@ -46,7 +58,7 @@ function extract_and_patch {
 	fi
 	if [[ ! -f patched-$1-$2 && -f $patchdir/$1-$2.patch ]]; then
 		echo "patching $1-$2"
-		patch -p1 -d $1-$2 -i $patchdir/$1-$2.patch || { echo "Error patching $1"; exit 1; }
+		$PATCH -p1 -d $1-$2 -i $patchdir/$1-$2.patch || { echo "Error patching $1"; exit 1; }
 		touch patched-$1-$2
 	fi
 }
