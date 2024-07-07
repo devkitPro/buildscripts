@@ -12,4 +12,4 @@ cd $BUILDDIR
 
 tar -xvf $SRCDIR/devkita64-rules-$DKA64_RULES_VER.tar.gz
 cd devkita64-rules-$DKA64_RULES_VER
-make install
+$MAKE install
