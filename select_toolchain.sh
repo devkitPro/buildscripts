@@ -50,7 +50,7 @@ case "$VERSION" in
   ;;
   "3" )
     GCC_VER=14.1.0
-    BINUTILS_VER=2.42
+    BINUTILS_VER=2.43.1
     NEWLIB_VER=4.4.0.20231231
     basedir='dka64'
     package=devkitA64

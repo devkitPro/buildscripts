@@ -1,0 +1,513 @@
+diff --git a/bfd/elf-bfd.h b/bfd/elf-bfd.h
+index b89d3dda05d..1ad8a9c088d 100644
+--- a/bfd/elf-bfd.h
++++ b/bfd/elf-bfd.h
+@@ -2005,6 +2005,14 @@ struct output_elf_obj_tdata
+     asection *sec;
+   } package_metadata;
+ 
++  /* Data for .nx-module-name. */
++  struct
++  {
++    bool (*after_write_object_contents) (bfd *);
++    const char *name;
++    asection *sec;
++  } nx_module_name;
++
+   /* Records the result of `get_program_header_size'.  */
+   bfd_size_type program_header_size;
+ 
+diff --git a/bfd/elf.c b/bfd/elf.c
+index f85f79e1e35..d27f05b92ae 100644
+--- a/bfd/elf.c
++++ b/bfd/elf.c
+@@ -7166,6 +7166,14 @@ _bfd_elf_write_object_contents (bfd *abfd)
+   if (!bed->s->write_shdrs_and_ehdr (abfd))
+     return false;
+ 
++  /* Write out the NX module name. */
++  if (t->o->nx_module_name.after_write_object_contents != NULL)
++    {
++      failed = !(*t->o->nx_module_name.after_write_object_contents) (abfd);
++      if (failed)
++        return false;
++    }
++
+   /* This is last since write_shdrs_and_ehdr can touch i_shdrp[0].  */
+   if (t->o->build_id.after_write_object_contents != NULL
+       && !(*t->o->build_id.after_write_object_contents) (abfd))
+diff --git a/bfd/elfnn-aarch64.c b/bfd/elfnn-aarch64.c
+index 94c9a01069b..d39880b27c4 100644
+--- a/bfd/elfnn-aarch64.c
++++ b/bfd/elfnn-aarch64.c
+@@ -2441,6 +2441,12 @@ enum elf_aarch64_stub_type
+   aarch64_stub_erratum_843419_veneer,
+ };
+ 
++/* Is an undefined weak symbol resolved to 0 ? */
++#define UNDEFINED_WEAK_RESOLVED_TO_ZERO(INFO, EH)               \
++  ((EH)->root.root.type == bfd_link_hash_undefweak              \
++   && bfd_link_executable (INFO)                                \
++   && !(INFO)->dynamic_undefined_weak)
++
+ struct elf_aarch64_stub_hash_entry
+ {
+   /* Base hash table entry structure.  */
+@@ -6969,11 +6975,13 @@ elfNN_aarch64_relocate_section (bfd *output_bfd,
+       Elf_Internal_Sym *sym;
+       asection *sec;
+       struct elf_link_hash_entry *h;
++      struct elf_aarch64_link_hash_entry *eh;
+       bfd_vma relocation;
+       bfd_reloc_status_type r;
+       arelent bfd_reloc;
+       char sym_type;
+       bool unresolved_reloc = false;
++      bool resolved_to_zero = false;
+       char *error_message = NULL;
+ 
+       r_symndx = ELFNN_R_SYM (rel->r_info);
+@@ -7113,6 +7121,10 @@ elfNN_aarch64_relocate_section (bfd *output_bfd,
+ 					       h, &unresolved_reloc,
+ 					       save_addend, &addend, sym);
+ 
++      eh = (struct elf_aarch64_link_hash_entry *) h;
++      resolved_to_zero = (eh != NULL
++                          && UNDEFINED_WEAK_RESOLVED_TO_ZERO (info, eh));
++
+       switch (elfNN_aarch64_bfd_reloc_from_type (input_bfd, r_type))
+ 	{
+ 	case BFD_RELOC_AARCH64_TLSGD_ADD_LO12_NC:
+@@ -7136,7 +7148,7 @@ elfNN_aarch64_relocate_section (bfd *output_bfd,
+ 	      need_relocs =
+ 		(!bfd_link_executable (info) || indx != 0) &&
+ 		(h == NULL
+-		 || ELF_ST_VISIBILITY (h->other) == STV_DEFAULT
++		 || (ELF_ST_VISIBILITY (h->other) == STV_DEFAULT && !resolved_to_zero)
+ 		 || h->root.type != bfd_link_hash_undefweak);
+ 
+ 	      BFD_ASSERT (globals->root.srelgot != NULL);
+@@ -7231,7 +7243,7 @@ elfNN_aarch64_relocate_section (bfd *output_bfd,
+ 	      need_relocs =
+ 		(!bfd_link_executable (info) || indx != 0) &&
+ 		(h == NULL
+-		 || ELF_ST_VISIBILITY (h->other) == STV_DEFAULT
++		 || (ELF_ST_VISIBILITY (h->other) == STV_DEFAULT && !resolved_to_zero)
+ 		 || h->root.type != bfd_link_hash_undefweak);
+ 
+ 	      BFD_ASSERT (globals->root.srelgot != NULL);
+@@ -7280,7 +7292,7 @@ elfNN_aarch64_relocate_section (bfd *output_bfd,
+ 	      bfd_vma off = symbol_tlsdesc_got_offset (input_bfd, h, r_symndx);
+ 
+ 	      need_relocs = (h == NULL
+-			     || ELF_ST_VISIBILITY (h->other) == STV_DEFAULT
++			     || (ELF_ST_VISIBILITY (h->other) == STV_DEFAULT && !resolved_to_zero)
+ 			     || h->root.type != bfd_link_hash_undefweak);
+ 
+ 	      BFD_ASSERT (globals->root.srelgot != NULL);
+@@ -7606,6 +7618,23 @@ need_copy_relocation_p (struct elf_aarch64_link_hash_entry *eh)
+   return false;
+ }
+ 
++/* Remove undefined weak symbol from the dynamic symbol table if it
++   is resolved to 0.   */
++
++static bool
++elfNN_aarch64_elf_fixup_symbol (struct bfd_link_info *info,
++                             struct elf_link_hash_entry *h)
++{
++  if (h->dynindx != -1
++      && UNDEFINED_WEAK_RESOLVED_TO_ZERO (info, elf_aarch64_hash_entry (h)))
++    {
++      h->dynindx = -1;
++      _bfd_elf_strtab_delref (elf_hash_table (info)->dynstr,
++                              h->dynstr_index);
++    }
++  return true;
++}
++
+ /* Adjust a symbol defined by a dynamic object and referenced by a
+    regular object.  The current definition is in some section of the
+    dynamic object, but we're not including those sections.  We have to
+@@ -8824,6 +8853,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+   struct elf_aarch64_link_hash_table *htab;
+   struct elf_aarch64_link_hash_entry *eh;
+   struct elf_dyn_relocs *p;
++  bool resolved_to_zero;
+ 
+   /* An example of a bfd_link_hash_indirect symbol is versioned
+      symbol. For example: __gxx_personality_v0(bfd_link_hash_indirect)
+@@ -8843,6 +8873,10 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+   info = (struct bfd_link_info *) inf;
+   htab = elf_aarch64_hash_table (info);
+ 
++  eh = (struct elf_aarch64_link_hash_entry *) h;
++  eh->tlsdesc_got_jump_table_offset = (bfd_vma) - 1;
++  resolved_to_zero = UNDEFINED_WEAK_RESOLVED_TO_ZERO (info, eh);
++
+   /* Since STT_GNU_IFUNC symbol must go through PLT, we handle it
+      here if it is defined and referenced in a non-shared object.  */
+   if (h->type == STT_GNU_IFUNC
+@@ -8852,7 +8886,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+     {
+       /* Make sure this symbol is output as a dynamic symbol.
+ 	 Undefined weak syms won't yet be marked as dynamic.  */
+-      if (h->dynindx == -1 && !h->forced_local
++      if (h->dynindx == -1 && !h->forced_local && !resolved_to_zero
+ 	  && h->root.type == bfd_link_hash_undefweak)
+ 	{
+ 	  if (!bfd_elf_link_record_dynamic_symbol (info, h))
+@@ -8886,6 +8920,11 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+ 	     of relaxing into these from the large model PLT entries.  */
+ 	  s->size += htab->plt_entry_size;
+ 
++          /* There should be no PLT relocations against resolved undefined
++             weak symbols in the executable.  */
++          if (!resolved_to_zero)
++            {
++
+ 	  /* We also need to make an entry in the .got.plt section, which
+ 	     will be placed in the .got section by the linker script.  */
+ 	  htab->root.sgotplt->size += GOT_ENTRY_SIZE;
+@@ -8914,6 +8953,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+ 	    htab->variant_pcs = 1;
+ 
+ 	}
++	}
+       else
+ 	{
+ 	  h->plt.offset = (bfd_vma) - 1;
+@@ -8926,9 +8966,6 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+       h->needs_plt = 0;
+     }
+ 
+-  eh = (struct elf_aarch64_link_hash_entry *) h;
+-  eh->tlsdesc_got_jump_table_offset = (bfd_vma) - 1;
+-
+   if (h->got.refcount > 0)
+     {
+       bool dyn;
+@@ -8940,7 +8977,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+ 
+       /* Make sure this symbol is output as a dynamic symbol.
+ 	 Undefined weak syms won't yet be marked as dynamic.  */
+-      if (dyn && h->dynindx == -1 && !h->forced_local
++      if (dyn && h->dynindx == -1 && !h->forced_local && !resolved_to_zero
+ 	  && h->root.type == bfd_link_hash_undefweak)
+ 	{
+ 	  if (!bfd_elf_link_record_dynamic_symbol (info, h))
+@@ -8954,7 +8991,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+ 	{
+ 	  h->got.offset = htab->root.sgot->size;
+ 	  htab->root.sgot->size += GOT_ENTRY_SIZE;
+-	  if ((ELF_ST_VISIBILITY (h->other) == STV_DEFAULT
++	  if (((ELF_ST_VISIBILITY (h->other) == STV_DEFAULT && !resolved_to_zero)
+ 	       || h->root.type != bfd_link_hash_undefweak)
+ 	      && (bfd_link_pic (info)
+ 		  || WILL_CALL_FINISH_DYNAMIC_SYMBOL (dyn, 0, h))
+@@ -8990,7 +9027,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+ 	    }
+ 
+ 	  indx = h && h->dynindx != -1 ? h->dynindx : 0;
+-	  if ((ELF_ST_VISIBILITY (h->other) == STV_DEFAULT
++	  if (((ELF_ST_VISIBILITY (h->other) == STV_DEFAULT && !resolved_to_zero)
+ 	       || h->root.type != bfd_link_hash_undefweak)
+ 	      && (!bfd_link_executable (info)
+ 		  || indx != 0
+@@ -9072,7 +9109,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+ 	 visibility.  */
+       if (h->dyn_relocs != NULL && h->root.type == bfd_link_hash_undefweak)
+ 	{
+-	  if (ELF_ST_VISIBILITY (h->other) != STV_DEFAULT
++	  if (ELF_ST_VISIBILITY (h->other) != STV_DEFAULT || resolved_to_zero
+ 	      || UNDEFWEAK_NO_DYNAMIC_RELOC (info, h))
+ 	    h->dyn_relocs = NULL;
+ 
+@@ -9092,7 +9129,9 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+ 	 symbols which turn out to need copy relocs or are not
+ 	 dynamic.  */
+ 
+-      if (!h->non_got_ref
++      if (!(h->non_got_ref
++           || (h->root.type == bfd_link_hash_undefweak
++               && !resolved_to_zero))
+ 	  && ((h->def_dynamic
+ 	       && !h->def_regular)
+ 	      || (htab->root.dynamic_sections_created
+@@ -9103,6 +9142,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+ 	     Undefined weak syms won't yet be marked as dynamic.  */
+ 	  if (h->dynindx == -1
+ 	      && !h->forced_local
++	      && !resolved_to_zero
+ 	      && h->root.type == bfd_link_hash_undefweak
+ 	      && !bfd_elf_link_record_dynamic_symbol (info, h))
+ 	    return false;
+@@ -10058,8 +10098,17 @@ elfNN_aarch64_finish_dynamic_symbol (bfd *output_bfd,
+ 				     Elf_Internal_Sym *sym)
+ {
+   struct elf_aarch64_link_hash_table *htab;
++  struct elf_aarch64_link_hash_entry *eh;
++  bool local_undefweak;
+   htab = elf_aarch64_hash_table (info);
+ 
++  eh = (struct elf_aarch64_link_hash_entry *) h;
++
++  /* We keep PLT/GOT entries without dynamic PLT/GOT relocations for
++     resolved undefined weak symbols in executable so that their
++     references have value 0 at run-time.  */
++  local_undefweak = UNDEFINED_WEAK_RESOLVED_TO_ZERO (info, eh);
++
+   if (h->plt.offset != (bfd_vma) - 1)
+     {
+       asection *plt, *gotplt, *relplt;
+@@ -10094,7 +10143,7 @@ elfNN_aarch64_finish_dynamic_symbol (bfd *output_bfd,
+ 	abort ();
+ 
+       elfNN_aarch64_create_small_pltn_entry (h, htab, output_bfd, info);
+-      if (!h->def_regular)
++      if (!local_undefweak && !h->def_regular)
+ 	{
+ 	  /* Mark the symbol as undefined, rather than as defined in
+ 	     the .plt section.  */
+@@ -10116,7 +10165,8 @@ elfNN_aarch64_finish_dynamic_symbol (bfd *output_bfd,
+       && elf_aarch64_hash_entry (h)->got_type == GOT_NORMAL
+       /* Undefined weak symbol in static PIE resolves to 0 without
+ 	 any dynamic relocations.  */
+-      && !UNDEFWEAK_NO_DYNAMIC_RELOC (info, h))
++      && !UNDEFWEAK_NO_DYNAMIC_RELOC (info, h)
++      && !local_undefweak)
+     {
+       Elf_Internal_Rela rela;
+       bfd_byte *loc;
+@@ -10766,6 +10816,9 @@ const struct elf_size_info elfNN_aarch64_size_info =
+ #define elf_backend_init_index_section		\
+   _bfd_elf_init_2_index_sections
+ 
++#define elf_backend_fixup_symbol		\
++  elfNN_aarch64_elf_fixup_symbol
++
+ #define elf_backend_finish_dynamic_sections	\
+   elfNN_aarch64_finish_dynamic_sections
+ 
+diff --git a/ld/emulparams/aarch64elf.sh b/ld/emulparams/aarch64elf.sh
+index 72616b57691..42f708118fb 100644
+--- a/ld/emulparams/aarch64elf.sh
++++ b/ld/emulparams/aarch64elf.sh
+@@ -1,4 +1,5 @@
+ source_sh ${srcdir}/emulparams/dt-relr.sh
++source_sh ${srcdir}/emulparams/dynamic_undefined_weak.sh
+ 
+ ARCH=aarch64
+ MACHINE=
+diff --git a/ld/emulparams/aarch64elf32.sh b/ld/emulparams/aarch64elf32.sh
+index 45bf31a179a..02e0cad8699 100644
+--- a/ld/emulparams/aarch64elf32.sh
++++ b/ld/emulparams/aarch64elf32.sh
+@@ -1,4 +1,5 @@
+ source_sh ${srcdir}/emulparams/dt-relr.sh
++source_sh ${srcdir}/emulparams/dynamic_undefined_weak.sh
+ 
+ ARCH="aarch64:ilp32"
+ MACHINE=
+diff --git a/ld/emultempl/aarch64elf.em b/ld/emultempl/aarch64elf.em
+index aa2859d4f73..c680dca8f86 100644
+--- a/ld/emultempl/aarch64elf.em
++++ b/ld/emultempl/aarch64elf.em
+@@ -368,7 +368,7 @@ PARSE_AND_LIST_LONGOPTS='
+   { "no-apply-dynamic-relocs", no_argument, NULL, OPTION_NO_APPLY_DYNAMIC_RELOCS},
+ '
+ 
+-PARSE_AND_LIST_OPTIONS='
++PARSE_AND_LIST_OPTIONS=${PARSE_AND_LIST_OPTIONS}'
+   fprintf (file, _("  --no-enum-size-warning      Don'\''t warn about objects with incompatible\n"
+ 		   "                                enum sizes\n"));
+   fprintf (file, _("  --no-wchar-size-warning     Don'\''t warn about objects with incompatible\n"
+diff --git a/ld/emultempl/elf.em b/ld/emultempl/elf.em
+index 863657e12f5..672974df511 100644
+--- a/ld/emultempl/elf.em
++++ b/ld/emultempl/elf.em
+@@ -813,6 +813,7 @@ EOF
+ fi
+ fragment <<EOF
+     {"build-id", optional_argument, NULL, OPTION_BUILD_ID},
++    {"nx-module-name", optional_argument, NULL, OPTION_NX_MODULE_NAME},
+     {"package-metadata", optional_argument, NULL, OPTION_PACKAGE_METADATA},
+     {"compress-debug-sections", required_argument, NULL, OPTION_COMPRESS_DEBUG},
+     {"rosegment", no_argument, NULL, OPTION_ROSEGMENT},
+@@ -892,6 +893,18 @@ gld${EMULATION_NAME}_handle_option (int optc)
+     case OPTION_NO_ROSEGMENT:
+       link_info.one_rosegment = false;
+       break;      
++
++    case OPTION_NX_MODULE_NAME:
++      if (ldelf_emit_nx_module_name != NULL)
++        {
++          free ((char *) ldelf_emit_nx_module_name);
++          ldelf_emit_nx_module_name = NULL;
++        }
++      if (optarg == NULL)
++        optarg = "";
++      ldelf_emit_nx_module_name = xstrdup (optarg);
++      break;
++
+ EOF
+ 
+ if test x"$GENERATE_SHLIB_SCRIPT" = xyes; then
+diff --git a/ld/ldelf.c b/ld/ldelf.c
+index 09691609fc0..5769b4aa0f9 100644
+--- a/ld/ldelf.c
++++ b/ld/ldelf.c
+@@ -55,6 +55,9 @@ const char *ldelf_emit_note_gnu_build_id;
+ /* Content of .note.package section.  */
+ const char *ldelf_emit_note_fdo_package_metadata;
+ 
++/* NX module name. */
++const char *ldelf_emit_nx_module_name;
++
+ /* These variables are required to pass information back and forth
+    between after_open and check_needed and stat_needed and vercheck.  */
+ 
+@@ -1209,8 +1212,93 @@ ldelf_handle_dt_needed (struct elf_link_hash_table *htab,
+   *save_input_bfd_tail = NULL;
+ }
+ 
+-/* This is called before calling plugin 'all symbols read' hook.  */
++static bool
++write_nx_module_name (bfd *abfd)
++{
++  struct elf_obj_tdata *t = elf_tdata (abfd);
++  const char *name;
++  asection *asec;
++  Elf_Internal_Shdr *i_shdr;
++  unsigned char *contents;
++  bfd_size_type size;
++  file_ptr position;
+ 
++  name = t->o->nx_module_name.name;
++  asec = t->o->nx_module_name.sec;
++  if (bfd_is_abs_section (asec->output_section))
++    {
++      einfo (_("%P: warning: .nx-module-name section discarded,"
++	       " --build-id ignored\n"));
++      return true;
++    }
++  i_shdr = &elf_section_data (asec->output_section)->this_hdr;
++
++  if (i_shdr->contents == NULL)
++    {
++      if (asec->contents == NULL)
++	asec->contents = (unsigned char *) xmalloc (asec->size);
++      contents = asec->contents;
++    }
++  else
++    contents = i_shdr->contents + asec->output_offset;
++
++  size = asec->size;
++  bfd_h_put_32 (abfd, 0, &contents[0]);
++  bfd_h_put_32 (abfd, size - 9, &contents[4]);
++  memcpy (&contents[8], name, size - 9);
++  contents[size - 1] = 0; /* ensure null termination for AMS */
++
++  position = i_shdr->sh_offset + asec->output_offset;
++
++  return (bfd_seek (abfd, position, SEEK_SET) == 0
++	  && bfd_write (contents, size, abfd) == size);
++}
++
++/* Make .nx-module-name section, and set up elf_tdata->nx_module_name.  */
++
++static bool
++setup_nx_module_name (bfd *ibfd, bfd *obfd)
++{
++  asection *s;
++  bfd_size_type size;
++  flagword flags;
++
++  if (ldelf_emit_nx_module_name[0] == '\0')
++    {
++      /* Extract the basename of the output bfd and use it as the module name. */
++      char *dot_pos;
++      free ((char *) ldelf_emit_nx_module_name);
++      ldelf_emit_nx_module_name = (char *) lbasename (bfd_get_filename (obfd));
++      ldelf_emit_nx_module_name = xstrdup (ldelf_emit_nx_module_name);
++      dot_pos = strrchr (ldelf_emit_nx_module_name, '.');
++      if (dot_pos != NULL)
++        {
++          /* Remove extension. */
++          *dot_pos = 0;
++        }
++    }
++
++  size = 8 + strlen(ldelf_emit_nx_module_name) + 1; /* extra null terminator for AMS */
++  flags = (SEC_ALLOC | SEC_LOAD | SEC_IN_MEMORY
++	   | SEC_LINKER_CREATED | SEC_READONLY | SEC_DATA);
++  s = bfd_make_section_with_flags (ibfd, ".nx-module-name", flags);
++  if (s != NULL && bfd_set_section_alignment (s, 4))
++    {
++      struct elf_obj_tdata *t = elf_tdata (link_info.output_bfd);
++      t->o->nx_module_name.after_write_object_contents = &write_nx_module_name;
++      t->o->nx_module_name.name = ldelf_emit_nx_module_name;
++      t->o->nx_module_name.sec = s;
++      elf_section_type (s) = SHT_PROGBITS;
++      s->size = size;
++      return true;
++    }
++
++  einfo (_("%P: warning: cannot create .nx-module-name section,"
++	   " --nx-module-name ignored\n"));
++  return false;
++}
++
++/* This is called before calling plugin 'all symbols read' hook.  */
+ void
+ ldelf_before_plugin_all_symbols_read (int use_libpath, int native,
+ 				      int is_linux, int is_freebsd,
+@@ -1289,6 +1377,24 @@ ldelf_after_open (int use_libpath, int native, int is_linux, int is_freebsd,
+ 	}
+     }
+ 
++  if (ldelf_emit_nx_module_name != NULL)
++    {
++      /* Find an ELF input.  */
++      for (abfd = link_info.input_bfds;
++        abfd != (bfd *) NULL; abfd = abfd->link.next)
++        if (bfd_get_flavour (abfd) == bfd_target_elf_flavour
++            && bfd_count_sections (abfd) != 0
++            && !((lang_input_statement_type *) abfd->usrdata)->flags.just_syms)
++          break;
++
++      /* If there are no ELF input files do not try to create a .nx-module-name section. */
++      if (abfd == NULL || !setup_nx_module_name (abfd, link_info.output_bfd))
++        {
++          free ((char *) ldelf_emit_nx_module_name);
++          ldelf_emit_nx_module_name = NULL;
++        }
++    }
++
+   get_elf_backend_data (link_info.output_bfd)->setup_gnu_properties (&link_info);
+ 
+   /* Do not allow executable files to be used as inputs to the link.  */
+diff --git a/ld/ldelf.h b/ld/ldelf.h
+index 239194772c4..68516dbf45e 100644
+--- a/ld/ldelf.h
++++ b/ld/ldelf.h
+@@ -20,6 +20,7 @@
+ 
+ extern const char *ldelf_emit_note_gnu_build_id;
+ extern const char *ldelf_emit_note_fdo_package_metadata;
++extern const char *ldelf_emit_nx_module_name;
+ 
+ extern void ldelf_after_parse (void);
+ extern bool ldelf_load_symbols (lang_input_statement_type *);
+diff --git a/ld/ldlex.h b/ld/ldlex.h
+index defe3fcbbb9..30f31df990e 100644
+--- a/ld/ldlex.h
++++ b/ld/ldlex.h
+@@ -186,6 +186,7 @@ enum option_values
+   /* Used by emultempl/elf.em, emultempl/pe.em and emultempl/pep.em.  */
+   OPTION_BUILD_ID,
+   OPTION_EXCLUDE_LIBS,
++  OPTION_NX_MODULE_NAME,
+   /* Used by emulparams/elf32mcore.sh, emultempl/beos.em, emultempl/pe.em
+      and emultempl/pep.em.  */
+   OPTION_BASE_FILE,
