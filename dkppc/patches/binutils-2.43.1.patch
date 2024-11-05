@@ -12,7 +12,7 @@ index da892988f5d..6b8efb9bbdb 100644
    .fixup        ${RELOCATING-0} : { *(.fixup) }
    .got1         ${RELOCATING-0} : { *(.got1) }
 diff --git a/opcodes/ppc-opc.c b/opcodes/ppc-opc.c
-index 37f1aeb780c..f8de8aacc44 100644
+index e55bfe846cd..f160e290bce 100644
 --- a/opcodes/ppc-opc.c
 +++ b/opcodes/ppc-opc.c
 @@ -4988,7 +4988,7 @@ const unsigned int num_powerpc_operands = ARRAY_SIZE (powerpc_operands);
