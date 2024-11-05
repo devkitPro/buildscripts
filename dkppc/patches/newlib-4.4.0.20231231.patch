@@ -7049,7 +7049,7 @@ index 000000000..2bada9736
 +}
 diff --git a/libgloss/libsysbase/fpathconf.c b/libgloss/libsysbase/fpathconf.c
 new file mode 100644
-index 000000000..453f64870
+index 000000000..9cba92a72
 --- /dev/null
 +++ b/libgloss/libsysbase/fpathconf.c
 @@ -0,0 +1,30 @@
@@ -7069,7 +7069,7 @@ index 000000000..453f64870
 +       struct _reent *r = _REENT;
 +
 +        if ( NULL == handle ) {
-+                errno = EINVAL;
++                errno = EBADF;
 +                return ret;
 +        }
 +
@@ -7085,10 +7085,10 @@ index 000000000..453f64870
 +}
 diff --git a/libgloss/libsysbase/fstat.c b/libgloss/libsysbase/fstat.c
 new file mode 100644
-index 000000000..32267b828
+index 000000000..94924d802
 --- /dev/null
 +++ b/libgloss/libsysbase/fstat.c
-@@ -0,0 +1,32 @@
+@@ -0,0 +1,35 @@
 +#include "config.h"
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -7108,7 +7108,10 @@ index 000000000..32267b828
 +	if(fileDesc!=-1) {
 +		handle = __get_handle(fileDesc);
 +
-+		if ( NULL == handle ) return ret;
++		if ( NULL == handle ) {
++			errno = EBADF;
++			return ret;
++		}
 +
 +		dev = handle->device;
 +
@@ -7123,7 +7126,7 @@ index 000000000..32267b828
 +}
 diff --git a/libgloss/libsysbase/fsync.c b/libgloss/libsysbase/fsync.c
 new file mode 100644
-index 000000000..fb06cb6d1
+index 000000000..e63e3762b
 --- /dev/null
 +++ b/libgloss/libsysbase/fsync.c
 @@ -0,0 +1,34 @@
@@ -7147,7 +7150,7 @@ index 000000000..fb06cb6d1
 +	handle = __get_handle(fileDesc);
 +
 +	if ( NULL == handle ) {
-+		errno = EINVAL;
++		errno = EBADF;
 +		return ret;
 +	}
 +
@@ -7163,7 +7166,7 @@ index 000000000..fb06cb6d1
 +}
 diff --git a/libgloss/libsysbase/ftruncate.c b/libgloss/libsysbase/ftruncate.c
 new file mode 100644
-index 000000000..0cd7d0fc4
+index 000000000..94b4a3761
 --- /dev/null
 +++ b/libgloss/libsysbase/ftruncate.c
 @@ -0,0 +1,34 @@
@@ -7187,7 +7190,7 @@ index 000000000..0cd7d0fc4
 +	handle = __get_handle(fileDesc);
 +
 +	if ( NULL == handle ) {
-+		r->_errno = EINVAL;
++		r->_errno=EBADF;
 +		return ret;
 +	}
 +
@@ -7732,10 +7735,10 @@ index 000000000..d7a988359
 +
 diff --git a/libgloss/libsysbase/lseek.c b/libgloss/libsysbase/lseek.c
 new file mode 100644
-index 000000000..39ef385b1
+index 000000000..c5568e338
 --- /dev/null
 +++ b/libgloss/libsysbase/lseek.c
-@@ -0,0 +1,35 @@
+@@ -0,0 +1,38 @@
 +#include "config.h"
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -7757,7 +7760,10 @@ index 000000000..39ef385b1
 +
 +		handle = __get_handle(fileDesc);
 +
-+		if ( NULL == handle ) return ret;
++		if ( NULL == handle ) {
++			r->_errno=EBADF;
++			return ret;
++		}
 +
 +		dev = handle->device;
 +
@@ -7941,10 +7947,10 @@ index 000000000..a696c9ab9
 +}
 diff --git a/libgloss/libsysbase/read.c b/libgloss/libsysbase/read.c
 new file mode 100644
-index 000000000..9c548d830
+index 000000000..30505c7b6
 --- /dev/null
 +++ b/libgloss/libsysbase/read.c
-@@ -0,0 +1,32 @@
+@@ -0,0 +1,35 @@
 +#include "config.h"
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -7964,7 +7970,10 @@ index 000000000..9c548d830
 +	if(fileDesc!=-1) {
 +		handle = __get_handle(fileDesc);
 +
-+		if ( NULL == handle ) return ret;
++		if ( NULL == handle ) {
++			r->_errno=EBADF;
++			return ret;
++		}
 +
 +		dev = handle->device;
 +
@@ -8919,10 +8928,10 @@ index 000000000..2c2998250
 +#endif /* __WARNING_H__ */
 diff --git a/libgloss/libsysbase/write.c b/libgloss/libsysbase/write.c
 new file mode 100644
-index 000000000..04198e854
+index 000000000..baf0d6ae5
 --- /dev/null
 +++ b/libgloss/libsysbase/write.c
-@@ -0,0 +1,31 @@
+@@ -0,0 +1,34 @@
 +#include "config.h"
 +#include <_ansi.h>
 +#include <_syslist.h>
@@ -8942,7 +8951,10 @@ index 000000000..04198e854
 +	if(fileDesc!=-1) {
 +		handle = __get_handle(fileDesc);
 +
-+		if ( NULL == handle ) return ret;
++		if ( NULL == handle ) {
++			r->_errno=EBADF;
++			return ret;
++		}
 +
 +		dev = handle->device;
 +
@@ -9019,11 +9031,11 @@ index ef5038e68..32a1d5e0b 100644
    .stab 0 : { *(.stab) }
 diff --git a/libgloss/rs6000/crtmain.c b/libgloss/rs6000/crtmain.c
 new file mode 100644
-index 000000000..bd25d775d
+index 000000000..7f8850624
 --- /dev/null
 +++ b/libgloss/rs6000/crtmain.c
-@@ -0,0 +1,18 @@
-+#include <unistd.h>
+@@ -0,0 +1,20 @@
++#include <stdlib.h>
 +
 +struct __argv {
 +	int argvMagic;		//!< argv magic number, set to 0x5f617267 ('_arg') if valid 
@@ -9037,10 +9049,28 @@ index 000000000..bd25d775d
 +void __init();
 +void SYS_PreMain();
 +
++int main(int argc, char **argv);
++
 +void __crtmain() {
 +	SYS_PreMain();
 +	exit ( main(__system_argv->argc,__system_argv->argv) );
 +}
+diff --git a/libgloss/rs6000/mbx-print.c b/libgloss/rs6000/mbx-print.c
+index 64472ee68..5a16e1ab7 100644
+--- a/libgloss/rs6000/mbx-print.c
++++ b/libgloss/rs6000/mbx-print.c
+@@ -15,7 +15,10 @@
+ 
+ /*
+  * print -- do a raw print of a string
+- */ 
++ */
++
++#include <unistd.h>
++
+ void
+ print (ptr)
+      char *ptr;
 diff --git a/libgloss/rs6000/mbx.ld b/libgloss/rs6000/mbx.ld
 index cedf4e867..99d849e90 100644
 --- a/libgloss/rs6000/mbx.ld
@@ -9053,6 +9083,77 @@ index cedf4e867..99d849e90 100644
    /* These are needed for ELF backends which have not yet been
       converted to the new style linker.  */
    .stab 0 : { *(.stab) }
+diff --git a/libgloss/rs6000/mvme-print.c b/libgloss/rs6000/mvme-print.c
+index 8d195424e..bae0eaf7c 100644
+--- a/libgloss/rs6000/mvme-print.c
++++ b/libgloss/rs6000/mvme-print.c
+@@ -17,6 +17,10 @@
+  * write -- write some bytes to the output device.
+  */
+ 
++void __outln( char *ptr, char *q);
++void __outstr( char *ptr, char *q);
++void __pcrlf();
++
+ int
+ write (fd, ptr, len)
+      int fd;
+diff --git a/libgloss/rs6000/sim-abort.c b/libgloss/rs6000/sim-abort.c
+index e1b59cf19..faeb93153 100644
+--- a/libgloss/rs6000/sim-abort.c
++++ b/libgloss/rs6000/sim-abort.c
+@@ -14,6 +14,9 @@
+  * they apply.
+  */
+ 
++#include <unistd.h>
++#include <stdlib.h>
++
+ void abort(void)
+ {
+   write (2, "Abort called.\n", sizeof("Abort called.\n")-1);
+diff --git a/libgloss/rs6000/sim-inbyte.c b/libgloss/rs6000/sim-inbyte.c
+index 787b68976..44b273dff 100644
+--- a/libgloss/rs6000/sim-inbyte.c
++++ b/libgloss/rs6000/sim-inbyte.c
+@@ -14,6 +14,8 @@
+  * they apply.
+  */
+ 
++#include <unistd.h>
++
+ int
+ inbyte ()
+ {
+diff --git a/libgloss/rs6000/sim-print.c b/libgloss/rs6000/sim-print.c
+index c0b9adced..911d8f4a2 100644
+--- a/libgloss/rs6000/sim-print.c
++++ b/libgloss/rs6000/sim-print.c
+@@ -15,7 +15,10 @@
+ 
+ /*
+  * print -- do a raw print of a string
+- */ 
++ */
++
++#include <unistd.h>
++
+ void
+ print (ptr)
+      char *ptr;
+diff --git a/libgloss/rs6000/sim-sbrk.c b/libgloss/rs6000/sim-sbrk.c
+index 5c8bd6522..9cf7de25d 100644
+--- a/libgloss/rs6000/sim-sbrk.c
++++ b/libgloss/rs6000/sim-sbrk.c
+@@ -17,6 +17,8 @@
+ extern char _end[];
+ static char *curbrk = _end;
+ 
++int brk(char *curbrk);
++
+ char *
+ sbrk (incr)
+      int incr;
 diff --git a/libgloss/rs6000/xilinx.ld b/libgloss/rs6000/xilinx.ld
 index 75b2a12b6..40a4a1e4b 100644
 --- a/libgloss/rs6000/xilinx.ld
@@ -9337,24 +9438,27 @@ index fa3e26879..4da1a374e 100644
  __END_DECLS
  
 diff --git a/newlib/libc/include/sys/config.h b/newlib/libc/include/sys/config.h
-index 5dcc77a80..c53fce983 100644
+index 5dcc77a80..fdf232649 100644
 --- a/newlib/libc/include/sys/config.h
 +++ b/newlib/libc/include/sys/config.h
-@@ -4,8 +4,18 @@
+@@ -4,8 +4,21 @@
  #include <machine/ieeefp.h>  /* floating point macros */
  #include <sys/features.h>	/* POSIX defs */
  
 -#ifdef __aarch64__
 +#ifdef __DEVKITARM__
 +#define __DYNAMIC_REENT__
++#define MALLOC_ALIGNMENT_THRESHOLD 32
 +#endif
 +
 +#ifdef __DEVKITA64__
  #define MALLOC_ALIGNMENT 16
++#define MALLOC_ALIGNMENT_THRESHOLD 32
 +#define __DYNAMIC_REENT__
 +#endif
 +
 +#ifdef __DEVKITPPC__
++#define MALLOC_ALIGNMENT_THRESHOLD 64
 +#define __BUFSIZ__ 32768
 +#define __DYNAMIC_REENT__
  #endif
@@ -10121,7 +10225,7 @@ index 8664dc3e5..dbaba0264 100644
        fp->_r -= resid;
        fp->_p += resid;
 diff --git a/newlib/libc/stdio/makebuf.c b/newlib/libc/stdio/makebuf.c
-index b9c75bbf8..d748d5dc8 100644
+index b9c75bbf8..bc65acc2a 100644
 --- a/newlib/libc/stdio/makebuf.c
 +++ b/newlib/libc/stdio/makebuf.c
 @@ -19,6 +19,7 @@
@@ -10132,12 +10236,15 @@ index b9c75bbf8..d748d5dc8 100644
  #include <sys/stat.h>
  #include <sys/types.h>
  #include <sys/unistd.h>
-@@ -50,7 +51,7 @@ __smakebuf_r (struct _reent *ptr,
+@@ -50,7 +51,11 @@ __smakebuf_r (struct _reent *ptr,
        return;
      }
    flags = __swhatbuf_r (ptr, fp, &size, &couldbetty);
--  if ((p = _malloc_r (ptr, size)) == NULL)
-+  if ((p = _memalign_r (ptr, 64, size)) == NULL)
++#ifdef MALLOC_ALIGNMENT_THRESHOLD
++  if ((p = _memalign_r (ptr, MALLOC_ALIGNMENT_THRESHOLD, size)) == NULL)
++#else
+   if ((p = _malloc_r (ptr, size)) == NULL)
++#endif
      {
        if (!(fp->_flags & __SSTR))
  	{
@@ -10277,18 +10384,20 @@ index 710440389..985e720bf 100644
  
  #endif /* _WANT_REGISTER_FINI  */
 diff --git a/newlib/libc/stdlib/malloc.c b/newlib/libc/stdlib/malloc.c
-index f5ac29208..3f21ea154 100644
+index f5ac29208..7d016a653 100644
 --- a/newlib/libc/stdlib/malloc.c
 +++ b/newlib/libc/stdlib/malloc.c
-@@ -161,7 +161,10 @@ Supporting OS subroutines required: <<sbrk>>.  */
+@@ -161,7 +161,12 @@ Supporting OS subroutines required: <<sbrk>>.  */
  void *
  malloc (size_t nbytes)		/* get a block */
  {
 -  return _malloc_r (_REENT, nbytes);
-+  if (nbytes < 64)
-+    return _malloc_r (_REENT, nbytes);
++#ifdef MALLOC_ALIGNMENT_THRESHOLD
++  if (nbytes >= MALLOC_ALIGNMENT_THRESHOLD)
++    return _memalign_r (_REENT, MALLOC_ALIGNMENT_THRESHOLD, nbytes);
 +  else
-+    return _memalign_r (_REENT, 64, nbytes);
++#endif
++    return _malloc_r (_REENT, nbytes);
  }
  
  void
