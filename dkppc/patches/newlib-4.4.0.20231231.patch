@@ -9480,7 +9480,7 @@ index a7d4bc52d..6b06ce5a5 100644
  #ifdef __rtems__
 diff --git a/newlib/libc/include/sys/iosupport.h b/newlib/libc/include/sys/iosupport.h
 new file mode 100644
-index 000000000..a38b71599
+index 000000000..3a7c44c28
 --- /dev/null
 +++ b/newlib/libc/include/sys/iosupport.h
 @@ -0,0 +1,127 @@
@@ -9493,7 +9493,7 @@ index 000000000..a38b71599
 +extern "C" {
 +#endif
 +
-+#include <reent.h>
++#include <sys/reent.h>
 +#include <sys/stat.h>
 +#include <sys/statvfs.h>
 +#include <sys/time.h>
@@ -9643,10 +9643,19 @@ index 9a6f115a6..142e71d35 100644
  #define MAXPATHLEN PATH_MAX
  
 diff --git a/newlib/libc/include/sys/reent.h b/newlib/libc/include/sys/reent.h
-index a02e7c2bd..61de73f88 100644
+index a02e7c2bd..5bade6497 100644
 --- a/newlib/libc/include/sys/reent.h
 +++ b/newlib/libc/include/sys/reent.h
-@@ -420,6 +420,8 @@ struct _reent
+@@ -45,6 +45,8 @@ struct _reent;
+ 
+ struct __locale_t;
+ 
++void *   memset (void *, int, size_t);
++
+ /*
+  * If _REENT_SMALL is defined, we make struct _reent as small as possible,
+  * by having nearly everything possible allocated at first use.
+@@ -420,6 +422,8 @@ struct _reent
    __FILE *__sf;			        /* file descriptors */
    struct _misc_reent *_misc;            /* strtok, multibyte states */
    char *_signal_buf;                    /* strsignal */
@@ -9655,7 +9664,7 @@ index a02e7c2bd..61de73f88 100644
  };
  
  # define _REENT_INIT(var) \
-@@ -648,6 +650,8 @@ struct _reent
+@@ -648,6 +652,8 @@ struct _reent
  
    /* signal info */
    void (**_sig_func)(int);
