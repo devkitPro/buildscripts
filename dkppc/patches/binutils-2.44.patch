@@ -1,0 +1,26 @@
+diff --git a/ld/emulparams/elf32ppccommon.sh b/ld/emulparams/elf32ppccommon.sh
+index da892988f5d..6b8efb9bbdb 100644
+--- a/ld/emulparams/elf32ppccommon.sh
++++ b/ld/emulparams/elf32ppccommon.sh
+@@ -23,7 +23,7 @@ else
+   unset SBSS_START_SYMBOLS
+   unset SBSS_END_SYMBOLS
+ fi
+-OTHER_END_SYMBOLS="${CREATE_SHLIB+PROVIDE (}__end = .${CREATE_SHLIB+)};"
++OTHER_END_SYMBOLS="${CREATE_SHLIB+PROVIDE (}__end = .${CREATE_SHLIB+)};${CREATE_SHLIB+PROVIDE (}__end__ = .${CREATE_SHLIB+)};"
+ OTHER_RELRO_SECTIONS="
+   .fixup        ${RELOCATING-0} : { *(.fixup) }
+   .got1         ${RELOCATING-0} : { *(.got1) }
+diff --git a/opcodes/ppc-opc.c b/opcodes/ppc-opc.c
+index e55bfe846cd..f160e290bce 100644
+--- a/opcodes/ppc-opc.c
++++ b/opcodes/ppc-opc.c
+@@ -4988,7 +4988,7 @@ const unsigned int num_powerpc_operands = ARRAY_SIZE (powerpc_operands);
+ #define MFDEC2	(PPC_OPCODE_PPC | PPC_OPCODE_601 | PPC_OPCODE_BOOKE \
+ 		 | PPC_OPCODE_TITAN)
+ #define BOOKE	PPC_OPCODE_BOOKE
+-#define NO371	PPC_OPCODE_BOOKE | PPC_OPCODE_PPCPS | PPC_OPCODE_EFS
++#define NO371	PPC_OPCODE_BOOKE | PPC_OPCODE_EFS
+ #define PPCE300 PPC_OPCODE_E300
+ #define PPCSPE	PPC_OPCODE_SPE
+ #define PPCSPE2 PPC_OPCODE_SPE2
