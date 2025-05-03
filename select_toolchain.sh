@@ -51,7 +51,7 @@ case "$VERSION" in
   "3" )
     GCC_VER=15.1.0
     BINUTILS_VER=2.44
-    NEWLIB_VER=4.4.0.20231231
+    NEWLIB_VER=4.5.0.20241231
     basedir='dka64'
     package=devkitA64
     target=aarch64-none-elf
