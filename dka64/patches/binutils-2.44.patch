@@ -1,8 +1,8 @@
 diff --git a/bfd/elf-bfd.h b/bfd/elf-bfd.h
-index b89d3dda05d..1ad8a9c088d 100644
+index c89327fdc9c..b46689a21c1 100644
 --- a/bfd/elf-bfd.h
 +++ b/bfd/elf-bfd.h
-@@ -2005,6 +2005,14 @@ struct output_elf_obj_tdata
+@@ -2008,6 +2008,14 @@ struct output_elf_obj_tdata
      asection *sec;
    } package_metadata;
  
@@ -18,10 +18,10 @@ index b89d3dda05d..1ad8a9c088d 100644
    bfd_size_type program_header_size;
  
 diff --git a/bfd/elf.c b/bfd/elf.c
-index f85f79e1e35..d27f05b92ae 100644
+index 1f2b82bfe92..7e9964a15f4 100644
 --- a/bfd/elf.c
 +++ b/bfd/elf.c
-@@ -7166,6 +7166,14 @@ _bfd_elf_write_object_contents (bfd *abfd)
+@@ -7189,6 +7189,14 @@ _bfd_elf_write_object_contents (bfd *abfd)
    if (!bed->s->write_shdrs_and_ehdr (abfd))
      return false;
  
@@ -37,7 +37,7 @@ index f85f79e1e35..d27f05b92ae 100644
    if (t->o->build_id.after_write_object_contents != NULL
        && !(*t->o->build_id.after_write_object_contents) (abfd))
 diff --git a/bfd/elfnn-aarch64.c b/bfd/elfnn-aarch64.c
-index 94c9a01069b..d39880b27c4 100644
+index 65182f49070..3ba294ad940 100644
 --- a/bfd/elfnn-aarch64.c
 +++ b/bfd/elfnn-aarch64.c
 @@ -2441,6 +2441,12 @@ enum elf_aarch64_stub_type
@@ -53,7 +53,7 @@ index 94c9a01069b..d39880b27c4 100644
  struct elf_aarch64_stub_hash_entry
  {
    /* Base hash table entry structure.  */
-@@ -6969,11 +6975,13 @@ elfNN_aarch64_relocate_section (bfd *output_bfd,
+@@ -6977,11 +6983,13 @@ elfNN_aarch64_relocate_section (bfd *output_bfd,
        Elf_Internal_Sym *sym;
        asection *sec;
        struct elf_link_hash_entry *h;
@@ -67,7 +67,7 @@ index 94c9a01069b..d39880b27c4 100644
        char *error_message = NULL;
  
        r_symndx = ELFNN_R_SYM (rel->r_info);
-@@ -7113,6 +7121,10 @@ elfNN_aarch64_relocate_section (bfd *output_bfd,
+@@ -7121,6 +7129,10 @@ elfNN_aarch64_relocate_section (bfd *output_bfd,
  					       h, &unresolved_reloc,
  					       save_addend, &addend, sym);
  
@@ -78,7 +78,7 @@ index 94c9a01069b..d39880b27c4 100644
        switch (elfNN_aarch64_bfd_reloc_from_type (input_bfd, r_type))
  	{
  	case BFD_RELOC_AARCH64_TLSGD_ADD_LO12_NC:
-@@ -7136,7 +7148,7 @@ elfNN_aarch64_relocate_section (bfd *output_bfd,
+@@ -7144,7 +7156,7 @@ elfNN_aarch64_relocate_section (bfd *output_bfd,
  	      need_relocs =
  		(!bfd_link_executable (info) || indx != 0) &&
  		(h == NULL
@@ -87,7 +87,7 @@ index 94c9a01069b..d39880b27c4 100644
  		 || h->root.type != bfd_link_hash_undefweak);
  
  	      BFD_ASSERT (globals->root.srelgot != NULL);
-@@ -7231,7 +7243,7 @@ elfNN_aarch64_relocate_section (bfd *output_bfd,
+@@ -7239,7 +7251,7 @@ elfNN_aarch64_relocate_section (bfd *output_bfd,
  	      need_relocs =
  		(!bfd_link_executable (info) || indx != 0) &&
  		(h == NULL
@@ -96,7 +96,7 @@ index 94c9a01069b..d39880b27c4 100644
  		 || h->root.type != bfd_link_hash_undefweak);
  
  	      BFD_ASSERT (globals->root.srelgot != NULL);
-@@ -7280,7 +7292,7 @@ elfNN_aarch64_relocate_section (bfd *output_bfd,
+@@ -7288,7 +7300,7 @@ elfNN_aarch64_relocate_section (bfd *output_bfd,
  	      bfd_vma off = symbol_tlsdesc_got_offset (input_bfd, h, r_symndx);
  
  	      need_relocs = (h == NULL
@@ -105,7 +105,7 @@ index 94c9a01069b..d39880b27c4 100644
  			     || h->root.type != bfd_link_hash_undefweak);
  
  	      BFD_ASSERT (globals->root.srelgot != NULL);
-@@ -7606,6 +7618,23 @@ need_copy_relocation_p (struct elf_aarch64_link_hash_entry *eh)
+@@ -7614,6 +7626,23 @@ need_copy_relocation_p (struct elf_aarch64_link_hash_entry *eh)
    return false;
  }
  
@@ -129,7 +129,7 @@ index 94c9a01069b..d39880b27c4 100644
  /* Adjust a symbol defined by a dynamic object and referenced by a
     regular object.  The current definition is in some section of the
     dynamic object, but we're not including those sections.  We have to
-@@ -8824,6 +8853,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+@@ -8720,6 +8749,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
    struct elf_aarch64_link_hash_table *htab;
    struct elf_aarch64_link_hash_entry *eh;
    struct elf_dyn_relocs *p;
@@ -137,7 +137,7 @@ index 94c9a01069b..d39880b27c4 100644
  
    /* An example of a bfd_link_hash_indirect symbol is versioned
       symbol. For example: __gxx_personality_v0(bfd_link_hash_indirect)
-@@ -8843,6 +8873,10 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+@@ -8739,6 +8769,10 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
    info = (struct bfd_link_info *) inf;
    htab = elf_aarch64_hash_table (info);
  
@@ -148,7 +148,7 @@ index 94c9a01069b..d39880b27c4 100644
    /* Since STT_GNU_IFUNC symbol must go through PLT, we handle it
       here if it is defined and referenced in a non-shared object.  */
    if (h->type == STT_GNU_IFUNC
-@@ -8852,7 +8886,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+@@ -8748,7 +8782,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
      {
        /* Make sure this symbol is output as a dynamic symbol.
  	 Undefined weak syms won't yet be marked as dynamic.  */
@@ -157,7 +157,7 @@ index 94c9a01069b..d39880b27c4 100644
  	  && h->root.type == bfd_link_hash_undefweak)
  	{
  	  if (!bfd_elf_link_record_dynamic_symbol (info, h))
-@@ -8886,6 +8920,11 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+@@ -8782,6 +8816,11 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
  	     of relaxing into these from the large model PLT entries.  */
  	  s->size += htab->plt_entry_size;
  
@@ -169,7 +169,7 @@ index 94c9a01069b..d39880b27c4 100644
  	  /* We also need to make an entry in the .got.plt section, which
  	     will be placed in the .got section by the linker script.  */
  	  htab->root.sgotplt->size += GOT_ENTRY_SIZE;
-@@ -8914,6 +8953,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+@@ -8810,6 +8849,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
  	    htab->variant_pcs = 1;
  
  	}
@@ -177,7 +177,7 @@ index 94c9a01069b..d39880b27c4 100644
        else
  	{
  	  h->plt.offset = (bfd_vma) - 1;
-@@ -8926,9 +8966,6 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+@@ -8822,9 +8862,6 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
        h->needs_plt = 0;
      }
  
@@ -187,7 +187,7 @@ index 94c9a01069b..d39880b27c4 100644
    if (h->got.refcount > 0)
      {
        bool dyn;
-@@ -8940,7 +8977,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+@@ -8836,7 +8873,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
  
        /* Make sure this symbol is output as a dynamic symbol.
  	 Undefined weak syms won't yet be marked as dynamic.  */
@@ -196,7 +196,7 @@ index 94c9a01069b..d39880b27c4 100644
  	  && h->root.type == bfd_link_hash_undefweak)
  	{
  	  if (!bfd_elf_link_record_dynamic_symbol (info, h))
-@@ -8954,7 +8991,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+@@ -8850,7 +8887,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
  	{
  	  h->got.offset = htab->root.sgot->size;
  	  htab->root.sgot->size += GOT_ENTRY_SIZE;
@@ -205,7 +205,7 @@ index 94c9a01069b..d39880b27c4 100644
  	       || h->root.type != bfd_link_hash_undefweak)
  	      && (bfd_link_pic (info)
  		  || WILL_CALL_FINISH_DYNAMIC_SYMBOL (dyn, 0, h))
-@@ -8990,7 +9027,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+@@ -8886,7 +8923,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
  	    }
  
  	  indx = h && h->dynindx != -1 ? h->dynindx : 0;
@@ -214,7 +214,7 @@ index 94c9a01069b..d39880b27c4 100644
  	       || h->root.type != bfd_link_hash_undefweak)
  	      && (!bfd_link_executable (info)
  		  || indx != 0
-@@ -9072,7 +9109,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+@@ -8968,7 +9005,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
  	 visibility.  */
        if (h->dyn_relocs != NULL && h->root.type == bfd_link_hash_undefweak)
  	{
@@ -223,7 +223,7 @@ index 94c9a01069b..d39880b27c4 100644
  	      || UNDEFWEAK_NO_DYNAMIC_RELOC (info, h))
  	    h->dyn_relocs = NULL;
  
-@@ -9092,7 +9129,9 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+@@ -8988,7 +9025,9 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
  	 symbols which turn out to need copy relocs or are not
  	 dynamic.  */
  
@@ -234,7 +234,7 @@ index 94c9a01069b..d39880b27c4 100644
  	  && ((h->def_dynamic
  	       && !h->def_regular)
  	      || (htab->root.dynamic_sections_created
-@@ -9103,6 +9142,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
+@@ -8999,6 +9038,7 @@ elfNN_aarch64_allocate_dynrelocs (struct elf_link_hash_entry *h, void *inf)
  	     Undefined weak syms won't yet be marked as dynamic.  */
  	  if (h->dynindx == -1
  	      && !h->forced_local
@@ -242,7 +242,7 @@ index 94c9a01069b..d39880b27c4 100644
  	      && h->root.type == bfd_link_hash_undefweak
  	      && !bfd_elf_link_record_dynamic_symbol (info, h))
  	    return false;
-@@ -10058,8 +10098,17 @@ elfNN_aarch64_finish_dynamic_symbol (bfd *output_bfd,
+@@ -9954,8 +9994,17 @@ elfNN_aarch64_finish_dynamic_symbol (bfd *output_bfd,
  				     Elf_Internal_Sym *sym)
  {
    struct elf_aarch64_link_hash_table *htab;
@@ -260,7 +260,7 @@ index 94c9a01069b..d39880b27c4 100644
    if (h->plt.offset != (bfd_vma) - 1)
      {
        asection *plt, *gotplt, *relplt;
-@@ -10094,7 +10143,7 @@ elfNN_aarch64_finish_dynamic_symbol (bfd *output_bfd,
+@@ -9990,7 +10039,7 @@ elfNN_aarch64_finish_dynamic_symbol (bfd *output_bfd,
  	abort ();
  
        elfNN_aarch64_create_small_pltn_entry (h, htab, output_bfd, info);
@@ -269,7 +269,7 @@ index 94c9a01069b..d39880b27c4 100644
  	{
  	  /* Mark the symbol as undefined, rather than as defined in
  	     the .plt section.  */
-@@ -10116,7 +10165,8 @@ elfNN_aarch64_finish_dynamic_symbol (bfd *output_bfd,
+@@ -10012,7 +10061,8 @@ elfNN_aarch64_finish_dynamic_symbol (bfd *output_bfd,
        && elf_aarch64_hash_entry (h)->got_type == GOT_NORMAL
        /* Undefined weak symbol in static PIE resolves to 0 without
  	 any dynamic relocations.  */
@@ -279,7 +279,7 @@ index 94c9a01069b..d39880b27c4 100644
      {
        Elf_Internal_Rela rela;
        bfd_byte *loc;
-@@ -10766,6 +10816,9 @@ const struct elf_size_info elfNN_aarch64_size_info =
+@@ -10680,6 +10730,9 @@ const struct elf_size_info elfNN_aarch64_size_info =
  #define elf_backend_init_index_section		\
    _bfd_elf_init_2_index_sections
  
@@ -310,10 +310,10 @@ index 45bf31a179a..02e0cad8699 100644
  ARCH="aarch64:ilp32"
  MACHINE=
 diff --git a/ld/emultempl/aarch64elf.em b/ld/emultempl/aarch64elf.em
-index aa2859d4f73..c680dca8f86 100644
+index 7791aabf16d..a1486617099 100644
 --- a/ld/emultempl/aarch64elf.em
 +++ b/ld/emultempl/aarch64elf.em
-@@ -368,7 +368,7 @@ PARSE_AND_LIST_LONGOPTS='
+@@ -458,7 +458,7 @@ PARSE_AND_LIST_LONGOPTS='
    { "no-apply-dynamic-relocs", no_argument, NULL, OPTION_NO_APPLY_DYNAMIC_RELOCS},
  '
  
@@ -323,10 +323,10 @@ index aa2859d4f73..c680dca8f86 100644
  		   "                                enum sizes\n"));
    fprintf (file, _("  --no-wchar-size-warning     Don'\''t warn about objects with incompatible\n"
 diff --git a/ld/emultempl/elf.em b/ld/emultempl/elf.em
-index 863657e12f5..672974df511 100644
+index 777f7204038..895f9ce59e6 100644
 --- a/ld/emultempl/elf.em
 +++ b/ld/emultempl/elf.em
-@@ -813,6 +813,7 @@ EOF
+@@ -814,6 +814,7 @@ EOF
  fi
  fragment <<EOF
      {"build-id", optional_argument, NULL, OPTION_BUILD_ID},
@@ -334,7 +334,7 @@ index 863657e12f5..672974df511 100644
      {"package-metadata", optional_argument, NULL, OPTION_PACKAGE_METADATA},
      {"compress-debug-sections", required_argument, NULL, OPTION_COMPRESS_DEBUG},
      {"rosegment", no_argument, NULL, OPTION_ROSEGMENT},
-@@ -892,6 +893,18 @@ gld${EMULATION_NAME}_handle_option (int optc)
+@@ -901,6 +902,18 @@ gld${EMULATION_NAME}_handle_option (int optc)
      case OPTION_NO_ROSEGMENT:
        link_info.one_rosegment = false;
        break;      
@@ -354,7 +354,7 @@ index 863657e12f5..672974df511 100644
  
  if test x"$GENERATE_SHLIB_SCRIPT" = xyes; then
 diff --git a/ld/ldelf.c b/ld/ldelf.c
-index 09691609fc0..5769b4aa0f9 100644
+index 4a1aa044e70..24025b0c5a6 100644
 --- a/ld/ldelf.c
 +++ b/ld/ldelf.c
 @@ -55,6 +55,9 @@ const char *ldelf_emit_note_gnu_build_id;
@@ -367,7 +367,7 @@ index 09691609fc0..5769b4aa0f9 100644
  /* These variables are required to pass information back and forth
     between after_open and check_needed and stat_needed and vercheck.  */
  
-@@ -1209,8 +1212,93 @@ ldelf_handle_dt_needed (struct elf_link_hash_table *htab,
+@@ -1213,8 +1216,93 @@ ldelf_handle_dt_needed (struct elf_link_hash_table *htab,
    *save_input_bfd_tail = NULL;
  }
  
@@ -382,7 +382,7 @@ index 09691609fc0..5769b4aa0f9 100644
 +  unsigned char *contents;
 +  bfd_size_type size;
 +  file_ptr position;
- 
++
 +  name = t->o->nx_module_name.name;
 +  asec = t->o->nx_module_name.sec;
 +  if (bfd_is_abs_section (asec->output_section))
@@ -413,7 +413,7 @@ index 09691609fc0..5769b4aa0f9 100644
 +  return (bfd_seek (abfd, position, SEEK_SET) == 0
 +	  && bfd_write (contents, size, abfd) == size);
 +}
-+
+ 
 +/* Make .nx-module-name section, and set up elf_tdata->nx_module_name.  */
 +
 +static bool
@@ -462,7 +462,7 @@ index 09691609fc0..5769b4aa0f9 100644
  void
  ldelf_before_plugin_all_symbols_read (int use_libpath, int native,
  				      int is_linux, int is_freebsd,
-@@ -1289,6 +1377,24 @@ ldelf_after_open (int use_libpath, int native, int is_linux, int is_freebsd,
+@@ -1293,6 +1381,24 @@ ldelf_after_open (int use_libpath, int native, int is_linux, int is_freebsd,
  	}
      }
  
@@ -488,7 +488,7 @@ index 09691609fc0..5769b4aa0f9 100644
  
    /* Do not allow executable files to be used as inputs to the link.  */
 diff --git a/ld/ldelf.h b/ld/ldelf.h
-index 239194772c4..68516dbf45e 100644
+index a6498cf2758..b69da549175 100644
 --- a/ld/ldelf.h
 +++ b/ld/ldelf.h
 @@ -20,6 +20,7 @@
@@ -497,13 +497,13 @@ index 239194772c4..68516dbf45e 100644
  extern const char *ldelf_emit_note_fdo_package_metadata;
 +extern const char *ldelf_emit_nx_module_name;
  
+ extern void ldelf_finish (void);
  extern void ldelf_after_parse (void);
- extern bool ldelf_load_symbols (lang_input_statement_type *);
 diff --git a/ld/ldlex.h b/ld/ldlex.h
-index defe3fcbbb9..30f31df990e 100644
+index b8b7d6b6829..3c9ee8d8742 100644
 --- a/ld/ldlex.h
 +++ b/ld/ldlex.h
-@@ -186,6 +186,7 @@ enum option_values
+@@ -187,6 +187,7 @@ enum option_values
    /* Used by emultempl/elf.em, emultempl/pe.em and emultempl/pep.em.  */
    OPTION_BUILD_ID,
    OPTION_EXCLUDE_LIBS,
