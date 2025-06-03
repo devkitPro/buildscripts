@@ -11023,7 +11023,7 @@ index f25db3b0a..8e1626550 100644
  	  for i in $(srcdir)/libc/sys/$(sys_dir)/sys/*.h; do \
  	    if [ -f $$i ]; then \
 diff --git a/newlib/configure.host b/newlib/configure.host
-index ff2e51275..7ef23d5f6 100644
+index ff2e51275..dfa957d55 100644
 --- a/newlib/configure.host
 +++ b/newlib/configure.host
 @@ -646,6 +646,14 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
@@ -11041,14 +11041,15 @@ index ff2e51275..7ef23d5f6 100644
    arm*-*-pe)
  	syscall_dir=syscalls
  	newlib_cflags="${newlib_cflags} -DHAVE_SYSCONF_PAGESIZE"
-@@ -818,7 +826,13 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
+@@ -818,7 +826,14 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
  	default_newlib_io_long_long="yes"
  	newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES"
  	;;
 -  powerpc*-*-eabi* | \
 +  powerpc*-*-eabi*)
-+	default_newlib_io_c99_formats="yes"
++  default_newlib_io_c99_formats="yes"
 +	default_newlib_io_long_long="yes"
++	default_newlib_io_pos_args="yes"
 +	newlib_cflags="${newlib_cflags} -DHAVE_ASSERT_FUNC -DABORT_PROVIDED -DCUSTOM_MALLOC_LOCK -D__DYNAMIC_REENT__ -DGETREENT_PROVIDED -DREENTRANT_SYSCALLS_PROVIDED -D__DEFAULT_UTF8__"
 +	newlib_cflags="${newlib_cflags} -ffunction-sections -fdata-sections"
 +	syscall_dir=syscalls
@@ -11960,7 +11961,7 @@ index d8dfdbd82..a85b5a99b 100644
    return 0;
  }
 diff --git a/newlib/libc/stdio/vfprintf.c b/newlib/libc/stdio/vfprintf.c
-index feb1fab56..7a59eb21f 100644
+index feb1fab56..99ec9c458 100644
 --- a/newlib/libc/stdio/vfprintf.c
 +++ b/newlib/libc/stdio/vfprintf.c
 @@ -108,6 +108,8 @@ Supporting OS subroutines required: <<close>>, <<fstat>>, <<isatty>>,
@@ -11972,7 +11973,28 @@ index feb1fab56..7a59eb21f 100644
  #if defined(LIBC_SCCS) && !defined(lint)
  /*static char *sccsid = "from: @(#)vfprintf.c	5.50 (Berkeley) 12/16/92";*/
  static char *rcsid = "$Id$";
-@@ -1188,7 +1190,7 @@ reswitch:	switch (ch) {
+@@ -548,12 +550,19 @@ _VFPRINTF_R (struct _reent *data,
+ #endif
+ 
+ 	/* Macros to support positional arguments */
++
++#if _ARCH_PPC
++#define __VALIST_PTR(arg) ((va_list *)(arg))
++#else
++#define __VALIST_PTR(arg) (&(arg))
++#endif
++
+ #ifndef _NO_POS_ARGS
+ # define GET_ARG(n, ap, type)						\
+ 	(is_pos_arg							\
+ 	 ? (n < numargs							\
+ 	    ? args[n].val_##type					\
+-	    : get_arg (data, n, fmt_anchor, &ap, &numargs, args,	\
++	    : get_arg (data, n, fmt_anchor, __VALIST_PTR(ap), &numargs, args,	\
+ 		       arg_type, &saved_fmt)->val_##type)		\
+ 	 : (arg_index++ < numargs					\
+ 	    ? args[n].val_##type					\
+@@ -1188,7 +1197,7 @@ reswitch:	switch (ch) {
  string:
  #endif
  			sign = '\0';
@@ -11981,7 +12003,7 @@ index feb1fab56..7a59eb21f 100644
  			/* Behavior is undefined if the user passed a
  			   NULL string when precision is not 0.
  			   However, if we are not optimizing for size,
-@@ -1198,7 +1200,7 @@ string:
+@@ -1198,7 +1207,7 @@ string:
  				size = ((unsigned) prec > 6U) ? 6 : prec;
  			}
  			else
@@ -11991,7 +12013,7 @@ index feb1fab56..7a59eb21f 100644
  			if (ch == 'S' || (flags & LONGINT)) {
  				mbstate_t ps;
 diff --git a/newlib/libc/stdio/vfscanf.c b/newlib/libc/stdio/vfscanf.c
-index 71e2c3e22..bd2d635ed 100644
+index 71e2c3e22..960c41608 100644
 --- a/newlib/libc/stdio/vfscanf.c
 +++ b/newlib/libc/stdio/vfscanf.c
 @@ -74,6 +74,8 @@ These are GNU extensions.
@@ -12003,8 +12025,28 @@ index 71e2c3e22..bd2d635ed 100644
  #include <_ansi.h>
  #include <reent.h>
  #include <newlib.h>
+@@ -572,12 +574,18 @@ __SVFSCANF_R (struct _reent *rptr,
+     {10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+ 
+   /* Macro to support positional arguments */
++#if _ARCH_PPC
++#define __VALIST_PTR(arg) ((va_list *)(arg))
++#else
++#define __VALIST_PTR(arg) (&(arg))
++#endif
++
+ #ifndef _NO_POS_ARGS
+ # define GET_ARG(n, ap, type)					\
+   ((type) (is_pos_arg						\
+ 	   ? (n < numargs					\
+ 	      ? args[n]						\
+-	      : get_arg (n, &ap, &numargs, args))		\
++	      : get_arg (n, __VALIST_PTR(ap), &numargs, args))		\
+ 	   : (arg_index++ < numargs				\
+ 	      ? args[n]						\
+ 	      : (numargs < MAX_POS_ARGS				\
 diff --git a/newlib/libc/stdio/vfwprintf.c b/newlib/libc/stdio/vfwprintf.c
-index 5a5c36829..3eaca0ce6 100644
+index 5a5c36829..3ecba7bd4 100644
 --- a/newlib/libc/stdio/vfwprintf.c
 +++ b/newlib/libc/stdio/vfwprintf.c
 @@ -92,6 +92,9 @@ SEEALSO
@@ -12017,8 +12059,28 @@ index 5a5c36829..3eaca0ce6 100644
  #include <newlib.h>
  
  #ifdef INTEGER_ONLY
+@@ -538,11 +541,18 @@ _VFWPRINTF_R (struct _reent *data,
+ 
+ 	/* Macros to support positional arguments */
+ #ifndef _NO_POS_ARGS
++
++#if _ARCH_PPC
++#define __VALIST_PTR(arg) ((va_list *)(arg))
++#else
++#define __VALIST_PTR(arg) (&(arg))
++#endif
++
+ # define GET_ARG(n, ap, type)						\
+ 	(is_pos_arg							\
+ 	 ? (n < numargs							\
+ 	    ? args[n].val_##type					\
+-	    : get_arg (data, n, fmt_anchor, &ap, &numargs, args,	\
++	    : get_arg (data, n, fmt_anchor, __VALIST_PTR(ap), &numargs, args,	\
+ 		       arg_type, &saved_fmt)->val_##type)		\
+ 	 : (arg_index++ < numargs					\
+ 	    ? args[n].val_##type					\
 diff --git a/newlib/libc/stdio/vfwscanf.c b/newlib/libc/stdio/vfwscanf.c
-index d2f91dde2..de80cc0c0 100644
+index d2f91dde2..7c44f29fb 100644
 --- a/newlib/libc/stdio/vfwscanf.c
 +++ b/newlib/libc/stdio/vfwscanf.c
 @@ -74,6 +74,9 @@ PORTABILITY
@@ -12031,6 +12093,26 @@ index d2f91dde2..de80cc0c0 100644
  #include <_ansi.h>
  #include <reent.h>
  #include <newlib.h>
+@@ -479,11 +482,18 @@ __SVFWSCANF_R (struct _reent *rptr,
+ 
+   /* Macro to support positional arguments */
+ #ifndef _NO_POS_ARGS
++
++#if _ARCH_PPC
++#define __VALIST_PTR(arg) ((va_list *)(arg))
++#else
++#define __VALIST_PTR(arg) (&(arg))
++#endif
++
+ # define GET_ARG(n, ap, type)					\
+   ((type) (is_pos_arg						\
+ 	   ? (n < numargs					\
+ 	      ? args[n]						\
+-	      : get_arg (n, &ap, &numargs, args))		\
++	      : get_arg (n, __VALIST_PTR(ap), &numargs, args))		\
+ 	   : (arg_index++ < numargs				\
+ 	      ? args[n]						\
+ 	      : (numargs < MAX_POS_ARGS				\
 diff --git a/newlib/libc/stdlib/__call_atexit.c b/newlib/libc/stdlib/__call_atexit.c
 index 710440389..985e720bf 100644
 --- a/newlib/libc/stdlib/__call_atexit.c
