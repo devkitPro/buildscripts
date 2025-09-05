@@ -7966,14 +7966,15 @@ index 000000000..5e81c5d42
 +#endif
 diff --git a/libgloss/libsysbase/iosupport.c b/libgloss/libsysbase/iosupport.c
 new file mode 100644
-index 000000000..71224902f
+index 000000000..84d14d56f
 --- /dev/null
 +++ b/libgloss/libsysbase/iosupport.c
-@@ -0,0 +1,138 @@
+@@ -0,0 +1,145 @@
 +#include <stdlib.h>
 +#include <string.h>
 +#include <ctype.h>
 +#include <sys/iosupport.h>
++#include <assert.h>
 +
 +static int defaultDevice = -1;
 +
@@ -8030,8 +8031,14 @@ index 000000000..71224902f
 +	&dotab_stdnull, &dotab_stdnull, &dotab_stdnull, &dotab_stdnull,
 +	&dotab_stdnull, &dotab_stdnull, &dotab_stdnull, &dotab_stdnull,
 +	&dotab_stdnull, &dotab_stdnull, &dotab_stdnull, &dotab_stdnull,
-+	&dotab_stdnull, &dotab_stdnull, &dotab_stdnull, &dotab_stdnull
++	&dotab_stdnull, &dotab_stdnull, &dotab_stdnull, &dotab_stdnull,
++	&dotab_stdnull, &dotab_stdnull, &dotab_stdnull, &dotab_stdnull,
++	&dotab_stdnull, &dotab_stdnull, &dotab_stdnull, &dotab_stdnull,
++	&dotab_stdnull, &dotab_stdnull, &dotab_stdnull, &dotab_stdnull,
++	&dotab_stdnull, &dotab_stdnull, &dotab_stdnull, &dotab_stdnull,
++	&dotab_stdnull, &dotab_stdnull, &dotab_stdnull
 +};
++static_assert(STD_MAX == sizeof(devoptab_list) / sizeof(devoptab_list[0]));
 +
 +//---------------------------------------------------------------------------------
 +int FindDevice(const char* name) {
