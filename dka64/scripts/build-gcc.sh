@@ -62,7 +62,7 @@ then
 		--enable-lto \
 		--disable-tm-clone-registry \
 		--disable-__cxa_atexit \
-		--with-bugurl="https://github.com/devkitPro/buildscripts/issues" --with-pkgversion="devkitA64 release 28" \
+		--with-bugurl="https://github.com/devkitPro/buildscripts/issues" --with-pkgversion="devkitA64 release 29" \
 		$CROSS_PARAMS \
 		$CROSS_GCC_PARAMS \
 		$EXTRA_GCC_PARAMS \
@@ -145,5 +145,3 @@ then
 	$MAKE install || { echo "Error installing gcc stage2"; exit 1; }
 	touch installed-stage2
 fi
-
-rm -fr $prefix/$target/sys-include
