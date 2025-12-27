@@ -101,7 +101,7 @@ then
 	--with-newlib \
 	--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
 	--prefix=$prefix \
-	--with-bugurl="https://github.com/devkitpro/buildscripts/issues" --with-pkgversion="devkitPPC release 47.1" \
+	--with-bugurl="https://github.com/devkitpro/buildscripts/issues" --with-pkgversion="devkitPPC release 48" \
 	$CROSS_PARAMS \
 	$CROSS_GCC_PARAMS \
 	$EXTRA_GCC_PARAMS \
@@ -182,8 +182,6 @@ then
 	$MAKE install || { echo "Error installing gcc stage2"; exit 1; }
 	touch installed-stage2
 fi
-
-rm -fr $prefix/$target/sys-include
 
 #---------------------------------------------------------------------------------
 # Install and build the gamecube crt and libogc
