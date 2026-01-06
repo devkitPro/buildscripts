@@ -31,6 +31,7 @@ DKARM_RULES_VER=1.6.1
 DKARM_CRTLS_VER=1.2.7
 
 DKPPC_RULES_VER=1.2.1
+DKPPC_CRTLS_VER=1.0.0
 
 DKA64_RULES_VER=1.1.1
 
@@ -195,7 +196,7 @@ if [ "$BUILD_DKPRO_SKIP_CRTLS" != "1" ]; then
 	fi
 
 	if [ $VERSION -eq 2 ]; then
-		archives="devkitppc-rules-$DKPPC_RULES_VER.tar.gz $archives"
+		archives="devkitppc-crtls-$DKPPC_CRTLS_VER.tar.gz devkitppc-rules-$DKPPC_RULES_VER.tar.gz $archives"
 	fi
 
 	if [ $VERSION -eq 3 ]; then

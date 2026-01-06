@@ -183,11 +183,4 @@ then
 	touch installed-stage2
 fi
 
-#---------------------------------------------------------------------------------
-# Install and build the gamecube crt and libogc
-#---------------------------------------------------------------------------------
-
-echo "installing linkscripts ..."
-cp $BUILDSCRIPTDIR/dkppc/crtls/*.ld $prefix/$target/lib/
-
 cd $BUILDDIR
