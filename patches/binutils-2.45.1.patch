@@ -309,6 +309,19 @@ index 0565b7a066c..64821b1fc31 100644
  
  ARCH="aarch64:ilp32"
  MACHINE=
+diff --git a/ld/emulparams/elf32ppccommon.sh b/ld/emulparams/elf32ppccommon.sh
+index da892988f5d..6b8efb9bbdb 100644
+--- a/ld/emulparams/elf32ppccommon.sh
++++ b/ld/emulparams/elf32ppccommon.sh
+@@ -23,7 +23,7 @@ else
+   unset SBSS_START_SYMBOLS
+   unset SBSS_END_SYMBOLS
+ fi
+-OTHER_END_SYMBOLS="${CREATE_SHLIB+PROVIDE (}__end = .${CREATE_SHLIB+)};"
++OTHER_END_SYMBOLS="${CREATE_SHLIB+PROVIDE (}__end = .${CREATE_SHLIB+)};${CREATE_SHLIB+PROVIDE (}__end__ = .${CREATE_SHLIB+)};"
+ OTHER_RELRO_SECTIONS="
+   .fixup        ${RELOCATING-0} : { *(.fixup) }
+   .got1         ${RELOCATING-0} : { *(.got1) }
 diff --git a/ld/emultempl/aarch64elf.em b/ld/emultempl/aarch64elf.em
 index 91d58d8fe5a..e1ac4a6b139 100644
 --- a/ld/emultempl/aarch64elf.em
@@ -511,3 +524,16 @@ index c8d61478c60..a5bb71b1dc5 100644
    /* Used by emulparams/elf32mcore.sh, emultempl/beos.em, emultempl/pe.em
       and emultempl/pep.em.  */
    OPTION_BASE_FILE,
+diff --git a/opcodes/ppc-opc.c b/opcodes/ppc-opc.c
+index 712cd31d19e..5d6dbb3b48d 100644
+--- a/opcodes/ppc-opc.c
++++ b/opcodes/ppc-opc.c
+@@ -5107,7 +5107,7 @@ const unsigned int num_powerpc_operands = ARRAY_SIZE (powerpc_operands);
+ #define MFDEC2	(PPC_OPCODE_PPC | PPC_OPCODE_601 | PPC_OPCODE_BOOKE \
+ 		 | PPC_OPCODE_TITAN)
+ #define BOOKE	PPC_OPCODE_BOOKE
+-#define NO371	PPC_OPCODE_BOOKE | PPC_OPCODE_PPCPS | PPC_OPCODE_EFS
++#define NO371	PPC_OPCODE_BOOKE | PPC_OPCODE_EFS
+ #define PPCE300 PPC_OPCODE_E300
+ #define PPCSPE	PPC_OPCODE_SPE
+ #define PPCSPE2 PPC_OPCODE_SPE2

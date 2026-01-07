@@ -181,7 +181,7 @@ if [ ! -z $CROSSBUILD ]; then
 	BUILDDIR=$BUILDDIR-$CROSSBUILD
 fi
 
-patchdir=$(pwd)/$basedir/patches
+patchdir=$(pwd)/patches
 scriptdir=$(pwd)/$basedir/scripts
 
 archives="binutils-${BINUTILS_VER}.tar.xz gcc-${GCC_VER}.tar.xz newlib-${NEWLIB_VER}.tar.gz"

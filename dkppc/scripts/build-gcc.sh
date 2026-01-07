@@ -35,59 +35,25 @@ then
 fi
 cd $BUILDDIR
 
-
-#---------------------------------------------------------------------------------
-# build and install mn10200 binutils
-#---------------------------------------------------------------------------------
-
-# Use modern config.sub for aarch64 host
-cp binutils-$BINUTILS_VER/config.sub binutils-$MN_BINUTILS_VER/config.sub
-
-mkdir -p mn10200/binutils
-cd mn10200/binutils
-
-if [ ! -f configured-binutils ]
-then
-	../../binutils-$MN_BINUTILS_VER/configure \
-	--prefix=$prefix --target=mn10200 --disable-nls --disable-debug \
-	--disable-multilib \
-	--disable-werror $CROSS_PARAMS \
-	|| { echo "Error configuing mn10200 binutils"; exit 1; }
-	touch configured-binutils
-fi
-
-if [ ! -f built-binutils ]
-then
-	$MAKE || { echo "Error building mn10200 binutils"; exit 1; }
-	touch built-binutils
-fi
-
-if [ ! -f installed-binutils ]
-then
-	$MAKE install || { echo "Error installing mn10200 binutils"; exit 1; }
-	touch installed-binutils
-fi
-
-cd $BUILDDIR
-
 #---------------------------------------------------------------------------------
 # build and install just the c compiler
 #---------------------------------------------------------------------------------
 mkdir -p $target/gcc
 cd $target/gcc
 
-export gcc_cv_libc_provides_ssp=yes
-
 if [ ! -f configured-gcc ]
 then
+	CPPFLAGS="-DSTDINT_LONG32=0 ${CPPFLAGS}" \
 	CFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
 	CXXFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
 	LDFLAGS_FOR_TARGET="" \
 	../../gcc-$GCC_VER/configure \
+	--target=$target \
+	--prefix=$prefix \
 	--enable-languages=c,c++,objc,lto \
 	--enable-lto \
 	--with-cpu=750 \
-	--disable-nls --disable-shared --enable-threads=dkp --disable-multilib \
+	--disable-nls --disable-shared --enable-threads=posix --disable-multilib \
 	--disable-win32-registry \
 	--disable-libstdcxx-pch \
 	--disable-libstdcxx-verbose \
@@ -97,15 +63,12 @@ then
 	--disable-__cxa_atexit \
 	--disable-libssp \
 	--enable-cxx-flags='-ffunction-sections -fdata-sections' \
-	--target=$target \
 	--with-newlib \
 	--with-headers=../../newlib-$NEWLIB_VER/newlib/libc/include \
-	--prefix=$prefix \
 	--with-bugurl="https://github.com/devkitpro/buildscripts/issues" --with-pkgversion="devkitPPC release 48" \
 	$CROSS_PARAMS \
 	$CROSS_GCC_PARAMS \
 	$EXTRA_GCC_PARAMS \
-        CFLAGS_FOR_TARGET="-O2 -ffunction-sections -fdata-sections" \
 	|| { echo "Error configuring gcc stage 1"; exit 1; }
 	touch configured-gcc
 fi
