@@ -37,6 +37,10 @@ case "$VERSION" in
     package=devkitARM
     target=arm-none-eabi
     toolchain=DEVKITARM
+    _prefix=devkitarm
+    _toolchain_options='--with-march=armv4t --enable-interwork --enable-multilib --with-pkgversion="devkitARM"'
+    _rules_ver=${DKARM_RULES_VER}
+    _crtls_ver=${DKARM_CRTLS_VER}
   ;;
   "2" )
     GCC_VER=15.2.0
@@ -47,6 +51,11 @@ case "$VERSION" in
     package=devkitPPC
     target=powerpc-eabi
     toolchain=DEVKITPPC
+    _prefix=devkitppc
+    cppflags="-DSTDINT_LONG32=0 ${cppflags}"
+    _toolchain_options='--with-cpu=750 --disable-multilib --with-pkgversion="devkitPPC"'
+    _rules_ver=${DKPPC_RULES_VER}
+    _crtls_ver=${DKPPC_CRTLS_VER}
   ;;
   "3" )
     GCC_VER=15.2.0
@@ -56,5 +65,9 @@ case "$VERSION" in
     package=devkitA64
     target=aarch64-none-elf
     toolchain=DEVKITA64
+    _prefix=devkita64
+    _toolchain_options='--with-march=armv8 --enable-multilib --with-pkgversion="devkitA64"'
+    _rules_ver=${DKA64_RULES_VER}
+    _crtls_ver=${DKA64_CRTLS_VER}
   ;;
 esac

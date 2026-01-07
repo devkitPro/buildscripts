@@ -132,6 +132,7 @@ if [ ! -z $CROSSBUILD ]; then
 	CROSS_GCC_PARAMS="--with-gmp=$CROSSPATH --with-mpfr=$CROSSPATH --with-mpc=$CROSSPATH --with-isl=$CROSSPATH --with-zstd=$CROSSPATH"
 else
 	prefix=$INSTALLDIR/$package
+	CROSS_PARAMS="$CROSS_PARAMS --host=`./config.guess`"
 fi
 
 #---------------------------------------------------------------------------------
@@ -239,11 +240,16 @@ if [ $VERSION -eq 2 ]; then extract_and_patch binutils $MN_BINUTILS_VER bz2; fi
 #---------------------------------------------------------------------------------
 # Build and install devkit components
 #---------------------------------------------------------------------------------
-if [ -f $scriptdir/build-gcc.sh ]; then . $scriptdir/build-gcc.sh || { echo "Error building toolchain"; exit 1; }; cd $BUILDSCRIPTDIR; fi
+. ${BUILDSCRIPTDIR}/build-binutils.sh || { echo "Error building binutils"; exit 1; };
+if [ $VERSION -eq 2 ]; then . ${BUILDSCRIPTDIR}/build-mn10200-binutils.sh || { echo "Error building mn10200 binutils"; exit 1; }; fi
+
+. ${BUILDSCRIPTDIR}/build-gcc-stage1.sh || { echo "Error building gcc stage1"; exit 1; };
+. ${BUILDSCRIPTDIR}/build-newlib.sh || { echo "Error building newlib"; exit 1; };
+. ${BUILDSCRIPTDIR}/build-gcc-stage2.sh || { echo "Error building gcc stage2"; exit 1; };
 
 
-if [ "$BUILD_DKPRO_SKIP_CRTLS" != "1" ] && [ -f $scriptdir/build-crtls.sh ]; then
-  . $scriptdir/build-crtls.sh || { echo "Error building crtls & rules"; exit 1; }; cd $BUILDSCRIPTDIR;
+if [ "$BUILD_DKPRO_SKIP_CRTLS" != "1" ]; then
+  . ${BUILDSCRIPTDIR}/build-crtls.sh || { echo "Error building crtls & rules"; exit 1; };
 fi
 
 cd $BUILDSCRIPTDIR
