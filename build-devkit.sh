@@ -224,7 +224,14 @@ mkdir -p $BUILDDIR
 cd $BUILDDIR
 
 extract_and_patch binutils $BINUTILS_VER xz
+
 extract_and_patch gcc $GCC_VER xz
+if [ "$GCC_DOWNLOAD_PREREQS" != "0" ] && [ ! -f downloaded_prereqs ]; then
+  cd gcc-${GCC_VER}
+  ./contrib/download_prerequisites && touch downloaded_prereqs
+  cd ..
+fi
+
 extract_and_patch newlib $NEWLIB_VER gz
 
 if [ $VERSION -eq 2 ]; then extract_and_patch binutils $MN_BINUTILS_VER bz2; fi
