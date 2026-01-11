@@ -7966,10 +7966,10 @@ index 000000000..5e81c5d42
 +#endif
 diff --git a/libgloss/libsysbase/iosupport.c b/libgloss/libsysbase/iosupport.c
 new file mode 100644
-index 000000000..71224902f
+index 000000000..3215d07f9
 --- /dev/null
 +++ b/libgloss/libsysbase/iosupport.c
-@@ -0,0 +1,138 @@
+@@ -0,0 +1,134 @@
 +#include <stdlib.h>
 +#include <string.h>
 +#include <ctype.h>
@@ -8027,10 +8027,7 @@ index 000000000..71224902f
 +//---------------------------------------------------------------------------------
 +const devoptab_t *devoptab_list[STD_MAX] = {
 +//---------------------------------------------------------------------------------
-+	&dotab_stdnull, &dotab_stdnull, &dotab_stdnull, &dotab_stdnull,
-+	&dotab_stdnull, &dotab_stdnull, &dotab_stdnull, &dotab_stdnull,
-+	&dotab_stdnull, &dotab_stdnull, &dotab_stdnull, &dotab_stdnull,
-+	&dotab_stdnull, &dotab_stdnull, &dotab_stdnull, &dotab_stdnull
++	&dotab_stdnull, &dotab_stdnull, &dotab_stdnull
 +};
 +
 +//---------------------------------------------------------------------------------
@@ -8067,7 +8064,7 @@ index 000000000..71224902f
 +	int dev = FindDevice(name);
 +
 +	if ( -1 != dev ) {
-+		devoptab_list[dev] = &dotab_stdnull;
++		devoptab_list[dev] = NULL;
 +		return 0;
 +	}
 +
@@ -8082,12 +8079,11 @@ index 000000000..71224902f
 +	int devnum;
 +
 +	for ( devnum = 3;devnum <STD_MAX; devnum++ ) {
++		// null pointer is available
++		if ( devoptab_list[devnum] ) break;
 +
-+		if ( (!strcmp(devoptab_list[devnum]->name, device->name) &&
-+					strlen(devoptab_list[devnum]->name) == strlen(device->name) ) ||
-+			 		!strcmp(devoptab_list[devnum]->name, "stdnull")
-+			 )
-+			 break;
++		if ( !strcmp(devoptab_list[devnum]->name, device->name) && strlen(devoptab_list[devnum]->name) == strlen(device->name) )
++			break;
 +	}
 +
 +	if ( devnum == STD_MAX ) {

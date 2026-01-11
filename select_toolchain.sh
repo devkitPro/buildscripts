@@ -30,9 +30,12 @@ done
 
 case "$VERSION" in
   "1" )
-    GCC_VER=15.2.0
     BINUTILS_VER=2.45.1
+    GCC_VER=15.2.0
     NEWLIB_VER=4.5.0.20241231
+    BINUTILS_PKGREL=2
+    GCC_PKGREL=6
+    NEWLIB_PKGREL=5
     basedir='dkarm-eabi'
     package=devkitARM
     target=arm-none-eabi
@@ -43,10 +46,13 @@ case "$VERSION" in
     _crtls_ver=${DKARM_CRTLS_VER}
   ;;
   "2" )
-    GCC_VER=15.2.0
     BINUTILS_VER=2.45.1
+    GCC_VER=15.2.0
     MN_BINUTILS_VER=2.24
     NEWLIB_VER=4.5.0.20241231
+    BINUTILS_PKGREL=2
+    GCC_PKGREL=6
+    NEWLIB_PKGREL=5
     basedir='dkppc'
     package=devkitPPC
     target=powerpc-eabi
@@ -61,6 +67,9 @@ case "$VERSION" in
     GCC_VER=15.2.0
     BINUTILS_VER=2.45.1
     NEWLIB_VER=4.5.0.20241231
+    BINUTILS_PKGREL=2
+    GCC_PKGREL=6
+    NEWLIB_PKGREL=5
     basedir='dka64'
     package=devkitA64
     target=aarch64-none-elf

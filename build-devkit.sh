@@ -54,12 +54,12 @@ function extract_and_patch {
 #---------------------------------------------------------------------------------
 	if [ ! -f extracted-$1-$2 ]; then
 		echo "extracting $1-$2"
-		tar -xf "$SRCDIR/$1-$2.tar.$3" || { echo "Error extracting "$1; exit 1; }
+		tar -xf "$SRCDIR/$1-$2.tar.$4" || { echo "Error extracting "$1; exit 1; }
 		touch extracted-$1-$2
 	fi
-	if [[ ! -f patched-$1-$2 && -f $patchdir/$1-$2.patch ]]; then
+	if [[ ! -f patched-$1-$2 && -f $patchdir/$1-$2-$3.patch ]]; then
 		echo "patching $1-$2"
-		$PATCH -p1 -d $1-$2 -i $patchdir/$1-$2.patch || { echo "Error patching $1"; exit 1; }
+		$PATCH -p1 -d $1-$2 -i $patchdir/$1-$2-$3.patch || { echo "Error patching $1"; exit 1; }
 		touch patched-$1-$2
 	fi
 }
@@ -224,16 +224,16 @@ cd $BUILDSCRIPTDIR
 mkdir -p $BUILDDIR
 cd $BUILDDIR
 
-extract_and_patch binutils $BINUTILS_VER xz
+extract_and_patch binutils $BINUTILS_VER $BINUTILS_PKGREL xz
 
-extract_and_patch gcc $GCC_VER xz
+extract_and_patch gcc $GCC_VER $GCC_PKGREL xz
 if [ "$GCC_DOWNLOAD_PREREQS" != "0" ] && [ ! -f downloaded_prereqs ]; then
   cd gcc-${GCC_VER}
   ./contrib/download_prerequisites && touch downloaded_prereqs
   cd ..
 fi
 
-extract_and_patch newlib $NEWLIB_VER gz
+extract_and_patch newlib $NEWLIB_VER $NEWLIB_PKGREL gz
 
 if [ $VERSION -eq 2 ]; then extract_and_patch binutils $MN_BINUTILS_VER bz2; fi
 
