@@ -100,10 +100,10 @@ INSTALLDIR=/opt/devkitpro
 
 [ ! -z "$INSTALLDIR" ] && mkdir -p $INSTALLDIR && touch $INSTALLDIR/nonexistantfile && rm $INSTALLDIR/nonexistantfile || exit 1;
 
-if test "`curl -V`"; then
+if test "`wget -V`"; then
+	FETCH='wget -U "dkp-buildscript"'
+elif test "`curl -V`"; then
 	FETCH="curl -f -L -O"
-elif test "`wget -V`"; then
-	FETCH=wget
 else
 	echo "ERROR: Please make sure you have wget or curl installed."
 	exit 1
