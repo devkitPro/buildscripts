@@ -68,7 +68,7 @@ case "$VERSION" in
     BINUTILS_VER=2.45.1
     NEWLIB_VER=4.5.0.20241231
     BINUTILS_PKGREL=2
-    GCC_PKGREL=6
+    GCC_PKGREL=3
     NEWLIB_PKGREL=5
     basedir='dka64'
     package=devkitA64
