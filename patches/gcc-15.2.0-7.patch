@@ -1,0 +1,1203 @@
+diff --git a/gcc/config.gcc b/gcc/config.gcc
+index 087aaa7be37..1230fd4b519 100644
+--- a/gcc/config.gcc
++++ b/gcc/config.gcc
+@@ -526,7 +526,7 @@ powerpc*-*-*)
+ 	extra_objs="rs6000-string.o rs6000-p8swap.o rs6000-logue.o"
+ 	extra_objs="${extra_objs} rs6000-call.o rs6000-pcrel-opt.o"
+ 	extra_objs="${extra_objs} rs6000-builtins.o rs6000-builtin.o"
+-	extra_headers="ppc-asm.h altivec.h htmintrin.h htmxlintrin.h"
++	extra_headers="ppc-asm.h htmintrin.h htmxlintrin.h"
+ 	extra_headers="${extra_headers} bmi2intrin.h bmiintrin.h"
+ 	extra_headers="${extra_headers} xmmintrin.h mm_malloc.h emmintrin.h"
+ 	extra_headers="${extra_headers} mmintrin.h x86intrin.h"
+@@ -1192,7 +1192,14 @@ aarch64*-*-elf | aarch64*-*-fuchsia* | aarch64*-*-rtems*)
+ 	tmake_file="${tmake_file} aarch64/t-aarch64"
+ 	case $target in
+ 	aarch64-*-elf*)
++		default_use_cxa_atexit=yes
+ 		use_gcc_stdint=wrap
++		tm_file="${tm_file} aarch64/devkita64.h"
++		tm_defines="${tm_defines}  TARGET_DEFAULT_ASYNC_UNWIND_TABLES=1"
++		extra_options="${extra_options} devkitpro.opt"
++		case ${enable_threads} in
++			"" | yes | posix) thread_file='posix' ;;
++		esac
+ 		;;
+         aarch64-*-fuchsia*)
+                 tm_file="${tm_file} fuchsia.h"
+@@ -1508,6 +1515,11 @@ arm*-*-eabi* | arm*-*-symbianelf* | arm*-*-rtems* | arm*-*-fuchsia*)
+ 	  tm_file="$tm_file newlib-stdint.h"
+ 	  tmake_file="${tmake_file} arm/t-bpabi"
+ 	  use_gcc_stdint=wrap
++	  tm_file="${tm_file} arm/devkitarm.h"
++	  extra_options="${extra_options} devkitpro.opt"
++	  case ${enable_threads} in
++		"" | yes | posix) thread_file='posix' ;;
++	  esac
+ 	  ;;
+ 	arm*-*-fuchsia*)
+ 	  tm_file="${tm_file} fuchsia.h arm/fuchsia-elf.h glibc-stdint.h"
+@@ -3051,9 +3063,12 @@ powerpc-*-eabialtivec*)
+ 	;;
+ powerpc-*-eabi*)
+ 	tm_file="${tm_file} elfos.h gnu-user.h usegas.h freebsd-spec.h newlib-stdint.h rs6000/sysv4.h rs6000/eabi.h"
+-	extra_options="${extra_options} rs6000/sysv4.opt"
++	extra_options="${extra_options} rs6000/sysv4.opt devkitpro.opt"
+ 	tmake_file="rs6000/t-fprules rs6000/t-ppcgas rs6000/t-ppccomm"
+ 	use_gcc_stdint=wrap
++	case ${enable_threads} in
++	  "" | yes | posix) thread_file='posix' ;;
++	esac
+ 	;;
+ powerpc-*-rtems*)
+ 	tm_file="rs6000/biarch64.h ${tm_file} elfos.h gnu-user.h freebsd-spec.h newlib-stdint.h rs6000/sysv4.h rs6000/rtems.h rtems.h"
+diff --git a/gcc/config/aarch64/aarch64-elf-raw.h b/gcc/config/aarch64/aarch64-elf-raw.h
+index 15cf1eb0389..aba0e9bbff9 100644
+--- a/gcc/config/aarch64/aarch64-elf-raw.h
++++ b/gcc/config/aarch64/aarch64-elf-raw.h
+@@ -22,6 +22,7 @@
+ #ifndef GCC_AARCH64_ELF_RAW_H
+ #define GCC_AARCH64_ELF_RAW_H
+ 
++#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
+ #define STARTFILE_SPEC " crti%O%s crtbegin%O%s crt0%O%s"
+ #define ENDFILE_SPEC \
+   " crtend%O%s crtn%O%s " \
+diff --git a/gcc/config/aarch64/aarch64-opts.h b/gcc/config/aarch64/aarch64-opts.h
+index a6ca5cf016b..90470fd6c44 100644
+--- a/gcc/config/aarch64/aarch64-opts.h
++++ b/gcc/config/aarch64/aarch64-opts.h
+@@ -91,7 +91,8 @@ enum aarch64_tp_reg {
+   AARCH64_TPIDR_EL1 = 1,
+   AARCH64_TPIDR_EL2 = 2,
+   AARCH64_TPIDR_EL3 = 3,
+-  AARCH64_TPIDRRO_EL0 = 4
++  AARCH64_TPIDRRO_EL0 = 4,
++  AARCH64_TP_SOFT = 5
+ };
+ 
+ /* SVE vector register sizes.  */
+diff --git a/gcc/config/aarch64/aarch64.cc b/gcc/config/aarch64/aarch64.cc
+index 6d6b6552a71..1595f0951e5 100644
+--- a/gcc/config/aarch64/aarch64.cc
++++ b/gcc/config/aarch64/aarch64.cc
+@@ -21393,8 +21393,24 @@ aarch64_load_tp (rtx target)
+       || !register_operand (target, Pmode))
+     target = gen_reg_rtx (Pmode);
+ 
+-  /* Can return in any reg.  */
+-  emit_insn (gen_aarch64_load_tp_hard (target));
++  if (TARGET_HARD_TP)
++    {
++      /* Can return in any reg.  */
++      emit_insn (gen_aarch64_load_tp_hard (target));
++    }
++  else
++    {
++      /* Always returned in r0.  Immediately copy the result into a pseudo,
++	 otherwise other uses of r0 (e.g. setting up function arguments) may
++	 clobber the value.  */
++
++      rtx tmp;
++
++      emit_insn (gen_aarch64_load_tp_soft ());
++
++      tmp = gen_rtx_REG (DImode, R0_REGNUM);
++      emit_move_insn (target, tmp);
++    }
+   return target;
+ }
+ 
+diff --git a/gcc/config/aarch64/aarch64.h b/gcc/config/aarch64/aarch64.h
+index e8bd8c73c12..4fc0d8f4ded 100644
+--- a/gcc/config/aarch64/aarch64.h
++++ b/gcc/config/aarch64/aarch64.h
+@@ -1436,6 +1436,10 @@ typedef struct
+ /* Check TLS Descriptors mechanism is selected.  */
+ #define TARGET_TLS_DESC (aarch64_tls_dialect == TLS_DESCRIPTORS)
+ 
++/* Check selected thread pointer access sequence to use.  */
++#define TARGET_HARD_TP (aarch64_tpidr_reg != AARCH64_TP_SOFT)
++#define TARGET_SOFT_TP (aarch64_tpidr_reg == AARCH64_TP_SOFT)
++
+ extern enum aarch64_code_model aarch64_cmodel;
+ 
+ /* When using the tiny addressing model conditional and unconditional branches
+diff --git a/gcc/config/aarch64/aarch64.md b/gcc/config/aarch64/aarch64.md
+index 79bbf5fafb3..e648866c39f 100644
+--- a/gcc/config/aarch64/aarch64.md
++++ b/gcc/config/aarch64/aarch64.md
+@@ -7710,11 +7710,22 @@
+ (define_insn "aarch64_load_tp_hard"
+   [(set (match_operand:DI 0 "register_operand" "=r")
+ 	(unspec:DI [(const_int 0)] UNSPEC_TLS))]
+-  ""
++  "TARGET_HARD_TP"
+   "* return aarch64_output_load_tp (operands[0]);"
+   [(set_attr "type" "mrs")]
+ )
+ 
++(define_insn "aarch64_load_tp_soft"
++  [(set (reg:DI 0) (unspec:DI [(const_int 0)] UNSPEC_TLS))
++   (clobber (reg:DI IP0_REGNUM))
++   (clobber (reg:DI IP1_REGNUM))
++   (clobber (reg:DI LR_REGNUM))
++   (clobber (reg:CC CC_REGNUM))]
++  "TARGET_SOFT_TP"
++  "bl\\t__aarch64_read_tp\\t// aarch64_load_tp_soft"
++  [(set_attr "type" "branch")]
++)
++
+ ;; The TLS ABI specifically requires that the compiler does not schedule
+ ;; instructions in the TLS stubs, in order to enable linker relaxation.
+ ;; Therefore we treat the stubs as an atomic sequence.
+diff --git a/gcc/config/aarch64/aarch64.opt b/gcc/config/aarch64/aarch64.opt
+index f32d56d4ffa..7cf8d3ba3d4 100644
+--- a/gcc/config/aarch64/aarch64.opt
++++ b/gcc/config/aarch64/aarch64.opt
+@@ -137,6 +137,9 @@ Enum(tp_reg) String(tpidr_el3) Value(AARCH64_TPIDR_EL3)
+ EnumValue
+ Enum(tp_reg) String(tpidrro_el0) Value(AARCH64_TPIDRRO_EL0)
+ 
++EnumValue
++Enum(tp_reg) String(soft) Value(AARCH64_TP_SOFT)
++
+ mtp=
+ Target RejectNegative Joined Enum(tp_reg) Var(aarch64_tpidr_reg) Init(AARCH64_TPIDR_EL0) Save
+ Specify the thread pointer register.
+@@ -338,7 +341,7 @@ TargetVariable
+ long aarch64_stack_protector_guard_offset = 0
+ 
+ moutline-atomics
+-Target Var(aarch64_flag_outline_atomics) Init(2) Save
++Target Var(aarch64_flag_outline_atomics) Save
+ Generate local calls to out-of-line atomic operations.
+ 
+ -param=aarch64-vect-compare-costs=
+diff --git a/gcc/config/aarch64/devkita64.h b/gcc/config/aarch64/devkita64.h
+new file mode 100644
+index 00000000000..5c0b53b9810
+--- /dev/null
++++ b/gcc/config/aarch64/devkita64.h
+@@ -0,0 +1,32 @@
++/* Definitions for devkitPro toolchains.
++   Copyright (C) 2016-2018 Free Software Foundation, Inc.
++
++   This file is part of GCC.
++
++   GCC is free software; you can redistribute it and/or modify it
++   under the terms of the GNU General Public License as published
++   by the Free Software Foundation; either version 3, or (at your
++   option) any later version.
++
++   GCC is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
++   or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
++   License for more details.
++
++   Under Section 7 of GPL version 3, you are granted additional
++   permissions described in the GCC Runtime Library Exception, version
++   3.1, as published by the Free Software Foundation.
++
++   You should have received a copy of the GNU General Public License and
++   a copy of the GCC Runtime Library Exception along with this program;
++   see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#undef TARGET_OS_CPP_BUILTINS
++#define TARGET_OS_CPP_BUILTINS()                \
++    do {                                        \
++        builtin_define ("__DEVKITPRO__");       \
++        builtin_define ("__DEVKITA64__");       \
++    } while (0)
++
++
+diff --git a/gcc/config/aarch64/t-aarch64 b/gcc/config/aarch64/t-aarch64
+index 59571948479..f50c37d8b3c 100644
+--- a/gcc/config/aarch64/t-aarch64
++++ b/gcc/config/aarch64/t-aarch64
+@@ -198,8 +198,10 @@ aarch64-ldp-fusion.o: $(srcdir)/config/aarch64/aarch64-ldp-fusion.cc \
+ 		$(srcdir)/config/aarch64/aarch64-ldp-fusion.cc
+ 
+ comma=,
+-MULTILIB_OPTIONS    = $(subst $(comma),/, $(patsubst %, mabi=%, $(subst $(comma),$(comma)mabi=,$(TM_MULTILIB_CONFIG))))
+-MULTILIB_DIRNAMES   = $(subst $(comma), ,$(TM_MULTILIB_CONFIG))
++MULTILIB_OPTIONS    = mcmodel=large fPIC
++MULTILIB_DIRNAMES   = large pic
++MULTILIB_REQUIRED   = mcmodel=large fPIC
++MULTILIB_MATCHES    = fPIC=fpic fPIC=fpie fPIC=fPIE
+ 
+ insn-conditions.md: s-check-sve-md
+ s-check-sve-md: $(srcdir)/config/aarch64/check-sve-md.awk \
+diff --git a/gcc/config/arm/arm-cpus.in b/gcc/config/arm/arm-cpus.in
+index 1939d55b9fd..62d425cb596 100644
+--- a/gcc/config/arm/arm-cpus.in
++++ b/gcc/config/arm/arm-cpus.in
+@@ -416,7 +416,7 @@ begin arch armv6k
+  tune for mpcore
+  tune flags CO_PROC
+  base 6K
+- isa ARMv6k
++ isa ARMv6k VFPv2 FP_DBL
+  option fp add VFPv2 FP_DBL
+  optalias vfpv2 fp
+  option nofp remove ALL_FP
+diff --git a/gcc/config/arm/devkitarm.h b/gcc/config/arm/devkitarm.h
+new file mode 100644
+index 00000000000..4d6c16a3db4
+--- /dev/null
++++ b/gcc/config/arm/devkitarm.h
+@@ -0,0 +1,33 @@
++/* Definitions for devkitPro toolchains.
++   Copyright (C) 2016-2018 Free Software Foundation, Inc.
++
++   This file is part of GCC.
++
++   GCC is free software; you can redistribute it and/or modify it
++   under the terms of the GNU General Public License as published
++   by the Free Software Foundation; either version 3, or (at your
++   option) any later version.
++
++   GCC is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
++   or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
++   License for more details.
++
++   Under Section 7 of GPL version 3, you are granted additional
++   permissions described in the GCC Runtime Library Exception, version
++   3.1, as published by the Free Software Foundation.
++
++   You should have received a copy of the GNU General Public License and
++   a copy of the GCC Runtime Library Exception along with this program;
++   see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
++   <http://www.gnu.org/licenses/>.  */
++
++#undef TARGET_OS_CPP_BUILTINS
++#define TARGET_OS_CPP_BUILTINS()                \
++    do {                                        \
++        builtin_define ("__DEVKITPRO__");       \
++        builtin_define ("__DEVKITARM__");       \
++        TARGET_BPABI_CPP_BUILTINS();
++    } while (0)
++
++
+diff --git a/gcc/config/arm/t-arm-elf b/gcc/config/arm/t-arm-elf
+index fdfdf9c580b..add129f0a62 100644
+--- a/gcc/config/arm/t-arm-elf
++++ b/gcc/config/arm/t-arm-elf
+@@ -16,120 +16,22 @@
+ # along with GCC; see the file COPYING3.  If not see
+ # <http://www.gnu.org/licenses/>.
+ 
+-# Build a very basic set of libraries that should cater for most cases.
+-
+-# Single-precision floating-point is NOT supported; we don't build a
+-# suitable library for that.  Use the rm-profile config in that case.
+-
+-# PART 1 - Useful groups of options
+-
+-dp_fpus		:= vfp vfpv2 vfpv3 vfpv3-fp16 vfpv3-d16 vfpv3-d16-fp16 \
+-		   neon neon-vfpv3 neon-fp16 vfpv4 neon-vfpv4 vfpv4-d16 \
+-		   fpv5-d16 fp-armv8 neon-fp-armv8 crypto-neon-fp-armv8 \
+-		   vfp3
+-
+-sp_fpus		:= vfpv3xd vfpv3xd-fp16  fpv4-sp-d16 fpv5-sp-d16
+-
+-v7a_fps		:= vfpv3 vfpv3-fp16 vfpv4 simd neon-fp16 neon-vfpv4
+-v7ve_fps	:= vfpv3-d16 vfpv3 vfpv3-d16-fp16 vfpv3-fp16 vfpv4 neon \
+-		   neon-fp16 simd
+-
+-# Not all these permutations exist for all architecture variants, but
+-# it seems to work ok.
+-v8_fps		:= simd fp16 crypto fp16+crypto dotprod fp16fml
+-
+-v9_fps		:= simd fp16 crypto fp16+crypto dotprod fp16fml
+-
+-# We don't do anything special with these.  Pre-v4t probably doesn't work.
+-all_early_nofp	:= armv4 armv4t armv5t
+-
+-all_early_arch	:= armv5tej armv6 armv6j armv6k armv6z armv6kz \
+-		   armv6zk armv6t2 iwmmxt iwmmxt2
+-
+-all_v7_a_r	:= armv7-a armv7ve armv7-r
+-
+-all_v8_archs	:= armv8-a armv8-a+crc armv8.1-a armv8.2-a armv8.3-a armv8.4-a \
+-		   armv8.5-a armv8.6-a
+-
+-all_v9_archs	:= armv9-a
+-
+-# No floating point variants, require thumb1 softfp
+-all_nofp_t	:= armv6-m armv6s-m armv8-m.base
+-
+-all_nofp_t2	:= armv7-m
+-
+-all_sp_only	:= armv7e-m armv8-m.main
+-
+-MULTILIB_OPTIONS     =
+-MULTILIB_DIRNAMES    =
++MULTILIB_OPTIONS     = mthumb mbig-endian march=armv6k march=armv6s-m mfloat-abi=hard mfloat-abi=soft
++MULTILIB_DIRNAMES    = thumb be armv6k v6-m fpu nofp
+ MULTILIB_EXCEPTIONS  = 
+ MULTILIB_MATCHES     =
+-MULTILIB_REUSE	     =
+-
+-# PART 2 - multilib build rules
+-
+-MULTILIB_OPTIONS     += marm/mthumb
+-MULTILIB_DIRNAMES    += arm thumb
+-
+-MULTILIB_OPTIONS     += mfpu=auto
+-MULTILIB_DIRNAMES    += autofp
+-
+-MULTILIB_OPTIONS     += march=armv5te+fp/march=armv7+fp
+-MULTILIB_DIRNAMES    += v5te v7
+-
+-MULTILIB_OPTIONS     += mfloat-abi=hard
+-MULTILIB_DIRNAMES    += fpu
+-
+-# Build a total of 4 library variants (base options plus the following):
+-MULTILIB_REQUIRED    += mthumb
+-MULTILIB_REQUIRED    += marm/mfpu=auto/march=armv5te+fp/mfloat-abi=hard
+-MULTILIB_REQUIRED    += mthumb/mfpu=auto/march=armv7+fp/mfloat-abi=hard
+-
+-# PART 3 - Match rules
+-
+-# Map all supported FPUs onto mfpu=auto
+-MULTILIB_MATCHES     += $(foreach FPU, $(dp_fpus), \
+-			  mfpu?auto=mfpu?$(FPU))
+-
+-MULTILIB_MATCHES     += march?armv5te+fp=march?armv5te
+-
+-MULTILIB_MATCHES     += $(foreach ARCH, $(all_early_arch), \
+-		          march?armv5te+fp=march?$(ARCH) \
+-			  march?armv5te+fp=march?$(ARCH)+fp)
+-
+-MULTILIB_MATCHES     += march?armv7+fp=march?armv7
+-
+-MULTILIB_MATCHES     += $(foreach FPARCH, $(v7a_fps), \
+-		          march?armv7+fp=march?armv7-a+$(FPARCH))
+-
+-MULTILIB_MATCHES     += $(foreach FPARCH, $(v7ve_fps), \
+-		          march?armv7+fp=march?armv7ve+$(FPARCH))
+-
+-MULTILIB_MATCHES     += $(foreach ARCH, $(all_v7_a_r), \
+-			  march?armv7+fp=march?$(ARCH) \
+-			  march?armv7+fp=march?$(ARCH)+fp)
+ 
+-MULTILIB_MATCHES     += $(foreach ARCH, $(all_v8_archs), \
+-			  march?armv7+fp=march?$(ARCH) \
+-			  $(foreach FPARCH, $(v8_fps), \
+-			    march?armv7+fp=march?$(ARCH)+$(FPARCH)))
++MULTILIB_REQUIRED    = mthumb mbig-endian mthumb/mbig-endian march=armv6k/mfloat-abi=hard mthumb/march=armv6s-m/mfloat-abi=soft
+ 
+-MULTILIB_MATCHES     += $(foreach ARCH, $(all_v9_archs), \
+-			  march?armv7+fp=march?$(ARCH) \
+-			  $(foreach FPARCH, $(v9_fps), \
+-			    march?armv7+fp=march?$(ARCH)+$(FPARCH)))
+ 
+-MULTILIB_MATCHES     += $(foreach ARCH, armv7e-m armv8-m.mainline, \
+-			  march?armv7+fp=march?$(ARCH)+fp.dp)
++MULTILIB_MATCHES    += march?armv6k=mtune?mpcore
++MULTILIB_MATCHES    += march?armv6k=mcpu?mpcore
+ 
+-# PART 4 - Reuse rules
++MULTILIB_MATCHES    += march?armv6s-m=mcpu?cortex-m0
++MULTILIB_MATCHES    += march?armv6s-m=mtune?cortex-m0
++MULTILIB_MATCHES    += march?armv6s-m=mcpu?cortex-m0plus
++MULTILIB_MATCHES    += march?armv6s-m=mtune?cortex-m0plus
++MULTILIB_MATCHES    += march?armv6s-m=mcpu?cortex-m1
++MULTILIB_MATCHES    += march?armv6s-m=mtune?cortex-m1
+ 
+-MULTILIB_REUSE	     += mthumb=mthumb/mfpu.auto
+-MULTILIB_REUSE	     += mthumb=mthumb/mfpu.auto/march.armv5te+fp
+-MULTILIB_REUSE	     += mthumb=mthumb/march.armv5te+fp
+-MULTILIB_REUSE	     += marm/mfpu.auto/march.armv5te+fp/mfloat-abi.hard=marm/march.armv5te+fp/mfloat-abi.hard
+-MULTILIB_REUSE	     += marm/mfpu.auto/march.armv5te+fp/mfloat-abi.hard=march.armv5te+fp/mfloat-abi.hard
+-MULTILIB_REUSE	     += marm/mfpu.auto/march.armv5te+fp/mfloat-abi.hard=mfpu.auto/march.armv5te+fp/mfloat-abi.hard
+-MULTILIB_REUSE	     += mthumb/mfpu.auto/march.armv7+fp/mfloat-abi.hard=mthumb/march.armv7+fp/mfloat-abi.hard
+-MULTILIB_REUSE	     += mthumb/mfpu.auto/march.armv7+fp/mfloat-abi.hard=mfpu.auto/march.armv7+fp/mfloat-abi.hard
+-MULTILIB_REUSE	     += mthumb/mfpu.auto/march.armv7+fp/mfloat-abi.hard=march.armv7+fp/mfloat-abi.hard
++MULTILIB_REUSE       = mthumb/march.armv6s-m/mfloat-abi.soft=mthumb/march.armv6s-m
+diff --git a/gcc/config/arm/unknown-elf.h b/gcc/config/arm/unknown-elf.h
+index ab3918283d8..c14a1955cad 100644
+--- a/gcc/config/arm/unknown-elf.h
++++ b/gcc/config/arm/unknown-elf.h
+@@ -29,7 +29,7 @@
+ #endif
+ 
+ /* Now we define the strings used to build the spec file.  */
+-#define UNKNOWN_ELF_STARTFILE_SPEC	" crti%O%s crtbegin%O%s crt0%O%s"
++#define UNKNOWN_ELF_STARTFILE_SPEC	" crti%O%s crtbegin%O%s"
+ 
+ #undef  STARTFILE_SPEC
+ #define STARTFILE_SPEC	\
+@@ -93,4 +93,5 @@
+    udivmoddi4, which will depend on the exception unwind routines,
+    which will depend on abort, which is defined in libc.  */
+ #undef LINK_GCC_C_SEQUENCE_SPEC
+-#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %{!nolibc:%L} --end-group"
++#define LINK_GCC_C_SEQUENCE_SPEC "--start-group %G %L %(libgloss) --end-group"
++
+diff --git a/gcc/config/devkitpro.opt b/gcc/config/devkitpro.opt
+new file mode 100644
+index 00000000000..9acbbf9d27c
+--- /dev/null
++++ b/gcc/config/devkitpro.opt
+@@ -0,0 +1,29 @@
++; Options for devkitPro toolchains.
++
++; Copyright (C) 2011-2018 Free Software Foundation, Inc.
++;
++; This file is part of GCC.
++;
++; GCC is free software; you can redistribute it and/or modify it under
++; the terms of the GNU General Public License as published by the Free
++; Software Foundation; either version 3, or (at your option) any later
++; version.
++;
++; GCC is distributed in the hope that it will be useful, but WITHOUT ANY
++; WARRANTY; without even the implied warranty of MERCHANTABILITY or
++; FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++; for more details.
++;
++; You should have received a copy of the GNU General Public License
++; along with GCC; see the file COPYING3.  If not see
++; <http://www.gnu.org/licenses/>.
++
++; See the GCC internals manual (options.texi) for a description of
++; this file's format.
++
++; Please try to keep this file in ASCII collating order.
++
++pthread
++Driver
++
++; This comment is to ensure we retain the blank line above.
+diff --git a/gcc/config/devkitpro.opt.urls b/gcc/config/devkitpro.opt.urls
+new file mode 100644
+index 00000000000..ab7b466aa71
+--- /dev/null
++++ b/gcc/config/devkitpro.opt.urls
+@@ -0,0 +1 @@
++; Autogenerated by regenerate-opt-urls.py from gcc/config/devkitpro.opt and generated HTML
+diff --git a/gcc/config/i386/host-mingw32.cc b/gcc/config/i386/host-mingw32.cc
+index e083f49f3da..1b81e7e88ce 100644
+--- a/gcc/config/i386/host-mingw32.cc
++++ b/gcc/config/i386/host-mingw32.cc
+@@ -94,6 +94,10 @@ mingw32_gt_pch_get_address (size_t size, int)
+      If we allocate at bottom we need to reserve the address as early
+      as possible and at the same point in each invocation. */
+ 
++#if __MINGW64__
++  size  = UINT64_C(64 * 1024 * 1024 * 1024);
++#endif
++
+   res = VirtualAlloc (NULL, size,
+ 		      MEM_RESERVE | MEM_TOP_DOWN,
+ 		      PAGE_NOACCESS);
+diff --git a/gcc/config/rs6000/eabi.h b/gcc/config/rs6000/eabi.h
+index 3cbee36cd20..e0ffda81164 100644
+--- a/gcc/config/rs6000/eabi.h
++++ b/gcc/config/rs6000/eabi.h
+@@ -36,6 +36,8 @@
+       builtin_assert ("system=embedded"); \
+       builtin_assert ("cpu=powerpc");     \
+       builtin_assert ("machine=powerpc"); \
++      builtin_define ("__DEVKITPPC__");   \
++      builtin_define ("__DEVKITPRO__");   \
+       TARGET_OS_SYSV_CPP_BUILTINS ();     \
+     }                                     \
+   while (0)
+diff --git a/gcc/config/rs6000/rs6000.h b/gcc/config/rs6000/rs6000.h
+index db6112a09e1..71cd6664a3e 100644
+--- a/gcc/config/rs6000/rs6000.h
++++ b/gcc/config/rs6000/rs6000.h
+@@ -193,6 +193,7 @@ ASM_OPT_ANY
+ /* -mcpu=native handling only makes sense with compiler running on
+    an PowerPC chip.  If changing this condition, also change
+    the condition in driver-rs6000.cc.  */
++#if 0
+ #if defined(__powerpc__) || defined(__POWERPC__) || defined(_AIX)
+ /* In driver-rs6000.cc.  */
+ extern const char *host_detect_local_cpu (int argc, const char **argv);
+@@ -204,6 +205,8 @@ extern const char *host_detect_local_cpu (int argc, const char **argv);
+ #else
+ #define ASM_CPU_NATIVE_SPEC "%(asm_default)"
+ #endif
++#endif
++#define ASM_CPU_NATIVE_SPEC "%(asm_default)"
+ 
+ #ifndef CC1_CPU_SPEC
+ #ifdef HAVE_LOCAL_CPU_DETECT
+diff --git a/gcc/config/rs6000/sysv4.h b/gcc/config/rs6000/sysv4.h
+index afb5c6ad867..30d30d530e8 100644
+--- a/gcc/config/rs6000/sysv4.h
++++ b/gcc/config/rs6000/sysv4.h
+@@ -581,7 +581,11 @@ GNU_USER_TARGET_CC1_SPEC
+ 
+ /* Default starting address if specified.  */
+ #define LINK_START_SPEC "\
+-%{mads         : %(link_start_ads)         ; \
++%{mgcn|mogc    : %(link_start_ogc)         ; \
++  mvgc         : %(link_start_vgc)         ; \
++  mgcbios      : %(link_start_gcb)         ; \
++  mrvl         : %(link_start_rvl)         ; \
++  mads         : %(link_start_ads)         ; \
+   myellowknife : %(link_start_yellowknife) ; \
+   mmvme        : %(link_start_mvme)        ; \
+   msim         : %(link_start_sim)         ; \
+@@ -612,7 +616,8 @@ GNU_USER_TARGET_CC1_SPEC
+ 
+ /* Any specific OS flags.  */
+ #define LINK_OS_SPEC "\
+-%{mads         : %(link_os_ads)         ; \
++%{mgcn|mogc|mvgc|mgcbios|mrvl         : %(link_os_ogc)         ; \
++  mads         : %(link_os_ads)         ; \
+   myellowknife : %(link_os_yellowknife) ; \
+   mmvme        : %(link_os_mvme)        ; \
+   msim         : %(link_os_sim)         ; \
+@@ -627,7 +632,10 @@ GNU_USER_TARGET_CC1_SPEC
+ /* Override rs6000.h definition.  */
+ #undef	CPP_SPEC
+ #define	CPP_SPEC "%{posix: -D_POSIX_SOURCE} \
+-%{mads         : %(cpp_os_ads)         ; \
++%{mgcn         : %(cpp_os_gcn)         ; \
++  mogc|mvgc|mgcbios         : %(cpp_os_ogc)         ; \
++  mrvl         : %(cpp_os_rvl)         ; \
++  mads         : %(cpp_os_ads)         ; \
+   myellowknife : %(cpp_os_yellowknife) ; \
+   mmvme        : %(cpp_os_mvme)        ; \
+   msim         : %(cpp_os_sim)         ; \
+@@ -641,7 +649,10 @@ GNU_USER_TARGET_CC1_SPEC
+ 
+ #undef	STARTFILE_SPEC
+ #define	STARTFILE_SPEC "\
+-%{mads         : %(startfile_ads)         ; \
++%{mgcn         : %(startfile_gcn)         ; \
++  mogc|mvgc|mgcbios         : %(startfile_ogc)         ; \
++  mrvl         : %(startfile_ogc)         ; \
++  mads         : %(startfile_ads)         ; \
+   myellowknife : %(startfile_yellowknife) ; \
+   mmvme        : %(startfile_mvme)        ; \
+   msim         : %(startfile_sim)         ; \
+@@ -655,7 +666,8 @@ GNU_USER_TARGET_CC1_SPEC
+ 
+ #undef	LIB_SPEC
+ #define	LIB_SPEC "\
+-%{mads         : %(lib_ads)         ; \
++%{mgcn|mogc|mvgc|mgcbios|mrvl        : %(lib_ogc)         ; \
++  mads         : %(lib_ads)         ; \
+   myellowknife : %(lib_yellowknife) ; \
+   mmvme        : %(lib_mvme)        ; \
+   msim         : %(lib_sim)         ; \
+@@ -665,11 +677,12 @@ GNU_USER_TARGET_CC1_SPEC
+   mcall-openbsd: %(lib_openbsd)     ; \
+                : %(lib_default)     }"
+ 
+-#define LIB_DEFAULT_SPEC "-lc"
++#define LIB_DEFAULT_SPEC "--start-group -lsysbase -lc --end-group"
+ 
+ #undef	ENDFILE_SPEC
+ #define	ENDFILE_SPEC "\
+-%{mads         : %(endfile_ads)         ; \
++%{mgcn|mogc|mvgc|mgcbios|mrvl         : %(endfile_ogc)         ; \
++  mads         : %(endfile_ads)         ; \
+   myellowknife : %(endfile_yellowknife) ; \
+   mmvme        : %(endfile_mvme)        ; \
+   msim         : %(endfile_sim)         ; \
+@@ -685,16 +698,27 @@ GNU_USER_TARGET_CC1_SPEC
+ 
+ /* Motorola ADS support.  */
+ #define LIB_ADS_SPEC "--start-group -lads -lc --end-group"
++#define LIB_OGC_SPEC "--start-group -lsysbase -lc --end-group"
+ 
+ #define	STARTFILE_ADS_SPEC "ecrti.o%s crt0.o%s crtbegin.o%s"
++#define	STARTFILE_OGC_SPEC "ecrti.o%s crtbegin.o%s crtmain.o%s"
+ 
+ #define	ENDFILE_ADS_SPEC "crtend.o%s ecrtn.o%s"
++#define	ENDFILE_OGC_SPEC "crtend.o%s ecrtn.o%s"
+ 
+ #define LINK_START_ADS_SPEC "-T ads.ld%s"
++#define LINK_START_OGC_SPEC "-T ogc.ld%s"
++#define LINK_START_RVL_SPEC "-T rvl.ld%s"
++#define LINK_START_VGC_SPEC "-T vgcogc.ld%s"
++#define LINK_START_GCB_SPEC "-T gcbogc.ld%s"
+ 
+ #define LINK_OS_ADS_SPEC ""
++#define LINK_OS_OGC_SPEC "--gc-sections"
+ 
+ #define CPP_OS_ADS_SPEC ""
++#define CPP_OS_GCN_SPEC "-D__gamecube__ -ffunction-sections -fdata-sections"
++#define CPP_OS_OGC_SPEC "-D__gamecube__ -DHW_DOL -ffunction-sections -fdata-sections"
++#define CPP_OS_RVL_SPEC "-D__wii__ -DHW_RVL -ffunction-sections -fdata-sections"
+ 
+ /* Motorola Yellowknife support.  */
+ #define LIB_YELLOWKNIFE_SPEC "--start-group -lyk -lc --end-group"
+@@ -843,6 +867,7 @@ ncrtn.o%s"
+ #undef	SUBTARGET_EXTRA_SPECS
+ #define	SUBTARGET_EXTRA_SPECS						\
+   { "crtsavres_default",	CRTSAVRES_DEFAULT_SPEC },		\
++  { "lib_ogc",			LIB_OGC_SPEC },				\
+   { "lib_ads",			LIB_ADS_SPEC },				\
+   { "lib_yellowknife",		LIB_YELLOWKNIFE_SPEC },			\
+   { "lib_mvme",			LIB_MVME_SPEC },			\
+@@ -852,6 +877,7 @@ ncrtn.o%s"
+   { "lib_netbsd",		LIB_NETBSD_SPEC },			\
+   { "lib_openbsd",		LIB_OPENBSD_SPEC },			\
+   { "lib_default",		LIB_DEFAULT_SPEC },			\
++  { "startfile_ogc",		STARTFILE_OGC_SPEC },			\
+   { "startfile_ads",		STARTFILE_ADS_SPEC },			\
+   { "startfile_yellowknife",	STARTFILE_YELLOWKNIFE_SPEC },		\
+   { "startfile_mvme",		STARTFILE_MVME_SPEC },			\
+@@ -861,6 +887,7 @@ ncrtn.o%s"
+   { "startfile_netbsd",		STARTFILE_NETBSD_SPEC },		\
+   { "startfile_openbsd",	STARTFILE_OPENBSD_SPEC },		\
+   { "startfile_default",	STARTFILE_DEFAULT_SPEC },		\
++  { "endfile_ogc",		ENDFILE_OGC_SPEC },			\
+   { "endfile_ads",		ENDFILE_ADS_SPEC },			\
+   { "endfile_yellowknife",	ENDFILE_YELLOWKNIFE_SPEC },		\
+   { "endfile_mvme",		ENDFILE_MVME_SPEC },			\
+@@ -872,7 +899,11 @@ ncrtn.o%s"
+   { "endfile_default",		ENDFILE_DEFAULT_SPEC },			\
+   { "link_shlib",		LINK_SHLIB_SPEC },			\
+   { "link_start",		LINK_START_SPEC },			\
++  { "link_start_vgc",		LINK_START_VGC_SPEC },			\
++  { "link_start_gcb",		LINK_START_GCB_SPEC },			\
++  { "link_start_rvl",		LINK_START_RVL_SPEC },			\
+   { "link_start_ads",		LINK_START_ADS_SPEC },			\
++  { "link_start_ogc",		LINK_START_OGC_SPEC },			\
+   { "link_start_yellowknife",	LINK_START_YELLOWKNIFE_SPEC },		\
+   { "link_start_mvme",		LINK_START_MVME_SPEC },			\
+   { "link_start_sim",		LINK_START_SIM_SPEC },			\
+@@ -882,6 +913,7 @@ ncrtn.o%s"
+   { "link_start_openbsd",	LINK_START_OPENBSD_SPEC },		\
+   { "link_start_default",	LINK_START_DEFAULT_SPEC },		\
+   { "link_os",			LINK_OS_SPEC },				\
++  { "link_os_ogc",		LINK_OS_OGC_SPEC },			\
+   { "link_os_ads",		LINK_OS_ADS_SPEC },			\
+   { "link_os_yellowknife",	LINK_OS_YELLOWKNIFE_SPEC },		\
+   { "link_os_mvme",		LINK_OS_MVME_SPEC },			\
+@@ -893,6 +925,9 @@ ncrtn.o%s"
+   { "link_os_default",		LINK_OS_DEFAULT_SPEC },			\
+   { "cc1_secure_plt_default",	CC1_SECURE_PLT_DEFAULT_SPEC },		\
+   { "link_secure_plt",		LINK_SECURE_PLT_SPEC },			\
++  { "cpp_os_gcn",		CPP_OS_GCN_SPEC },			\
++  { "cpp_os_ogc",		CPP_OS_OGC_SPEC },			\
++  { "cpp_os_rvl",		CPP_OS_RVL_SPEC },			\
+   { "cpp_os_ads",		CPP_OS_ADS_SPEC },			\
+   { "cpp_os_yellowknife",	CPP_OS_YELLOWKNIFE_SPEC },		\
+   { "cpp_os_mvme",		CPP_OS_MVME_SPEC },			\
+diff --git a/gcc/config/rs6000/sysv4.opt b/gcc/config/rs6000/sysv4.opt
+index dc0b0e82d9e..20300b60da8 100644
+--- a/gcc/config/rs6000/sysv4.opt
++++ b/gcc/config/rs6000/sysv4.opt
+@@ -124,6 +124,26 @@ mads
+ Target RejectNegative
+ Link with libads.a, libc.a and crt0.o.
+ 
++mgcn
++Target RejectNegative
++Link with libsysbase.a and libc.a, use ogc linker script 
++
++mogc
++Target RejectNegative
++Link with libsysbase.a and libc.a, use ogc linker script 
++
++mgcbios
++Target RejectNegative
++Link with libsysbase.a and libc.a, use gcbogc linker script 
++
++mvgc
++Target RejectNegative
++Link with libsysbase.a and libc.a, use gcbogc linker script 
++
++mrvl
++Target RejectNegative
++Link with libsysbase.a and libc.a, use rvl linker script 
++
+ myellowknife
+ Target RejectNegative
+ Link with libyk.a, libc.a and crt0.o.
+diff --git a/gcc/devkitpro.opt b/gcc/devkitpro.opt
+new file mode 100644
+index 00000000000..92731fee3ba
+--- /dev/null
++++ b/gcc/devkitpro.opt
+@@ -0,0 +1,30 @@
++; Options for devkitPro toolchains.
++
++; Copyright (C) 2011-2018 Free Software Foundation, Inc.
++;
++; This file is part of GCC.
++;
++; GCC is free software; you can redistribute it and/or modify it under
++; the terms of the GNU General Public License as published by the Free
++; Software Foundation; either version 3, or (at your option) any later
++; version.
++;
++; GCC is distributed in the hope that it will be useful, but WITHOUT ANY
++; WARRANTY; without even the implied warranty of MERCHANTABILITY or
++; FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++; for more details.
++;
++; You should have received a copy of the GNU General Public License
++; along with GCC; see the file COPYING3.  If not see
++; <http://www.gnu.org/licenses/>.
++
++; See the GCC internals manual (options.texi) for a description of
++; this file's format.
++
++; Please try to keep this file in ASCII collating order.
++
++pthread
++Driver
++
++; This comment is to ensure we retain the blank line above.
++
+diff --git a/gcc/gcc.cc b/gcc/gcc.cc
+index 4fd87f2c4a1..6af06f7b032 100644
+--- a/gcc/gcc.cc
++++ b/gcc/gcc.cc
+@@ -888,6 +888,11 @@ proper position among the other output files.  */
+ #endif
+ #endif
+ 
++#ifndef LIBGLOSS_SPEC
++# define LIBGLOSS_SPEC "-lsysbase"
++#endif
++
++
+ /* config.h can define STARTFILE_SPEC to override the default crt0 files.  */
+ #ifndef STARTFILE_SPEC
+ #define STARTFILE_SPEC  \
+@@ -1215,6 +1220,7 @@ static const char *link_spec = LINK_SPEC;
+ static const char *lib_spec = LIB_SPEC;
+ static const char *link_gomp_spec = "";
+ static const char *libgcc_spec = LIBGCC_SPEC;
++static const char *libgloss_spec = LIBGLOSS_SPEC;
+ static const char *endfile_spec = ENDFILE_SPEC;
+ static const char *startfile_spec = STARTFILE_SPEC;
+ static const char *linker_name_spec = LINKER_NAME;
+@@ -1727,6 +1733,7 @@ static struct spec_list static_specs[] =
+   INIT_STATIC_SPEC ("lib",			&lib_spec),
+   INIT_STATIC_SPEC ("link_gomp",		&link_gomp_spec),
+   INIT_STATIC_SPEC ("libgcc",			&libgcc_spec),
++  INIT_STATIC_SPEC ("libgloss",			&libgloss_spec),
+   INIT_STATIC_SPEC ("startfile",		&startfile_spec),
+   INIT_STATIC_SPEC ("cross_compile",		&cross_compile),
+   INIT_STATIC_SPEC ("version",			&compiler_version),
+diff --git a/libcc1/configure b/libcc1/configure
+index ea689a353c8..98f9d9b21b7 100755
+--- a/libcc1/configure
++++ b/libcc1/configure
+@@ -5119,7 +5119,7 @@ else
+        # Adding the `sed 1q' prevents false positives on HP-UX, which says:
+        #   nm: unknown option "B" ignored
+        case `"$tmp_nm" -B "$tmp_nm_to_nm" 2>&1 | grep -v '^ *$' | sed '1q'` in
+-       *$tmp_nm*) lt_cv_path_NM="$tmp_nm -B"
++       $tmp_nm*) lt_cv_path_NM="$tmp_nm -B"
+ 	 break
+ 	 ;;
+        *)
+diff --git a/libgcc/config/arm/t-bpabi b/libgcc/config/arm/t-bpabi
+index dddddc7c444..c2502597953 100644
+--- a/libgcc/config/arm/t-bpabi
++++ b/libgcc/config/arm/t-bpabi
+@@ -17,4 +17,4 @@ SHLIB_MAPFILES += $(srcdir)/config/arm/libgcc-bpabi.ver
+ # On ARM, specifying -fnon-call-exceptions will needlessly pull in
+ # the unwinder in simple programs which use 64-bit division.  Omitting
+ # the option is safe.
+-LIB2_DIVMOD_EXCEPTION_FLAGS := -fexceptions
++LIB2_DIVMOD_EXCEPTION_FLAGS := -fno-exceptions
+diff --git a/libgcc/config/rs6000/crtrestvr.S b/libgcc/config/rs6000/crtrestvr.S
+index 8761f612004..95cc245813b 100644
+--- a/libgcc/config/rs6000/crtrestvr.S
++++ b/libgcc/config/rs6000/crtrestvr.S
+@@ -24,7 +24,7 @@
+ 
+ /* On PowerPC64 Linux, these functions are provided by the linker.  */
+ #ifndef __powerpc64__
+-
++#if 0
+ #undef __ALTIVEC__
+ #define __ALTIVEC__ 1
+ 	#include "ppc-asm.h"
+@@ -86,3 +86,4 @@ FUNC_END(_restvr_20)
+ CFI_ENDPROC
+ 
+ #endif
++#endif
+diff --git a/libgcc/config/rs6000/crtsavevr.S b/libgcc/config/rs6000/crtsavevr.S
+index 9d05c98c32d..1b7e1ca68b9 100644
+--- a/libgcc/config/rs6000/crtsavevr.S
++++ b/libgcc/config/rs6000/crtsavevr.S
+@@ -24,7 +24,7 @@
+ 
+ /* On PowerPC64 Linux, these functions are provided by the linker.  */
+ #ifndef __powerpc64__
+-
++#if 0
+ #undef __ALTIVEC__
+ #define __ALTIVEC__ 1
+ 	#include "ppc-asm.h"
+@@ -86,3 +86,4 @@ FUNC_END(_savevr_20)
+ CFI_ENDPROC
+ 
+ #endif
++#endif
+diff --git a/libgcc/crtstuff.c b/libgcc/crtstuff.c
+index b9767cd1eee..362689c9f0b 100644
+--- a/libgcc/crtstuff.c
++++ b/libgcc/crtstuff.c
+@@ -326,7 +326,7 @@ register_tm_clones (void)
+ 
+ #ifdef OBJECT_FORMAT_ELF
+ 
+-#if DEFAULT_USE_CXA_ATEXIT
++#if 1 /* DEFAULT_USE_CXA_ATEXIT */
+ /* Declare the __dso_handle variable.  It should have a unique value
+    in every shared-object; in a main program its value is zero.  The
+    object should in any case be protected.  This means the instance
+diff --git a/libgcc/gthr.h b/libgcc/gthr.h
+index 557417997f4..7c1c7c40ab9 100644
+--- a/libgcc/gthr.h
++++ b/libgcc/gthr.h
+@@ -136,7 +136,7 @@ see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
+ /* The pe-coff weak support isn't fully compatible to ELF's weak.
+    For static libraries it might would work, but as we need to deal
+    with shared versions too, we disable it for mingw-targets.  */
+-#ifdef __MINGW32__
++#if defined (__MINGW32__) || defined (__DEVKITPRO__)
+ #undef GTHREAD_USE_WEAK
+ #define GTHREAD_USE_WEAK 0
+ #endif
+diff --git a/libstdc++-v3/configure b/libstdc++-v3/configure
+index 819a1d82876..e51ff5ec6ee 100755
+--- a/libstdc++-v3/configure
++++ b/libstdc++-v3/configure
+@@ -893,6 +893,7 @@ infodir
+ docdir
+ oldincludedir
+ includedir
++runstatedir
+ localstatedir
+ sharedstatedir
+ sysconfdir
+@@ -1027,6 +1028,7 @@ datadir='${datarootdir}'
+ sysconfdir='${prefix}/etc'
+ sharedstatedir='${prefix}/com'
+ localstatedir='${prefix}/var'
++runstatedir='${localstatedir}/run'
+ includedir='${prefix}/include'
+ oldincludedir='/usr/include'
+ docdir='${datarootdir}/doc/${PACKAGE_TARNAME}'
+@@ -1279,6 +1281,15 @@ do
+   | -silent | --silent | --silen | --sile | --sil)
+     silent=yes ;;
+ 
++  -runstatedir | --runstatedir | --runstatedi | --runstated \
++  | --runstate | --runstat | --runsta | --runst | --runs \
++  | --run | --ru | --r)
++    ac_prev=runstatedir ;;
++  -runstatedir=* | --runstatedir=* | --runstatedi=* | --runstated=* \
++  | --runstate=* | --runstat=* | --runsta=* | --runst=* | --runs=* \
++  | --run=* | --ru=* | --r=*)
++    runstatedir=$ac_optarg ;;
++
+   -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
+     ac_prev=sbindir ;;
+   -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
+@@ -1416,7 +1427,7 @@ fi
+ for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
+ 		datadir sysconfdir sharedstatedir localstatedir includedir \
+ 		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
+-		libdir localedir mandir
++		libdir localedir mandir runstatedir
+ do
+   eval ac_val=\$$ac_var
+   # Remove trailing slashes.
+@@ -1569,6 +1580,7 @@ Fine tuning of the installation directories:
+   --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
+   --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
+   --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
++  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
+   --libdir=DIR            object code libraries [EPREFIX/lib]
+   --includedir=DIR        C header files [PREFIX/include]
+   --oldincludedir=DIR     C header files for non-gcc [/usr/include]
+@@ -5080,7 +5092,7 @@ else
+     We can't simply define LARGE_OFF_T to be 9223372036854775807,
+     since some C++ compilers masquerading as C compilers
+     incorrectly reject 9223372036854775807.  */
+-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
++#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+ 		       && LARGE_OFF_T % 2147483647 == 1)
+ 		      ? 1 : -1];
+@@ -5126,7 +5138,7 @@ else
+     We can't simply define LARGE_OFF_T to be 9223372036854775807,
+     since some C++ compilers masquerading as C compilers
+     incorrectly reject 9223372036854775807.  */
+-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
++#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+ 		       && LARGE_OFF_T % 2147483647 == 1)
+ 		      ? 1 : -1];
+@@ -5150,7 +5162,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+     We can't simply define LARGE_OFF_T to be 9223372036854775807,
+     since some C++ compilers masquerading as C compilers
+     incorrectly reject 9223372036854775807.  */
+-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
++#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+ 		       && LARGE_OFF_T % 2147483647 == 1)
+ 		      ? 1 : -1];
+@@ -5195,7 +5207,7 @@ else
+     We can't simply define LARGE_OFF_T to be 9223372036854775807,
+     since some C++ compilers masquerading as C compilers
+     incorrectly reject 9223372036854775807.  */
+-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
++#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+ 		       && LARGE_OFF_T % 2147483647 == 1)
+ 		      ? 1 : -1];
+@@ -5219,7 +5231,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+     We can't simply define LARGE_OFF_T to be 9223372036854775807,
+     since some C++ compilers masquerading as C compilers
+     incorrectly reject 9223372036854775807.  */
+-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
++#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
+   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
+ 		       && LARGE_OFF_T % 2147483647 == 1)
+ 		      ? 1 : -1];
+@@ -12280,7 +12292,7 @@ else
+   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
+   lt_status=$lt_dlunknown
+   cat > conftest.$ac_ext <<_LT_EOF
+-#line 12283 "configure"
++#line 12295 "configure"
+ #include "confdefs.h"
+ 
+ #if HAVE_DLFCN_H
+@@ -12386,7 +12398,7 @@ else
+   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
+   lt_status=$lt_dlunknown
+   cat > conftest.$ac_ext <<_LT_EOF
+-#line 12389 "configure"
++#line 12401 "configure"
+ #include "confdefs.h"
+ 
+ #if HAVE_DLFCN_H
+@@ -16182,7 +16194,7 @@ $as_echo "$glibcxx_cv_atomic_long_long" >&6; }
+   # Fake what AC_TRY_COMPILE does.
+ 
+     cat > conftest.$ac_ext << EOF
+-#line 16185 "configure"
++#line 16198 "configure"
+ int main()
+ {
+   typedef bool atomic_type;
+@@ -16217,7 +16229,7 @@ $as_echo "$glibcxx_cv_atomic_bool" >&6; }
+     rm -f conftest*
+ 
+     cat > conftest.$ac_ext << EOF
+-#line 16220 "configure"
++#line 16233 "configure"
+ int main()
+ {
+   typedef short atomic_type;
+@@ -16252,7 +16264,7 @@ $as_echo "$glibcxx_cv_atomic_short" >&6; }
+     rm -f conftest*
+ 
+     cat > conftest.$ac_ext << EOF
+-#line 16255 "configure"
++#line 16268 "configure"
+ int main()
+ {
+   // NB: _Atomic_word not necessarily int.
+@@ -16288,7 +16300,7 @@ $as_echo "$glibcxx_cv_atomic_int" >&6; }
+     rm -f conftest*
+ 
+     cat > conftest.$ac_ext << EOF
+-#line 16291 "configure"
++#line 16304 "configure"
+ int main()
+ {
+   typedef long long atomic_type;
+@@ -16445,7 +16457,7 @@ $as_echo "mutex" >&6; }
+   # unnecessary for this test.
+ 
+     cat > conftest.$ac_ext << EOF
+-#line 16448 "configure"
++#line 16461 "configure"
+ int main()
+ {
+   _Decimal32 d1;
+@@ -16487,7 +16499,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+   # unnecessary for this test.
+ 
+   cat > conftest.$ac_ext << EOF
+-#line 16490 "configure"
++#line 16503 "configure"
+ template<typename T1, typename T2>
+   struct same
+   { typedef T2 type; };
+@@ -28602,6 +28614,8 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+ 
+     $as_echo "#define HAVE_MEMALIGN 1" >>confdefs.h
+ 
++    $as_echo "#define HAVE_ALIGNED_ALLOC 1" >>confdefs.h
++
+ 
+     case "${target}" in
+       *-rtems*)
+diff --git a/libstdc++-v3/configure.ac b/libstdc++-v3/configure.ac
+index a6c01b29e94..a8fb1200c8b 100644
+--- a/libstdc++-v3/configure.ac
++++ b/libstdc++-v3/configure.ac
+@@ -386,6 +386,7 @@ dnl # rather than hardcoding that information.
+     fi
+ 
+     AC_DEFINE(HAVE_MEMALIGN)
++    AC_DEFINE(HAVE_ALIGNED_ALLOC)
+ 
+     case "${target}" in
+       *-rtems*)
+diff --git a/libstdc++-v3/include/Makefile.am b/libstdc++-v3/include/Makefile.am
+index 537774c2668..bdd357ff60d 100644
+--- a/libstdc++-v3/include/Makefile.am
++++ b/libstdc++-v3/include/Makefile.am
+@@ -1436,6 +1436,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
+ 	    -e '/^#/s/\(${uppercase}${uppercase}*\)/_GLIBCXX_\1/g' \
+ 	    -e 's/_GLIBCXX_SUPPORTS_WEAK/__GXX_WEAK__/g' \
+ 	    -e 's/_GLIBCXX___MINGW32_GLIBCXX___/__MINGW32__/g' \
++	    -e 's/_GLIBCXX___DEVKITPRO__/__DEVKITPRO__/g' \
+ 	    -e 's,^#include "\(.*\)",#include <bits/\1>,g' \
+ 	    < $< > $@
+ 
+diff --git a/libstdc++-v3/include/Makefile.in b/libstdc++-v3/include/Makefile.in
+index 7b96b2207f8..61eb866ebe8 100644
+--- a/libstdc++-v3/include/Makefile.in
++++ b/libstdc++-v3/include/Makefile.in
+@@ -1910,6 +1910,7 @@ ${host_builddir}/gthr.h: ${toplevel_srcdir}/libgcc/gthr.h stamp-${host_alias}
+ 	    -e '/^#/s/\(${uppercase}${uppercase}*\)/_GLIBCXX_\1/g' \
+ 	    -e 's/_GLIBCXX_SUPPORTS_WEAK/__GXX_WEAK__/g' \
+ 	    -e 's/_GLIBCXX___MINGW32_GLIBCXX___/__MINGW32__/g' \
++	    -e 's/_GLIBCXX___DEVKITPRO__/__DEVKITPRO__/g' \
+ 	    -e 's,^#include "\(.*\)",#include <bits/\1>,g' \
+ 	    < $< > $@
+ 
+diff --git a/libstdc++-v3/include/std/fstream b/libstdc++-v3/include/std/fstream
+index 53e794162eb..08602c21949 100644
+--- a/libstdc++-v3/include/std/fstream
++++ b/libstdc++-v3/include/std/fstream
+@@ -53,7 +53,7 @@
+ 
+ // This can be overridden by the target's os_defines.h
+ #ifndef _GLIBCXX_BUFSIZ
+-# define _GLIBCXX_BUFSIZ BUFSIZ
++# define _GLIBCXX_BUFSIZ (BUFSIZ+1)
+ #endif
+ 
+ namespace std _GLIBCXX_VISIBILITY(default)
+diff --git a/libstdc++-v3/libsupc++/eh_alloc.cc b/libstdc++-v3/libsupc++/eh_alloc.cc
+index 42ca2ea5116..04f75c43cf5 100644
+--- a/libstdc++-v3/libsupc++/eh_alloc.cc
++++ b/libstdc++-v3/libsupc++/eh_alloc.cc
+@@ -143,6 +143,7 @@ namespace
+     {
+     public:
+       pool() noexcept;
++      ~pool();
+ 
+       _GLIBCXX_NODISCARD void *allocate (std::size_t) noexcept;
+       void free (void *) noexcept;
+@@ -248,6 +249,15 @@ namespace
+       first_free_entry->next = NULL;
+     }
+ 
++  pool::~pool()
++    {
++      if (arena)
++        {
++          ::free(arena);
++          arena = 0;
++        }
++    }
++
+   void *pool::allocate (std::size_t size) noexcept
+     {
+       __scoped_lock sentry(emergency_mutex);
+diff --git a/libstdc++-v3/src/c++17/fs_ops.cc b/libstdc++-v3/src/c++17/fs_ops.cc
+index 4f188153ae3..ea9d379e33a 100644
+--- a/libstdc++-v3/src/c++17/fs_ops.cc
++++ b/libstdc++-v3/src/c++17/fs_ops.cc
+@@ -1153,6 +1153,7 @@ fs::permissions(const path& p, perms prms, perm_options opts,
+     }
+ 
+   int err = 0;
++#ifndef __DEVKITPPC__
+ #if _GLIBCXX_USE_FCHMODAT
+   const int flag = (nofollow && is_symlink(st)) ? AT_SYMLINK_NOFOLLOW : 0;
+   if (::fchmodat(AT_FDCWD, p.c_str(), static_cast<mode_t>(prms), flag))
+@@ -1162,6 +1163,7 @@ fs::permissions(const path& p, perms prms, perm_options opts,
+     ec = std::__unsupported();
+   else if (posix::chmod(p.c_str(), static_cast<posix::mode_t>(prms)))
+     err = errno;
++#endif
+ #endif
+ 
+   if (err)
+diff --git a/libstdc++-v3/src/filesystem/ops-common.h b/libstdc++-v3/src/filesystem/ops-common.h
+index 4feacfdb932..b8c49f49381 100644
+--- a/libstdc++-v3/src/filesystem/ops-common.h
++++ b/libstdc++-v3/src/filesystem/ops-common.h
+@@ -563,6 +563,7 @@ _GLIBCXX_BEGIN_NAMESPACE_FILESYSTEM
+ 	return false;
+       }
+ 
++#ifndef __DEVKITPPC__
+ #if defined _GLIBCXX_USE_FCHMOD && ! defined _GLIBCXX_FILESYSTEM_IS_WINDOWS
+     if (::fchmod(out.fd, from_st->st_mode))
+ #elif defined _GLIBCXX_USE_FCHMODAT && ! defined _GLIBCXX_FILESYSTEM_IS_WINDOWS
+@@ -576,6 +577,7 @@ _GLIBCXX_BEGIN_NAMESPACE_FILESYSTEM
+ 	ec.assign(errno, std::generic_category());
+ 	return false;
+       }
++#endif
+ 
+     bool has_copied = false;
+ 
+diff --git a/libstdc++-v3/src/filesystem/ops.cc b/libstdc++-v3/src/filesystem/ops.cc
+index 4e21e43b97a..d93c8985224 100644
+--- a/libstdc++-v3/src/filesystem/ops.cc
++++ b/libstdc++-v3/src/filesystem/ops.cc
+@@ -987,6 +987,7 @@ fs::permissions(const path& p, perms prms, error_code& ec) noexcept
+     }
+ 
+   int err = 0;
++#ifndef __DEVKITPPC__
+ #if _GLIBCXX_USE_FCHMODAT
+   const int flag = (nofollow && is_symlink(st)) ? AT_SYMLINK_NOFOLLOW : 0;
+   if (::fchmodat(AT_FDCWD, p.c_str(), static_cast<mode_t>(prms), flag))
+@@ -996,6 +997,7 @@ fs::permissions(const path& p, perms prms, error_code& ec) noexcept
+     ec = std::__unsupported();
+   else if (posix::chmod(p.c_str(), static_cast<mode_t>(prms)))
+     err = errno;
++#endif
+ #endif
+ 
+   if (err)
+diff --git a/lto-plugin/configure b/lto-plugin/configure
+index 28f5dd79cd7..a79f318a4d6 100755
+--- a/lto-plugin/configure
++++ b/lto-plugin/configure
+@@ -6469,7 +6469,7 @@ else
+        # Adding the `sed 1q' prevents false positives on HP-UX, which says:
+        #   nm: unknown option "B" ignored
+        case `"$tmp_nm" -B "$tmp_nm_to_nm" 2>&1 | grep -v '^ *$' | sed '1q'` in
+-       *$tmp_nm*) lt_cv_path_NM="$tmp_nm -B"
++       $tmp_nm*) lt_cv_path_NM="$tmp_nm -B"
+ 	 break
+ 	 ;;
+        *)
