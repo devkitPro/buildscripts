@@ -52,7 +52,7 @@ case "$VERSION" in
     NEWLIB_VER=4.6.0.20260123
     BINUTILS_PKGREL=2
     GCC_PKGREL=7
-    NEWLIB_PKGREL=1
+    NEWLIB_PKGREL=2
     basedir='dkppc'
     package=devkitPPC
     target=powerpc-eabi
