@@ -48,11 +48,11 @@ case "$VERSION" in
   ;;
 # devkitPPC
   "2" )
-    BINUTILS_VER=2.46.0
+    BINUTILS_VER=2.47
     GCC_VER=16.1.0
     MN_BINUTILS_VER=2.24
     NEWLIB_VER=4.6.0.20260123
-    BINUTILS_PKGREL=1
+    BINUTILS_PKGREL=2
     GCC_PKGREL=1
     NEWLIB_PKGREL=4
     basedir='dkppc'
